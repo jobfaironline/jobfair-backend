@@ -56,14 +56,14 @@ jobs:
         with:
           name: artifact
       #Deploy the artifact (JAR) into AWS Beanstalk
+
       - name: Deploy to EB
-        uses: einaregilsson/beanstalk-deploy@v13
+        uses: einaregilsson/beanstalk-deploy@v20
         with:
-          aws_access_key: ${{ secrets.ACCESS_KEY_ID }}
-          aws_secret_key: ${{ secrets.SECRET_ACCESS_KEY }}
-          use_existing_version_if_available: false
-          application_name: job-fair-online-backend
-          environment_name: Jobfaironlinebackend-env
-          version_label: ${{github.SHA}}
-          region: southeast-1
-          deployment_package: jobfair-backend.jar
+         aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+         aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+         application_name: job-fair-online-backend
+         environment_name: Jobfaironlinebackend-env
+         version_label: 12345
+         region: southeast-1
+         deployment_package: jobfair-backend.jar
