@@ -15,4 +15,5 @@ public class LoginResponse {
     private int status;
     private Collection<String> roles;
     private String token;
+    private String refreshToken;
 }

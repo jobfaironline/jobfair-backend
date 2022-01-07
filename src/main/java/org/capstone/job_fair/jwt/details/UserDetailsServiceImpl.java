@@ -2,7 +2,7 @@ package org.capstone.job_fair.jwt.details;
 
 import org.capstone.job_fair.models.Account;
 import org.capstone.job_fair.repositories.AccountRepository;
-import org.capstone.job_fair.utils.AccountConstant;
+import org.capstone.job_fair.constants.AccountConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

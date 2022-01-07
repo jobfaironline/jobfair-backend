@@ -1,4 +1,4 @@
-package org.capstone.job_fair.utils;
+package org.capstone.job_fair.constants;
 
 public class AccountConstant {
     public static final int ACTIVE =1;

@@ -1,4 +1,4 @@
-package org.capstone.job_fair.utils.regex;
+package org.capstone.job_fair.constants;
 
 import java.util.regex.Pattern;
 

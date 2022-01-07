@@ -1,42 +1,50 @@
 package org.capstone.job_fair.controllers;
 
+import lombok.extern.slf4j.Slf4j;
+import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.jwt.JwtTokenProvider;
 import org.capstone.job_fair.jwt.details.UserDetailsImpl;
+import org.capstone.job_fair.models.Account;
 import org.capstone.job_fair.payload.LoginRequest;
 import org.capstone.job_fair.payload.LoginResponse;
+import org.capstone.job_fair.payload.RefreshTokenRequest;
+import org.capstone.job_fair.payload.RefreshTokenResponse;
 import org.capstone.job_fair.repositories.AccountRepository;
 import lombok.AllArgsConstructor;
+import org.capstone.job_fair.services.AccountService;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Optional;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-@RequestMapping("/api/v1/auth")
 @RestController
 @AllArgsConstructor
+@Slf4j
 public class AuthController {
 
     private final AuthenticationManager authManager;
 
     private final JwtTokenProvider tokenProvider;
 
-    private final AccountRepository accountRepository;
 
-    private final PasswordEncoder passwordEncoder;
+    private final AccountService accountService;
 
 
-    @PostMapping("/login")
+    @PostMapping(path = ApiEndPoint.Authentication.LOGIN_ENDPOINT)
     public ResponseEntity<LoginResponse> authenticateUser(@Validated @RequestBody LoginRequest request) {
         //initialize UsernameAndPasswordAuthenticationToken obj
         UsernamePasswordAuthenticationToken authToken =
@@ -48,19 +56,41 @@ public class AuthController {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             //then generate jwt token to return client
             String jwt = tokenProvider.generateToken(authentication);
+            String refreshToken = tokenProvider.generateRefreshToken(authentication);
             //get user principle from authentication obj
             UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
             //get list of roles
-            List<String> roles = userDetails.getAuthorities().stream().map(role -> role.getAuthority()).collect(Collectors.toList());
+            List<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
             //then return login response which include email and password in userDetails
             LoginResponse response = new LoginResponse(
                     userDetails.getEmail(),
                     userDetails.getPassword(),
                     userDetails.getStatus(),
                     roles,
-                    jwt);
+                    jwt,
+                    refreshToken
+            );
             return new ResponseEntity(response, HttpStatus.OK);
         }
         return new ResponseEntity(null, HttpStatus.UNAUTHORIZED);
+    }
+
+    @GetMapping(path = ApiEndPoint.Authentication.REFRESH_TOKEN_ENDPOINT)
+    public ResponseEntity refreshToken(@RequestBody RefreshTokenRequest tokenRequest) {
+        if (!tokenProvider.validateToken(tokenRequest.getRefreshToken())) {
+            log.info("Invalid refresh token");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token");
+        }
+        final String email = tokenProvider.getUsernameFromJwt(tokenRequest.getRefreshToken());
+        Optional<Account> accountOptional = accountService.getActiveAccountByEmail(email);
+        if (!accountOptional.isPresent()) {
+            log.info("Token claim is invalid");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token claim is invalid");
+        }
+        final Account account = accountOptional.get();
+        String newToken = tokenProvider.generateToken(account.getEmail());
+        String newRefreshToken = tokenProvider.generateRefreshToken(account.getEmail());
+        RefreshTokenResponse response = new RefreshTokenResponse(newRefreshToken, newToken);
+        return new ResponseEntity(response, HttpStatus.OK);
     }
 }
