@@ -1,5 +1,6 @@
 package org.capstone.job_fair.config;
 
+import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.jwt.JwtAuthEntryPoint;
 import org.capstone.job_fair.jwt.JwtAuthenticationFilter;
 import org.capstone.job_fair.jwt.JwtTokenProvider;
@@ -61,14 +62,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and() //handle exception
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 //Authenticated API Security
-                .authorizeRequests().antMatchers("/api/v1/auth/logout").authenticated().and()
-                .authorizeRequests().antMatchers("/api/v1/auth/**").permitAll().and()
+                .authorizeRequests().antMatchers(ApiEndPoint.Authentication.AUTHENTICATION_ENDPOINT + "/**").permitAll().and()
                 //Account API Security
-                .authorizeRequests().antMatchers("/api/v1/accounts/**").hasAuthority("ADMIN")
+                .authorizeRequests().antMatchers(ApiEndPoint.Account.ACCOUNT_ENDPOINT + "/**").hasAuthority("ADMIN")
                 .anyRequest().authenticated();
 
         //after logout success, invalidate session
-        http.logout().logoutUrl("api/v1/auth/logout").invalidateHttpSession(true);
+        http.logout().logoutUrl(ApiEndPoint.Authentication.LOGOUT_ENDPOINT).invalidateHttpSession(true);
         //adding a filter to validate jwt token
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
     }

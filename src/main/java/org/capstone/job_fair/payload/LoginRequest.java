@@ -15,5 +15,4 @@ public class LoginRequest {
     private String email;
     @PasswordConstraint
     private String password;
-
 }

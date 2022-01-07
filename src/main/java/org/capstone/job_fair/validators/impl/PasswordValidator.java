@@ -1,6 +1,6 @@
 package org.capstone.job_fair.validators.impl;
 
-import org.capstone.job_fair.utils.regex.RegexPattern;
+import org.capstone.job_fair.constants.RegexPattern;
 import org.capstone.job_fair.validators.PasswordConstraint;
 
 import javax.validation.ConstraintValidator;

@@ -10,4 +10,5 @@ import java.util.Optional;
 public interface AccountRepository extends JpaRepository<Account, String> {
 
     Optional<Account> findAccountByEmailAndStatusNot(String email, int status);
+
 }
