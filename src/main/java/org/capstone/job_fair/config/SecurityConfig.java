@@ -62,9 +62,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 "/configuration/ui",
                 "/swagger-resources/**",
                 "/configuration/security",
-                "/swagger-ui.html",
                 "/webjars/**",
-                "/csrf"
+                "/csrf",
+                "/error",
+                "/swagger-ui/**"
                 );
     }
 
