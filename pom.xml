@@ -79,7 +79,10 @@
         </dependency>
     </dependencies>
 
+    <packaging>jar</packaging>
+    
     <build>
+       <finalName>jobfair-backend</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
