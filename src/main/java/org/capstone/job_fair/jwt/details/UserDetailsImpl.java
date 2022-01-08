@@ -1,9 +1,9 @@
 package org.capstone.job_fair.jwt.details;
 
-import org.capstone.job_fair.models.Account;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.capstone.job_fair.models.entities.attendant.AttendantEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -27,7 +27,7 @@ public class UserDetailsImpl implements UserDetails {
 
     private Collection<? extends GrantedAuthority> authorities;
 
-    public static UserDetailsImpl build(Account account) {
+    public static UserDetailsImpl build(AttendantEntity account) {
         List<GrantedAuthority> authorities = new ArrayList<>(
                 Arrays.asList(
                         new SimpleGrantedAuthority(account.getRole().getName().toString())));

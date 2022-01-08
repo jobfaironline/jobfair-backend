@@ -4,15 +4,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.jwt.JwtTokenProvider;
 import org.capstone.job_fair.jwt.details.UserDetailsImpl;
-import org.capstone.job_fair.models.Account;
+import org.capstone.job_fair.models.entities.attendant.AttendantEntity;
 import org.capstone.job_fair.payload.LoginRequest;
 import org.capstone.job_fair.payload.LoginResponse;
 import org.capstone.job_fair.payload.RefreshTokenRequest;
 import org.capstone.job_fair.payload.RefreshTokenResponse;
-import org.capstone.job_fair.repositories.AccountRepository;
 import lombok.AllArgsConstructor;
-import org.capstone.job_fair.services.AccountService;
-import org.slf4j.LoggerFactory;
+import org.capstone.job_fair.services.attendant.AttendantService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,15 +18,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @RestController
@@ -41,11 +35,12 @@ public class AuthController {
     private final JwtTokenProvider tokenProvider;
 
 
-    private final AccountService accountService;
+    private final AttendantService attendantService;
 
 
     @PostMapping(path = ApiEndPoint.Authentication.LOGIN_ENDPOINT)
     public ResponseEntity<LoginResponse> authenticateUser(@Validated @RequestBody LoginRequest request) {
+        System.out.println(request.getPassword());
         //initialize UsernameAndPasswordAuthenticationToken obj
         UsernamePasswordAuthenticationToken authToken =
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword());
@@ -82,12 +77,12 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token");
         }
         final String email = tokenProvider.getUsernameFromJwt(tokenRequest.getRefreshToken());
-        Optional<Account> accountOptional = accountService.getActiveAccountByEmail(email);
+        Optional<AttendantEntity> accountOptional = attendantService.getActiveAccountByEmail(email);
         if (!accountOptional.isPresent()) {
             log.info("Token claim is invalid");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token claim is invalid");
         }
-        final Account account = accountOptional.get();
+        final AttendantEntity account = accountOptional.get();
         String newToken = tokenProvider.generateToken(account.getEmail());
         String newRefreshToken = tokenProvider.generateRefreshToken(account.getEmail());
         RefreshTokenResponse response = new RefreshTokenResponse(newRefreshToken, newToken);

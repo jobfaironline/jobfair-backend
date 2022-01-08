@@ -1,4 +1,4 @@
-package org.capstone.job_fair.models;
+package org.capstone.job_fair.constants;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 
