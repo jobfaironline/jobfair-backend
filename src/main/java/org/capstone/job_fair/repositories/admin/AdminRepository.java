@@ -1,11 +1,12 @@
 package org.capstone.job_fair.repositories.admin;
 
+import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.models.entities.admin.AdminEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
-@RepositoryRestResource(path = "admins")
+@RepositoryRestResource(path = ApiEndPoint.RestDataEndpoint.ADMIN)
 public interface AdminRepository extends JpaRepository<AdminEntity, String> {
 }
