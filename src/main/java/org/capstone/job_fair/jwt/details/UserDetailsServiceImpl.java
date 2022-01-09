@@ -1,6 +1,7 @@
 package org.capstone.job_fair.jwt.details;
 
-import org.capstone.job_fair.models.entities.attendant.AttendantEntity;
+import org.capstone.job_fair.models.entities.AccountEntity;
+import org.capstone.job_fair.repositories.AccountRepository;
 import org.capstone.job_fair.repositories.attendant.AttendantRepository;
 import org.capstone.job_fair.constants.AccountConstant;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,17 +14,17 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    private final AttendantRepository attendantRepository;
+    private final AccountRepository accountRepository;
 
     @Autowired
-    public UserDetailsServiceImpl(AttendantRepository attendantRepository) {
-        this.attendantRepository = attendantRepository;
+    public UserDetailsServiceImpl(AccountRepository accountRepository) {
+        this.accountRepository = accountRepository;
     }
 
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        AttendantEntity account = attendantRepository
+        AccountEntity account = accountRepository
                 .findAccountByEmailAndStatusNot(email, AccountConstant.INACTIVE)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with -> email : " + email));
         return UserDetailsImpl.build(account);

@@ -1,4 +1,4 @@
-package org.capstone.job_fair.models.entities.company;
+package org.capstone.job_fair.models.entities.attendant;
 
 import lombok.*;
 
@@ -11,8 +11,8 @@ import java.util.Objects;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "industry", schema = "dbo")
-public class IndustryEntity {
+@Table(name = "job_level", schema = "dbo")
+public class JobLevelEntity {
     @Id
     @Column(name = "id")
     private String id;
@@ -28,7 +28,7 @@ public class IndustryEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        IndustryEntity that = (IndustryEntity) o;
+        JobLevelEntity that = (JobLevelEntity) o;
 
         if (!Objects.equals(id, that.id)) return false;
         if (!Objects.equals(name, that.name)) return false;

@@ -21,6 +21,7 @@ public class ApiEndPoint {
     }
 
     public static final class RestDataEndpoint {
+        public static final String ACCOUNT = "accounts";
         public static final String MEDIA = "medias";
         public static final String INDUSTRY = "medias";
         public static final String COMPANY_SIZE = "medias";
