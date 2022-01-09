@@ -1,25 +1,28 @@
 package org.capstone.job_fair.models.entities.company;
 
+import lombok.*;
 import org.capstone.job_fair.models.entities.AccountEntity;
 import org.capstone.job_fair.models.entities.attendant.RoleEntity;
 
 import javax.persistence.*;
 import java.util.Objects;
 
+
 @Entity
+@Getter
+@Setter
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "company_employee", schema = "dbo")
 public class CompanyEmployeeEntity {
-    private String accountId;
-
     @Id
     @Column(name = "account_id", nullable = false, length = 36)
-    public String getAccountId() {
-        return accountId;
-    }
+    private String accountId;
 
     @OneToOne
-    @MapsId
-    public AccountEntity account;
+    @JoinColumn(name = "account_id")
+    private  AccountEntity account;
 
     @ManyToOne
     @JoinColumn(name = "company_id")
