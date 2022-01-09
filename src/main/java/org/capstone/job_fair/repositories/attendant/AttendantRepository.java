@@ -1,5 +1,6 @@
 package org.capstone.job_fair.repositories.attendant;
 
+import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.models.entities.attendant.AttendantEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
@@ -10,7 +11,7 @@ import springfox.documentation.annotations.ApiIgnore;
 import java.util.Optional;
 
 @Transactional
-@RepositoryRestResource(path = "attendants")
+@RepositoryRestResource(path = ApiEndPoint.RestDataEndpoint.ATTENDANT)
 public interface AttendantRepository extends JpaRepository<AttendantEntity, String> {
 
     @ApiIgnore
