@@ -3,6 +3,7 @@ package org.capstone.job_fair.models.entities.attendant;
 import org.capstone.job_fair.models.entities.AccountEntity;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Table(name = "attendant", schema = "dbo")
@@ -14,7 +15,7 @@ public class AttendantEntity {
     @OneToOne
     @MapsId
     private AccountEntity account;
-    
+
     @Basic
     @Column(name = "title", nullable = true, length = 100)
     private String title;
@@ -34,7 +35,17 @@ public class AttendantEntity {
     @Column(name = "marital_status", nullable = true)
     private Boolean maritalStatus;
 
+    @ManyToOne
+    @JoinColumn(name = "country_id")
+    private CountryEntity country;
 
+    @ManyToOne
+    @JoinColumn(name = "residence_id")
+    private ResidenceEntity residence;
+
+    @ManyToOne
+    @JoinColumn(name = "current_job_level_id")
+    private CurrentJobLevelEntity currentJobLevel;
 
 
     @Override
@@ -44,14 +55,16 @@ public class AttendantEntity {
 
         AttendantEntity that = (AttendantEntity) o;
 
-        if (accountId != null ? !accountId.equals(that.accountId) : that.accountId != null) return false;
-        if (title != null ? !title.equals(that.title) : that.title != null) return false;
-        if (address != null ? !address.equals(that.address) : that.address != null) return false;
-        if (dob != null ? !dob.equals(that.dob) : that.dob != null) return false;
-        if (jobTitle != null ? !jobTitle.equals(that.jobTitle) : that.jobTitle != null) return false;
-        if (yearOfExp != null ? !yearOfExp.equals(that.yearOfExp) : that.yearOfExp != null) return false;
-        if (maritalStatus != null ? !maritalStatus.equals(that.maritalStatus) : that.maritalStatus != null)
-            return false;
+        if (!Objects.equals(accountId, that.accountId)) return false;
+        if (!Objects.equals(title, that.title)) return false;
+        if (!Objects.equals(address, that.address)) return false;
+        if (!Objects.equals(dob, that.dob)) return false;
+        if (!Objects.equals(jobTitle, that.jobTitle)) return false;
+        if (!Objects.equals(yearOfExp, that.yearOfExp)) return false;
+        if (!Objects.equals(maritalStatus, that.maritalStatus)) return false;
+        if (!Objects.equals(country, that.country)) return false;
+        if (!Objects.equals(residence, that.residence)) return false;
+        if (!Objects.equals(currentJobLevel, that.currentJobLevel)) return false;
 
         return true;
     }
