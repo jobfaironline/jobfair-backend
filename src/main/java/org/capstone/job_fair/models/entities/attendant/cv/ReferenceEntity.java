@@ -33,6 +33,10 @@ public class ReferenceEntity {
     @Column(name = "phone_number")
     private String phoneNumber;
 
+    @ManyToOne
+    @JoinColumn
+    private CvEntity cv;
+
 
     @Override
     public boolean equals(Object o) {
@@ -46,6 +50,7 @@ public class ReferenceEntity {
         if (!Objects.equals(position, that.position)) return false;
         if (!Objects.equals(company, that.company)) return false;
         if (!Objects.equals(email, that.email)) return false;
+        if (!Objects.equals(cv, that.cv)) return false;
         return Objects.equals(phoneNumber, that.phoneNumber);
     }
 
@@ -57,6 +62,7 @@ public class ReferenceEntity {
         result = 31 * result + (company != null ? company.hashCode() : 0);
         result = 31 * result + (email != null ? email.hashCode() : 0);
         result = 31 * result + (phoneNumber != null ? phoneNumber.hashCode() : 0);
+        result = 31 * result + (cv != null ? cv.hashCode() : 0);
         return result;
     }
 }

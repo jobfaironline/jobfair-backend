@@ -1,8 +1,13 @@
 package org.capstone.job_fair.models.entities.attendant.cv;
 
 import lombok.*;
+import org.capstone.job_fair.models.entities.attendant.CountryEntity;
+import org.capstone.job_fair.models.entities.attendant.CurrentJobLevelEntity;
+import org.capstone.job_fair.models.entities.attendant.GenderEntity;
+import org.capstone.job_fair.models.entities.attendant.NationalityEntity;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -32,7 +37,7 @@ public class CvEntity {
     @Column(name = "email")
     private String email;
     @Basic
-    @Column(name = "cell_number")
+    @Column(name = "phone")
     private String cellNumber;
     @Basic
     @Column(name = "dob")
@@ -49,6 +54,40 @@ public class CvEntity {
     @Basic
     @Column(name = "create_date")
     private Long createDate;
+
+    @ManyToOne
+    @JoinColumn(name = "nationality_id")
+    private NationalityEntity nationality;
+
+    @ManyToOne
+    @JoinColumn(name = "country_id")
+    private CountryEntity country;
+
+    @ManyToOne
+    @JoinColumn(name = "current_job_level_id")
+    private CurrentJobLevelEntity currentJobLevel;
+
+    @ManyToOne
+    @JoinColumn(name = "gender_id")
+    private GenderEntity gender;
+
+    @OneToMany(mappedBy = "cv")
+    private List<SkillEntity> skillEntities;
+
+    @OneToMany(mappedBy = "cv")
+    private List<WorkHistoryEntity> workHistoryEntities;
+
+    @OneToMany(mappedBy = "cv")
+    private List<EducationEntity> educationEntities;
+
+    @OneToMany(mappedBy = "cv")
+    private List<CertificationEntity> certificationEntities;
+
+    @OneToMany(mappedBy = "cv")
+    private List<ReferenceEntity> referenceEntities;
+
+    @OneToMany(mappedBy = "cv")
+    private List<ActivityEntity> activityEntities;
 
 
     @Override
@@ -70,7 +109,18 @@ public class CvEntity {
             return false;
         if (!Objects.equals(address, cvEntity.address)) return false;
         if (!Objects.equals(summary, cvEntity.summary)) return false;
-        return Objects.equals(createDate, cvEntity.createDate);
+        if (!Objects.equals(createDate, cvEntity.createDate)) return false;
+        if (!Objects.equals(nationality, cvEntity.nationality)) return false;
+        if (!Objects.equals(country, cvEntity.country)) return false;
+        if (!Objects.equals(currentJobLevel, cvEntity.currentJobLevel)) return false;
+        if (!Objects.equals(gender, cvEntity.gender)) return false;
+        if (!Objects.equals(skillEntities, cvEntity.skillEntities)) return false;
+        if (!Objects.equals(workHistoryEntities, cvEntity.workHistoryEntities)) return false;
+        if (!Objects.equals(educationEntities, cvEntity.educationEntities)) return false;
+        if (!Objects.equals(certificationEntities, cvEntity.certificationEntities)) return false;
+        if (!Objects.equals(referenceEntities, cvEntity.referenceEntities)) return false;
+        if (!Objects.equals(activityEntities, cvEntity.activityEntities)) return false;
+        return true;
     }
 
     @Override
@@ -87,6 +137,10 @@ public class CvEntity {
         result = 31 * result + (address != null ? address.hashCode() : 0);
         result = 31 * result + (summary != null ? summary.hashCode() : 0);
         result = 31 * result + (createDate != null ? createDate.hashCode() : 0);
+        result = 31 * result + (nationality != null ? nationality.hashCode() : 0);
+        result = 31 * result + (country != null ? country.hashCode() : 0);
+        result = 31 * result + (currentJobLevel != null ? currentJobLevel.hashCode() : 0);
+        result = 31 * result + (gender != null ? gender.hashCode() : 0);
         return result;
     }
 }

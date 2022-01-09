@@ -39,6 +39,10 @@ public class ActivityEntity {
     @Column(name = "description")
     private String description;
 
+    @ManyToOne
+    @JoinColumn(name = "cv_id")
+    private CvEntity cv;
+
 
     @Override
     public boolean equals(Object o) {
@@ -54,6 +58,7 @@ public class ActivityEntity {
         if (!Objects.equals(organization, that.organization)) return false;
         if (!Objects.equals(fromDate, that.fromDate)) return false;
         if (!Objects.equals(toDate, that.toDate)) return false;
+        if (!Objects.equals(cv, that.cv)) return false;
         if (!Objects.equals(isCurrentActivity, that.isCurrentActivity))
             return false;
         return Objects.equals(description, that.description);
@@ -69,6 +74,7 @@ public class ActivityEntity {
         result = 31 * result + (toDate != null ? toDate.hashCode() : 0);
         result = 31 * result + (isCurrentActivity != null ? isCurrentActivity.hashCode() : 0);
         result = 31 * result + (description != null ? description.hashCode() : 0);
+        result = 31 * result + (cv != null ? cv.hashCode() : 0);
         return result;
     }
 }

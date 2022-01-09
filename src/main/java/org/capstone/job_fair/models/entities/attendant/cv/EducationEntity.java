@@ -22,7 +22,6 @@ public class EducationEntity {
     @Basic
     @Column(name = "school")
     private String school;
-
     @Basic
     @Column(name = "qualification_id")
     private Integer qualificationId;
@@ -35,6 +34,10 @@ public class EducationEntity {
     @Basic
     @Column(name = "achievement")
     private String achievement;
+
+    @ManyToOne
+    @JoinColumn(name = "cv_id")
+    private CvEntity cv;
 
 
     @Override
@@ -51,6 +54,7 @@ public class EducationEntity {
             return false;
         if (!Objects.equals(toDate, that.toDate)) return false;
         if (!Objects.equals(fromDate, that.fromDate)) return false;
+        if (!Objects.equals(cv, that.cv)) return false;
         return Objects.equals(achievement, that.achievement);
     }
 
@@ -62,6 +66,7 @@ public class EducationEntity {
         result = 31 * result + (qualificationId != null ? qualificationId.hashCode() : 0);
         result = 31 * result + (fromDate != null ? fromDate.hashCode() : 0);
         result = 31 * result + (toDate != null ? toDate.hashCode() : 0);
+        result = 31 * result + (achievement != null ? achievement.hashCode() : 0);
         result = 31 * result + (achievement != null ? achievement.hashCode() : 0);
         return result;
     }

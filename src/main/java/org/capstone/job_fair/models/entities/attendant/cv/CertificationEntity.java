@@ -30,6 +30,9 @@ public class CertificationEntity {
     @Basic
     @Column(name = "certification_link")
     private String certificationLink;
+    @ManyToOne
+    @JoinColumn(name = "cv_id")
+    private CvEntity cv;
 
     @Override
     public boolean equals(Object o) {
@@ -42,6 +45,7 @@ public class CertificationEntity {
         if (!Objects.equals(name, that.name)) return false;
         if (!Objects.equals(institution, that.institution)) return false;
         if (!Objects.equals(year, that.year)) return false;
+        if (!Objects.equals(cv, that.cv)) return false;
         return Objects.equals(certificationLink, that.certificationLink);
     }
 
@@ -52,6 +56,7 @@ public class CertificationEntity {
         result = 31 * result + (institution != null ? institution.hashCode() : 0);
         result = 31 * result + (year != null ? year.hashCode() : 0);
         result = 31 * result + (certificationLink != null ? certificationLink.hashCode() : 0);
+        result = 31 * result + (cv != null ? cv.hashCode() : 0);
         return result;
     }
 }
