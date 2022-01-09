@@ -11,8 +11,8 @@ import java.util.Objects;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "current_job_level", schema = "dbo")
-public class CurrentJobLevelEntity {
+@Table(name = "job_level", schema = "dbo")
+public class JobLevelEntity {
     @Id
     @Column(name = "id")
     private String id;
@@ -28,7 +28,7 @@ public class CurrentJobLevelEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        CurrentJobLevelEntity that = (CurrentJobLevelEntity) o;
+        JobLevelEntity that = (JobLevelEntity) o;
 
         if (!Objects.equals(id, that.id)) return false;
         if (!Objects.equals(name, that.name)) return false;

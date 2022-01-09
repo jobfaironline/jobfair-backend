@@ -1,6 +1,9 @@
 package org.capstone.job_fair.models.entities.company.job;
 
 import lombok.*;
+import org.capstone.job_fair.models.entities.attendant.JobLevelEntity;
+import org.capstone.job_fair.models.entities.attendant.LanguageEntity;
+import org.capstone.job_fair.models.entities.company.CompanyEntity;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -37,7 +40,18 @@ public class JobPositionEntity {
     @Basic
     @Column(name = "contact_email")
     private String contactEmail;
-
+    @ManyToOne
+    @JoinColumn(name = "preferred_language_id")
+    private LanguageEntity language;
+    @ManyToOne
+    @JoinColumn(name = "level_id")
+    private JobLevelEntity jobLevel;
+    @ManyToOne
+    @JoinColumn(name = "job_type_id")
+    private JobTypeEntity jobTypeEntity;
+    @ManyToOne
+    @JoinColumn(name = "company_id")
+    private CompanyEntity company;
 
     @Override
     public boolean equals(Object o) {
@@ -55,6 +69,10 @@ public class JobPositionEntity {
         if (!Objects.equals(contactPersonName, that.contactPersonName))
             return false;
         if (!Objects.equals(contactEmail, that.contactEmail)) return false;
+        if (!Objects.equals(language, that.language)) return false;
+        if (!Objects.equals(jobLevel, that.jobLevel)) return false;
+        if (!Objects.equals(jobTypeEntity, that.jobTypeEntity)) return false;
+        if (!Objects.equals(company, that.company)) return false;
         return true;
     }
 
@@ -68,6 +86,10 @@ public class JobPositionEntity {
         result = 31 * result + (maxSalary != null ? maxSalary.hashCode() : 0);
         result = 31 * result + (contactPersonName != null ? contactPersonName.hashCode() : 0);
         result = 31 * result + (contactEmail != null ? contactEmail.hashCode() : 0);
+        result = 31 * result + (language != null ? language.hashCode() : 0);
+        result = 31 * result + (jobLevel != null ? jobLevel.hashCode() : 0);
+        result = 31 * result + (jobTypeEntity != null ? jobTypeEntity.hashCode() : 0);
+        result = 31 * result + (company != null ? company.hashCode() : 0);
         return result;
     }
 }

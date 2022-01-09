@@ -45,7 +45,7 @@ public class AttendantEntity {
 
     @ManyToOne
     @JoinColumn(name = "current_job_level_id")
-    private CurrentJobLevelEntity currentJobLevel;
+    private JobLevelEntity currentJobLevel;
 
 
     @Override

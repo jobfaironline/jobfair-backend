@@ -2,7 +2,7 @@ package org.capstone.job_fair.models.entities.attendant.cv;
 
 import lombok.*;
 import org.capstone.job_fair.models.entities.attendant.CountryEntity;
-import org.capstone.job_fair.models.entities.attendant.CurrentJobLevelEntity;
+import org.capstone.job_fair.models.entities.attendant.JobLevelEntity;
 import org.capstone.job_fair.models.entities.attendant.GenderEntity;
 import org.capstone.job_fair.models.entities.attendant.NationalityEntity;
 
@@ -65,7 +65,7 @@ public class CvEntity {
 
     @ManyToOne
     @JoinColumn(name = "current_job_level_id")
-    private CurrentJobLevelEntity currentJobLevel;
+    private JobLevelEntity currentJobLevel;
 
     @ManyToOne
     @JoinColumn(name = "gender_id")
