@@ -1,8 +1,8 @@
 package org.capstone.job_fair.controllers;
 
 import org.capstone.job_fair.constants.ApiEndPoint;
-import org.capstone.job_fair.models.entities.attendant.AttendantEntity;
-import org.capstone.job_fair.services.attendant.AttendantService;
+import org.capstone.job_fair.models.entities.AccountEntity;
+import org.capstone.job_fair.services.attendant.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,9 +15,9 @@ import java.util.List;
 public class AttendantController {
 
     @Autowired
-    private AttendantService attendantService;
+    private AccountService accountService;
     @GetMapping(ApiEndPoint.Attendant.ACCOUNT_ENDPOINT)
-    public ResponseEntity<List<AttendantEntity>> getAllAccounts(){
-        return new ResponseEntity<List<AttendantEntity>>(attendantService.getAllAccounts(), HttpStatus.OK);
+    public ResponseEntity<List<AccountEntity>> getAllAccounts(){
+        return new ResponseEntity<List<AccountEntity>>(accountService.getAllAccounts(), HttpStatus.OK);
     }
 }
