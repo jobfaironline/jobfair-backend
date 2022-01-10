@@ -20,11 +20,15 @@ public class ApiEndPoint {
         public static final String ACCOUNT_ENDPOINT = ROOT_ENDPOINT + VERSION + "/attendants";
     }
 
+    public static final class ResetPasswordToken {
+        public static final String GENERATE_OTP_ENDPOINT = ROOT_ENDPOINT + VERSION + "/generate-otp";
+        public static final String RESET_PASSWORD_ENDPOINT = ROOT_ENDPOINT + VERSION + "/reset-password";
+    }
+
     public static final class RestDataEndpoint {
         public static final String ACCOUNT = "accounts";
         public static final String MEDIA = "medias";
-        public static final String INDUSTRY = "medias";
-        public static final String COMPANY_SIZE = "medias";
+        public static final String COMPANY_SIZE = "company-sizes";
         public static final String COMPANY = "companies";
         public static final String CATEGORY = "categories";
         public static final String BENEFIT = "benefits";
@@ -43,7 +47,7 @@ public class ApiEndPoint {
         public static final String CV = "cvs";
         public static final String EDUCATION = "educations";
         public static final String REFERENCE = "references";
-        public static final String ADMIN = "admin";
+        public static final String RESET_PASSWORD = "reset-password";
 
     }
 

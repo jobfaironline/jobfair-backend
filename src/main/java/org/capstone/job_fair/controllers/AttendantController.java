@@ -2,7 +2,7 @@ package org.capstone.job_fair.controllers;
 
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.models.entities.AccountEntity;
-import org.capstone.job_fair.services.attendant.AccountService;
+import org.capstone.job_fair.services.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

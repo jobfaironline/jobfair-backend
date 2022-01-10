@@ -1,4 +1,4 @@
-package org.capstone.job_fair.services.attendant;
+package org.capstone.job_fair.services;
 
 import org.capstone.job_fair.models.entities.AccountEntity;
 
