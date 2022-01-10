@@ -13,7 +13,7 @@ public class AttendantEntity {
     private String accountId;
 
     @OneToOne
-    @MapsId
+    @JoinColumn(name = "account_id")
     private AccountEntity account;
 
     @Basic
@@ -46,6 +46,8 @@ public class AttendantEntity {
     @ManyToOne
     @JoinColumn(name = "current_job_level_id")
     private JobLevelEntity currentJobLevel;
+
+
 
 
     @Override

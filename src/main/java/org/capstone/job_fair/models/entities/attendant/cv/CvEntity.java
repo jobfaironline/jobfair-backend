@@ -1,6 +1,7 @@
 package org.capstone.job_fair.models.entities.attendant.cv;
 
 import lombok.*;
+import org.capstone.job_fair.models.entities.AccountEntity;
 import org.capstone.job_fair.models.entities.attendant.CountryEntity;
 import org.capstone.job_fair.models.entities.attendant.JobLevelEntity;
 import org.capstone.job_fair.models.entities.attendant.GenderEntity;
@@ -71,6 +72,10 @@ public class CvEntity {
     @JoinColumn(name = "gender_id")
     private GenderEntity gender;
 
+    @ManyToOne
+    @JoinColumn(name = "account_id")
+    private AccountEntity account;
+
     @OneToMany(mappedBy = "cv")
     private List<SkillEntity> skillEntities;
 
@@ -120,6 +125,7 @@ public class CvEntity {
         if (!Objects.equals(certificationEntities, cvEntity.certificationEntities)) return false;
         if (!Objects.equals(referenceEntities, cvEntity.referenceEntities)) return false;
         if (!Objects.equals(activityEntities, cvEntity.activityEntities)) return false;
+        if (!Objects.equals(account, cvEntity.account)) return false;
         return true;
     }
 

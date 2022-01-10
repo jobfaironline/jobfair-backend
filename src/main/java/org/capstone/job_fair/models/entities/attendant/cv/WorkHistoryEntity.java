@@ -17,13 +17,13 @@ public class WorkHistoryEntity {
     private String company;
     @Basic
     @Column(name = "from_date", nullable = true)
-    private Long fromMonth;
+    private Long fromDate;
     @Basic
     @Column(name = "to_date", nullable = true)
-    private Long toMonth;
+    private Long toDate;
     @Basic
     @Column(name = "is_current_job", nullable = true)
-    private Integer isCurrentJob;
+    private Boolean isCurrentJob;
     @Basic
     @Column(name = "description", nullable = true, length = 5000)
     private String description;
@@ -42,8 +42,8 @@ public class WorkHistoryEntity {
         if (!Objects.equals(id, that.id)) return false;
         if (!Objects.equals(position, that.position)) return false;
         if (!Objects.equals(company, that.company)) return false;
-        if (!Objects.equals(fromMonth, that.fromMonth)) return false;
-        if (!Objects.equals(toMonth, that.toMonth)) return false;
+        if (!Objects.equals(fromDate, that.fromDate)) return false;
+        if (!Objects.equals(toDate, that.toDate)) return false;
         if (!Objects.equals(isCurrentJob, that.isCurrentJob)) return false;
         if (!Objects.equals(description, that.description)) return false;
         if (!Objects.equals(cv, that.cv)) return false;
@@ -56,8 +56,8 @@ public class WorkHistoryEntity {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (position != null ? position.hashCode() : 0);
         result = 31 * result + (company != null ? company.hashCode() : 0);
-        result = 31 * result + (fromMonth != null ? fromMonth.hashCode() : 0);
-        result = 31 * result + (toMonth != null ? toMonth.hashCode() : 0);
+        result = 31 * result + (fromDate != null ? fromDate.hashCode() : 0);
+        result = 31 * result + (toDate != null ? toDate.hashCode() : 0);
         result = 31 * result + (isCurrentJob != null ? isCurrentJob.hashCode() : 0);
         result = 31 * result + (description != null ? description.hashCode() : 0);
         result = 31 * result + (cv != null ? cv.hashCode() : 0);
