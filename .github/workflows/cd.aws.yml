@@ -39,7 +39,7 @@ jobs:
           name: artifact
           #From this path
           path: target/jobfair-backend.jar
-  #Deploy's job
+  
   deploy:
     #Depends on build's job
     name: Deploy
