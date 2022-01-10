@@ -1,8 +1,11 @@
 package org.capstone.job_fair.models.entities;
 
 import lombok.*;
+import org.capstone.job_fair.models.entities.attendant.AttendantEntity;
 import org.capstone.job_fair.models.entities.attendant.GenderEntity;
 import org.capstone.job_fair.models.entities.attendant.RoleEntity;
+import org.capstone.job_fair.models.entities.company.CompanyEmployeeEntity;
+import org.capstone.job_fair.models.entities.company.CompanyEntity;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -54,6 +57,12 @@ public class AccountEntity {
     @ManyToOne
     @JoinColumn(name = "gender_id")
     private GenderEntity gender;
+
+    @OneToOne(mappedBy = "account")
+    private AttendantEntity attendant;
+
+    @OneToOne(mappedBy = "account")
+    private CompanyEmployeeEntity employee;
 
     public String getFullname(){
         return firstname + " " + middlename + " " + lastname;
