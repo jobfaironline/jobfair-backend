@@ -1,13 +1,14 @@
 # This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
 # For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven
-
 name: CD
-
 on:
   push:
     branches: [ main ]
+    
 jobs:
+   #Build's job
   build:
+    #Depends on sonar's job
     name: Build
     #Run on Ubuntu using the latest version
     runs-on: ubuntu-latest
@@ -39,9 +40,12 @@ jobs:
           name: artifact
           #From this path
           path: target/jobfair-backend.jar
-  
+          
+          
+  #Deploy's job
   deploy:
     #Depends on build's job
+    needs: build
     name: Deploy
     #Run on Ubuntu using the latest version
     runs-on: ubuntu-latest
@@ -52,7 +56,6 @@ jobs:
         with:
           name: artifact
       #Deploy the artifact (JAR) into AWS Beanstalk
-
       - name: Deploy to EB
         uses: einaregilsson/beanstalk-deploy@v20
         with:
