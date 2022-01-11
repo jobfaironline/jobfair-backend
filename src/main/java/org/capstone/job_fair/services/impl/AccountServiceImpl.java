@@ -1,28 +1,35 @@
 package org.capstone.job_fair.services.impl;
 
 import org.capstone.job_fair.constants.AccountConstant;
-import org.capstone.job_fair.constants.AccountStatus;
-import org.capstone.job_fair.constants.Role;
-import org.capstone.job_fair.models.dtos.AccountEntityDto;
-import org.capstone.job_fair.models.entities.AccountEntity;
-import org.capstone.job_fair.models.entities.attendant.GenderEntity;
-import org.capstone.job_fair.models.entities.attendant.RoleEntity;
+import org.capstone.job_fair.models.dtos.account.AccountDTO;
+import org.capstone.job_fair.models.entities.attendant.AttendantEntity;
+import org.capstone.job_fair.models.statuses.AccountStatus;
+import org.capstone.job_fair.models.enums.Role;
+import org.capstone.job_fair.models.entities.account.AccountEntity;
+import org.capstone.job_fair.models.entities.account.GenderEntity;
+import org.capstone.job_fair.models.entities.account.RoleEntity;
 import org.capstone.job_fair.models.mappers.AccountEntityMapper;
 import org.capstone.job_fair.repositories.AccountRepository;
+import org.capstone.job_fair.repositories.attendant.AttendantRepository;
 import org.capstone.job_fair.services.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@Transactional
 public class AccountServiceImpl implements AccountService {
 
     @Autowired
     private AccountRepository accountRepository;
+
+    @Autowired
+    private AttendantRepository attendantRepository;
 
     @Autowired
     private AccountEntityMapper mapper;
@@ -46,10 +53,11 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void createNewAccount(AccountEntityDto dto) {
+    public void createNewAccount(AccountDTO dto) {
         AccountEntity entity = mapper.toEntity(dto);
         entity.setId(UUID.randomUUID().toString());
         entity.setStatus(AccountStatus.ACTIVE);
+        entity.setPassword(encoder.encode(entity.getPassword()));
 
         RoleEntity role = new RoleEntity();
         role.setId(Role.ATTENDANT.ordinal());
@@ -60,6 +68,12 @@ public class AccountServiceImpl implements AccountService {
 
         entity.setGender(gender);
         accountRepository.save(entity);
+        AttendantEntity attendant = new AttendantEntity();
+        System.out.println(entity);
+        attendant.setAccount(entity);
+        attendant.setAccountId(entity.getId());
+        System.out.println(attendant);
+        attendantRepository.save(attendant);
     }
 
 }

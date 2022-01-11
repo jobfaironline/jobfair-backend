@@ -1,13 +1,13 @@
-package org.capstone.job_fair.models.dtos;
+package org.capstone.job_fair.models.dtos.account;
 
 import lombok.Data;
-import org.capstone.job_fair.constants.AccountStatus;
-import org.capstone.job_fair.constants.Gender;
+import org.capstone.job_fair.models.statuses.AccountStatus;
+import org.capstone.job_fair.models.enums.Gender;
 
 import java.io.Serializable;
 
 @Data
-public class AccountEntityDto implements Serializable {
+public class AccountDTO implements Serializable {
     private String id;
     private String email;
     private String password;
@@ -18,7 +18,7 @@ public class AccountEntityDto implements Serializable {
     private String lastname;
     private String middlename;
     private Gender gender;
-    public AccountEntityDto() {
+    public AccountDTO() {
 
     }
 }

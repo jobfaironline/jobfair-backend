@@ -1,7 +1,7 @@
 package org.capstone.job_fair.services.impl;
 
-import org.capstone.job_fair.models.entities.AccountEntity;
-import org.capstone.job_fair.models.entities.PasswordResetTokenEntity;
+import org.capstone.job_fair.models.entities.account.AccountEntity;
+import org.capstone.job_fair.models.entities.token.PasswordResetTokenEntity;
 import org.capstone.job_fair.repositories.PasswordResetTokenRepository;
 import org.capstone.job_fair.services.AccountService;
 import org.capstone.job_fair.services.PasswordResetTokenService;

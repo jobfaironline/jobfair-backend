@@ -1,12 +1,7 @@
-package org.capstone.job_fair.models.entities;
+package org.capstone.job_fair.models.entities.account;
 
 import lombok.*;
-import org.capstone.job_fair.constants.AccountStatus;
-import org.capstone.job_fair.models.entities.attendant.AttendantEntity;
-import org.capstone.job_fair.models.entities.attendant.GenderEntity;
-import org.capstone.job_fair.models.entities.attendant.RoleEntity;
-import org.capstone.job_fair.models.entities.company.CompanyEmployeeEntity;
-import org.capstone.job_fair.models.entities.company.CompanyEntity;
+import org.capstone.job_fair.models.statuses.AccountStatus;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -72,18 +67,7 @@ public class AccountEntity {
 
         AccountEntity that = (AccountEntity) o;
 
-        if (!Objects.equals(id, that.id)) return false;
-        if (!Objects.equals(email, that.email)) return false;
-        if (!Objects.equals(password, that.password)) return false;
-        if (!Objects.equals(status, that.status)) return false;
-        if (!Objects.equals(phone, that.phone)) return false;
-        if (!Objects.equals(profileImageUrl, that.profileImageUrl))
-            return false;
-        if (!Objects.equals(firstname, that.firstname)) return false;
-        if (!Objects.equals(lastname, that.lastname)) return false;
-        if (!Objects.equals(role, that.role)) return false;
-        if (!Objects.equals(gender, that.gender)) return false;
-        return Objects.equals(middlename, that.middlename);
+        return !Objects.equals(id, that.id);
     }
 
     @Override

@@ -1,4 +1,4 @@
-package org.capstone.job_fair.constants;
+package org.capstone.job_fair.models.enums;
 
 public enum Gender {
     MALE,

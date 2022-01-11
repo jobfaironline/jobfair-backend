@@ -1,7 +1,7 @@
 package org.capstone.job_fair.payload;
 
 import lombok.*;
-import org.capstone.job_fair.constants.AccountStatus;
+import org.capstone.job_fair.models.statuses.AccountStatus;
 
 import java.util.Collection;
 

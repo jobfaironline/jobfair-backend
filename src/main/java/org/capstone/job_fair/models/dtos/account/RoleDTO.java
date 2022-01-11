@@ -1,4 +1,4 @@
-package org.capstone.job_fair.models.dtos.attendant;
+package org.capstone.job_fair.models.dtos.account;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

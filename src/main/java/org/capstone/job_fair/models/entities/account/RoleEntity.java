@@ -1,9 +1,8 @@
-package org.capstone.job_fair.models.entities.attendant;
+package org.capstone.job_fair.models.entities.account;
 
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.Objects;
 
 @Entity
 @Getter
@@ -11,8 +10,8 @@ import java.util.Objects;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "gender", schema = "dbo")
-public class GenderEntity {
+@Table(name = "role", schema = "dbo")
+public class RoleEntity {
     @Id
     @Column(name = "id")
     private Integer id;
@@ -27,8 +26,10 @@ public class GenderEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        GenderEntity gender = (GenderEntity) o;
-        return id.equals(gender.id);
+
+        RoleEntity role = (RoleEntity) o;
+
+        return id.equals(role.id);
     }
 
     @Override

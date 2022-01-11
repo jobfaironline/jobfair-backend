@@ -1,10 +1,10 @@
 package org.capstone.job_fair.models.entities.attendant.cv;
 
 import lombok.*;
-import org.capstone.job_fair.models.entities.AccountEntity;
+import org.capstone.job_fair.models.entities.account.AccountEntity;
 import org.capstone.job_fair.models.entities.attendant.CountryEntity;
 import org.capstone.job_fair.models.entities.attendant.JobLevelEntity;
-import org.capstone.job_fair.models.entities.attendant.GenderEntity;
+import org.capstone.job_fair.models.entities.account.GenderEntity;
 import org.capstone.job_fair.models.entities.attendant.NationalityEntity;
 
 import javax.persistence.*;
@@ -14,7 +14,6 @@ import java.util.Objects;
 @Entity
 @Getter
 @Setter
-@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "cv", schema = "dbo")
@@ -94,7 +93,6 @@ public class CvEntity {
     @OneToMany(mappedBy = "cv")
     private List<ActivityEntity> activityEntities;
 
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -102,51 +100,11 @@ public class CvEntity {
 
         CvEntity cvEntity = (CvEntity) o;
 
-        if (!Objects.equals(id, cvEntity.id)) return false;
-        if (!Objects.equals(firstname, cvEntity.firstname)) return false;
-        if (!Objects.equals(lastname, cvEntity.lastname)) return false;
-        if (!Objects.equals(middlename, cvEntity.middlename)) return false;
-        if (!Objects.equals(yearOfExp, cvEntity.yearOfExp)) return false;
-        if (!Objects.equals(email, cvEntity.email)) return false;
-        if (!Objects.equals(cellNumber, cvEntity.cellNumber)) return false;
-        if (!Objects.equals(dob, cvEntity.dob)) return false;
-        if (!Objects.equals(maritalStatus, cvEntity.maritalStatus))
-            return false;
-        if (!Objects.equals(address, cvEntity.address)) return false;
-        if (!Objects.equals(summary, cvEntity.summary)) return false;
-        if (!Objects.equals(createDate, cvEntity.createDate)) return false;
-        if (!Objects.equals(nationality, cvEntity.nationality)) return false;
-        if (!Objects.equals(country, cvEntity.country)) return false;
-        if (!Objects.equals(currentJobLevel, cvEntity.currentJobLevel)) return false;
-        if (!Objects.equals(gender, cvEntity.gender)) return false;
-        if (!Objects.equals(skillEntities, cvEntity.skillEntities)) return false;
-        if (!Objects.equals(workHistoryEntities, cvEntity.workHistoryEntities)) return false;
-        if (!Objects.equals(educationEntities, cvEntity.educationEntities)) return false;
-        if (!Objects.equals(certificationEntities, cvEntity.certificationEntities)) return false;
-        if (!Objects.equals(referenceEntities, cvEntity.referenceEntities)) return false;
-        if (!Objects.equals(activityEntities, cvEntity.activityEntities)) return false;
-        if (!Objects.equals(account, cvEntity.account)) return false;
-        return true;
+        return id.equals(cvEntity.id);
     }
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (firstname != null ? firstname.hashCode() : 0);
-        result = 31 * result + (lastname != null ? lastname.hashCode() : 0);
-        result = 31 * result + (middlename != null ? middlename.hashCode() : 0);
-        result = 31 * result + (yearOfExp != null ? yearOfExp.hashCode() : 0);
-        result = 31 * result + (email != null ? email.hashCode() : 0);
-        result = 31 * result + (cellNumber != null ? cellNumber.hashCode() : 0);
-        result = 31 * result + (dob != null ? dob.hashCode() : 0);
-        result = 31 * result + (maritalStatus != null ? maritalStatus.hashCode() : 0);
-        result = 31 * result + (address != null ? address.hashCode() : 0);
-        result = 31 * result + (summary != null ? summary.hashCode() : 0);
-        result = 31 * result + (createDate != null ? createDate.hashCode() : 0);
-        result = 31 * result + (nationality != null ? nationality.hashCode() : 0);
-        result = 31 * result + (country != null ? country.hashCode() : 0);
-        result = 31 * result + (currentJobLevel != null ? currentJobLevel.hashCode() : 0);
-        result = 31 * result + (gender != null ? gender.hashCode() : 0);
-        return result;
+        return id.hashCode();
     }
 }

@@ -1,16 +1,15 @@
 package org.capstone.job_fair.controllers.attendant;
 
-import org.capstone.job_fair.constants.AccountStatus;
 import org.capstone.job_fair.constants.ApiEndPoint;
-import org.capstone.job_fair.models.dtos.AccountEntityDto;
-import org.capstone.job_fair.models.entities.AccountEntity;
+import org.capstone.job_fair.models.dtos.account.AccountDTO;
+import org.capstone.job_fair.models.entities.account.AccountEntity;
 import org.capstone.job_fair.payload.AttendantRegisterRequest;
 import org.capstone.job_fair.payload.GenericMessageResponseEntity;
 import org.capstone.job_fair.services.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,20 +25,20 @@ public class AttendantController {
     private AccountService accountService;
 
     @GetMapping(ApiEndPoint.Attendant.ATTENDANT_ENDPOINT)
-    public ResponseEntity<List<AccountEntity>> getAllAccounts(){
+    public ResponseEntity<List<AccountEntity>> getAllAccounts() {
         return new ResponseEntity<List<AccountEntity>>(accountService.getAllAccounts(), HttpStatus.OK);
     }
 
     @PostMapping(ApiEndPoint.Attendant.REGISTER_ENDPOINT)
-    public ResponseEntity<?> register(@RequestBody AttendantRegisterRequest request){
-        if (!request.getPassword().equals(request.getConfirmPassword())){
+    public ResponseEntity<?> register(@Validated @RequestBody AttendantRegisterRequest request) {
+        if (!request.getPassword().equals(request.getConfirmPassword())) {
             return new GenericMessageResponseEntity("Confirm password mismatch", HttpStatus.BAD_REQUEST);
         }
         Optional<AccountEntity> existedAccount = accountService.getActiveAccountByEmail(request.getEmail());
-        if (existedAccount.isPresent()){
+        if (existedAccount.isPresent()) {
             return new GenericMessageResponseEntity("Existed account", HttpStatus.BAD_REQUEST);
         }
-        AccountEntityDto dto = new AccountEntityDto();
+        AccountDTO dto = new AccountDTO();
         dto.setEmail(request.getEmail());
         dto.setPassword(request.getPassword());
         dto.setFirstname(request.getFirstName());

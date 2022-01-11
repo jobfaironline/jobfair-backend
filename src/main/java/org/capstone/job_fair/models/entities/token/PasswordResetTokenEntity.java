@@ -1,13 +1,12 @@
-package org.capstone.job_fair.models.entities;
+package org.capstone.job_fair.models.entities.token;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.GenericGenerator;
+import org.capstone.job_fair.models.entities.account.AccountEntity;
 
 import javax.persistence.*;
-import java.util.UUID;
 
 @Entity
 @Table(name = "password_reset_token", schema = "dbo")

@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.capstone.job_fair.constants.Gender;
+import org.capstone.job_fair.models.enums.Gender;
 import org.capstone.job_fair.validators.EmailConstraint;
 import org.capstone.job_fair.validators.PasswordConstraint;
 
