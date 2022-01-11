@@ -1,11 +1,10 @@
 package org.capstone.job_fair.config;
 
-import org.capstone.job_fair.constants.ApiEndPoint;
+import org.capstone.job_fair.constants.MailServerConstant;
 import org.capstone.job_fair.constants.ResetPasswordTokenConstants;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
@@ -36,10 +35,10 @@ public class MailConfig {
         mailSender.setPassword(MAIL_SERVER_PASSWORD);
 
         Properties props = mailSender.getJavaMailProperties();
-        props.put(ResetPasswordTokenConstants.MailConstant.PROTOCOL_KEY, ResetPasswordTokenConstants.MailConstant.PROTOCOL_VALUE);
-        props.put(ResetPasswordTokenConstants.MailConstant.SMTP_AUTHENTICATION,ResetPasswordTokenConstants.MailConstant.TRUE);
-        props.put(ResetPasswordTokenConstants.MailConstant.SMTP_START_TLS, ResetPasswordTokenConstants.MailConstant.TRUE);
-        props.put(ResetPasswordTokenConstants.MailConstant.MAIL_DEBUG, ResetPasswordTokenConstants.MailConstant.TRUE);
+        props.put(MailServerConstant.PROTOCOL_KEY, MailServerConstant.PROTOCOL_VALUE);
+        props.put(MailServerConstant.SMTP_AUTHENTICATION, MailServerConstant.TRUE);
+        props.put(MailServerConstant.SMTP_START_TLS, MailServerConstant.TRUE);
+        props.put(MailServerConstant.MAIL_DEBUG, MailServerConstant.TRUE);
 
         return mailSender;
     }
