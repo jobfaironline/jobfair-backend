@@ -1,17 +1,13 @@
 package org.capstone.job_fair.services.impl;
 
-import org.aspectj.weaver.ast.Not;
-import org.capstone.job_fair.constants.AccountConstant;
 import org.capstone.job_fair.models.entities.AccountEntity;
 import org.capstone.job_fair.models.entities.PasswordResetTokenEntity;
-import org.capstone.job_fair.repositories.AccountRepository;
 import org.capstone.job_fair.repositories.PasswordResetTokenRepository;
 import org.capstone.job_fair.services.AccountService;
 import org.capstone.job_fair.services.PasswordResetTokenService;
 import org.capstone.job_fair.utils.OTPGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

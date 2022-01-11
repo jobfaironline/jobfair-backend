@@ -1,11 +1,8 @@
 package org.capstone.job_fair.models.entities.attendant;
 
 import lombok.*;
-import org.capstone.job_fair.constants.RoleName;
-import org.hibernate.Hibernate;
 
 import javax.persistence.*;
-import java.util.Objects;
 
 @Entity
 @Getter
@@ -17,11 +14,10 @@ import java.util.Objects;
 public class RoleEntity {
     @Id
     @Column(name = "id")
-    private String id;
+    private Integer id;
     @Basic
-    @Enumerated(EnumType.STRING)
     @Column(name = "name")
-    private RoleName name;
+    private String name;
     @Basic
     @Column(name = "description")
     private String description;
@@ -29,13 +25,15 @@ public class RoleEntity {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        RoleEntity that = (RoleEntity) o;
-        return id != null && Objects.equals(id, that.id);
+        if (o == null || getClass() != o.getClass()) return false;
+
+        RoleEntity role = (RoleEntity) o;
+
+        return id.equals(role.id);
     }
 
     @Override
     public int hashCode() {
-        return getClass().hashCode();
+        return id.hashCode();
     }
 }

@@ -39,7 +39,6 @@ public class AuthController {
 
     @PostMapping(path = ApiEndPoint.Authentication.LOGIN_ENDPOINT)
     public ResponseEntity<LoginResponse> authenticateUser(@Validated @RequestBody LoginRequest request) {
-        System.out.println(request.getPassword());
         //initialize UsernameAndPasswordAuthenticationToken obj
         UsernamePasswordAuthenticationToken authToken =
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword());

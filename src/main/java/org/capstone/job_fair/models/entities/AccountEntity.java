@@ -1,6 +1,7 @@
 package org.capstone.job_fair.models.entities;
 
 import lombok.*;
+import org.capstone.job_fair.constants.AccountStatus;
 import org.capstone.job_fair.models.entities.attendant.AttendantEntity;
 import org.capstone.job_fair.models.entities.attendant.GenderEntity;
 import org.capstone.job_fair.models.entities.attendant.RoleEntity;
@@ -29,7 +30,8 @@ public class AccountEntity {
     private String password;
     @Basic
     @Column(name = "status", nullable = true)
-    private Integer status;
+    @Enumerated(EnumType.ORDINAL)
+    private AccountStatus status;
     @Basic
     @Column(name = "phone", nullable = true, length = 11)
     private String phone;
@@ -50,20 +52,14 @@ public class AccountEntity {
     @Column(name = "middlename", nullable = true, length = 100)
     private String middlename;
 
-    @ManyToOne
+    @ManyToOne(cascade={CascadeType.ALL})
     @JoinColumn(name = "role_id")
     private RoleEntity role;
 
-    @ManyToOne
+    @ManyToOne(cascade={CascadeType.ALL})
     @JoinColumn(name = "gender_id")
     private GenderEntity gender;
-
-    @OneToOne(mappedBy = "account")
-    private AttendantEntity attendant;
-
-    @OneToOne(mappedBy = "account")
-    private CompanyEmployeeEntity employee;
-
+    
     public String getFullname(){
         return firstname + " " + middlename + " " + lastname;
     }
