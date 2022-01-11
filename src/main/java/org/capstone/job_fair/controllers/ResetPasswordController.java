@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.Date;
 import java.util.Optional;
 
@@ -71,7 +70,11 @@ public class ResetPasswordController {
             return new GenericMessageResponseEntity(INVALID_OTP_MESSAGE, HttpStatus.BAD_REQUEST);
         }
         //check if token is expired
-        if (token.getExpiredTime() > new Date().getTime()) {
+        if (token.isInvalidated()) {
+            return new GenericMessageResponseEntity(EXPIRED_OTP_MESSAGE, HttpStatus.BAD_REQUEST);
+        }
+        if (token.getExpiredTime() < new Date().getTime()) {
+            resetService.invalidateEntity(tokenOpt.get());
             return new GenericMessageResponseEntity(EXPIRED_OTP_MESSAGE, HttpStatus.BAD_REQUEST);
         }
         //generate new password and set for that account
@@ -93,16 +96,27 @@ public class ResetPasswordController {
         }
         AccountEntity account = accountOpt.get();
         //check existed and expired token
-        Optional<PasswordResetTokenEntity> tokenOpt = resetService.findTokenByEmail(request.getEmail());
-        if (tokenOpt.isPresent() && tokenOpt.get().getExpiredTime() > new Date().getTime()) {
-            return new GenericMessageResponseEntity(INTERVAL_REQUEST_MESSAGE, HttpStatus.BAD_REQUEST);
+        Optional<PasswordResetTokenEntity> tokenOpt = resetService.findLastValidateTokenByEmail(request.getEmail());
+        if (!tokenOpt.isPresent()) {
+            PasswordResetTokenEntity tokenEntity = this.resetService.createResetToken(account);
+            //send mail
+            this.mailService.sendMail(account.getEmail(),
+                    ResetPasswordTokenConstants.MAIL_SUBJECT,
+                    ResetPasswordTokenConstants.MAIL_BODY + tokenEntity.getOtp());
+            return new GenericMessageResponseEntity(REQUEST_RESET_SUCCESSFULLY_MESSAGE, HttpStatus.OK);
         }
-        PasswordResetTokenEntity tokenEntity = this.resetService.createResetToken(account);
-        //send mail
-        this.mailService.sendMail(account.getEmail(),
-                ResetPasswordTokenConstants.MAIL_SUBJECT,
-                ResetPasswordTokenConstants.MAIL_BODY + tokenEntity.getOtp());
-        return new GenericMessageResponseEntity(REQUEST_RESET_SUCCESSFULLY_MESSAGE, HttpStatus.OK);
+        PasswordResetTokenEntity token = tokenOpt.get();
+        if (token.getExpiredTime() > new Date().getTime()) {
+            return new GenericMessageResponseEntity(INTERVAL_REQUEST_MESSAGE, HttpStatus.BAD_REQUEST);
+        } else {
+            resetService.invalidateEntity(token);
+            PasswordResetTokenEntity tokenEntity = this.resetService.createResetToken(account);
+            //send mail
+            this.mailService.sendMail(account.getEmail(),
+                    ResetPasswordTokenConstants.MAIL_SUBJECT,
+                    ResetPasswordTokenConstants.MAIL_BODY + tokenEntity.getOtp());
+            return new GenericMessageResponseEntity(REQUEST_RESET_SUCCESSFULLY_MESSAGE, HttpStatus.OK);
+        }
     }
 
 }

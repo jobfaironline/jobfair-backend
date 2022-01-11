@@ -7,7 +7,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface PasswordResetTokenService {
-    Optional<PasswordResetTokenEntity> findTokenByEmail(String email);
+    Optional<PasswordResetTokenEntity> findLastValidateTokenByEmail(String email);
 
     PasswordResetTokenEntity createResetToken(AccountEntity account);
 

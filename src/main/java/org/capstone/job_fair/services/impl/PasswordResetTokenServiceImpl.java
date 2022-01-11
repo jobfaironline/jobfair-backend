@@ -34,11 +34,11 @@ public class PasswordResetTokenServiceImpl implements PasswordResetTokenService 
 
 
     @Override
-    public Optional<PasswordResetTokenEntity> findTokenByEmail(String email) {
+    public Optional<PasswordResetTokenEntity> findLastValidateTokenByEmail(String email) {
 
         Optional<AccountEntity> optAccount = accountService.getActiveAccountByEmail(email);
         if (optAccount.isPresent()) {
-            PasswordResetTokenEntity result = resetRepository.findByAccount_Id(optAccount.get().getId());
+            PasswordResetTokenEntity result = resetRepository.findTopByAccount_IdOrderByExpiredTimeDesc(optAccount.get().getId());
             return Optional.ofNullable(result);
         }
         return Optional.empty();

@@ -12,6 +12,6 @@ import java.util.Optional;
 @RepositoryRestResource(path = ApiEndPoint.RestDataEndpoint.RESET_PASSWORD)
 public interface PasswordResetTokenRepository extends JpaRepository<PasswordResetTokenEntity, String> {
 
-    PasswordResetTokenEntity findByAccount_Id(String accountID);
+    PasswordResetTokenEntity findTopByAccount_IdOrderByExpiredTimeDesc(String accountID);
     Optional<PasswordResetTokenEntity> findByOtpAndAccount_Id(String otp, String accountID);
 }

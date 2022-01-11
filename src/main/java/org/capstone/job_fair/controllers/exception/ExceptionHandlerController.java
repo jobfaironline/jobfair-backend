@@ -10,9 +10,10 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 public class ExceptionHandlerController extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = Exception.class)
-    public GenericMessageResponseEntity handlerGlobalException() {
+    public GenericMessageResponseEntity handlerGlobalException(Exception e) {
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
         String message = "Oops!";
+        e.printStackTrace();
         return new GenericMessageResponseEntity(message, status);
     }
 
