@@ -34,7 +34,6 @@ public class AuthController {
 
     private final JwtTokenProvider tokenProvider;
 
-
     private final AccountService accountService;
 
 
@@ -65,13 +64,13 @@ public class AuthController {
                     jwt,
                     refreshToken
             );
-            return new ResponseEntity(response, HttpStatus.OK);
+            return new ResponseEntity<>(response, HttpStatus.OK);
         }
-        return new ResponseEntity(null, HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
     }
 
     @GetMapping(path = ApiEndPoint.Authentication.REFRESH_TOKEN_ENDPOINT)
-    public ResponseEntity refreshToken(@RequestBody RefreshTokenRequest tokenRequest) {
+    public ResponseEntity<?> refreshToken(@RequestBody RefreshTokenRequest tokenRequest) {
         if (!tokenProvider.validateToken(tokenRequest.getRefreshToken())) {
             log.info("Invalid refresh token");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token");
@@ -86,6 +85,6 @@ public class AuthController {
         String newToken = tokenProvider.generateToken(account.getEmail());
         String newRefreshToken = tokenProvider.generateRefreshToken(account.getEmail());
         RefreshTokenResponse response = new RefreshTokenResponse(newRefreshToken, newToken);
-        return new ResponseEntity(response, HttpStatus.OK);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

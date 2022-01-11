@@ -57,7 +57,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
-    public void configure(WebSecurity web) throws Exception {
+    public void configure(WebSecurity web) {
         web.ignoring().antMatchers("/v2/api-docs",
                 "/configuration/ui",
                 "/swagger-resources/**",
@@ -78,10 +78,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 //Authenticated API Security
                 .authorizeRequests().antMatchers(ApiEndPoint.Authentication.AUTHENTICATION_ENDPOINT + "/**").permitAll().and()
                 //Account API Security
-                .authorizeRequests().antMatchers(ApiEndPoint.Attendant.ACCOUNT_ENDPOINT + "/**").hasAuthority("ADMIN").and()
-                //ResetPassword API Security
-                .authorizeRequests().antMatchers(ApiEndPoint.ResetPasswordToken.GENERATE_OTP_ENDPOINT).permitAll().and()
-                .authorizeRequests().antMatchers(ApiEndPoint.ResetPasswordToken.RESET_PASSWORD_ENDPOINT).permitAll()
+                .authorizeRequests().antMatchers(ApiEndPoint.Attendant.ACCOUNT_ENDPOINT + "/**").hasAuthority("ADMIN")
                 .anyRequest().authenticated();
 
         //after logout success, invalidate session

@@ -4,5 +4,5 @@ public class ResetPasswordTokenConstants {
 
     public static final String TO_EMAIL = "phamcaoson1999@gmail.com";
     public static final String MAIL_SUBJECT = "[Job Fair Online] - Reset your password";
-    public static final String MAIL_BODY = "Hi " + TO_EMAIL + " Forgot your password?, Here is the OTP for you to reset you password: ";
+    public static final String MAIL_BODY = "Hi %s Forgot your password?, Here is the OTP for you to reset you password: %s";
 }

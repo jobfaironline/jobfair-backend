@@ -47,7 +47,7 @@ public class ResetPasswordController {
     private static final String ACCOUNT_NOT_FOUND_MESSAGE = "Account not found";
 
 
-    @PostMapping(ApiEndPoint.ResetPasswordToken.RESET_PASSWORD_ENDPOINT)
+    @PostMapping(ApiEndPoint.Authentication.RESET_PASSWORD_ENDPOINT)
     public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequest request) {
         //check matching password
         if (!request.getNewPassword().equals(request.getConfirmPassword())) {
@@ -87,7 +87,7 @@ public class ResetPasswordController {
         return new GenericMessageResponseEntity(RESET_SUCCESSFULLY_MESSAGE, HttpStatus.OK);
     }
 
-    @PostMapping(ApiEndPoint.ResetPasswordToken.GENERATE_OTP_ENDPOINT)
+    @PostMapping(ApiEndPoint.Authentication.GENERATE_OTP_ENDPOINT)
     public ResponseEntity<?> generateOTP(@RequestBody GenerateOTPRequest request) {
         //check existed account
         Optional<AccountEntity> accountOpt = accountService.getActiveAccountByEmail(request.getEmail());
@@ -114,7 +114,7 @@ public class ResetPasswordController {
             //send mail
             this.mailService.sendMail(account.getEmail(),
                     ResetPasswordTokenConstants.MAIL_SUBJECT,
-                    ResetPasswordTokenConstants.MAIL_BODY + tokenEntity.getOtp());
+                    String.format(ResetPasswordTokenConstants.MAIL_BODY, account.getEmail(), token.getOtp()));
             return new GenericMessageResponseEntity(REQUEST_RESET_SUCCESSFULLY_MESSAGE, HttpStatus.OK);
         }
     }

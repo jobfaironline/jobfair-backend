@@ -14,16 +14,15 @@ public class ApiEndPoint {
         public static final String LOGIN_ENDPOINT = AUTHENTICATION_ENDPOINT + "/login";
         public static final String REFRESH_TOKEN_ENDPOINT = AUTHENTICATION_ENDPOINT + "/refresh-token";
         public static final String LOGOUT_ENDPOINT = AUTHENTICATION_ENDPOINT + "/logout";
+        public static final String GENERATE_OTP_ENDPOINT = AUTHENTICATION_ENDPOINT + "/generate-otp";
+        public static final String RESET_PASSWORD_ENDPOINT = AUTHENTICATION_ENDPOINT + "/reset-password";
+
     }
 
     public static final class Attendant {
         public static final String ACCOUNT_ENDPOINT = ROOT_ENDPOINT + VERSION + "/attendants";
     }
 
-    public static final class ResetPasswordToken {
-        public static final String GENERATE_OTP_ENDPOINT = ROOT_ENDPOINT + VERSION + "/generate-otp";
-        public static final String RESET_PASSWORD_ENDPOINT = ROOT_ENDPOINT + VERSION + "/reset-password";
-    }
 
     public static final class RestDataEndpoint {
         public static final String ACCOUNT = "accounts";
