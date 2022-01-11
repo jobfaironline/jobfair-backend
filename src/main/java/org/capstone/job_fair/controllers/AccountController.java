@@ -2,9 +2,7 @@ package org.capstone.job_fair.controllers;
 
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.models.dtos.account.CreateAccountDTO;
-import org.capstone.job_fair.models.entities.AccountEntity;
-import org.capstone.job_fair.models.entities.attendant.GenderEntity;
-import org.capstone.job_fair.models.entities.attendant.RoleEntity;
+import org.capstone.job_fair.models.entities.account.AccountEntity;
 import org.capstone.job_fair.payload.GenericMessageResponseEntity;
 import org.capstone.job_fair.payload.RegisterResponse;
 import org.capstone.job_fair.services.AccountService;

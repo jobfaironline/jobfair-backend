@@ -2,10 +2,10 @@ package org.capstone.job_fair.models.mappers;
 
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
 import org.capstone.job_fair.repositories.attendant.RoleRepository;
-import org.mapstruct.Mapper;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
-import org.mapstruct.Mapping;
+import org.mapstruct.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.Mapping;
 
 @Mapper(componentModel = "spring")
 public abstract class AccountEntityMapper {

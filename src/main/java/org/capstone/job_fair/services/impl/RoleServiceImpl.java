@@ -1,6 +1,6 @@
 package org.capstone.job_fair.services.impl;
 
-import org.capstone.job_fair.models.entities.attendant.RoleEntity;
+import org.capstone.job_fair.models.entities.account.RoleEntity;
 import org.capstone.job_fair.repositories.attendant.RoleRepository;
 import org.capstone.job_fair.services.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;

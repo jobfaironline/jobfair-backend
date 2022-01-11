@@ -2,6 +2,7 @@ package org.capstone.job_fair.services.impl;
 
 import org.capstone.job_fair.constants.AccountConstant;
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
+import org.capstone.job_fair.models.dtos.account.CreateAccountDTO;
 import org.capstone.job_fair.models.entities.attendant.AttendantEntity;
 import org.capstone.job_fair.models.enums.Gender;
 import org.capstone.job_fair.models.statuses.AccountStatus;
@@ -13,6 +14,8 @@ import org.capstone.job_fair.models.mappers.AccountEntityMapper;
 import org.capstone.job_fair.repositories.AccountRepository;
 import org.capstone.job_fair.repositories.attendant.AttendantRepository;
 import org.capstone.job_fair.services.AccountService;
+import org.capstone.job_fair.services.GenderService;
+import org.capstone.job_fair.services.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -37,6 +40,9 @@ public class AccountServiceImpl implements AccountService {
 
     @Autowired
     private AccountEntityMapper mapper;
+
+    @Autowired
+    private RoleService roleService;
 
     @Autowired
     private BCryptPasswordEncoder encoder;
@@ -72,7 +78,7 @@ public class AccountServiceImpl implements AccountService {
         account.setEmail(dto.getEmail().trim());
         String hashedPassword = encoder.encode(dto.getPassword().trim());
         account.setPassword(hashedPassword);
-        account.setStatus(AccountConstant.ACTIVE);
+        account.setStatus(AccountStatus.ACTIVE);
         account.setPhone(dto.getPhone().trim());
         account.setProfileImageUrl(dto.getProfileImageURL());
         account.setFirstname(dto.getFirstName());

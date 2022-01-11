@@ -29,14 +29,14 @@ public class AttendantController {
         return new ResponseEntity<List<AccountEntity>>(accountService.getAllAccounts(), HttpStatus.OK);
     }
 
-    @PostMapping(ApiEndPoint.Attendant.REGISTER_ENDPOINT)
+    @PostMapping(ApiEndPoint.Account.REGISTER_ENDPOINT)
     public ResponseEntity<?> register(@Validated @RequestBody AttendantRegisterRequest request) {
         if (!request.getPassword().equals(request.getConfirmPassword())) {
-            return new GenericMessageResponseEntity("Confirm password mismatch", HttpStatus.BAD_REQUEST);
+            return  GenericMessageResponseEntity.build("Confirm password mismatch", HttpStatus.BAD_REQUEST);
         }
         Optional<AccountEntity> existedAccount = accountService.getActiveAccountByEmail(request.getEmail());
         if (existedAccount.isPresent()) {
-            return new GenericMessageResponseEntity("Existed account", HttpStatus.BAD_REQUEST);
+            return  GenericMessageResponseEntity.build("Existed account", HttpStatus.BAD_REQUEST);
         }
         AccountDTO dto = new AccountDTO();
         dto.setEmail(request.getEmail());
@@ -46,6 +46,6 @@ public class AttendantController {
         dto.setFirstname(request.getFirstName());
         dto.setGender(request.getGender());
         accountService.createNewAccount(dto);
-        return new GenericMessageResponseEntity("Noice", HttpStatus.OK);
+        return GenericMessageResponseEntity.build("Noice", HttpStatus.OK);
     }
 }

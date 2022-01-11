@@ -1,6 +1,6 @@
 package org.capstone.job_fair.services.impl;
 
-import org.capstone.job_fair.models.entities.attendant.GenderEntity;
+import org.capstone.job_fair.models.entities.account.GenderEntity;
 import org.capstone.job_fair.repositories.attendant.GenderRepository;
 import org.capstone.job_fair.services.GenderService;
 import org.springframework.beans.factory.annotation.Autowired;
