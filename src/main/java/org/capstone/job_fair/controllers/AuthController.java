@@ -21,6 +21,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -54,13 +55,13 @@ public class AuthController {
             //get user principle from authentication obj
             UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
             //get list of roles
-            List<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
+            String role = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.joining());
             //then return login response which include email and password in userDetails
             LoginResponse response = new LoginResponse(
                     userDetails.getEmail(),
                     userDetails.getPassword(),
                     userDetails.getStatus(),
-                    roles,
+                    role,
                     jwt,
                     refreshToken
             );
@@ -69,7 +70,7 @@ public class AuthController {
         return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
     }
 
-    @GetMapping(path = ApiEndPoint.Authentication.REFRESH_TOKEN_ENDPOINT)
+    @PostMapping(path = ApiEndPoint.Authentication.REFRESH_TOKEN_ENDPOINT)
     public ResponseEntity<?> refreshToken(@RequestBody RefreshTokenRequest tokenRequest) {
         if (!tokenProvider.validateToken(tokenRequest.getRefreshToken())) {
             log.info("Invalid refresh token");

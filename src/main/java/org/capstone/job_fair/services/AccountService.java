@@ -1,5 +1,7 @@
 package org.capstone.job_fair.services;
 
+import org.capstone.job_fair.models.dtos.account.CreateAccountDTO;
+import org.capstone.job_fair.models.dtos.account.UpdateAccountDTO;
 import org.capstone.job_fair.models.entities.AccountEntity;
 
 import java.util.List;
@@ -11,4 +13,7 @@ public interface AccountService {
     Optional<AccountEntity> getActiveAccountByEmail(String email);
 
     AccountEntity save(AccountEntity account);
+
+    AccountEntity convertCreateAccountDTOToEntity(CreateAccountDTO dto);
+
 }

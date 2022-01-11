@@ -28,22 +28,22 @@ public class AccountEntity {
     @Column(name = "password", nullable = false, length = 50)
     private String password;
     @Basic
-    @Column(name = "status", nullable = true)
+    @Column(name = "status", nullable = false)
     private Integer status;
     @Basic
-    @Column(name = "phone", nullable = true, length = 11)
+    @Column(name = "phone", nullable = false, length = 11)
     private String phone;
 
     @Basic
-    @Column(name = "profile_image_url", nullable = true, length = 2048)
+    @Column(name = "profile_image_url", nullable = false, length = 2048)
     private String profileImageUrl;
 
     @Basic
-    @Column(name = "firstname", nullable = true, length = 100)
+    @Column(name = "firstname", nullable = false, length = 100)
     private String firstname;
 
     @Basic
-    @Column(name = "lastname", nullable = true, length = 100)
+    @Column(name = "lastname", nullable = false, length = 100)
     private String lastname;
 
     @Basic

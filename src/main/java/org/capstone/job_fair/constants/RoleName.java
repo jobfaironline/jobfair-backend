@@ -4,13 +4,11 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum RoleName {
 
+    ADMIN("admin"),
     COMPANY_MANAGER("company_manager"),
     ATTENDANT("attendant"),
-    ADMIN("admin"),
     COMPANY_EMPLOYEE("company_employee"),
     STAFF("staff");
-
-
 
 
     private String displayRole;

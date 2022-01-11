@@ -5,6 +5,7 @@ import org.capstone.job_fair.constants.RoleName;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
+import java.util.HashMap;
 import java.util.Objects;
 
 @Entity
@@ -17,7 +18,7 @@ import java.util.Objects;
 public class RoleEntity {
     @Id
     @Column(name = "id")
-    private String id;
+    private int id;
     @Basic
     @Enumerated(EnumType.STRING)
     @Column(name = "name")
@@ -27,11 +28,8 @@ public class RoleEntity {
     private String description;
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        RoleEntity that = (RoleEntity) o;
-        return id != null && Objects.equals(id, that.id);
+    public boolean equals(Object obj) {
+        return super.equals(obj);
     }
 
     @Override

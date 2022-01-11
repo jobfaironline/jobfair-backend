@@ -16,7 +16,7 @@ public class AttendantController {
 
     @Autowired
     private AccountService accountService;
-    @GetMapping(ApiEndPoint.Attendant.ACCOUNT_ENDPOINT)
+    @GetMapping(ApiEndPoint.Attendant.ATTENDANT_ENDPOINT)
     public ResponseEntity<List<AccountEntity>> getAllAccounts(){
         return new ResponseEntity<List<AccountEntity>>(accountService.getAllAccounts(), HttpStatus.OK);
     }

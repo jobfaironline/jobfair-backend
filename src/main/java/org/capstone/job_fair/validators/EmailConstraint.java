@@ -1,6 +1,7 @@
 package org.capstone.job_fair.validators;
 
 
+import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.validators.impl.EmailValidator;
 
 import javax.validation.Constraint;
@@ -12,7 +13,7 @@ import java.lang.annotation.*;
 @Target( { ElementType.METHOD, ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface EmailConstraint {
-    String message() default "Invalid email address";
+    String message() default MessageConstant.InvalidFormat.INVALID_EMAIL_FORMAT;
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

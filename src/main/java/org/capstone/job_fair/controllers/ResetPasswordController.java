@@ -51,31 +51,31 @@ public class ResetPasswordController {
     public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequest request) {
         //check matching password
         if (!request.getNewPassword().equals(request.getConfirmPassword())) {
-            return new GenericMessageResponseEntity(CONFIRM_PASSWORD_MISMATCH_MESSAGE, HttpStatus.BAD_REQUEST);
+            return  GenericMessageResponseEntity.build(CONFIRM_PASSWORD_MISMATCH_MESSAGE, HttpStatus.BAD_REQUEST);
         }
         //check existed account
         Optional<AccountEntity> accountOpt = accountService.getActiveAccountByEmail(request.getEmail());
         if (!accountOpt.isPresent()) {
-            return new GenericMessageResponseEntity(ACCOUNT_NOT_FOUND_MESSAGE, HttpStatus.BAD_REQUEST);
+            return  GenericMessageResponseEntity.build(ACCOUNT_NOT_FOUND_MESSAGE, HttpStatus.BAD_REQUEST);
         }
         AccountEntity account = accountOpt.get();
         //check existed token
         Optional<PasswordResetTokenEntity> tokenOpt = resetService.findTokenByOTPAndAccountID(request.getOtp(), account.getId());
         if (!tokenOpt.isPresent()) {
-            return new GenericMessageResponseEntity(INVALID_OTP_MESSAGE, HttpStatus.BAD_REQUEST);
+            return GenericMessageResponseEntity.build(INVALID_OTP_MESSAGE, HttpStatus.BAD_REQUEST);
         }
         PasswordResetTokenEntity token = tokenOpt.get();
         //check if token account is the same as request account
         if (!account.equals(token.getAccount())) {
-            return new GenericMessageResponseEntity(INVALID_OTP_MESSAGE, HttpStatus.BAD_REQUEST);
+            return GenericMessageResponseEntity.build(INVALID_OTP_MESSAGE, HttpStatus.BAD_REQUEST);
         }
         //check if token is expired
         if (token.isInvalidated()) {
-            return new GenericMessageResponseEntity(EXPIRED_OTP_MESSAGE, HttpStatus.BAD_REQUEST);
+            return GenericMessageResponseEntity.build(EXPIRED_OTP_MESSAGE, HttpStatus.BAD_REQUEST);
         }
         if (token.getExpiredTime() < new Date().getTime()) {
             resetService.invalidateEntity(tokenOpt.get());
-            return new GenericMessageResponseEntity(EXPIRED_OTP_MESSAGE, HttpStatus.BAD_REQUEST);
+            return GenericMessageResponseEntity.build(EXPIRED_OTP_MESSAGE, HttpStatus.BAD_REQUEST);
         }
         //generate new password and set for that account
         String hashedNewPassword = encoder.encode(request.getNewPassword());
@@ -84,7 +84,7 @@ public class ResetPasswordController {
         //invalidate otp token
         resetService.invalidateEntity(token);
 
-        return new GenericMessageResponseEntity(RESET_SUCCESSFULLY_MESSAGE, HttpStatus.OK);
+        return GenericMessageResponseEntity.build(RESET_SUCCESSFULLY_MESSAGE, HttpStatus.OK);
     }
 
     @PostMapping(ApiEndPoint.Authentication.GENERATE_OTP_ENDPOINT)
@@ -92,7 +92,7 @@ public class ResetPasswordController {
         //check existed account
         Optional<AccountEntity> accountOpt = accountService.getActiveAccountByEmail(request.getEmail());
         if (!accountOpt.isPresent()) {
-            return new GenericMessageResponseEntity(ACCOUNT_NOT_FOUND_MESSAGE, HttpStatus.BAD_REQUEST);
+            return GenericMessageResponseEntity.build(ACCOUNT_NOT_FOUND_MESSAGE, HttpStatus.BAD_REQUEST);
         }
         AccountEntity account = accountOpt.get();
         //check existed and expired token
@@ -103,11 +103,11 @@ public class ResetPasswordController {
             this.mailService.sendMail(account.getEmail(),
                     ResetPasswordTokenConstants.MAIL_SUBJECT,
                     ResetPasswordTokenConstants.MAIL_BODY + tokenEntity.getOtp());
-            return new GenericMessageResponseEntity(REQUEST_RESET_SUCCESSFULLY_MESSAGE, HttpStatus.OK);
+            return GenericMessageResponseEntity.build(REQUEST_RESET_SUCCESSFULLY_MESSAGE, HttpStatus.OK);
         }
         PasswordResetTokenEntity token = tokenOpt.get();
         if (token.getExpiredTime() > new Date().getTime()) {
-            return new GenericMessageResponseEntity(INTERVAL_REQUEST_MESSAGE, HttpStatus.BAD_REQUEST);
+            return GenericMessageResponseEntity.build(INTERVAL_REQUEST_MESSAGE, HttpStatus.BAD_REQUEST);
         } else {
             resetService.invalidateEntity(token);
             PasswordResetTokenEntity tokenEntity = this.resetService.createResetToken(account);
@@ -115,7 +115,7 @@ public class ResetPasswordController {
             this.mailService.sendMail(account.getEmail(),
                     ResetPasswordTokenConstants.MAIL_SUBJECT,
                     String.format(ResetPasswordTokenConstants.MAIL_BODY, account.getEmail(), token.getOtp()));
-            return new GenericMessageResponseEntity(REQUEST_RESET_SUCCESSFULLY_MESSAGE, HttpStatus.OK);
+            return GenericMessageResponseEntity.build(REQUEST_RESET_SUCCESSFULLY_MESSAGE, HttpStatus.OK);
         }
     }
 

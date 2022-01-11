@@ -13,7 +13,7 @@ public class LoginResponse {
     private String email;
     private String password;
     private int status;
-    private Collection<String> roles;
+    private String role;
     private String token;
     private String refreshToken;
 }
