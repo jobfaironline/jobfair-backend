@@ -1,9 +1,8 @@
-package org.capstone.job_fair.models.entities.attendant;
+package org.capstone.job_fair.models.entities.account;
 
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.Objects;
 
 @Entity
 @Getter
@@ -15,7 +14,7 @@ import java.util.Objects;
 public class GenderEntity {
     @Id
     @Column(name = "id")
-    private String id;
+    private Integer id;
     @Basic
     @Column(name = "name")
     private String name;
@@ -27,19 +26,12 @@ public class GenderEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
-        GenderEntity that = (GenderEntity) o;
-
-        if (!Objects.equals(id, that.id)) return false;
-        if (!Objects.equals(name, that.name)) return false;
-        return Objects.equals(description, that.description);
+        GenderEntity gender = (GenderEntity) o;
+        return id.equals(gender.id);
     }
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (description != null ? description.hashCode() : 0);
-        return result;
+        return id.hashCode();
     }
 }

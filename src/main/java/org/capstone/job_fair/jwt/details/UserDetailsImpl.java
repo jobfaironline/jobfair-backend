@@ -3,7 +3,8 @@ package org.capstone.job_fair.jwt.details;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.capstone.job_fair.models.entities.AccountEntity;
+import org.capstone.job_fair.models.statuses.AccountStatus;
+import org.capstone.job_fair.models.entities.account.AccountEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,7 +24,7 @@ public class UserDetailsImpl implements UserDetails {
     @JsonIgnore
     private String password;
     private String fullname;
-    private int status;
+    private AccountStatus status;
 
     private Collection<? extends GrantedAuthority> authorities;
 
@@ -41,7 +42,7 @@ public class UserDetailsImpl implements UserDetails {
 
     }
 
-    public int getStatus() {
+    public AccountStatus getStatus() {
         return status;
     }
 

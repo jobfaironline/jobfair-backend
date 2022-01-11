@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.jwt.JwtTokenProvider;
 import org.capstone.job_fair.jwt.details.UserDetailsImpl;
-import org.capstone.job_fair.models.entities.AccountEntity;
+import org.capstone.job_fair.models.entities.account.AccountEntity;
 import org.capstone.job_fair.payload.LoginRequest;
 import org.capstone.job_fair.payload.LoginResponse;
 import org.capstone.job_fair.payload.RefreshTokenRequest;
@@ -39,7 +39,6 @@ public class AuthController {
 
     @PostMapping(path = ApiEndPoint.Authentication.LOGIN_ENDPOINT)
     public ResponseEntity<LoginResponse> authenticateUser(@Validated @RequestBody LoginRequest request) {
-        System.out.println(request.getPassword());
         //initialize UsernameAndPasswordAuthenticationToken obj
         UsernamePasswordAuthenticationToken authToken =
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword());

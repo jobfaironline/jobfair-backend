@@ -1,18 +1,24 @@
 package org.capstone.job_fair.models.entities.attendant;
 
-import org.capstone.job_fair.models.entities.AccountEntity;
+import lombok.*;
+import org.capstone.job_fair.models.entities.account.AccountEntity;
 
 import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
+@Getter
+@Setter
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "attendant", schema = "dbo")
 public class AttendantEntity {
     @Id
     @Column(name = "account_id", nullable = false, length = 36)
     private String accountId;
 
-    @OneToOne
+    @OneToOne(cascade = {CascadeType.ALL})
     @JoinColumn(name = "account_id")
     private AccountEntity account;
 
@@ -57,18 +63,7 @@ public class AttendantEntity {
 
         AttendantEntity that = (AttendantEntity) o;
 
-        if (!Objects.equals(accountId, that.accountId)) return false;
-        if (!Objects.equals(title, that.title)) return false;
-        if (!Objects.equals(address, that.address)) return false;
-        if (!Objects.equals(dob, that.dob)) return false;
-        if (!Objects.equals(jobTitle, that.jobTitle)) return false;
-        if (!Objects.equals(yearOfExp, that.yearOfExp)) return false;
-        if (!Objects.equals(maritalStatus, that.maritalStatus)) return false;
-        if (!Objects.equals(country, that.country)) return false;
-        if (!Objects.equals(residence, that.residence)) return false;
-        if (!Objects.equals(currentJobLevel, that.currentJobLevel)) return false;
-
-        return true;
+        return (!Objects.equals(accountId, that.accountId));
     }
 
     @Override
