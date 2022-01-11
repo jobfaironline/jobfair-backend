@@ -7,8 +7,6 @@ import lombok.*;
 @AllArgsConstructor
 @Getter
 @Setter
-public class ResetPasswordTokenResponse {
-    private String messsage;
-    private String result;
-
+public class GenerateOTPRequest {
+    private String email;
 }

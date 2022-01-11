@@ -1,5 +1,6 @@
 package org.capstone.job_fair.services.impl;
 
+import org.aspectj.weaver.ast.Not;
 import org.capstone.job_fair.constants.AccountConstant;
 import org.capstone.job_fair.models.entities.AccountEntity;
 import org.capstone.job_fair.models.entities.PasswordResetTokenEntity;
@@ -8,6 +9,7 @@ import org.capstone.job_fair.repositories.PasswordResetTokenRepository;
 import org.capstone.job_fair.services.AccountService;
 import org.capstone.job_fair.services.PasswordResetTokenService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -41,4 +43,10 @@ public class PasswordResetTokenServiceImpl implements PasswordResetTokenService 
         }
         return false;
     }
+
+    @Override
+    public Optional<PasswordResetTokenEntity> findTokenByOTPAndAccountID(String otp, String accountID) {
+        return resetRepository.findByOtpAndAccount_Id(otp, accountID);
+    }
+
 }

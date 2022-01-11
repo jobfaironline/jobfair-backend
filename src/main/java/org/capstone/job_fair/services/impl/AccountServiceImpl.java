@@ -25,4 +25,10 @@ public class AccountServiceImpl implements AccountService {
     public Optional<AccountEntity> getActiveAccountByEmail(String email) {
         return accountRepository.findByEmailAndStatusNot(email, AccountConstant.INACTIVE);
     }
+
+    @Override
+    public AccountEntity save(AccountEntity account) {
+        return accountRepository.save(account);
+    }
+
 }

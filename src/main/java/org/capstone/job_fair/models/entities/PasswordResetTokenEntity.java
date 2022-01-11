@@ -21,7 +21,7 @@ public class PasswordResetTokenEntity {
     private String id;
 
     @Column(name = "otp")
-    private char[] otp;
+    private String otp;
 
     @Column(name = "expired_time")
     private float expiredTime;

@@ -1,5 +1,8 @@
 package org.capstone.job_fair.config;
 
+import org.capstone.job_fair.constants.ApiEndPoint;
+import org.capstone.job_fair.constants.ResetPasswordTokenConstants;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.mail.SimpleMailMessage;
@@ -10,32 +13,35 @@ import java.util.Properties;
 
 @Configuration
 public class MailConfig {
+    @Value("${spring.mail.host}")
+    private String MAIL_SERVER_HOST;
+
+    @Value("${spring.mail.port}")
+    private int MAIL_SERVER_PORT;
+
+    @Value("${spring.mail.username}")
+    private String MAIL_SERVER_USERNAME;
+
+    @Value("${spring.mail.password}")
+    private String MAIL_SERVER_PASSWORD;
+
+
     @Bean
     public JavaMailSender getJavaMailSender() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-        mailSender.setHost("smtp.gmail.com");
-        mailSender.setPort(587);
+        mailSender.setHost(MAIL_SERVER_HOST);
+        mailSender.setPort(MAIL_SERVER_PORT);
 
-        mailSender.setUsername("admin@gmail.com");
-        mailSender.setPassword("songudboy");
+        mailSender.setUsername(MAIL_SERVER_USERNAME);
+        mailSender.setPassword(MAIL_SERVER_PASSWORD);
 
         Properties props = mailSender.getJavaMailProperties();
-        props.put("mail.transport.protocol", "smtp");
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.debug", "true");
+        props.put(ResetPasswordTokenConstants.MailConstant.PROTOCOL_KEY, ResetPasswordTokenConstants.MailConstant.PROTOCOL_VALUE);
+        props.put(ResetPasswordTokenConstants.MailConstant.SMTP_AUTHENTICATION,ResetPasswordTokenConstants.MailConstant.TRUE);
+        props.put(ResetPasswordTokenConstants.MailConstant.SMTP_START_TLS, ResetPasswordTokenConstants.MailConstant.TRUE);
+        props.put(ResetPasswordTokenConstants.MailConstant.MAIL_DEBUG, ResetPasswordTokenConstants.MailConstant.TRUE);
 
         return mailSender;
-    }
-
-    @Bean
-    public SimpleMailMessage emailTemplate()
-    {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo("somebody@gmail.com");
-        message.setFrom("admin@gmail.com");
-        message.setText("FATAL - Application crash. Save your job !!");
-        return message;
     }
 
 }

@@ -11,9 +11,6 @@ public class MailServiceImpl  implements MailService {
     @Autowired
     private JavaMailSender mailSender;
 
-    @Autowired
-    private SimpleMailMessage preConfiguredMessage;
-
     @Override
     public void sendMail(String to, String subject, String body) {
         SimpleMailMessage message = new SimpleMailMessage();
@@ -23,12 +20,6 @@ public class MailServiceImpl  implements MailService {
         mailSender.send(message);
     }
 
-    @Override
-    public void sendPreConfiguredMail(String message) {
-    SimpleMailMessage mailMessage = new SimpleMailMessage(preConfiguredMessage);
-    mailMessage.setText(message);
-    mailSender.send(mailMessage);
-    }
 }
 
 

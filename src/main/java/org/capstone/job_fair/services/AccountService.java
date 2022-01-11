@@ -9,4 +9,6 @@ public interface AccountService {
     List<AccountEntity> getAllAccounts();
 
     Optional<AccountEntity> getActiveAccountByEmail(String email);
+
+    AccountEntity save(AccountEntity account);
 }
