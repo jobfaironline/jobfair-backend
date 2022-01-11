@@ -17,6 +17,7 @@ public class JobFairApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(JobFairApplication.class, args);
+        System.out.print("Hello world");
     }
 
 
