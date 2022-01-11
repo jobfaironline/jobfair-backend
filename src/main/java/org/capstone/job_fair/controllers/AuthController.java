@@ -5,13 +5,12 @@ import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.jwt.JwtTokenProvider;
 import org.capstone.job_fair.jwt.details.UserDetailsImpl;
 import org.capstone.job_fair.models.entities.AccountEntity;
-import org.capstone.job_fair.models.entities.attendant.AttendantEntity;
 import org.capstone.job_fair.payload.LoginRequest;
 import org.capstone.job_fair.payload.LoginResponse;
 import org.capstone.job_fair.payload.RefreshTokenRequest;
 import org.capstone.job_fair.payload.RefreshTokenResponse;
 import lombok.AllArgsConstructor;
-import org.capstone.job_fair.services.attendant.AccountService;
+import org.capstone.job_fair.services.AccountService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -34,7 +33,6 @@ public class AuthController {
     private final AuthenticationManager authManager;
 
     private final JwtTokenProvider tokenProvider;
-
 
     private final AccountService accountService;
 
@@ -66,13 +64,13 @@ public class AuthController {
                     jwt,
                     refreshToken
             );
-            return new ResponseEntity(response, HttpStatus.OK);
+            return new ResponseEntity<>(response, HttpStatus.OK);
         }
-        return new ResponseEntity(null, HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
     }
 
     @GetMapping(path = ApiEndPoint.Authentication.REFRESH_TOKEN_ENDPOINT)
-    public ResponseEntity refreshToken(@RequestBody RefreshTokenRequest tokenRequest) {
+    public ResponseEntity<?> refreshToken(@RequestBody RefreshTokenRequest tokenRequest) {
         if (!tokenProvider.validateToken(tokenRequest.getRefreshToken())) {
             log.info("Invalid refresh token");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token");
@@ -87,6 +85,6 @@ public class AuthController {
         String newToken = tokenProvider.generateToken(account.getEmail());
         String newRefreshToken = tokenProvider.generateRefreshToken(account.getEmail());
         RefreshTokenResponse response = new RefreshTokenResponse(newRefreshToken, newToken);
-        return new ResponseEntity(response, HttpStatus.OK);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

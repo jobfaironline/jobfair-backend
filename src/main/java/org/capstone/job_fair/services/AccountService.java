@@ -1,4 +1,4 @@
-package org.capstone.job_fair.services.attendant;
+package org.capstone.job_fair.services;
 
 import org.capstone.job_fair.models.entities.AccountEntity;
 
@@ -9,4 +9,6 @@ public interface AccountService {
     List<AccountEntity> getAllAccounts();
 
     Optional<AccountEntity> getActiveAccountByEmail(String email);
+
+    AccountEntity save(AccountEntity account);
 }

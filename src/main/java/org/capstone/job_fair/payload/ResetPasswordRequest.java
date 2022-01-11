@@ -1,0 +1,15 @@
+package org.capstone.job_fair.payload;
+
+import lombok.*;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+public class ResetPasswordRequest {
+    private String otp;
+    private String email;
+    private String newPassword;
+    private String confirmPassword;
+}
