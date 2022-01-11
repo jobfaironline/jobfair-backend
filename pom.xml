@@ -136,6 +136,9 @@
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
+                    <configuration>
+                        <mainClass>org.capstone.job_fair.JobFairApplication</mainClass>
+                    </configuration>
                     <annotationProcessorPaths>
                         <path>
                             <groupId>org.projectlombok</groupId>
