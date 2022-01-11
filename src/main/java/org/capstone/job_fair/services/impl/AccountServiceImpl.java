@@ -3,6 +3,7 @@ package org.capstone.job_fair.services.impl;
 import org.capstone.job_fair.constants.AccountConstant;
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
 import org.capstone.job_fair.models.entities.attendant.AttendantEntity;
+import org.capstone.job_fair.models.enums.Gender;
 import org.capstone.job_fair.models.statuses.AccountStatus;
 import org.capstone.job_fair.models.enums.Role;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
@@ -44,7 +45,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Optional<AccountEntity> getActiveAccountByEmail(String email) {
-        return accountRepository.findByEmailAndStatusNot(email, AccountStatus.ACTIVE);
+        return accountRepository.findByEmailAndStatus(email, AccountStatus.ACTIVE);
     }
 
     @Override
@@ -58,21 +59,21 @@ public class AccountServiceImpl implements AccountService {
         entity.setId(UUID.randomUUID().toString());
         entity.setStatus(AccountStatus.ACTIVE);
         entity.setPassword(encoder.encode(entity.getPassword()));
+        entity.setProfileImageUrl(AccountConstant.DEFAULT_PROFILE_IMAGE_URL);
+
 
         RoleEntity role = new RoleEntity();
         role.setId(Role.ATTENDANT.ordinal());
         entity.setRole(role);
-        GenderEntity gender = new GenderEntity();
-        gender.setId(1);
-        entity.setProfileImageUrl(AccountConstant.DEFAULT_PROFILE_IMAGE_URL);
 
+        GenderEntity gender = new GenderEntity();
+        gender.setId(dto.getGender().ordinal());
         entity.setGender(gender);
         accountRepository.save(entity);
+
         AttendantEntity attendant = new AttendantEntity();
-        System.out.println(entity);
         attendant.setAccount(entity);
         attendant.setAccountId(entity.getId());
-        System.out.println(attendant);
         attendantRepository.save(attendant);
     }
 

@@ -14,5 +14,5 @@ import java.util.Optional;
 @ApiIgnore
 @RepositoryRestResource(path = ApiEndPoint.RestDataEndpoint.ACCOUNT, exported = false)
 public interface AccountRepository extends JpaRepository<AccountEntity, String> {
-    Optional<AccountEntity> findByEmailAndStatusNot(String email, AccountStatus status);
+    Optional<AccountEntity> findByEmailAndStatus(String email, AccountStatus status);
 }
