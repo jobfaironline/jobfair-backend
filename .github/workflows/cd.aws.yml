@@ -63,7 +63,8 @@ jobs:
          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
          application_name: job-fair-online-backend
          environment_name: Jobfaironlinebackend-env
-         version_label: ${{github.SHA}}
+#          version_label: ${{github.SHA}}
+         version_label: 123
          region: ap-southeast-1
          deployment_package: jobfair-backend.jar
-         use_existing_version_if_available: true
+         use_existing_version_if_available: false
