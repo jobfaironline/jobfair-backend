@@ -1,4 +1,4 @@
-package com.example.jobfair_be;
+package org.capstone;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
