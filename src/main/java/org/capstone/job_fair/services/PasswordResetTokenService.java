@@ -1,10 +1,9 @@
 package org.capstone.job_fair.services;
 
-import org.capstone.job_fair.models.entities.AccountEntity;
-import org.capstone.job_fair.models.entities.PasswordResetTokenEntity;
+import org.capstone.job_fair.models.entities.account.AccountEntity;
+import org.capstone.job_fair.models.entities.token.PasswordResetTokenEntity;
 
 import java.util.Optional;
-import java.util.UUID;
 
 public interface PasswordResetTokenService {
     Optional<PasswordResetTokenEntity> findLastValidateTokenByEmail(String email);

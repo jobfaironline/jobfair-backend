@@ -1,11 +1,7 @@
-package org.capstone.job_fair.models.entities;
+package org.capstone.job_fair.models.entities.account;
 
 import lombok.*;
-import org.capstone.job_fair.models.entities.attendant.AttendantEntity;
-import org.capstone.job_fair.models.entities.attendant.GenderEntity;
-import org.capstone.job_fair.models.entities.attendant.RoleEntity;
-import org.capstone.job_fair.models.entities.company.CompanyEmployeeEntity;
-import org.capstone.job_fair.models.entities.company.CompanyEntity;
+import org.capstone.job_fair.models.statuses.AccountStatus;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -29,7 +25,8 @@ public class AccountEntity {
     private String password;
     @Basic
     @Column(name = "status", nullable = true)
-    private Integer status;
+    @Enumerated(EnumType.ORDINAL)
+    private AccountStatus status;
     @Basic
     @Column(name = "phone", nullable = true, length = 11)
     private String phone;
@@ -50,20 +47,14 @@ public class AccountEntity {
     @Column(name = "middlename", nullable = true, length = 100)
     private String middlename;
 
-    @ManyToOne
+    @ManyToOne(cascade={CascadeType.ALL})
     @JoinColumn(name = "role_id")
     private RoleEntity role;
 
-    @ManyToOne
+    @ManyToOne(cascade={CascadeType.ALL})
     @JoinColumn(name = "gender_id")
     private GenderEntity gender;
-
-    @OneToOne(mappedBy = "account")
-    private AttendantEntity attendant;
-
-    @OneToOne(mappedBy = "account")
-    private CompanyEmployeeEntity employee;
-
+    
     public String getFullname(){
         return firstname + " " + middlename + " " + lastname;
     }
@@ -76,18 +67,7 @@ public class AccountEntity {
 
         AccountEntity that = (AccountEntity) o;
 
-        if (!Objects.equals(id, that.id)) return false;
-        if (!Objects.equals(email, that.email)) return false;
-        if (!Objects.equals(password, that.password)) return false;
-        if (!Objects.equals(status, that.status)) return false;
-        if (!Objects.equals(phone, that.phone)) return false;
-        if (!Objects.equals(profileImageUrl, that.profileImageUrl))
-            return false;
-        if (!Objects.equals(firstname, that.firstname)) return false;
-        if (!Objects.equals(lastname, that.lastname)) return false;
-        if (!Objects.equals(role, that.role)) return false;
-        if (!Objects.equals(gender, that.gender)) return false;
-        return Objects.equals(middlename, that.middlename);
+        return !Objects.equals(id, that.id);
     }
 
     @Override

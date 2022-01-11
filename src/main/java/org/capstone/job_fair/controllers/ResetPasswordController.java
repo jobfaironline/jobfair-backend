@@ -2,8 +2,8 @@ package org.capstone.job_fair.controllers;
 
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.ResetPasswordTokenConstants;
-import org.capstone.job_fair.models.entities.AccountEntity;
-import org.capstone.job_fair.models.entities.PasswordResetTokenEntity;
+import org.capstone.job_fair.models.entities.account.AccountEntity;
+import org.capstone.job_fair.models.entities.token.PasswordResetTokenEntity;
 import org.capstone.job_fair.payload.*;
 import org.capstone.job_fair.services.AccountService;
 import org.capstone.job_fair.services.MailService;
