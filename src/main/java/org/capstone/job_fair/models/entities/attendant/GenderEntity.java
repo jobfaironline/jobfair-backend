@@ -11,7 +11,7 @@ import java.util.Objects;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "gender", schema = "dbo", catalog = "")
+@Table(name = "gender", schema = "dbo")
 public class GenderEntity {
     @Id
     @Column(name = "id")

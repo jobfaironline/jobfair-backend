@@ -16,6 +16,7 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+//import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -44,8 +45,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
-        // Password encoder for encoding password
+    public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
@@ -78,7 +78,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 //Authenticated API Security
                 .authorizeRequests().antMatchers(ApiEndPoint.Authentication.AUTHENTICATION_ENDPOINT + "/**").permitAll().and()
                 //Account API Security
-                .authorizeRequests().antMatchers(ApiEndPoint.Attendant.ACCOUNT_ENDPOINT + "/**").hasAuthority("ADMIN")
+                .authorizeRequests().antMatchers(ApiEndPoint.Attendant.ACCOUNT_ENDPOINT + "/**").hasAuthority("ADMIN").and()
+                //ResetPassword API Security
+                .authorizeRequests().antMatchers(ApiEndPoint.ResetPasswordToken.GENERATE_OTP_ENDPOINT).permitAll().and()
+                .authorizeRequests().antMatchers(ApiEndPoint.ResetPasswordToken.RESET_PASSWORD_ENDPOINT).permitAll()
                 .anyRequest().authenticated();
 
         //after logout success, invalidate session

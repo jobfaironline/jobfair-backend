@@ -1,10 +1,9 @@
-package org.capstone.job_fair.services.attendant.impl;
+package org.capstone.job_fair.services.impl;
 
 import org.capstone.job_fair.constants.AccountConstant;
 import org.capstone.job_fair.models.entities.AccountEntity;
 import org.capstone.job_fair.repositories.AccountRepository;
-import org.capstone.job_fair.repositories.attendant.AttendantRepository;
-import org.capstone.job_fair.services.attendant.AccountService;
+import org.capstone.job_fair.services.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,10 +18,17 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public List<AccountEntity> getAllAccounts() {
-        return accountRepository.findAll(); //can be sorted before return...
+        return accountRepository.findAll();
     }
 
-    public Optional<AccountEntity> getActiveAccountByEmail(String email){
-        return accountRepository.findAccountByEmailAndStatusNot(email, AccountConstant.ACTIVE);
+    @Override
+    public Optional<AccountEntity> getActiveAccountByEmail(String email) {
+        return accountRepository.findByEmailAndStatusNot(email, AccountConstant.INACTIVE);
     }
+
+    @Override
+    public AccountEntity save(AccountEntity account) {
+        return accountRepository.save(account);
+    }
+
 }
