@@ -26,7 +26,11 @@ public class ApiEndPoint {
     public static final class Account {
         public static final String ACCOUNT_ENDPOINT = ROOT_ENDPOINT + VERSION + "/accounts";
         public static final String REGISTER_COMPANY_MANAGER = ROOT_ENDPOINT + VERSION + "/companies/register";
+        public static final String ATTENDANT_ENDPOINT = ROOT_ENDPOINT + VERSION + "/attendants";
+
+        public static final String REGISTER_ENDPOINT = ATTENDANT_ENDPOINT + "/register";
     }
+
 
 
     public static final class RestDataEndpoint {

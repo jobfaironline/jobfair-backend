@@ -1,4 +1,4 @@
-package org.capstone.job_fair.models.dtos.attendant;
+package org.capstone.job_fair.models.dtos.account;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;

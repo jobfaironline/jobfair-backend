@@ -1,8 +1,7 @@
 package org.capstone.job_fair.models.entities.company;
 
 import lombok.*;
-import org.capstone.job_fair.models.entities.AccountEntity;
-import org.capstone.job_fair.models.entities.attendant.RoleEntity;
+import org.capstone.job_fair.models.entities.account.AccountEntity;
 
 import javax.persistence.*;
 import java.util.Objects;

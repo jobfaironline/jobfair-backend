@@ -1,10 +1,8 @@
-package org.capstone.job_fair.models.entities.attendant;
+package org.capstone.job_fair.models.entities.account;
 
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.HashMap;
-import java.util.Objects;
 
 @Entity
 @Getter
@@ -12,11 +10,11 @@ import java.util.Objects;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "gender", schema = "dbo")
-public class GenderEntity {
+@Table(name = "role", schema = "dbo")
+public class RoleEntity {
     @Id
     @Column(name = "id")
-    private int id;
+    private Integer id;
     @Basic
     @Column(name = "name")
     private String name;
@@ -29,14 +27,13 @@ public class GenderEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        GenderEntity that = (GenderEntity) o;
+        RoleEntity role = (RoleEntity) o;
 
-        if (!Objects.equals(id, that.id)) return false;
-        if (!Objects.equals(name, that.name)) return false;
-        return Objects.equals(description, that.description);
+        return id.equals(role.id);
     }
+
     @Override
     public int hashCode() {
-        return super.hashCode();
+        return id.hashCode();
     }
 }

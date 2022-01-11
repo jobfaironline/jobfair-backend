@@ -1,6 +1,7 @@
 package org.capstone.job_fair.payload;
 
 import lombok.*;
+import org.capstone.job_fair.models.statuses.AccountStatus;
 
 import java.util.Collection;
 
@@ -12,8 +13,10 @@ import java.util.Collection;
 public class LoginResponse {
     private String email;
     private String password;
-    private int status;
-    private String role;
+    private AccountStatus status;
+    private Collection<String> roles;
     private String token;
     private String refreshToken;
+
+
 }

@@ -1,25 +1,29 @@
 package org.capstone.job_fair.services.impl;
 
 import org.capstone.job_fair.constants.AccountConstant;
-import org.capstone.job_fair.constants.RoleName;
-import org.capstone.job_fair.models.dtos.account.CreateAccountDTO;
-import org.capstone.job_fair.models.dtos.account.UpdateAccountDTO;
-import org.capstone.job_fair.models.entities.AccountEntity;
-import org.capstone.job_fair.models.entities.attendant.GenderEntity;
-import org.capstone.job_fair.models.entities.attendant.RoleEntity;
+import org.capstone.job_fair.models.dtos.account.AccountDTO;
+import org.capstone.job_fair.models.entities.attendant.AttendantEntity;
+import org.capstone.job_fair.models.enums.Gender;
+import org.capstone.job_fair.models.statuses.AccountStatus;
+import org.capstone.job_fair.models.enums.Role;
+import org.capstone.job_fair.models.entities.account.AccountEntity;
+import org.capstone.job_fair.models.entities.account.GenderEntity;
+import org.capstone.job_fair.models.entities.account.RoleEntity;
+import org.capstone.job_fair.models.mappers.AccountEntityMapper;
 import org.capstone.job_fair.repositories.AccountRepository;
+import org.capstone.job_fair.repositories.attendant.AttendantRepository;
 import org.capstone.job_fair.services.AccountService;
-import org.capstone.job_fair.services.GenderService;
-import org.capstone.job_fair.services.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@Transactional
 public class AccountServiceImpl implements AccountService {
 
     @Autowired
@@ -29,7 +33,10 @@ public class AccountServiceImpl implements AccountService {
     private GenderService genderService;
 
     @Autowired
-    private RoleService roleService;
+    private AttendantRepository attendantRepository;
+
+    @Autowired
+    private AccountEntityMapper mapper;
 
     @Autowired
     private BCryptPasswordEncoder encoder;
@@ -41,7 +48,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Optional<AccountEntity> getActiveAccountByEmail(String email) {
-        return accountRepository.findByEmailAndStatusNot(email, AccountConstant.INACTIVE);
+        return accountRepository.findByEmailAndStatus(email, AccountStatus.ACTIVE);
     }
 
     @Override
@@ -75,4 +82,28 @@ public class AccountServiceImpl implements AccountService {
         account.setRole(role);
         return account;
     }
+    @Override
+    public void createNewAccount(AccountDTO dto) {
+        AccountEntity entity = mapper.toEntity(dto);
+        entity.setId(UUID.randomUUID().toString());
+        entity.setStatus(AccountStatus.ACTIVE);
+        entity.setPassword(encoder.encode(entity.getPassword()));
+        entity.setProfileImageUrl(AccountConstant.DEFAULT_PROFILE_IMAGE_URL);
+
+
+        RoleEntity role = new RoleEntity();
+        role.setId(Role.ATTENDANT.ordinal());
+        entity.setRole(role);
+
+        GenderEntity gender = new GenderEntity();
+        gender.setId(dto.getGender().ordinal());
+        entity.setGender(gender);
+        accountRepository.save(entity);
+
+        AttendantEntity attendant = new AttendantEntity();
+        attendant.setAccount(entity);
+        attendant.setAccountId(entity.getId());
+        attendantRepository.save(attendant);
+    }
+
 }
