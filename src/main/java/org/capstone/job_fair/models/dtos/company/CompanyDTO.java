@@ -14,5 +14,7 @@ public class CompanyDTO {
     private String address;
     private String phone;
     private String email;
+    private int employeeMaxNum;
     private String websiteUrl;
+    private String sizeId;
 }

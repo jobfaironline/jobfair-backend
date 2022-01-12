@@ -19,6 +19,10 @@ public class ApiEndPoint {
 
     }
 
+    public static final class Company {
+        public static final String COMPANY_ENDPOINT = ROOT_ENDPOINT + VERSION + "/companies";
+    }
+
     public static final class Attendant {
         public static final String ATTENDANT_ENDPOINT = ROOT_ENDPOINT + VERSION + "/attendants";
         public static final String REGISTER_ENDPOINT = ATTENDANT_ENDPOINT + "/register";

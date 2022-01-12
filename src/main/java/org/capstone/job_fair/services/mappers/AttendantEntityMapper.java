@@ -8,7 +8,6 @@ import org.mapstruct.Mapper;
 
 public abstract class AttendantEntityMapper {
 
-
     public abstract AttendantDTO toDTO(AttendantEntity attendant);
 
     public abstract AttendantEntity toEntity(AttendantDTO dto);

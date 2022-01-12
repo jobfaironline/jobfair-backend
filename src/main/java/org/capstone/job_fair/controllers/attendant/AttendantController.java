@@ -40,13 +40,12 @@ public class AttendantController {
         dto.setPassword(request.getPassword());
         dto.setFirstname(request.getFirstName());
         dto.setLastname(request.getLastName());
-        dto.setFirstname(request.getFirstName());
+        dto.setMiddlename(request.getMiddleName());
         dto.setGender(request.getGender());
 
         AttendantDTO attendantDTO = new AttendantDTO();
         attendantDTO.setAccount(dto);
         attendantDTO.setAccountId(dto.getId());
-        attendantDTO.setAccount(dto);
         return attendantDTO;
     }
 
