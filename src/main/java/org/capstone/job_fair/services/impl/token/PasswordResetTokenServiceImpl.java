@@ -30,14 +30,8 @@ public class PasswordResetTokenServiceImpl implements PasswordResetTokenService 
 
 
     @Override
-    public Optional<PasswordResetTokenEntity> findLastValidateTokenByEmail(String email) {
-
-        Optional<AccountEntity> optAccount = accountService.getActiveAccountByEmail(email);
-        if (optAccount.isPresent()) {
-            PasswordResetTokenEntity result = resetRepository.findTopByAccount_IdOrderByExpiredTimeDesc(optAccount.get().getId());
-            return Optional.ofNullable(result);
-        }
-        return Optional.empty();
+    public Optional<PasswordResetTokenEntity> findLastValidateTokenByAccountID(String accountID) {
+        return resetRepository.findTopByAccount_IdOrderByExpiredTimeDesc(accountID);
     }
 
     @Override
@@ -50,7 +44,7 @@ public class PasswordResetTokenServiceImpl implements PasswordResetTokenService 
         resetToken.setId(id.toString());
         resetToken.setOtp(otp);
         resetToken.setCreateTime(new Date().getTime());
-        resetToken.setExpiredTime(resetToken.getExpiredTime() + Integer.parseInt(RESET_PASSWORD_TOKEN_EXPIRED_TIME));
+        resetToken.setExpiredTime(resetToken.getCreateTime() + Integer.parseInt(RESET_PASSWORD_TOKEN_EXPIRED_TIME)* 1000L);
         resetToken.setAccount(account);
         resetToken.setInvalidated(false);
         resetRepository.save(resetToken);

@@ -6,7 +6,7 @@ import org.capstone.job_fair.models.entities.token.PasswordResetTokenEntity;
 import java.util.Optional;
 
 public interface PasswordResetTokenService {
-    Optional<PasswordResetTokenEntity> findLastValidateTokenByEmail(String email);
+    Optional<PasswordResetTokenEntity> findLastValidateTokenByAccountID(String accountID);
 
     PasswordResetTokenEntity createResetToken(AccountEntity account);
 
