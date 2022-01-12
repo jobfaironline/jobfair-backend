@@ -2,7 +2,6 @@ package org.capstone.job_fair.controllers.attendant;
 
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.controllers.payload.AttendantRequest;
-import org.capstone.job_fair.controllers.payload.JobLevelRequest;
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
 import org.capstone.job_fair.models.dtos.attendant.AttendantDTO;
 import org.capstone.job_fair.models.dtos.attendant.CountryDTO;
@@ -105,7 +104,8 @@ public class AttendantController {
                 .residence(residenceDTO)
                 .maritalStatus(req.getMaritalStatus())
                 .build();
-        return ResponseEntity.status(HttpStatus.OK).body(attendantService.save(dto));
+        attendantService.update(dto);
+        return GenericMessageResponseEntity.build("", HttpStatus.OK);
     }
 
     @GetMapping(ApiEndPoint.Attendant.ATTENDANT_ENDPOINT + "/{email}")

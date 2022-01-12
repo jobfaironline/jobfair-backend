@@ -12,7 +12,6 @@ import org.capstone.job_fair.services.mappers.AttendantEntityMapper;
 import org.capstone.job_fair.models.statuses.AccountStatus;
 import org.capstone.job_fair.repositories.attendant.AttendantRepository;
 import org.capstone.job_fair.services.interfaces.attendant.AttendantService;
-import org.capstone.job_fair.services.mappers.AttendantMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -38,8 +37,6 @@ public class AttendantServiceImpl implements AttendantService {
     @Autowired
     private AccountService accountService;
 
-    @Autowired
-    private AttendantMapper attendantMapper;
     @Override
     public void createNewAccount(AttendantDTO dto) {
         String id = UUID.randomUUID().toString();
@@ -67,9 +64,9 @@ public class AttendantServiceImpl implements AttendantService {
     }
 
     @Override
-    public AttendantEntity save(AttendantDTO attendantDTO) {
+    public AttendantEntity update(AttendantDTO attendantDTO) {
         return attendantRepository.findById(attendantDTO.getAccountId()).map((atd) -> {
-            attendantMapper.updateAttendantMapperFromDto(attendantDTO, atd);
+            mapper.updateAttendantMapperFromDto(attendantDTO, atd);
             return attendantRepository.save(atd);
         }).orElseThrow(NoSuchElementException::new);
     }
