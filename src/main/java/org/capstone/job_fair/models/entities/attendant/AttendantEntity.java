@@ -50,7 +50,7 @@ public class AttendantEntity {
     private ResidenceEntity residence;
 
     @ManyToOne
-    @JoinColumn(name = "current_job_level_id")
+    @JoinColumn(name = "job_level_id")
     private JobLevelEntity currentJobLevel;
 
 
