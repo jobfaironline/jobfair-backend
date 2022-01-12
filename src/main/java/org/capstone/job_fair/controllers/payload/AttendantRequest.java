@@ -1,9 +1,6 @@
 package org.capstone.job_fair.controllers.payload;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
 
 import javax.persistence.*;
@@ -12,11 +9,11 @@ import javax.validation.constraints.Size;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 @ToString
 public class AttendantRequest {
     private String accountId;
-    private AccountRequest account;
+    @Builder.Default
+    private AccountRequest account = new AccountRequest();
     @Size(max = 100)
     @Pattern(message="Type can contain alphanumeric characters only", regexp = "[a-zA-Z0-9 ]+")
     private String title;
@@ -29,7 +26,10 @@ public class AttendantRequest {
     private String jobTitle;
     private Double yearOfExp;
     private Boolean maritalStatus;
-    private CountryRequest country;
-    private ResidenceRequest residence;
-    private JobLevelRequest currentJobLevel;
+    @Builder.Default
+    private CountryRequest country = new CountryRequest();
+    @Builder.Default
+    private ResidenceRequest residence = new ResidenceRequest();
+    @Builder.Default
+    private JobLevelRequest currentJobLevel = new JobLevelRequest();
 }

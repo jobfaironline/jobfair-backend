@@ -70,7 +70,7 @@ public class AttendantController {
 
     @PostMapping(ApiEndPoint.Attendant.UPDATE_ENDPOINT)
     public ResponseEntity<?> update(@Validated @RequestBody AttendantRequest req) {
-        AccountDTO accountDTO = AccountDTO.builder()
+        AccountDTO accountDTO = req.getAccount() != null ? AccountDTO.builder()
                 .lastname(req.getAccount().getLastname())
                 .firstname(req.getAccount().getFirstname())
                 .middlename(req.getAccount().getMiddlename())
@@ -78,21 +78,21 @@ public class AttendantController {
                 .gender(req.getAccount().getGender())
                 .phone(req.getAccount().getPhone())
                 .profileImageUrl(req.getAccount().getProfileImageUrl())
-                .build();
-        CountryDTO countryDTO = CountryDTO.builder()
+                .build() : new AccountDTO();
+        CountryDTO countryDTO = req.getCountry() != null ? CountryDTO.builder()
                 .id(req.getCountry().getId())
                 .description(req.getCountry().getDescription())
                 .name(req.getCountry().getName())
-                .build();
-        ResidenceDTO residenceDTO = ResidenceDTO.builder()
+                .build() : new CountryDTO();
+        ResidenceDTO residenceDTO = req.getResidence() != null ? ResidenceDTO.builder()
                 .id(req.getResidence().getId())
                 .name(req.getResidence().getName())
-                .build();
-        JobLevelDTO jobLevelRequest = JobLevelDTO.builder()
+                .build() : new ResidenceDTO();
+        JobLevelDTO jobLevelRequest = req.getCurrentJobLevel() !=null ? JobLevelDTO.builder()
                 .id(req.getCurrentJobLevel().getId())
                 .name(req.getCurrentJobLevel().getName())
                 .description(req.getCurrentJobLevel().getDescription())
-                .build();
+                .build() : new JobLevelDTO();
         AttendantDTO dto = AttendantDTO.builder()
                 .accountId(req.getAccountId())
                 .account(accountDTO)
