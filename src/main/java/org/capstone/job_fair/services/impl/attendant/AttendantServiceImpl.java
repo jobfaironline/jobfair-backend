@@ -6,6 +6,7 @@ import org.capstone.job_fair.models.entities.account.AccountEntity;
 import org.capstone.job_fair.models.entities.account.GenderEntity;
 import org.capstone.job_fair.models.entities.account.RoleEntity;
 import org.capstone.job_fair.models.entities.attendant.AttendantEntity;
+import org.capstone.job_fair.models.enums.Gender;
 import org.capstone.job_fair.models.enums.Role;
 import org.capstone.job_fair.services.interfaces.account.AccountService;
 import org.capstone.job_fair.services.mappers.AttendantEntityMapper;
@@ -47,7 +48,6 @@ public class AttendantServiceImpl implements AttendantService {
         accountEntity.setPassword(encoder.encode(accountEntity.getPassword()));
         accountEntity.setProfileImageUrl(AccountConstant.DEFAULT_PROFILE_IMAGE_URL);
         accountEntity.setStatus(AccountStatus.ACTIVE);
-
         RoleEntity role = new RoleEntity();
         role.setId(Role.ATTENDANT.ordinal());
         accountEntity.setRole(role);
@@ -67,6 +67,9 @@ public class AttendantServiceImpl implements AttendantService {
     public AttendantEntity update(AttendantDTO attendantDTO) {
         return attendantRepository.findById(attendantDTO.getAccountId()).map((atd) -> {
             mapper.updateAttendantMapperFromDto(attendantDTO, atd);
+            GenderEntity genderEntity = new GenderEntity();
+            genderEntity.setId(attendantDTO.getAccount().getGender().ordinal());
+            atd.getAccount().setGender(genderEntity);
             return attendantRepository.save(atd);
         }).orElseThrow(NoSuchElementException::new);
     }

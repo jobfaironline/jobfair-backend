@@ -1,9 +1,7 @@
 package org.capstone.job_fair.controllers.payload;
 
 import lombok.*;
-import org.capstone.job_fair.models.entities.account.AccountEntity;
 
-import javax.persistence.*;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
@@ -26,10 +24,7 @@ public class AttendantRequest {
     private String jobTitle;
     private Double yearOfExp;
     private Boolean maritalStatus;
-    @Builder.Default
-    private CountryRequest country = new CountryRequest();
-    @Builder.Default
-    private ResidenceRequest residence = new ResidenceRequest();
-    @Builder.Default
-    private JobLevelRequest currentJobLevel = new JobLevelRequest();
+    private String country ;
+    private String residence;
+    private String currentJobLevel;
 }

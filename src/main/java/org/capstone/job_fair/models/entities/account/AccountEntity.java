@@ -54,7 +54,6 @@ public class AccountEntity {
     @ManyToOne()
     @JoinColumn(name = "gender_id")
     private GenderEntity gender;
-    
     public String getFullname(){
         return firstname + " " + middlename + " " + lastname;
     }
