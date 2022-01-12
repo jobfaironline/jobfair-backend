@@ -10,8 +10,8 @@ public interface CompanyService {
 
     List<CompanyEntity> getAllCompanies();
     Optional<CompanyEntity> getCompanyById(String id);
-    void createCompany(CompanyDTO dto);
-    Boolean updateCompany(String id, CompanyDTO dto) ;
+    CompanyEntity createCompany(CompanyDTO dto);
+    CompanyEntity updateCompany(CompanyDTO dto) ;
     Boolean deleteCompany(String id);
     CompanyEntity findByTaxId(String taxId);
 }

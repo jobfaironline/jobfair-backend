@@ -6,23 +6,28 @@ import org.capstone.job_fair.models.entities.company.CompanySizeEntity;
 import org.capstone.job_fair.repositories.company.CompanyRepository;
 import org.capstone.job_fair.repositories.company.CompanySizeRepository;
 import org.capstone.job_fair.services.interfaces.company.CompanyService;
+import org.capstone.job_fair.services.interfaces.company.CompanySizeService;
 import org.capstone.job_fair.services.mappers.CompanyEntityMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 
 @Service
 public class CompanyServiceImpl implements CompanyService {
 
+    private static final String NOT_FOUND_SIZE = "Size not found with given Id";
+    private static final String NOT_FOUND_COMPANY = "Company not found with given Id";
+
     @Autowired
     private CompanyRepository companyRepository;
 
     @Autowired
-    private CompanySizeRepository sizeRepository;
+    private CompanySizeService sizeService;
 
     @Autowired
     private CompanyEntityMapper mapper;
@@ -38,45 +43,40 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     private CompanySizeEntity findSizeById(String id) {
-        return sizeRepository.findById(id).isPresent() ? sizeRepository.findById(id).get() : null;
+        return sizeService.findBySizeId(id).isPresent() ? sizeService.findBySizeId(id).get() : null;
     }
 
     @Override
-    public void createCompany(CompanyDTO dto) {
+    public CompanyEntity createCompany(CompanyDTO dto) {
         String id = UUID.randomUUID().toString();
-        CompanyEntity entity = mapper.toEntity(dto);
+        CompanyEntity entity = new CompanyEntity();
+        mapper.DTOToEntity(dto, entity);
         entity.setId(id);
 
         CompanySizeEntity sizeEntity = findSizeById(dto.getSizeId());
 
-        if (sizeEntity != null) {
-            entity.setCompanySize(sizeEntity);
+        if (sizeEntity == null) {
+            throw new NoSuchElementException(NOT_FOUND_SIZE);
         }
 
-        companyRepository.save(entity);
+        entity.setCompanySize(sizeEntity);
+        return companyRepository.save(entity);
     }
 
     @Transactional
     @Override
-    public Boolean updateCompany(String id, CompanyDTO dto) {
-        Optional<CompanyEntity> result = this.getCompanyById(id);
-        if (result.isPresent()) {
-            CompanyEntity com = result.get();
-            com.setName(dto.getName().trim());
-            com.setAddress(dto.getAddress().trim());
-            com.setPhone(dto.getPhone().trim());
-            com.setEmail(dto.getEmail().trim());
-            com.setEmployeeMaxNum(dto.getEmployeeMaxNum());
-            com.setWebsiteUrl(dto.getWebsiteUrl().trim());
+    public CompanyEntity updateCompany(CompanyDTO dto) {
+        String sizeId = dto.getSizeId();
 
-            CompanySizeEntity sizeEntity = findSizeById(dto.getSizeId());
-            if (sizeEntity != null) {
-                com.setCompanySize(sizeEntity);
-                companyRepository.save(com);
-                return true;
-            }
+        CompanySizeEntity sizeEntity = findSizeById(dto.getSizeId());
+        if (sizeEntity == null) {
+            throw new NoSuchElementException(NOT_FOUND_SIZE);
         }
-        return false;
+
+        return companyRepository.findById(dto.getId()).map(com -> {
+            mapper.DTOToEntity(dto, com);
+            return companyRepository.save(com);
+        }).orElse(null);
     }
 
     @Transactional

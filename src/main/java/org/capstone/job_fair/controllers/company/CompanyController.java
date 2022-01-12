@@ -14,7 +14,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 public class CompanyController {
@@ -22,17 +24,15 @@ public class CompanyController {
     private static final String TAX_ID_EXIST_MSG = "Tax Id has already existed. Please choose another one.";
     private static final String NOT_FOUND_COMPANY = "Company not found with id: ";
     private static final String CREATE_COMPANY_SUCCESS = "Create company successfully.";
+    private static final String CREATE_COMPANY_FAIL = "Fail to create company.";
     private static final String UPDATE_COMPANY_SUCCESS = "Update company successfully.";
-    private static final String UPDATE_COMPANY_FAIL = "Update company failed.";
-    private static final String DELETE_COMPANY_SUCCESS = "Delete company sucessfully.";
+    private static final String UPDATE_COMPANY_FAIL = "CompanyId Not Found. Update company failed.";
+    private static final String DELETE_COMPANY_SUCCESS = "Delete company successfully.";
     private static final String DELETE_COMPANY_FAIL= "Delete company failed.";
     private static final String SIZE_INVALID= "Chosen size is invalid";
 
     @Autowired
     private CompanyService companyService;
-
-    @Autowired
-    private CompanySizeRepository sizeRepository;
 
 
     @PreAuthorize("hasAuthority('ADMIN')")
@@ -49,38 +49,55 @@ public class CompanyController {
              GenericMessageResponseEntity.build(NOT_FOUND_COMPANY + id, HttpStatus.NOT_FOUND);
     }
 
-    //true : valid , false: invalid
-    private boolean isSizeValid(String id) {
-        return sizeRepository.findById(id).isPresent() ? true : false;
-    }
-
 
     @PostMapping(ApiEndPoint.Company.COMPANY_ENDPOINT)
     public ResponseEntity<?> create(@Validated @RequestBody CreateCompanyRequest request) {
-        //tax Id cannot be duplicated
-        CompanyEntity company = companyService.findByTaxId(request.getTaxID().trim());
-        if (company != null) {
-            return GenericMessageResponseEntity.build(TAX_ID_EXIST_MSG, HttpStatus.BAD_REQUEST);
-        }
-        if (!isSizeValid(request.getSizeId())){
-            return GenericMessageResponseEntity.build(SIZE_INVALID, HttpStatus.BAD_REQUEST);
-        }
-        CompanyDTO dto = mappingRequestToDTO(request);
-        companyService.createCompany(dto);
-
-        return new ResponseEntity<>(new CreateCompanyResponse(CREATE_COMPANY_SUCCESS), HttpStatus.CREATED);
+       try{
+           CompanyEntity company = companyService.findByTaxId(request.getTaxID().trim());
+           if (company != null) {
+               return GenericMessageResponseEntity.build(TAX_ID_EXIST_MSG, HttpStatus.BAD_REQUEST);
+           }
+           CompanyDTO dto = CompanyDTO.builder()
+                   .id(UUID.randomUUID().toString())
+                   .taxId(request.getTaxID())
+                   .name(request.getName())
+                   .address(request.getAddress())
+                   .phone(request.getPhone())
+                   .email(request.getEmail())
+                   .employeeMaxNum(request.getEmployeeMaxNum())
+                   .websiteUrl(request.getUrl())
+                   .sizeId(request.getSizeId())
+                   .build();
+           CompanyEntity result = companyService.createCompany(dto);
+           return result != null ? GenericMessageResponseEntity.build(CREATE_COMPANY_SUCCESS, HttpStatus.CREATED)
+           : GenericMessageResponseEntity.build(CREATE_COMPANY_FAIL, HttpStatus.NOT_FOUND);
+       }
+       catch(NoSuchElementException ex) {
+           return GenericMessageResponseEntity.build(ex.getMessage(), HttpStatus.BAD_REQUEST);
+       }
     }
 
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('COMPANY_MANAGER')")
     @PutMapping(ApiEndPoint.Company.COMPANY_ENDPOINT)
     public ResponseEntity<?> update(@Validated @RequestBody UpdateCompanyRequest request) {
-        if (!isSizeValid(request.getSizeId())){
-            return GenericMessageResponseEntity.build(SIZE_INVALID, HttpStatus.BAD_REQUEST);
-        }
-        CompanyDTO dto = mappingRequestToDTO(request);
-        Boolean result = companyService.updateCompany(request.getId(), dto);
-        return result ? new ResponseEntity<>(new UpdateCompanyResponse(UPDATE_COMPANY_SUCCESS), HttpStatus.OK)
-            : new ResponseEntity<>(new UpdateCompanyResponse(UPDATE_COMPANY_FAIL), HttpStatus.BAD_REQUEST);
+       try {
+           CompanyDTO dto = CompanyDTO.builder()
+                   .id(request.getId())
+                   .name(request.getName())
+                   .address(request.getAddress())
+                   .phone(request.getPhone())
+                   .email(request.getEmail())
+                   .employeeMaxNum(request.getEmployeeMaxNum())
+                   .websiteUrl(request.getUrl())
+                   .sizeId(request.getSizeId())
+                   .build();
+           CompanyEntity result = companyService.updateCompany(dto);
+           return result != null ? GenericMessageResponseEntity.build(UPDATE_COMPANY_SUCCESS, HttpStatus.OK)
+                   : GenericMessageResponseEntity.build(UPDATE_COMPANY_FAIL, HttpStatus.NOT_FOUND);
+       }
+       catch (NoSuchElementException ex) {
+           return GenericMessageResponseEntity.build(ex.getMessage(), HttpStatus.NOT_FOUND);
+       }
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
@@ -104,15 +121,4 @@ public class CompanyController {
         return dto;
     }
 
-    private CompanyDTO mappingRequestToDTO(UpdateCompanyRequest request) {
-        CompanyDTO dto = new CompanyDTO();
-        dto.setName(request.getName().trim());
-        dto.setAddress(request.getAddress().trim());
-        dto.setPhone(request.getPhone().trim());
-        dto.setEmail(request.getEmail().trim());
-        dto.setWebsiteUrl(request.getUrl().trim());
-        dto.setSizeId(request.getSizeId());
-
-        return dto;
-    }
 }
