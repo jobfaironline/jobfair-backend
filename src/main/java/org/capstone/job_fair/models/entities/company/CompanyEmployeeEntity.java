@@ -19,7 +19,7 @@ public class CompanyEmployeeEntity {
     @Column(name = "account_id", nullable = false, length = 36)
     private String accountId;
 
-    @OneToOne
+    @OneToOne(cascade = {CascadeType.ALL})
     @JoinColumn(name = "account_id")
     private  AccountEntity account;
 
