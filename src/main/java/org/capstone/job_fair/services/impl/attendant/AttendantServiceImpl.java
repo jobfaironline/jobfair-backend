@@ -7,15 +7,19 @@ import org.capstone.job_fair.models.entities.account.GenderEntity;
 import org.capstone.job_fair.models.entities.account.RoleEntity;
 import org.capstone.job_fair.models.entities.attendant.AttendantEntity;
 import org.capstone.job_fair.models.enums.Role;
+import org.capstone.job_fair.services.interfaces.account.AccountService;
 import org.capstone.job_fair.services.mappers.AttendantEntityMapper;
 import org.capstone.job_fair.models.statuses.AccountStatus;
 import org.capstone.job_fair.repositories.attendant.AttendantRepository;
 import org.capstone.job_fair.services.interfaces.attendant.AttendantService;
+import org.capstone.job_fair.services.mappers.AttendantMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -31,6 +35,11 @@ public class AttendantServiceImpl implements AttendantService {
     @Autowired
     private AttendantRepository attendantRepository;
 
+    @Autowired
+    private AccountService accountService;
+
+    @Autowired
+    private AttendantMapper attendantMapper;
     @Override
     public void createNewAccount(AttendantDTO dto) {
         String id = UUID.randomUUID().toString();
@@ -50,5 +59,18 @@ public class AttendantServiceImpl implements AttendantService {
         gender.setId(dto.getAccount().getGender().ordinal());
         accountEntity.setGender(gender);
         attendantRepository.save(attendantEntity);
+    }
+    @Override
+    public AttendantEntity getAttendantByEmail(String email) {
+        Optional<AccountEntity> accountEntity = accountService.getActiveAccountByEmail(email);
+        return attendantRepository.findById(accountEntity.get().getId()).orElseThrow(NoSuchElementException::new);
+    }
+
+    @Override
+    public AttendantEntity save(AttendantDTO attendantDTO) {
+        return attendantRepository.findById(attendantDTO.getAccountId()).map((atd) -> {
+            attendantMapper.updateAttendantMapperFromDto(attendantDTO, atd);
+            return attendantRepository.save(atd);
+        }).orElseThrow(NoSuchElementException::new);
     }
 }

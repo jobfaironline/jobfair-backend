@@ -9,13 +9,11 @@ import org.capstone.job_fair.controllers.payload.GenericMessageResponseEntity;
 import org.capstone.job_fair.services.interfaces.account.AccountService;
 import org.capstone.job_fair.services.interfaces.attendant.AttendantService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -63,5 +61,15 @@ public class AttendantController {
         AttendantDTO attendantDTO = mappingRegisterRequestToDTO(request);
         attendantService.createNewAccount(attendantDTO);
         return GenericMessageResponseEntity.build("Noice", HttpStatus.OK);
+    }
+    @PostMapping(ApiEndPoint.Attendant.UPDATE_ENDPOINT)
+    public ResponseEntity<?> update(@RequestBody AttendantDTO req){
+        HttpHeaders responseHeader = new HttpHeaders();
+        return ResponseEntity.status(HttpStatus.OK).headers(responseHeader).body(attendantService.save(req));
+    }
+    @GetMapping(ApiEndPoint.Attendant.ATTENDANT_ENDPOINT + "/{email}")
+    public ResponseEntity<?> getAttendant(@PathVariable("email")String email){
+        HttpHeaders responseHeader = new HttpHeaders();
+        return  ResponseEntity.status(HttpStatus.OK).headers(responseHeader).body(attendantService.getAttendantByEmail(email));
     }
 }
