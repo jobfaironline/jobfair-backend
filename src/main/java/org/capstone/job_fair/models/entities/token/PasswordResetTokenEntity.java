@@ -1,10 +1,8 @@
 package org.capstone.job_fair.models.entities.token;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
+import org.springframework.data.domain.Persistable;
 
 import javax.persistence.*;
 
@@ -14,6 +12,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Getter
 @Setter
+@ToString
 public class PasswordResetTokenEntity {
     @Id
     @Column(name = "id", updatable = false, nullable = false)
@@ -23,11 +22,11 @@ public class PasswordResetTokenEntity {
     private String otp;
 
     @Column(name = "expired_time")
-    private float expiredTime;
+    private Long expiredTime;
 
 
     @Column(name = "create_time")
-    private float createTime;
+    private Long createTime;
 
     @Column(name = "is_invalidated")
     private boolean isInvalidated;
