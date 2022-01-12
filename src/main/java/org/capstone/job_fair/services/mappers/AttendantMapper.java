@@ -1,4 +1,4 @@
-package org.capstone.job_fair.models.mappers;
+package org.capstone.job_fair.services.mappers;
 
 import org.capstone.job_fair.models.dtos.attendant.AttendantDTO;
 import org.capstone.job_fair.models.entities.attendant.AttendantEntity;

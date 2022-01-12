@@ -10,7 +10,7 @@ import java.util.Objects;
 @Setter
 @ToString
 @AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor @Builder
 @Table(name = "job_level", schema = "dbo")
 public class JobLevelEntity {
     @Id

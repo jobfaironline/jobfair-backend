@@ -1,21 +1,24 @@
 package org.capstone.job_fair.controllers.attendant;
 
 import org.capstone.job_fair.constants.ApiEndPoint;
+import org.capstone.job_fair.controllers.payload.AttendantRequest;
+import org.capstone.job_fair.controllers.payload.JobLevelRequest;
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
 import org.capstone.job_fair.models.dtos.attendant.AttendantDTO;
+import org.capstone.job_fair.models.dtos.attendant.CountryDTO;
+import org.capstone.job_fair.models.dtos.attendant.JobLevelDTO;
+import org.capstone.job_fair.models.dtos.attendant.ResidenceDTO;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
 import org.capstone.job_fair.controllers.payload.AttendantRegisterRequest;
 import org.capstone.job_fair.controllers.payload.GenericMessageResponseEntity;
 import org.capstone.job_fair.services.interfaces.account.AccountService;
 import org.capstone.job_fair.services.interfaces.attendant.AttendantService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -63,5 +66,50 @@ public class AttendantController {
         AttendantDTO attendantDTO = mappingRegisterRequestToDTO(request);
         attendantService.createNewAccount(attendantDTO);
         return GenericMessageResponseEntity.build("Noice", HttpStatus.OK);
+    }
+
+    @PostMapping(ApiEndPoint.Attendant.UPDATE_ENDPOINT)
+    public ResponseEntity<?> update(@Validated @RequestBody AttendantRequest req) {
+        AccountDTO accountDTO = AccountDTO.builder()
+                .lastname(req.getAccount().getLastname())
+                .firstname(req.getAccount().getFirstname())
+                .middlename(req.getAccount().getMiddlename())
+                .email(req.getAccount().getEmail())
+                .gender(req.getAccount().getGender())
+                .phone(req.getAccount().getPhone())
+                .profileImageUrl(req.getAccount().getProfileImageUrl())
+                .build();
+        CountryDTO countryDTO = CountryDTO.builder()
+                .id(req.getCountry().getId())
+                .description(req.getCountry().getDescription())
+                .name(req.getCountry().getName())
+                .build();
+        ResidenceDTO residenceDTO = ResidenceDTO.builder()
+                .id(req.getResidence().getId())
+                .name(req.getResidence().getName())
+                .build();
+        JobLevelDTO jobLevelRequest = JobLevelDTO.builder()
+                .id(req.getCurrentJobLevel().getId())
+                .name(req.getCurrentJobLevel().getName())
+                .description(req.getCurrentJobLevel().getDescription())
+                .build();
+        AttendantDTO dto = AttendantDTO.builder()
+                .accountId(req.getAccountId())
+                .account(accountDTO)
+                .address(req.getAddress())
+                .dob(req.getDob())
+                .country(countryDTO)
+                .currentJobLevel(jobLevelRequest)
+                .yearOfExp(req.getYearOfExp())
+                .title(req.getTitle())
+                .residence(residenceDTO)
+                .maritalStatus(req.getMaritalStatus())
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(attendantService.save(dto));
+    }
+
+    @GetMapping(ApiEndPoint.Attendant.ATTENDANT_ENDPOINT + "/{email}")
+    public ResponseEntity<?> getAttendant(@PathVariable("email") String email) {
+        return ResponseEntity.status(HttpStatus.OK).body(attendantService.getAttendantByEmail(email));
     }
 }
