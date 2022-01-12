@@ -1,28 +1,25 @@
 package org.capstone.job_fair.models.dtos.attendant;
 
-import lombok.*;
-import org.capstone.job_fair.models.entities.account.AccountEntity;
-import org.capstone.job_fair.models.entities.attendant.CountryEntity;
-import org.capstone.job_fair.models.entities.attendant.JobLevelEntity;
-import org.capstone.job_fair.models.entities.attendant.ResidenceEntity;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.capstone.job_fair.models.dtos.account.AccountDTO;
 
-import javax.persistence.*;
+import java.io.Serializable;
 
-@Getter
-@Setter
-@AllArgsConstructor
+@Data
 @NoArgsConstructor
-@ToString
-public class AttendantDTO {
+@AllArgsConstructor
+public class AttendantDTO implements Serializable {
     private String accountId;
-    private AccountEntity account;
+    private AccountDTO account;
     private String title;
     private String address;
     private Long dob;
     private String jobTitle;
     private Double yearOfExp;
     private Boolean maritalStatus;
-    private CountryEntity country;
-    private ResidenceEntity residence;
-    private JobLevelEntity currentJobLevel;
+    private CountryDTO country;
+    private ResidenceDTO residence;
+    private JobLevelDTO currentJobLevel;
 }

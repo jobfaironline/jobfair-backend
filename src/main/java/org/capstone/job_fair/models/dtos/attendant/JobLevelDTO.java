@@ -6,19 +6,21 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ResidenceDTO implements Serializable {
+public class JobLevelDTO implements Serializable {
     private String id;
     private String name;
+    private String description;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        ResidenceDTO that = (ResidenceDTO) o;
+        JobLevelDTO that = (JobLevelDTO) o;
 
         return id.equals(that.id);
     }

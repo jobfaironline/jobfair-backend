@@ -2,12 +2,10 @@ package org.capstone.job_fair.controllers.exception;
 
 import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
-import org.capstone.job_fair.payload.GenericMessageResponseEntity;
+import org.capstone.job_fair.controllers.payload.GenericMessageResponseEntity;
 import org.capstone.job_fair.response.ErrorResponse;
 import org.capstone.job_fair.utils.MessageUtil;
-import org.springframework.context.ApplicationContextException;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -15,7 +13,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.nio.file.AccessDeniedException;
 import java.util.*;
@@ -54,10 +51,10 @@ public class ExceptionHandlerController {
         return buildErrorResponse(ex, MessageUtil.getMessage("MSG_METHOD_ARGUMENT_NOT_VALID", ""), HttpStatus.BAD_REQUEST, request);
     }
 
-    public GenericMessageResponseEntity handleEntityNotFound() {
+    public ResponseEntity handleEntityNotFound() {
         HttpStatus status = HttpStatus.NOT_FOUND;
         String message = "Entity not found!";
-        return new GenericMessageResponseEntity(message, status);
+        return GenericMessageResponseEntity.build(message, status);
     }
 
     private ResponseEntity<ErrorResponse> buildErrorResponse(Exception exception, String message, HttpStatus httpStatus,

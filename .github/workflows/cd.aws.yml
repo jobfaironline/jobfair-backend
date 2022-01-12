@@ -30,7 +30,7 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
       #Build the application using Maven
       - name: Build with Maven
-        run: mvn -B package -DskipTests --file pom.xml
+        run: mvn clean install
       #Build the application using Maven
       - name: Upload JAR
         #This uploads artifacts from your workflow allowing you to share data between jobs and store data once a workflow is complete.
@@ -63,8 +63,8 @@ jobs:
          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
          application_name: job-fair-online-backend
          environment_name: Jobfaironlinebackend-env
-#          version_label: ${{github.SHA}}
-         version_label: 123
+         version_label: ${{github.SHA}}
+#          version_label: 123
          region: ap-southeast-1
          deployment_package: jobfair-backend.jar
-         use_existing_version_if_available: false
+         use_existing_version_if_available: true

@@ -1,10 +1,10 @@
 package org.capstone.job_fair.config;
 
 import org.capstone.job_fair.constants.ApiEndPoint;
-import org.capstone.job_fair.jwt.JwtAuthEntryPoint;
-import org.capstone.job_fair.jwt.JwtAuthenticationFilter;
-import org.capstone.job_fair.jwt.JwtTokenProvider;
-import org.capstone.job_fair.jwt.details.UserDetailsServiceImpl;
+import org.capstone.job_fair.config.jwt.JwtAuthEntryPoint;
+import org.capstone.job_fair.config.jwt.JwtAuthenticationFilter;
+import org.capstone.job_fair.config.jwt.JwtTokenProvider;
+import org.capstone.job_fair.config.jwt.details.UserDetailsServiceImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,7 +18,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 //import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
@@ -78,8 +77,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 //Authenticated API Security
                 .authorizeRequests().antMatchers(ApiEndPoint.Authentication.AUTHENTICATION_ENDPOINT + "/**").permitAll().and()
                 //Account API Security
-                .authorizeRequests().antMatchers(ApiEndPoint.Attendant.REGISTER_ENDPOINT).permitAll()
-                .anyRequest().authenticated();
+                .authorizeRequests().antMatchers(ApiEndPoint.Attendant.REGISTER_ENDPOINT).permitAll().and()
+                .authorizeRequests().antMatchers(ApiEndPoint.Account.REGISTER_COMPANY_MANAGER).permitAll().and()
+                //ResetPassword API Security
+                .authorizeRequests().antMatchers(ApiEndPoint.Authentication.REFRESH_TOKEN_ENDPOINT).permitAll().and()
+                .authorizeRequests().antMatchers(ApiEndPoint.Authentication.GENERATE_OTP_ENDPOINT).permitAll()
+                .anyRequest().authenticated().and()
+                .headers().contentSecurityPolicy("script-src 'self'");
 
         //after logout success, invalidate session
         http.logout().logoutUrl(ApiEndPoint.Authentication.LOGOUT_ENDPOINT).invalidateHttpSession(true);
