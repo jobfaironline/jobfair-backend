@@ -7,6 +7,5 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring", uses = {AccountEntityMapper.class})
 public abstract class CompanyEmployeeEntityMapper {
     public abstract CompanyEmployeeDTO toDTO(CompanyEmployeeEntity attendant);
-
     public abstract CompanyEmployeeEntity toEntity(CompanyEmployeeDTO dto);
 }
