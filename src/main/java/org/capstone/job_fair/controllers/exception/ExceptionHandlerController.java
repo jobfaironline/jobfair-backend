@@ -8,6 +8,7 @@ import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -52,6 +53,11 @@ public class ExceptionHandlerController {
         return buildErrorResponse(ex, MessageUtil.getMessage("MSG_METHOD_ARGUMENT_NOT_VALID", ""), HttpStatus.BAD_REQUEST, request);
     }
 
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex, WebRequest request) {
+        return buildErrorResponse(ex, MessageUtil.getMessage("MSG_HTTP_MESSAGE_NOT_VALID", ""), HttpStatus.BAD_REQUEST, request);
+    }
+
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleEntityNotFoundException(EntityNotFoundException ex, WebRequest request){
         return buildErrorResponse(ex, MessageUtil.getMessage("MSG_ENTITY_NOT_FOUND", ""), HttpStatus.BAD_REQUEST, request);
@@ -65,7 +71,7 @@ public class ExceptionHandlerController {
 
     private ResponseEntity<ErrorResponse> buildErrorResponse(Exception exception, String message, HttpStatus httpStatus,
                                                              WebRequest request) {
-        ErrorResponse errorResponse = new ErrorResponse(httpStatus.value(), message + exception, new Date());
+        ErrorResponse errorResponse = new ErrorResponse(httpStatus.value(), message + exception.getMessage(), new Date());
         return ResponseEntity.status(httpStatus).body(errorResponse);
     }
 

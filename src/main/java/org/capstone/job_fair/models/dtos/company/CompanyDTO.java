@@ -1,6 +1,7 @@
 package org.capstone.job_fair.models.dtos.company;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -8,6 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class CompanyDTO {
     private String id;
     private String taxId;
@@ -15,5 +17,7 @@ public class CompanyDTO {
     private String address;
     private String phone;
     private String email;
+    private Integer employeeMaxNum;
     private String websiteUrl;
+    private String sizeId;
 }

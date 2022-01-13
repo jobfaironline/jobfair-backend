@@ -16,6 +16,7 @@ public class EmailValidator implements ConstraintValidator<EmailConstraint, Stri
 
     @Override
     public boolean isValid(String email, ConstraintValidatorContext ctx) {
+        if (email == null) return true;
         Matcher matcher = RegexPattern.VALID_EMAIL_REGEX.matcher(email);
         return matcher.find();
     }
