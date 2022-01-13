@@ -39,13 +39,12 @@ public class AttendantController {
         dto.setPassword(request.getPassword());
         dto.setFirstname(request.getFirstName());
         dto.setLastname(request.getLastName());
-        dto.setFirstname(request.getFirstName());
+        dto.setMiddlename(request.getMiddleName());
         dto.setGender(request.getGender());
 
         AttendantDTO attendantDTO = new AttendantDTO();
         attendantDTO.setAccount(dto);
         attendantDTO.setAccountId(dto.getId());
-        attendantDTO.setAccount(dto);
         return attendantDTO;
     }
 
@@ -86,7 +85,7 @@ public class AttendantController {
                 .maritalStatus(req.getMaritalStatus())
                 .build();
 
-        if (accountService.getCountActiveAccountByEmail(accountDTO.getEmail()) != 0){
+        if (accountService.getCountByActiveEmail(accountDTO.getEmail()) != 0){
             return GenericMessageResponseEntity.build("Email existed", HttpStatus.BAD_REQUEST);
         }
 

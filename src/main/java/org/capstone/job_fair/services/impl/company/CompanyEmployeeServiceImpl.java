@@ -5,7 +5,9 @@ import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
 import org.capstone.job_fair.models.entities.account.GenderEntity;
 import org.capstone.job_fair.models.entities.account.RoleEntity;
+import org.capstone.job_fair.models.entities.company.CompanyEntity;
 import org.capstone.job_fair.models.enums.Role;
+import org.capstone.job_fair.repositories.company.CompanyRepository;
 import org.capstone.job_fair.services.mappers.CompanyEmployeeEntityMapper;
 import org.capstone.job_fair.models.statuses.AccountStatus;
 import org.capstone.job_fair.repositories.company.CompanyEmployeeRepository;
@@ -16,6 +18,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 @Service
@@ -29,6 +33,9 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
 
     @Autowired
     private CompanyEmployeeRepository employeeRepository;
+
+    @Autowired
+    private CompanyRepository companyRepository;
 
     @Override
     public void createNewCompanyManagerAccount(CompanyEmployeeDTO dto) {
@@ -51,6 +58,23 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
         accountEntity.setGender(gender);
 
         employeeRepository.save(entity);
+
+    }
+
+    @Override
+    public void updateProfile(CompanyEmployeeDTO dto) {
+        try {
+            employeeRepository.findById(dto.getAccountId()).map((atd) -> {
+                mapper.updateCompanyEmployeeMapperFromDto(dto, atd);
+                if (dto.getCompanyDTO() != null){
+                    CompanyEntity companyEntity = companyRepository.getById(dto.getCompanyDTO().getId());
+                    atd.setCompany(companyEntity);
+                }
+                return employeeRepository.save(atd);
+            }).orElseThrow(NoSuchElementException::new);
+        } catch (EntityNotFoundException e){
+            throw new NoSuchElementException();
+        }
 
     }
 }
