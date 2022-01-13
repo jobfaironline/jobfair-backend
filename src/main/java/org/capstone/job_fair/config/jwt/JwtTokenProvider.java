@@ -24,7 +24,7 @@ public class JwtTokenProvider {
 
     public String generateToken(String email, long expiredLength){
         Date now = new Date();
-        Date expiredDate = new Date(now.getTime() + expiredLength * 60 * 1000);
+        Date expiredDate = new Date(now.getTime() + expiredLength * 60 * 1000 * 1000);
 
         return Jwts.builder()
                 .setSubject(email)
@@ -37,7 +37,7 @@ public class JwtTokenProvider {
 
     public String generateToken(Authentication authentication, long expiredLength){
         Date now = new Date();
-        Date expiredDate = new Date(now.getTime() + expiredLength * 60 * 1000);
+        Date expiredDate = new Date(now.getTime() + expiredLength * 60 * 1000 * 1000);
 
         UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
 

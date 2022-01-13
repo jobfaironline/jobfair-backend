@@ -6,7 +6,9 @@ import org.capstone.job_fair.models.entities.account.AccountEntity;
 import org.capstone.job_fair.models.entities.account.GenderEntity;
 import org.capstone.job_fair.models.entities.account.RoleEntity;
 import org.capstone.job_fair.models.entities.attendant.AttendantEntity;
+import org.capstone.job_fair.models.enums.Gender;
 import org.capstone.job_fair.models.enums.Role;
+import org.capstone.job_fair.services.interfaces.account.AccountService;
 import org.capstone.job_fair.services.mappers.AttendantEntityMapper;
 import org.capstone.job_fair.models.statuses.AccountStatus;
 import org.capstone.job_fair.repositories.attendant.AttendantRepository;
@@ -16,6 +18,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -31,6 +35,9 @@ public class AttendantServiceImpl implements AttendantService {
     @Autowired
     private AttendantRepository attendantRepository;
 
+    @Autowired
+    private AccountService accountService;
+
     @Override
     public void createNewAccount(AttendantDTO dto) {
         String id = UUID.randomUUID().toString();
@@ -41,7 +48,6 @@ public class AttendantServiceImpl implements AttendantService {
         accountEntity.setPassword(encoder.encode(accountEntity.getPassword()));
         accountEntity.setProfileImageUrl(AccountConstant.DEFAULT_PROFILE_IMAGE_URL);
         accountEntity.setStatus(AccountStatus.ACTIVE);
-
         RoleEntity role = new RoleEntity();
         role.setId(Role.ATTENDANT.ordinal());
         accountEntity.setRole(role);
@@ -50,5 +56,23 @@ public class AttendantServiceImpl implements AttendantService {
         gender.setId(dto.getAccount().getGender().ordinal());
         accountEntity.setGender(gender);
         attendantRepository.save(attendantEntity);
+    }
+    @Override
+    public AttendantEntity getAttendantByEmail(String email) {
+        Optional<AccountEntity> accountEntity = accountService.getActiveAccountByEmail(email);
+        return attendantRepository.findById(accountEntity.get().getId()).orElseThrow(() ->  new NoSuchElementException("Account not found"));
+    }
+
+    @Override
+    public AttendantEntity update(AttendantDTO attendantDTO) {
+        return attendantRepository.findById(attendantDTO.getAccountId()).map((atd) -> {
+            mapper.updateAttendantMapperFromDto(attendantDTO, atd);
+            if (attendantDTO.getAccount().getGender() != null){
+                GenderEntity genderEntity = new GenderEntity();
+                genderEntity.setId(attendantDTO.getAccount().getGender().ordinal());
+                atd.getAccount().setGender(genderEntity);
+            }
+            return attendantRepository.save(atd);
+        }).orElseThrow(() ->  new NoSuchElementException("Account not found"));
     }
 }

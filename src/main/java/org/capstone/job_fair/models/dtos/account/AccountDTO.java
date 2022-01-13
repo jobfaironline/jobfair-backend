@@ -3,14 +3,15 @@ package org.capstone.job_fair.models.dtos.account;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.capstone.job_fair.models.statuses.AccountStatus;
 import org.capstone.job_fair.models.enums.Gender;
 
 import java.io.Serializable;
 
 @Data
-@Builder
 @AllArgsConstructor
+@Builder
 public class AccountDTO implements Serializable {
     private String id;
     private String email;
