@@ -86,7 +86,7 @@ public class AttendantController {
                 .maritalStatus(req.getMaritalStatus())
                 .build();
 
-        if (accountService.getCountActiveAccountByEmail(accountDTO.getEmail()) != 0){
+        if (accountService.getCountByActiveEmail(accountDTO.getEmail()) != 0){
             return GenericMessageResponseEntity.build("Email existed", HttpStatus.BAD_REQUEST);
         }
 
