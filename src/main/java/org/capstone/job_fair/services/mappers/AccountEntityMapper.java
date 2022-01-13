@@ -12,8 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE )
 public abstract class AccountEntityMapper {
 
-    @Autowired
-    protected RoleRepository roleRepository;
     @Mapping(target = "gender", ignore = true)
     public abstract AccountDTO toDTO(AccountEntity account);
     @Mapping(target = "gender", ignore = true)

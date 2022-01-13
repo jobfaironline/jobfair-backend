@@ -3,6 +3,7 @@ package org.capstone.job_fair.controllers.company;
 
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
+import org.capstone.job_fair.models.dtos.company.CompanyDTO;
 import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
 import org.capstone.job_fair.controllers.payload.CompanyManagerRegisterRequest;
 import org.capstone.job_fair.controllers.payload.GenericMessageResponseEntity;
@@ -17,6 +18,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.UUID;
 
 @RestController
 public class CompanyManagerController {
@@ -35,22 +38,7 @@ public class CompanyManagerController {
     @Autowired
     private CompanyEmployeeService companyEmployeeService;
 
-
-    @PostMapping(ApiEndPoint.Account.REGISTER_COMPANY_MANAGER)
-    public ResponseEntity<?> register(@Validated @RequestBody CompanyManagerRegisterRequest request) {
-        //check if email existed?
-        if (isEmailExist(request.getEmail())) {
-            return GenericMessageResponseEntity.build(EMAIL_EXISTED, HttpStatus.BAD_REQUEST);
-        }
-        //check if password match confirm password
-        if (!request.getPassword().equals(request.getConfirmPassword())) {
-            return GenericMessageResponseEntity.build(CONFIRM_NOT_MATCH_PASSWORD, HttpStatus.BAD_REQUEST);
-        }
-        //check gender validation
-        if (!isGenderExist(request.getGender().ordinal())) {
-            return GenericMessageResponseEntity.build(GENDER_INVALID, HttpStatus.BAD_REQUEST);
-        }
-
+    private CompanyEmployeeDTO mappingRegisterRequestToDTO(CompanyManagerRegisterRequest request) {
         AccountDTO accountDTO = new AccountDTO();
         accountDTO.setEmail(request.getEmail());
         accountDTO.setPassword(request.getPassword());
@@ -62,8 +50,24 @@ public class CompanyManagerController {
 
         CompanyEmployeeDTO dto = new CompanyEmployeeDTO();
         dto.setAccount(accountDTO);
+        dto.setAccountId(accountDTO.getId());
+        return dto;
+    }
 
+    @PostMapping(ApiEndPoint.Account.REGISTER_COMPANY_MANAGER)
+    public ResponseEntity<?> register(@Validated @RequestBody CompanyManagerRegisterRequest request) {
+        //check if email existed?
+        if (isEmailExist(request.getEmail())) {
+            return GenericMessageResponseEntity.build(EMAIL_EXISTED, HttpStatus.BAD_REQUEST);
+        }
+        //check if password match confirm password
+        if (!request.getPassword().equals(request.getConfirmPassword())) {
+            return GenericMessageResponseEntity.build(CONFIRM_NOT_MATCH_PASSWORD, HttpStatus.BAD_REQUEST);
+        }
+
+        CompanyEmployeeDTO dto = mappingRegisterRequestToDTO(request);
         companyEmployeeService.createNewCompanyManagerAccount(dto);
+
         return new ResponseEntity<>(new RegisterResponse(SUCCESS_TO_REGISTER), HttpStatus.CREATED);
     }
 
