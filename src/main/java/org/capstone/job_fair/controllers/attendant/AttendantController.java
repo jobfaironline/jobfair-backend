@@ -1,7 +1,7 @@
 package org.capstone.job_fair.controllers.attendant;
 
 import org.capstone.job_fair.constants.ApiEndPoint;
-import org.capstone.job_fair.controllers.payload.AttendantRequest;
+import org.capstone.job_fair.controllers.payload.UpdateAttendantRequest;
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
 import org.capstone.job_fair.models.dtos.attendant.AttendantDTO;
 
@@ -65,7 +65,7 @@ public class AttendantController {
     }
 
     @PostMapping(ApiEndPoint.Attendant.UPDATE_ENDPOINT)
-    public ResponseEntity<?> update(@Validated @RequestBody AttendantRequest req) {
+    public ResponseEntity<?> update(@Validated @RequestBody UpdateAttendantRequest req) {
         AccountDTO accountDTO = req.getAccount() != null ? AccountDTO.builder()
                 .id(req.getAccountId())
                 .lastname(req.getAccount().getLastname())
@@ -85,6 +85,11 @@ public class AttendantController {
                 .title(req.getTitle())
                 .maritalStatus(req.getMaritalStatus())
                 .build();
+
+        if (accountService.getCountActiveAccountByEmail(accountDTO.getEmail()) != 0){
+            return GenericMessageResponseEntity.build("Email existed", HttpStatus.BAD_REQUEST);
+        }
+
         attendantService.update(dto);
         return GenericMessageResponseEntity.build(SUCCESS_UPDATE_MESSAGE, HttpStatus.OK);
     }
