@@ -14,4 +14,6 @@ public interface CompanyService {
     CompanyEntity updateCompany(CompanyDTO dto) ;
     Boolean deleteCompany(String id);
     CompanyEntity findByTaxId(String taxId);
+    Integer getCountByEmail(String email);
+    Integer getCountByTaxId(String taxId);
 }

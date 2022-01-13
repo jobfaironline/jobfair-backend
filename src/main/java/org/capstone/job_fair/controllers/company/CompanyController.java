@@ -14,6 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
@@ -22,6 +23,7 @@ import java.util.UUID;
 public class CompanyController {
 
     private static final String TAX_ID_EXIST_MSG = "Tax Id has already existed. Please choose another one.";
+    private static final String EMAIL_EXIST_MSG = "Email has already existed. Please choose another one.";
     private static final String NOT_FOUND_COMPANY = "Company not found with id: ";
     private static final String CREATE_COMPANY_SUCCESS = "Create company successfully.";
     private static final String CREATE_COMPANY_FAIL = "Fail to create company.";
@@ -33,6 +35,14 @@ public class CompanyController {
 
     @Autowired
     private CompanyService companyService;
+
+    private boolean isEmailExisted(String email){
+        return companyService.getCountByEmail(email) != 0;
+    }
+
+    private boolean isTaxIDExisted(String taxID){
+        return companyService.getCountByTaxId(taxID) != 0;
+    }
 
 
     @PreAuthorize("hasAuthority('ADMIN')")
@@ -79,8 +89,14 @@ public class CompanyController {
 
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('COMPANY_MANAGER')")
     @PutMapping(ApiEndPoint.Company.COMPANY_ENDPOINT)
-    public ResponseEntity<?> update(@Validated @RequestBody UpdateCompanyRequest request) {
+    public ResponseEntity<?> update(@Valid @RequestBody UpdateCompanyRequest request) {
        try {
+           if (isEmailExisted(request.getEmail())){
+               return GenericMessageResponseEntity.build(EMAIL_EXIST_MSG, HttpStatus.BAD_REQUEST);
+           }
+           if (isTaxIDExisted(request.getTaxId())){
+               return GenericMessageResponseEntity.build(TAX_ID_EXIST_MSG, HttpStatus.BAD_REQUEST);
+           }
            CompanyDTO dto = CompanyDTO.builder()
                    .id(request.getId())
                    .name(request.getName())
@@ -90,6 +106,7 @@ public class CompanyController {
                    .employeeMaxNum(request.getEmployeeMaxNum())
                    .websiteUrl(request.getUrl())
                    .sizeId(request.getSizeId())
+                   .taxId(request.getTaxId())
                    .build();
            CompanyEntity result = companyService.updateCompany(dto);
            return result != null ? GenericMessageResponseEntity.build(UPDATE_COMPANY_SUCCESS, HttpStatus.OK)
@@ -108,17 +125,5 @@ public class CompanyController {
                 : new ResponseEntity<>(new UpdateCompanyResponse(DELETE_COMPANY_FAIL), HttpStatus.BAD_REQUEST);
     }
 
-    private CompanyDTO mappingRequestToDTO(CreateCompanyRequest request) {
-        CompanyDTO dto = new CompanyDTO();
-        dto.setTaxId(request.getTaxID().trim());
-        dto.setName(request.getName().trim());
-        dto.setAddress(request.getAddress().trim());
-        dto.setPhone(request.getPhone().trim());
-        dto.setEmail(request.getEmail().trim());
-        dto.setWebsiteUrl(request.getUrl().trim());
-        dto.setSizeId(request.getSizeId());
-
-        return dto;
-    }
 
 }

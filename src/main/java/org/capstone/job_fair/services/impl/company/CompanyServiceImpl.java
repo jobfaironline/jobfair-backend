@@ -66,13 +66,12 @@ public class CompanyServiceImpl implements CompanyService {
     @Transactional
     @Override
     public CompanyEntity updateCompany(CompanyDTO dto) {
-        String sizeId = dto.getSizeId();
-
-        CompanySizeEntity sizeEntity = findSizeById(dto.getSizeId());
-        if (sizeEntity == null) {
-            throw new NoSuchElementException(NOT_FOUND_SIZE);
+        if (dto.getSizeId()!=null){
+            CompanySizeEntity sizeEntity = findSizeById(dto.getSizeId());
+            if (sizeEntity == null) {
+                throw new NoSuchElementException(NOT_FOUND_SIZE);
+            }
         }
-
         return companyRepository.findById(dto.getId()).map(com -> {
             mapper.DTOToEntity(dto, com);
             return companyRepository.save(com);
@@ -96,4 +95,13 @@ public class CompanyServiceImpl implements CompanyService {
         return result.isPresent() ? result.get() : null;
     }
 
+    @Override
+    public Integer getCountByEmail(String email) {
+        return companyRepository.countByEmail(email);
+    }
+
+    @Override
+    public Integer getCountByTaxId(String taxId) {
+        return companyRepository.countByTaxId(taxId);
+    }
 }

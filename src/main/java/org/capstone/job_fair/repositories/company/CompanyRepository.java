@@ -13,4 +13,6 @@ import java.util.Optional;
 @RepositoryRestResource(path = ApiEndPoint.RestDataEndpoint.COMPANY)
 public interface CompanyRepository extends JpaRepository<CompanyEntity, String> {
     Optional<CompanyEntity> findByTaxId(String taxId);
+    Integer countByEmail(String email);
+    Integer countByTaxId(String taxId);
 }
