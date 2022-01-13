@@ -31,7 +31,9 @@ public class ApiEndPoint {
         public static final String ATTENDANT_ENDPOINT = ROOT_ENDPOINT + VERSION + "/attendants";
     }
 
-
+    public static final class Job {
+        public static final String JOB_POSITION_ENDPOINT = ROOT_ENDPOINT + VERSION + "/job";
+    }
 
     public static final class RestDataEndpoint {
         public static final String ACCOUNT = "accounts";
