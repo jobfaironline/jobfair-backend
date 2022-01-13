@@ -2,6 +2,9 @@ package org.capstone.job_fair.controllers.company;
 
 
 import org.capstone.job_fair.constants.ApiEndPoint;
+import org.capstone.job_fair.models.dtos.account.AccountDTO;
+import org.capstone.job_fair.models.dtos.company.CompanyDTO;
+import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
 import org.capstone.job_fair.controllers.payload.CompanyManagerRegisterRequest;
 import org.capstone.job_fair.controllers.payload.GenericMessageResponseEntity;
 import org.capstone.job_fair.controllers.payload.RegisterResponse;
@@ -24,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 public class CompanyEmployeeController {
@@ -50,7 +54,7 @@ public class CompanyEmployeeController {
     }
 
     private boolean isEmailExist(String email) {
-        return accountService.getCountByActiveEmail(email) == 0;
+        return accountService.getCountByActiveEmail(email) != 0;
     }
 
 
@@ -90,11 +94,11 @@ public class CompanyEmployeeController {
     public ResponseEntity<?> updateProfile(@Validated @RequestBody UpdateCompanyEmployeeProfileRequest request) {
 
         Optional<AccountEntity> accountOpt = accountService.getActiveAccountById(request.getAccountId());
-        if (!accountOpt.isPresent()){
+        if (!accountOpt.isPresent()) {
             return GenericMessageResponseEntity.build("Account does not existed", HttpStatus.BAD_REQUEST);
         }
 
-        if (request.getAccountRequest()!= null && request.getAccountRequest().getEmail() != null && isEmailExist(request.getAccountRequest().getEmail())) {
+        if (request.getAccountRequest() != null && request.getAccountRequest().getEmail() != null && isEmailExist(request.getAccountRequest().getEmail())) {
             return GenericMessageResponseEntity.build(EMAIL_EXISTED, HttpStatus.BAD_REQUEST);
         }
 
