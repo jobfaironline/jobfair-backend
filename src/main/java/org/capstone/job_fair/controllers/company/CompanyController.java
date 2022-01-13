@@ -93,10 +93,10 @@ public class CompanyController {
     @PutMapping(ApiEndPoint.Company.COMPANY_ENDPOINT)
     public ResponseEntity<?> update(@Valid @RequestBody UpdateCompanyRequest request) {
        try {
-           if (isEmailExisted(request.getEmail())){
+           if (request.getEmail() != null && isEmailExisted(request.getEmail())){
                return GenericMessageResponseEntity.build(EMAIL_EXIST_MSG, HttpStatus.BAD_REQUEST);
            }
-           if (isTaxIDExisted(request.getTaxId())){
+           if (request.getTaxId() != null && isTaxIDExisted(request.getTaxId())){
                return GenericMessageResponseEntity.build(TAX_ID_EXIST_MSG, HttpStatus.BAD_REQUEST);
            }
            CompanyDTO dto = CompanyDTO.builder()
