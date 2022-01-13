@@ -13,6 +13,10 @@ public interface AccountService {
 
     AccountEntity save(AccountEntity account);
 
-    Integer getCountActiveAccountByEmail(String email);
+    Optional<AccountEntity> getActiveAccountById(String id);
+
+    Integer getCountByActiveEmail(String email);
+
+    Integer getCountActiveAccountById(String id);
 
 }

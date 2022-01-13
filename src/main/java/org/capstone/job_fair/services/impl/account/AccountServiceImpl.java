@@ -35,8 +35,18 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Integer getCountActiveAccountByEmail(String email) {
-        return accountRepository.countByEmail(email);
+    public Optional<AccountEntity> getActiveAccountById(String id) {
+        return accountRepository.findByIdAndStatus(id, AccountStatus.ACTIVE);
+    }
+
+    @Override
+    public Integer getCountByActiveEmail(String email) {
+        return accountRepository.countByEmailAndStatus(email, AccountStatus.ACTIVE);
+    }
+
+    @Override
+    public Integer getCountActiveAccountById(String id) {
+        return accountRepository.countByIdAndStatus(id, AccountStatus.ACTIVE);
     }
 
 

@@ -16,4 +16,6 @@ public interface CompanyService {
     CompanyEntity findByTaxId(String taxId);
     Integer getCountByEmail(String email);
     Integer getCountByTaxId(String taxId);
+    Integer getCountById(String id);
+    Optional<CompanyEntity> findCompanyById(String id);
 }

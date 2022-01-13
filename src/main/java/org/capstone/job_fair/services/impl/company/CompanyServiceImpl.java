@@ -4,7 +4,6 @@ import org.capstone.job_fair.models.dtos.company.CompanyDTO;
 import org.capstone.job_fair.models.entities.company.CompanyEntity;
 import org.capstone.job_fair.models.entities.company.CompanySizeEntity;
 import org.capstone.job_fair.repositories.company.CompanyRepository;
-import org.capstone.job_fair.repositories.company.CompanySizeRepository;
 import org.capstone.job_fair.services.interfaces.company.CompanyService;
 import org.capstone.job_fair.services.interfaces.company.CompanySizeService;
 import org.capstone.job_fair.services.mappers.CompanyEntityMapper;
@@ -104,4 +103,16 @@ public class CompanyServiceImpl implements CompanyService {
     public Integer getCountByTaxId(String taxId) {
         return companyRepository.countByTaxId(taxId);
     }
+
+    @Override
+    public Integer getCountById(String id) {
+        return companyRepository.countById(id);
+    }
+
+    @Override
+    public Optional<CompanyEntity> findCompanyById(String id) {
+        return companyRepository.findById(id);
+    }
+
+
 }

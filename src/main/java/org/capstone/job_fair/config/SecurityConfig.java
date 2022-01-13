@@ -78,7 +78,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests().antMatchers(ApiEndPoint.Authentication.AUTHENTICATION_ENDPOINT + "/**").permitAll().and()
                 //Account API Security
                 .authorizeRequests().antMatchers(ApiEndPoint.Attendant.REGISTER_ENDPOINT).permitAll().and()
-                .authorizeRequests().antMatchers(ApiEndPoint.Account.REGISTER_COMPANY_MANAGER).permitAll().and()
+                .authorizeRequests().antMatchers(ApiEndPoint.CompanyEmployee.REGISTER_COMPANY_MANAGER).permitAll().and()
                 //ResetPassword API Security
                 .authorizeRequests().antMatchers(ApiEndPoint.Authentication.REFRESH_TOKEN_ENDPOINT).permitAll().and()
                 .authorizeRequests().antMatchers(ApiEndPoint.Authentication.GENERATE_OTP_ENDPOINT).permitAll().and()
