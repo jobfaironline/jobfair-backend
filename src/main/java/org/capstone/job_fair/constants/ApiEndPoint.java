@@ -27,8 +27,14 @@ public class ApiEndPoint {
 
     public static final class Account {
         public static final String ACCOUNT_ENDPOINT = ROOT_ENDPOINT + VERSION + "/accounts";
-        public static final String REGISTER_COMPANY_MANAGER = ROOT_ENDPOINT + VERSION + "/companies/register";
         public static final String ATTENDANT_ENDPOINT = ROOT_ENDPOINT + VERSION + "/attendants";
+    }
+
+    public static final class CompanyEmployee {
+        public static final String COMPANY_EMPLOYEE_ENDPOINT = ROOT_ENDPOINT + VERSION + "/company-employees";
+        public static final String REGISTER_COMPANY_MANAGER = COMPANY_EMPLOYEE_ENDPOINT+ "/manager/register";
+        public static final String UPDATE_PROFILE_ENDPOINT = COMPANY_EMPLOYEE_ENDPOINT + "/update";
+
     }
 
 

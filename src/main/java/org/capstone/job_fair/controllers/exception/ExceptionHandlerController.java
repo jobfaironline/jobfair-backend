@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 
+import javax.persistence.EntityNotFoundException;
 import java.nio.file.AccessDeniedException;
 import java.util.*;
 
@@ -49,6 +50,11 @@ public class ExceptionHandlerController {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> MethodArgumentNotValid(MethodArgumentNotValidException ex, WebRequest request) {
         return buildErrorResponse(ex, MessageUtil.getMessage("MSG_METHOD_ARGUMENT_NOT_VALID", ""), HttpStatus.BAD_REQUEST, request);
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleEntityNotFoundException(EntityNotFoundException ex, WebRequest request){
+        return buildErrorResponse(ex, MessageUtil.getMessage("MSG_ENTITY_NOT_FOUND", ""), HttpStatus.BAD_REQUEST, request);
     }
 
     public ResponseEntity handleEntityNotFound() {

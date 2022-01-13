@@ -15,4 +15,6 @@ import java.util.Optional;
 @RepositoryRestResource(path = ApiEndPoint.RestDataEndpoint.ACCOUNT, exported = false)
 public interface AccountRepository extends JpaRepository<AccountEntity, String> {
     Optional<AccountEntity> findByEmailAndStatus(String email, AccountStatus status);
+    Optional<AccountEntity> findByIdAndStatus(String id, AccountStatus status);
+    Integer countByEmailAndStatus(String email, AccountStatus status);
 }
