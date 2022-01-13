@@ -44,5 +44,10 @@ public class AccountServiceImpl implements AccountService {
         return accountRepository.countByEmailAndStatus(email, AccountStatus.ACTIVE);
     }
 
+    @Override
+    public Integer getCountActiveAccountById(String id) {
+        return accountRepository.countByIdAndStatus(id, AccountStatus.ACTIVE);
+    }
+
 
 }

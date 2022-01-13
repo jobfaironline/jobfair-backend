@@ -93,8 +93,7 @@ public class CompanyEmployeeController {
     @PostMapping(ApiEndPoint.CompanyEmployee.UPDATE_PROFILE_ENDPOINT)
     public ResponseEntity<?> updateProfile(@Validated @RequestBody UpdateCompanyEmployeeProfileRequest request) {
 
-        Optional<AccountEntity> accountOpt = accountService.getActiveAccountById(request.getAccountId());
-        if (!accountOpt.isPresent()) {
+        if (!(accountService.getCountActiveAccountById(request.getAccountId()) == 0)) {
             return GenericMessageResponseEntity.build("Account does not existed", HttpStatus.BAD_REQUEST);
         }
 
@@ -118,7 +117,7 @@ public class CompanyEmployeeController {
 
         CompanyDTO companyDTO = null;
         if (request.getCompanyId() != null) {
-            if (!companyService.findCompanyById(request.getCompanyId()).isPresent()) {
+            if (!(companyService.getCountById(request.getCompanyId()) == 0)) {
                 return GenericMessageResponseEntity.build("Company not existed", HttpStatus.BAD_REQUEST);
             }
             companyDTO = new CompanyDTO();
@@ -130,7 +129,6 @@ public class CompanyEmployeeController {
                 .account(accountDTO)
                 .accountId(request.getAccountId())
                 .build();
-        System.out.println(companyEmployeeDTO);
         companyEmployeeService.updateProfile(companyEmployeeDTO);
 
         return GenericMessageResponseEntity.build("noice", HttpStatus.OK);

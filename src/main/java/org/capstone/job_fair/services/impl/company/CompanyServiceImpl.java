@@ -105,6 +105,11 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
+    public Integer getCountById(String id) {
+        return companyRepository.countById(id);
+    }
+
+    @Override
     public Optional<CompanyEntity> findCompanyById(String id) {
         return companyRepository.findById(id);
     }
