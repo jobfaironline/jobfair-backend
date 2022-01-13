@@ -32,19 +32,17 @@ public class CreateCompanyRequest {
     @Size(max = 1000)
     private String name;
 
-    @NotBlank(message = "Address  " + MessageConstant.InvalidFormat.NOT_BLANK_FORMAT)
     @Size(max = 1000)
     private String address;
 
-    @NotBlank(message = "Phone " + MessageConstant.InvalidFormat.NOT_BLANK_FORMAT)
-    @Size(max = 11)
+    @PhoneConstraint
     private String phone;
 
     @EmailConstraint
     private String email;
 
     @Min(value = MIN_EMPLOYEE , message = MessageConstant.InvalidFormat.MIN_EMPLOYEE_INVALID)
-    private int employeeMaxNum;
+    private Integer employeeMaxNum;
 
     private String url;
 

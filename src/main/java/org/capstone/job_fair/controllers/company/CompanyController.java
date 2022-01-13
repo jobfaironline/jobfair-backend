@@ -63,8 +63,10 @@ public class CompanyController {
     @PostMapping(ApiEndPoint.Company.COMPANY_ENDPOINT)
     public ResponseEntity<?> create(@Validated @RequestBody CreateCompanyRequest request) {
        try{
-           CompanyEntity company = companyService.findByTaxId(request.getTaxID().trim());
-           if (company != null) {
+           if (isEmailExisted(request.getEmail())){
+               return GenericMessageResponseEntity.build(EMAIL_EXIST_MSG, HttpStatus.BAD_REQUEST);
+           }
+           if (isTaxIDExisted(request.getTaxID())){
                return GenericMessageResponseEntity.build(TAX_ID_EXIST_MSG, HttpStatus.BAD_REQUEST);
            }
            CompanyDTO dto = CompanyDTO.builder()
