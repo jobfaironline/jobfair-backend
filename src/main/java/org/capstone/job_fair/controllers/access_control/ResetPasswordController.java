@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -42,12 +43,13 @@ public class ResetPasswordController {
     private static final String INVALID_OTP_MESSAGE = "OTP is invalid";
     private static final String EXPIRED_OTP_MESSAGE = "OTP is invalid";
     private static final String RESET_SUCCESSFULLY_MESSAGE = "Reset password successfully";
-    private final String INTERVAL_REQUEST_MESSAGE = "Cannot request OTP for this email 2 times in " + RESET_PASSWORD_TOKEN_EXPIRED_TIME + " minutes";
+    private static final String INTERVAL_REQUEST_MESSAGE = "Cannot request OTP for this email 2 times in %s minutes";
     private static final String REQUEST_RESET_SUCCESSFULLY_MESSAGE = "An email has been sent to your email";
     private static final String ACCOUNT_NOT_FOUND_MESSAGE = "Account not found";
 
 
     @PostMapping(ApiEndPoint.Authentication.RESET_PASSWORD_ENDPOINT)
+    @Transactional
     public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequest request) {
         //check matching password
         if (!request.getNewPassword().equals(request.getConfirmPassword())) {
@@ -93,10 +95,11 @@ public class ResetPasswordController {
         Optional<AccountEntity> accountOpt = accountService.getActiveAccountByEmail(request.getEmail());
         if (!accountOpt.isPresent()) {
             return GenericMessageResponseEntity.build(ACCOUNT_NOT_FOUND_MESSAGE, HttpStatus.BAD_REQUEST);
-        }
+         }
         AccountEntity account = accountOpt.get();
         //check existed and expired token
-        Optional<PasswordResetTokenEntity> tokenOpt = resetService.findLastValidateTokenByEmail(request.getEmail());
+        Optional<PasswordResetTokenEntity> tokenOpt = resetService.findLastValidateTokenByAccountID(account.getId());
+        System.out.println("AAAAAAAÂ");
         if (!tokenOpt.isPresent()) {
             PasswordResetTokenEntity tokenEntity = this.resetService.createResetToken(account);
             //send mail
@@ -107,14 +110,14 @@ public class ResetPasswordController {
         }
         PasswordResetTokenEntity token = tokenOpt.get();
         if (token.getExpiredTime() > new Date().getTime()) {
-            return GenericMessageResponseEntity.build(INTERVAL_REQUEST_MESSAGE, HttpStatus.BAD_REQUEST);
+            return GenericMessageResponseEntity.build(String.format(INTERVAL_REQUEST_MESSAGE, RESET_PASSWORD_TOKEN_EXPIRED_TIME), HttpStatus.BAD_REQUEST);
         } else {
             resetService.invalidateEntity(token);
-            PasswordResetTokenEntity tokenEntity = this.resetService.createResetToken(account);
+            PasswordResetTokenEntity newToken = this.resetService.createResetToken(account);
             //send mail
             this.mailService.sendMail(account.getEmail(),
                     ResetPasswordTokenConstants.MAIL_SUBJECT,
-                    String.format(ResetPasswordTokenConstants.MAIL_BODY, account.getEmail(), token.getOtp()));
+                    String.format(ResetPasswordTokenConstants.MAIL_BODY, account.getEmail(), newToken.getOtp()));
             return GenericMessageResponseEntity.build(REQUEST_RESET_SUCCESSFULLY_MESSAGE, HttpStatus.OK);
         }
     }
