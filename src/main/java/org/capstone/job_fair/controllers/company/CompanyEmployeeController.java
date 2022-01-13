@@ -85,7 +85,7 @@ public class CompanyEmployeeController {
         return new ResponseEntity<>(new RegisterResponse(SUCCESS_TO_REGISTER), HttpStatus.CREATED);
     }
 
-    @PreAuthorize("hasAuthority('COMPANY_EMPLOYEE')")
+    @PreAuthorize("hasAuthority('COMPANY_EMPLOYEE') or hasAuthority('COMPANY_MANAGER')")
     @PostMapping(ApiEndPoint.CompanyEmployee.UPDATE_PROFILE_ENDPOINT)
     public ResponseEntity<?> updateProfile(@Validated @RequestBody UpdateCompanyEmployeeProfileRequest request) {
 
@@ -94,7 +94,7 @@ public class CompanyEmployeeController {
             return GenericMessageResponseEntity.build("Account does not existed", HttpStatus.BAD_REQUEST);
         }
 
-        if (isEmailExist(request.getAccountRequest().getEmail())) {
+        if (request.getAccountRequest()!= null && request.getAccountRequest().getEmail() != null && isEmailExist(request.getAccountRequest().getEmail())) {
             return GenericMessageResponseEntity.build(EMAIL_EXISTED, HttpStatus.BAD_REQUEST);
         }
 
