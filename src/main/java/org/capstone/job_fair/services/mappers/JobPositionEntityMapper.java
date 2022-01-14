@@ -5,12 +5,14 @@ import org.capstone.job_fair.models.dtos.company.job.JobPositionDTO;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
 import org.capstone.job_fair.models.entities.company.job.JobPositionEntity;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE )
 public abstract class JobPositionEntityMapper {
+    @Mapping(target = "language", ignore = true)
     public abstract JobPositionDTO toDTO(JobPositionEntity jobPosition);
+    @Mapping(target = "language", ignore = true)
     public abstract JobPositionEntity toEntity(JobPositionDTO jobPositionDTO);
-    public abstract void updateAccountMapperFromDto(AccountDTO dto, @MappingTarget AccountEntity entity);
 }

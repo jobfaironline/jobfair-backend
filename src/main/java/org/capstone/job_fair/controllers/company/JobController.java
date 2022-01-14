@@ -32,7 +32,7 @@ public class JobController {
                 .maxSalary(request.getMaxSalary())
                 .contactPersonName(request.getContactPerson())
                 .contactEmail(request.getContactEmail())
-                .languageId(request.getPreferredLanguageId())
+                .language(request.getPreferredLanguage())
                 .levelId(request.getLevelId())
                 .jobTypeId(request.getJobTypeId())
                 .locationId(request.getLocationId())
