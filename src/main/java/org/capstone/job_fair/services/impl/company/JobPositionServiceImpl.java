@@ -31,7 +31,7 @@ public class JobPositionServiceImpl implements JobPositionService {
         LanguageEntity languageEntity = new LanguageEntity();
         languageEntity.setId(dto.getLanguage().getCode());
         JobLevelEntity jobLevelEntity = new JobLevelEntity();
-        jobLevelEntity.setId(dto.getLevelId());
+        jobLevelEntity.setId(dto.getLevel().ordinal());
         JobTypeEntity jobTypeEntity = new JobTypeEntity();
         jobTypeEntity.setId(dto.getJobTypeId());
         CompanyEntity companyEntity = new CompanyEntity();

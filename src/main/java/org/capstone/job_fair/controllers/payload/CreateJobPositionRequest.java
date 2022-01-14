@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.ToString;
 import org.capstone.job_fair.constants.DataConstraint;
+import org.capstone.job_fair.models.enums.JobLevel;
 import org.capstone.job_fair.models.enums.Language;
 import org.capstone.job_fair.validators.EmailConstraint;
 import org.capstone.job_fair.validators.XSSConstraint;
@@ -45,7 +46,7 @@ public class CreateJobPositionRequest {
     @NotNull
     private Language preferredLanguage;
     @NotNull
-    private String levelId;
+    private JobLevel level;
     @NotNull
     private String jobTypeId;
     @NotNull

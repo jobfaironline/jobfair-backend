@@ -14,7 +14,6 @@ import java.io.Serializable;
 public class JobLevelDTO implements Serializable {
     private String id;
     private String name;
-    private String description;
 
     @Override
     public boolean equals(Object o) {

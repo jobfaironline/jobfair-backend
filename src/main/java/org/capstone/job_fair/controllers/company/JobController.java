@@ -33,7 +33,7 @@ public class JobController {
                 .contactPersonName(request.getContactPerson())
                 .contactEmail(request.getContactEmail())
                 .language(request.getPreferredLanguage())
-                .levelId(request.getLevelId())
+                .level(request.getLevel())
                 .jobTypeId(request.getJobTypeId())
                 .locationId(request.getLocationId())
                 .comapnyId(request.getCompanyId())
