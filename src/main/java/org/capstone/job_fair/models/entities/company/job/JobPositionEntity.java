@@ -14,7 +14,7 @@ import java.util.Objects;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "job_position", schema = "dbo", catalog = "")
+@Table(name = "job_position", schema = "dbo")
 public class JobPositionEntity {
     @Id
     @Column(name = "id")

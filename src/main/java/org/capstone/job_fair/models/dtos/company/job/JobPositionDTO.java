@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.capstone.job_fair.models.enums.JobLevel;
+import org.capstone.job_fair.models.enums.JobType;
 import org.capstone.job_fair.models.enums.Language;
 
 
@@ -24,7 +25,7 @@ public class JobPositionDTO {
     private String companyName;
     private Language language;
     private JobLevel level;
-    private String jobTypeId;
+    private JobType jobType;
     private String locationId;
     private String comapnyId;
 }
