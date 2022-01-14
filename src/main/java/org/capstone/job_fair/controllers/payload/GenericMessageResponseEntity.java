@@ -13,10 +13,11 @@ import java.util.Map;
 @Setter
 public class GenericMessageResponseEntity{
     public static ResponseEntity<?> build(String message, HttpStatus status) {
-        Long timestamp = Instant.now().getEpochSecond();
-        Map<String, String> body = new HashMap<>();
+        long timestamp = Instant.now().getEpochSecond();
+        Map<String, Object> body = new HashMap<>();
+        body.put("status", status.value());
         body.put("message", message);
-        body.put("timestamp", timestamp.toString());
+        body.put("timestamp", timestamp);
         return new ResponseEntity<>(body, status);
 
     }

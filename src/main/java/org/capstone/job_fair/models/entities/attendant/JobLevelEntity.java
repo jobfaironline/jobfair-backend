@@ -10,18 +10,18 @@ import java.util.Objects;
 @Setter
 @ToString
 @AllArgsConstructor
-@NoArgsConstructor @Builder
+@NoArgsConstructor
+@Builder
 @Table(name = "job_level", schema = "dbo")
 public class JobLevelEntity {
     @Id
     @Column(name = "id")
-    private String id;
+    private int id;
     @Basic
-    @Column(name = "name")
+    @Column(name = "name", length = 100)
     private String name;
+
     @Basic
-    @Column(name = "description")
-    private String description;
 
     @Override
     public boolean equals(Object o) {
@@ -30,16 +30,13 @@ public class JobLevelEntity {
 
         JobLevelEntity that = (JobLevelEntity) o;
 
-        if (!Objects.equals(id, that.id)) return false;
-        if (!Objects.equals(name, that.name)) return false;
-        return Objects.equals(description, that.description);
+        return !Objects.equals(id, that.id);
     }
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
+        int result = id;
         result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (description != null ? description.hashCode() : 0);
         return result;
     }
 }
