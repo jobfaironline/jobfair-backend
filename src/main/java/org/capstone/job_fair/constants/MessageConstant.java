@@ -8,5 +8,6 @@ public class MessageConstant {
         public static final String NOT_BLANK_FORMAT = " must not be empty";
         public static final String MIN_EMPLOYEE_INVALID = "Minimum of employee is 1 member";
         public static final String MIN_YEAR_OF_EXP_INVALID = "Minimum of employee year's experience is 1 year.";
+        public static final String XSS_MESSAGE ="Cannot enter HTML tag";
     }
 }
