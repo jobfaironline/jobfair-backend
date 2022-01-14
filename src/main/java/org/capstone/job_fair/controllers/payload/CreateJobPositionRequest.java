@@ -12,8 +12,7 @@ import javax.validation.constraints.Size;
 @Data
 @AllArgsConstructor
 @ToString
-public class JobPositionRequest {
-    @NotNull
+public class CreateJobPositionRequest {
     private String id;
     @Size(max = 200)
     @Pattern(message="Type can contain alphanumeric characters only", regexp = "[a-zA-Z0-9 ]+")
@@ -25,14 +24,19 @@ public class JobPositionRequest {
     private Double minSalary;
     private Double maxSalary;
     @Size(max = 100)
+    @NotNull
     @Pattern(message="Type can contain alphanumeric characters only", regexp = "[a-zA-Z0-9 ]+")
     private String contactPerson;
     @Size(max = 322)
     @EmailConstraint
     private String contactEmail;
-    private String preferredLanguageID;
-    private String leveId;
+    @NotNull
+    private String preferredLanguageId;
+    @NotNull
+    private String levelId;
+    @NotNull
     private String jobTypeId;
     private String locationId;
+    @NotNull
     private String companyId;
 }
