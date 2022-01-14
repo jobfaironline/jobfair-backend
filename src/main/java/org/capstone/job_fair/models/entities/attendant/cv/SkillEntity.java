@@ -1,9 +1,15 @@
 package org.capstone.job_fair.models.entities.attendant.cv;
 
+import lombok.*;
+
 import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "skill", schema = "dbo")
 public class SkillEntity {
     @Id

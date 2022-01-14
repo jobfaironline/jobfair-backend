@@ -9,4 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RepositoryRestResource(path = ApiEndPoint.RestDataEndpoint.CV)
 @Transactional
 public interface CvRepository extends JpaRepository<CvEntity, String> {
+
+    Integer countById(String id);
+    Integer countByEmail(String email);
 }

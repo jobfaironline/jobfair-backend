@@ -11,6 +11,7 @@ import java.io.Serializable;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class AccountDTO implements Serializable {
     private String id;
@@ -23,7 +24,4 @@ public class AccountDTO implements Serializable {
     private String lastname;
     private String middlename;
     private Gender gender;
-    public AccountDTO() {
-
-    }
 }

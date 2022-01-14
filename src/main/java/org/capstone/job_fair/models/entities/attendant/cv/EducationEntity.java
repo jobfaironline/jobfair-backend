@@ -22,9 +22,9 @@ public class EducationEntity {
     @Basic
     @Column(name = "school")
     private String school;
-    @Basic
-    @Column(name = "qualification_id")
-    private Integer qualificationId;
+    @ManyToOne
+    @JoinColumn(name = "qualification_id")
+    private QualificationEntity qualification;
     @Basic
     @Column(name = "from_date")
     private Long fromDate;
@@ -39,35 +39,4 @@ public class EducationEntity {
     @JoinColumn(name = "cv_id")
     private CvEntity cv;
 
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        EducationEntity that = (EducationEntity) o;
-
-        if (!Objects.equals(id, that.id)) return false;
-        if (!Objects.equals(subject, that.subject)) return false;
-        if (!Objects.equals(school, that.school)) return false;
-        if (!Objects.equals(qualificationId, that.qualificationId))
-            return false;
-        if (!Objects.equals(toDate, that.toDate)) return false;
-        if (!Objects.equals(fromDate, that.fromDate)) return false;
-        if (!Objects.equals(cv, that.cv)) return false;
-        return Objects.equals(achievement, that.achievement);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (subject != null ? subject.hashCode() : 0);
-        result = 31 * result + (school != null ? school.hashCode() : 0);
-        result = 31 * result + (qualificationId != null ? qualificationId.hashCode() : 0);
-        result = 31 * result + (fromDate != null ? fromDate.hashCode() : 0);
-        result = 31 * result + (toDate != null ? toDate.hashCode() : 0);
-        result = 31 * result + (achievement != null ? achievement.hashCode() : 0);
-        result = 31 * result + (achievement != null ? achievement.hashCode() : 0);
-        return result;
-    }
 }

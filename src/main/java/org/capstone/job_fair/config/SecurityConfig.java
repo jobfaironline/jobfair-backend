@@ -83,7 +83,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests().antMatchers(ApiEndPoint.Authentication.REFRESH_TOKEN_ENDPOINT).permitAll().and()
                 .authorizeRequests().antMatchers(ApiEndPoint.Authentication.GENERATE_OTP_ENDPOINT).permitAll().and()
                 //Company API Security
-                .authorizeRequests().antMatchers(ApiEndPoint.Company.COMPANY_ENDPOINT).permitAll()
+                .authorizeRequests().antMatchers(ApiEndPoint.Company.COMPANY_ENDPOINT).permitAll().and()
+                //Cv API Security
+                .authorizeRequests().antMatchers(ApiEndPoint.Cv.CREATE_CV).hasAuthority("ATTENDANT")
                 .anyRequest().authenticated().and()
                 .headers().contentSecurityPolicy("script-src 'self'");
 

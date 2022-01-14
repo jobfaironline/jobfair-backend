@@ -41,7 +41,9 @@ public class ApiEndPoint {
 
     }
 
-
+    public static final class Cv {
+        public static final String CREATE_CV = ROOT_ENDPOINT + VERSION + "/create-cv";
+    }
 
     public static final class RestDataEndpoint {
         public static final String ACCOUNT = "accounts";

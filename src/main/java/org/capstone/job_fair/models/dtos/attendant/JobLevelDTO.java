@@ -12,22 +12,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor @Builder
 public class JobLevelDTO implements Serializable {
-    private String id;
+    private int id;
     private String name;
-    private String description;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        JobLevelDTO that = (JobLevelDTO) o;
-
-        return id.equals(that.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return id.hashCode();
-    }
 }

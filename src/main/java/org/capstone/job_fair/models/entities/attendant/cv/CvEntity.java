@@ -6,6 +6,8 @@ import org.capstone.job_fair.models.entities.attendant.CountryEntity;
 import org.capstone.job_fair.models.entities.attendant.JobLevelEntity;
 import org.capstone.job_fair.models.entities.account.GenderEntity;
 import org.capstone.job_fair.models.entities.attendant.NationalityEntity;
+import org.capstone.job_fair.models.statuses.CvStatus;
+import org.capstone.job_fair.models.statuses.MaritalStatus;
 
 import javax.persistence.*;
 import java.util.List;
@@ -42,9 +44,16 @@ public class CvEntity {
     @Basic
     @Column(name = "dob")
     private Long dob;
+
     @Basic
     @Column(name = "marital_status")
-    private Boolean maritalStatus;
+    @Enumerated(EnumType.ORDINAL)
+    private MaritalStatus martialStatus;
+
+    @Column(name = "status")
+    @Enumerated(EnumType.ORDINAL)
+    private CvStatus status;
+
     @Basic
     @Column(name = "address")
     private String address;

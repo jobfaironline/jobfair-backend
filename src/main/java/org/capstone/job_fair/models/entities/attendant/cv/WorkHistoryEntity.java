@@ -1,9 +1,18 @@
 package org.capstone.job_fair.models.entities.attendant.cv;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "work_history", schema = "dbo")
 public class WorkHistoryEntity {
     @Id
