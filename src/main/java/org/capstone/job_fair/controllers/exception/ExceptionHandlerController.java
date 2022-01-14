@@ -63,11 +63,6 @@ public class ExceptionHandlerController {
         return buildErrorResponse(ex, MessageUtil.getMessage("MSG_ENTITY_NOT_FOUND", ""), HttpStatus.BAD_REQUEST, request);
     }
 
-    public ResponseEntity handleEntityNotFound() {
-        HttpStatus status = HttpStatus.NOT_FOUND;
-        String message = "Entity not found!";
-        return GenericMessageResponseEntity.build(message, status);
-    }
 
     private ResponseEntity<ErrorResponse> buildErrorResponse(Exception exception, String message, HttpStatus httpStatus,
                                                              WebRequest request) {

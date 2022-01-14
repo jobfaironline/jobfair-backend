@@ -45,6 +45,7 @@ public class JobPositionServiceImpl implements JobPositionService {
         entity.setLanguage(languageEntity);
         entity.setJobTypeEntity(jobTypeEntity);
         entity.setJobLevel(jobLevelEntity);
+
         jobPositionRepository.save(entity);
     }
 }

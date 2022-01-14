@@ -18,15 +18,18 @@ import javax.validation.constraints.*;
 public class CreateJobPositionRequest {
     @NotNull
     @Size(max = DataConstraint.JobPosition.TITLE_LENGTH)
+    @NotEmpty
     @XSSConstraint
     private String title;
     @NotNull
     @Size(max = DataConstraint.JobPosition.DESCRIPTION_LENGTH)
     @XSSConstraint
+    @NotEmpty
     private String description;
     @NotNull
     @XSSConstraint
     @Size(max= DataConstraint.JobPosition.REQUIREMENT_LENGTH)
+    @NotEmpty
     private String requirements;
     @NotNull
     @Min(value = DataConstraint.JobPosition.SALARY_MIN)
@@ -39,6 +42,7 @@ public class CreateJobPositionRequest {
     @Size(max = DataConstraint.JobPosition.CONTACT_PERSON_NAME_LENGTH)
     @NotNull
     @XSSConstraint
+    @NotEmpty
     private String contactPerson;
     @Size(max = DataConstraint.JobPosition.CONTACT_EMAIL_LENGTH)
     @EmailConstraint
