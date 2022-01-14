@@ -7,5 +7,6 @@ public class MessageConstant {
         public static final String INVALID_PHONE_FORMAT = "Invalid phone format, must have 10-11 characters";
         public static final String NOT_BLANK_FORMAT = " must not be empty";
         public static final String MIN_EMPLOYEE_INVALID = "Minimum of employee is 1 member";
+        public static final String XSS_MESSAGE ="Cannot enter HTML tag";
     }
 }

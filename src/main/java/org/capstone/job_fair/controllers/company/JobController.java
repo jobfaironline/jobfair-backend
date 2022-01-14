@@ -8,6 +8,8 @@ import org.capstone.job_fair.services.interfaces.company.JobPositionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,6 +20,8 @@ public class JobController {
     private final String SUCCES_CREATE_JOB_POSITION = "Successfully";
     @Autowired
     private JobPositionService jobPositionService;
+
+    @PreAuthorize("hasAuthority('COMPANY_MANAGER')")
     @PostMapping(ApiEndPoint.Job.JOB_POSITION_ENDPOINT)
     public ResponseEntity<?> createJobPosition(@Validated @RequestBody CreateJobPositionRequest request){
         JobPositionDTO jobPositionDTO = JobPositionDTO.builder()
