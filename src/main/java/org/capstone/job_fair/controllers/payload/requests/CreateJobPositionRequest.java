@@ -1,4 +1,4 @@
-package org.capstone.job_fair.controllers.payload;
+package org.capstone.job_fair.controllers.payload.requests;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

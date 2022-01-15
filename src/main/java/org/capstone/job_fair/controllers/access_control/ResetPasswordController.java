@@ -3,9 +3,11 @@ package org.capstone.job_fair.controllers.access_control;
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.constants.ResetPasswordTokenConstants;
+import org.capstone.job_fair.controllers.payload.requests.GenerateOTPRequest;
+import org.capstone.job_fair.controllers.payload.requests.ResetPasswordRequest;
+import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
 import org.capstone.job_fair.models.entities.token.PasswordResetTokenEntity;
-import org.capstone.job_fair.controllers.payload.*;
 import org.capstone.job_fair.services.interfaces.account.AccountService;
 import org.capstone.job_fair.services.interfaces.util.MailService;
 import org.capstone.job_fair.services.interfaces.token.PasswordResetTokenService;
@@ -46,14 +48,14 @@ public class ResetPasswordController {
     public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequest request) {
         //check matching password
         if (!request.getNewPassword().equals(request.getConfirmPassword())) {
-            return GenericMessageResponseEntity.build(
+            return GenericResponse.build(
                     MessageUtil.getMessage(MessageConstant.AccessControlMessage.CONFIRM_PASSWORD_MISMATCH),
                     HttpStatus.BAD_REQUEST);
         }
         //check existed account
         Optional<AccountEntity> accountOpt = accountService.getActiveAccountByEmail(request.getEmail());
         if (!accountOpt.isPresent()) {
-            return GenericMessageResponseEntity.build(
+            return GenericResponse.build(
                     MessageUtil.getMessage(MessageConstant.Account.NOT_FOUND),
                     HttpStatus.BAD_REQUEST);
         }
@@ -61,27 +63,27 @@ public class ResetPasswordController {
         //check existed token
         Optional<PasswordResetTokenEntity> tokenOpt = resetService.findTokenByOTPAndAccountID(request.getOtp(), account.getId());
         if (!tokenOpt.isPresent()) {
-            return GenericMessageResponseEntity.build(
+            return GenericResponse.build(
                     MessageUtil.getMessage(MessageConstant.AccessControlMessage.INVALID_OTP),
                     HttpStatus.BAD_REQUEST);
         }
         PasswordResetTokenEntity token = tokenOpt.get();
         //check if token account is the same as request account
         if (!account.equals(token.getAccount())) {
-            return GenericMessageResponseEntity.build(
+            return GenericResponse.build(
                     MessageUtil.getMessage(MessageConstant.AccessControlMessage.INVALID_OTP),
                     HttpStatus.BAD_REQUEST);
         }
         //check if token is invalidated
         if (token.isInvalidated()) {
-            return GenericMessageResponseEntity.build(
+            return GenericResponse.build(
                     MessageUtil.getMessage(MessageConstant.AccessControlMessage.EXPIRED_OTP),
                     HttpStatus.BAD_REQUEST);
         }
         //check expired token
         if (token.getExpiredTime() < new Date().getTime()) {
             resetService.invalidateEntity(tokenOpt.get());
-            return GenericMessageResponseEntity.build(
+            return GenericResponse.build(
                     MessageUtil.getMessage(MessageConstant.AccessControlMessage.EXPIRED_OTP),
                     HttpStatus.BAD_REQUEST);
         }
@@ -92,7 +94,7 @@ public class ResetPasswordController {
         //invalidate otp token
         resetService.invalidateEntity(token);
 
-        return GenericMessageResponseEntity.build(
+        return GenericResponse.build(
                 MessageUtil.getMessage(MessageConstant.AccessControlMessage.RESET_PASSWORD_SUCCESSFULLY),
                 HttpStatus.OK);
     }
@@ -102,7 +104,7 @@ public class ResetPasswordController {
         //check existed account
         Optional<AccountEntity> accountOpt = accountService.getActiveAccountByEmail(request.getEmail());
         if (!accountOpt.isPresent()) {
-            return GenericMessageResponseEntity.build(
+            return GenericResponse.build(
                     MessageUtil.getMessage(MessageConstant.Account.NOT_FOUND),
                     HttpStatus.BAD_REQUEST);
         }
@@ -115,14 +117,14 @@ public class ResetPasswordController {
             this.mailService.sendMail(account.getEmail(),
                     ResetPasswordTokenConstants.MAIL_SUBJECT,
                     ResetPasswordTokenConstants.MAIL_BODY + tokenEntity.getOtp());
-            return GenericMessageResponseEntity.build(
+            return GenericResponse.build(
                     MessageUtil.getMessage(MessageConstant.AccessControlMessage.REQUEST_RESET_PASSWORD_SUCCESSFULLY),
                     HttpStatus.OK);
         }
         PasswordResetTokenEntity token = tokenOpt.get();
         //check expired token
         if (token.getExpiredTime() > new Date().getTime()) {
-            return GenericMessageResponseEntity.build(String.format(
+            return GenericResponse.build(String.format(
                             MessageUtil.getMessage(MessageConstant.AccessControlMessage.INTERVAL_OTP_REQUEST),
                             RESET_PASSWORD_TOKEN_EXPIRED_TIME),
                     HttpStatus.BAD_REQUEST);
@@ -133,7 +135,7 @@ public class ResetPasswordController {
             this.mailService.sendMail(account.getEmail(),
                     ResetPasswordTokenConstants.MAIL_SUBJECT,
                     String.format(ResetPasswordTokenConstants.MAIL_BODY, account.getEmail(), newToken.getOtp()));
-            return GenericMessageResponseEntity.build(
+            return GenericResponse.build(
                     MessageUtil.getMessage(MessageConstant.AccessControlMessage.REQUEST_RESET_PASSWORD_SUCCESSFULLY),
                     HttpStatus.OK);
         }

@@ -1,14 +1,16 @@
-package org.capstone.job_fair.controllers.payload;
+package org.capstone.job_fair.controllers.payload.requests;
 
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.capstone.job_fair.constants.DataConstraint;
 import org.capstone.job_fair.models.enums.Gender;
 import org.capstone.job_fair.models.statuses.AccountStatus;
 import org.capstone.job_fair.validators.EmailConstraint;
 import org.capstone.job_fair.validators.PhoneConstraint;
+import org.capstone.job_fair.validators.XSSConstraint;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -26,25 +28,31 @@ public class UpdateCompanyEmployeeProfileRequest {
     @AllArgsConstructor
     @NoArgsConstructor
     @ToString
-    public class AccountRequest {
+    public static class AccountRequest {
         @EmailConstraint
         private String email;
         private AccountStatus status;
         @PhoneConstraint
         private String phone;
+        @NotEmpty
+        @XSSConstraint
         private String profileImageUrl;
         @NotNull
         @NotEmpty
-        @Size(max = 100)
-        @Pattern(message = "Type can contain alphanumeric characters only", regexp = "[a-zA-Z0-9 ]+")
+        @Size(max = DataConstraint.Account.NAME_LENGTH)
+        @XSSConstraint
         private String firstname;
-        @Size(max = 100)
-        @Pattern(message = "Type can contain alphanumeric characters only", regexp = "[a-zA-Z0-9 ]+")
-        private String lastname;
-        @Size(max = 100)
-        @Pattern(message = "Type can contain alphanumeric characters only", regexp = "[a-zA-Z0-9 ]+")
-        private String middlename;
         @NotNull
+        @NotEmpty
+        @Size(max = DataConstraint.Account.NAME_LENGTH)
+        @XSSConstraint
+        private String lastname;
+        @NotNull
+        @NotEmpty
+        @Size(max = DataConstraint.Account.NAME_LENGTH)
+        @XSSConstraint
+        private String middlename;
+
         private Gender gender;
     }
 

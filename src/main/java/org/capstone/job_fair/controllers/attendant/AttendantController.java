@@ -2,13 +2,13 @@ package org.capstone.job_fair.controllers.attendant;
 
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
-import org.capstone.job_fair.controllers.payload.UpdateAttendantRequest;
+import org.capstone.job_fair.controllers.payload.requests.UpdateAttendantRequest;
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
 import org.capstone.job_fair.models.dtos.attendant.AttendantDTO;
 
 import org.capstone.job_fair.models.entities.account.AccountEntity;
-import org.capstone.job_fair.controllers.payload.AttendantRegisterRequest;
-import org.capstone.job_fair.controllers.payload.GenericMessageResponseEntity;
+import org.capstone.job_fair.controllers.payload.requests.AttendantRegisterRequest;
+import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.services.interfaces.account.AccountService;
 import org.capstone.job_fair.services.interfaces.attendant.AttendantService;
 import org.capstone.job_fair.utils.MessageUtil;
@@ -53,20 +53,20 @@ public class AttendantController {
     @PostMapping(ApiEndPoint.Attendant.REGISTER_ENDPOINT)
     public ResponseEntity<?> register(@Validated @RequestBody AttendantRegisterRequest request) {
         if (!request.getPassword().equals(request.getConfirmPassword())) {
-            return GenericMessageResponseEntity.build(
+            return GenericResponse.build(
                     MessageUtil.getMessage(MessageConstant.AccessControlMessage.CONFIRM_PASSWORD_MISMATCH),
                     HttpStatus.BAD_REQUEST);
         }
         Optional<AccountEntity> existedAccount = accountService.getActiveAccountByEmail(request.getEmail());
         if (existedAccount.isPresent()) {
-            return GenericMessageResponseEntity.build(
+            return GenericResponse.build(
                     MessageUtil.getMessage(MessageConstant.Account.EXISTED),
                     HttpStatus.BAD_REQUEST);
         }
 
         AttendantDTO attendantDTO = mappingRegisterRequestToDTO(request);
         attendantService.createNewAccount(attendantDTO);
-        return GenericMessageResponseEntity.build(
+        return GenericResponse.build(
                 MessageUtil.getMessage(MessageConstant.Attendant.REGISTER_SUCCESSFULLY),
                 HttpStatus.OK);
     }
@@ -94,13 +94,13 @@ public class AttendantController {
                 .build();
 
         if (accountService.getCountByActiveEmail(accountDTO.getEmail()) != 0) {
-            return GenericMessageResponseEntity.build(
+            return GenericResponse.build(
                     MessageUtil.getMessage(MessageConstant.Account.EMAIL_EXISTED),
                     HttpStatus.BAD_REQUEST);
         }
 
         attendantService.update(dto);
-        return GenericMessageResponseEntity.build(
+        return GenericResponse.build(
                 MessageUtil.getMessage(MessageConstant.Attendant.UPDATE_PROFILE_SUCCESSFULLY),
                 HttpStatus.OK);
     }

@@ -1,4 +1,4 @@
-package org.capstone.job_fair.controllers.payload;
+package org.capstone.job_fair.controllers.payload.responses;
 
 import lombok.*;
 import org.springframework.http.HttpStatus;
@@ -11,7 +11,7 @@ import java.util.Map;
 
 @Getter
 @Setter
-public class GenericMessageResponseEntity{
+public class GenericResponse {
     public static ResponseEntity<?> build(String message, HttpStatus status) {
         long timestamp = Instant.now().getEpochSecond();
         Map<String, Object> body = new HashMap<>();
@@ -19,6 +19,5 @@ public class GenericMessageResponseEntity{
         body.put("message", message);
         body.put("timestamp", timestamp);
         return new ResponseEntity<>(body, status);
-
     }
 }

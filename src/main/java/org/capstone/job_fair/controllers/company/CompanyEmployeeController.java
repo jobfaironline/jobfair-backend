@@ -6,9 +6,9 @@ import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
 import org.capstone.job_fair.models.dtos.company.CompanyDTO;
 import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
-import org.capstone.job_fair.controllers.payload.CompanyManagerRegisterRequest;
-import org.capstone.job_fair.controllers.payload.GenericMessageResponseEntity;
-import org.capstone.job_fair.controllers.payload.UpdateCompanyEmployeeProfileRequest;
+import org.capstone.job_fair.controllers.payload.requests.CompanyManagerRegisterRequest;
+import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
+import org.capstone.job_fair.controllers.payload.requests.UpdateCompanyEmployeeProfileRequest;
 import org.capstone.job_fair.services.interfaces.account.AccountService;
 import org.capstone.job_fair.services.interfaces.account.GenderService;
 import org.capstone.job_fair.services.interfaces.company.CompanyEmployeeService;
@@ -51,19 +51,19 @@ public class CompanyEmployeeController {
     public ResponseEntity<?> register(@Validated @RequestBody CompanyManagerRegisterRequest request) {
         //check if email existed?
         if (isEmailExist(request.getEmail())) {
-            return GenericMessageResponseEntity.build(
+            return GenericResponse.build(
                     MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMAIL_EXISTED),
                     HttpStatus.BAD_REQUEST);
         }
         //check if password match confirm password
         if (!request.getPassword().equals(request.getConfirmPassword())) {
-            return GenericMessageResponseEntity.build(
+            return GenericResponse.build(
                     MessageUtil.getMessage(MessageConstant.AccessControlMessage.CONFIRM_PASSWORD_MISMATCH),
                     HttpStatus.BAD_REQUEST);
         }
         //check gender validation
         if (!isGenderExist(request.getGender().ordinal())) {
-            return GenericMessageResponseEntity.build(
+            return GenericResponse.build(
                     MessageUtil.getMessage(MessageConstant.Gender.NOT_FOUND),
                     HttpStatus.BAD_REQUEST);
         }
@@ -81,7 +81,7 @@ public class CompanyEmployeeController {
         dto.setAccount(accountDTO);
 
         companyEmployeeService.createNewCompanyManagerAccount(dto);
-        return GenericMessageResponseEntity.build(
+        return GenericResponse.build(
                 MessageUtil.getMessage(MessageConstant.CompanyEmployee.CREATE_EMPLOYEE_MANAGER_SUCCESSFULLY),
                 HttpStatus.CREATED);
     }
@@ -91,13 +91,13 @@ public class CompanyEmployeeController {
     public ResponseEntity<?> updateProfile(@Validated @RequestBody UpdateCompanyEmployeeProfileRequest request) {
 
         if (!(accountService.getCountActiveAccountById(request.getAccountId()) == 0)) {
-            return GenericMessageResponseEntity.build(
+            return GenericResponse.build(
                     MessageConstant.Account.NOT_FOUND,
                     HttpStatus.BAD_REQUEST);
         }
 
         if (request.getAccountRequest() != null && request.getAccountRequest().getEmail() != null && isEmailExist(request.getAccountRequest().getEmail())) {
-            return GenericMessageResponseEntity.build(
+            return GenericResponse.build(
                     MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMAIL_EXISTED),
                     HttpStatus.BAD_REQUEST);
         }
@@ -119,7 +119,7 @@ public class CompanyEmployeeController {
         CompanyDTO companyDTO = null;
         if (request.getCompanyId() != null) {
             if (!(companyService.getCountById(request.getCompanyId()) == 0)) {
-                return GenericMessageResponseEntity.build(
+                return GenericResponse.build(
                         MessageUtil.getMessage(MessageConstant.Company.NOT_FOUND)
                         , HttpStatus.BAD_REQUEST);
             }
@@ -134,7 +134,7 @@ public class CompanyEmployeeController {
                 .build();
         companyEmployeeService.updateProfile(companyEmployeeDTO);
 
-        return GenericMessageResponseEntity.build(
+        return GenericResponse.build(
                 MessageUtil.getMessage(MessageConstant.CompanyEmployee.UPDATE_PROFILE_SUCCESSFULLY),
                 HttpStatus.OK);
     }

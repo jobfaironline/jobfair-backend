@@ -2,8 +2,8 @@ package org.capstone.job_fair.controllers.company;
 
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
-import org.capstone.job_fair.controllers.payload.GenericMessageResponseEntity;
-import org.capstone.job_fair.controllers.payload.CreateJobPositionRequest;
+import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
+import org.capstone.job_fair.controllers.payload.requests.CreateJobPositionRequest;
 import org.capstone.job_fair.models.dtos.company.job.JobPositionDTO;
 import org.capstone.job_fair.services.interfaces.company.CompanyService;
 import org.capstone.job_fair.services.interfaces.company.JobPositionService;
@@ -31,13 +31,13 @@ public class JobController {
     public ResponseEntity<?> createJobPosition(@Validated @RequestBody CreateJobPositionRequest request) {
 
         if (companyService.getCountById(request.getCompanyId()) == 0) {
-            return GenericMessageResponseEntity.build(
+            return GenericResponse.build(
                     MessageUtil.getMessage(MessageConstant.Company.NOT_FOUND)
                     , HttpStatus.BAD_REQUEST);
         }
 
         if (request.getMaxSalary() < request.getMinSalary()) {
-            return GenericMessageResponseEntity.build(
+            return GenericResponse.build(
                     MessageUtil.getMessage(MessageConstant.Job.SALARY_ERROR),
                     HttpStatus.BAD_REQUEST);
         }
@@ -57,7 +57,7 @@ public class JobController {
                 .comapnyId(request.getCompanyId())
                 .build();
         jobPositionService.createNewJobPosition(jobPositionDTO);
-        return GenericMessageResponseEntity.build(
+        return GenericResponse.build(
                 MessageUtil.getMessage(MessageConstant.Job.CREATE_JOB_SUCCESSFULLY),
                 HttpStatus.OK);
     }

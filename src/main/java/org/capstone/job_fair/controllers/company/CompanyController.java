@@ -2,11 +2,11 @@ package org.capstone.job_fair.controllers.company;
 
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
-import org.capstone.job_fair.controllers.payload.*;
+import org.capstone.job_fair.controllers.payload.requests.CreateCompanyRequest;
+import org.capstone.job_fair.controllers.payload.requests.UpdateCompanyRequest;
+import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.dtos.company.CompanyDTO;
 import org.capstone.job_fair.models.entities.company.CompanyEntity;
-import org.capstone.job_fair.models.entities.company.CompanySizeEntity;
-import org.capstone.job_fair.repositories.company.CompanySizeRepository;
 import org.capstone.job_fair.services.interfaces.company.CompanyService;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +48,7 @@ public class CompanyController {
         Optional<CompanyEntity> opt = companyService.getCompanyById(id);
         return opt.isPresent() ?
                 new ResponseEntity<>(opt.get(), HttpStatus.OK) :
-                GenericMessageResponseEntity.build(
+                GenericResponse.build(
                         MessageUtil.getMessage(MessageConstant.Company.NOT_FOUND), HttpStatus.NOT_FOUND);
     }
 
@@ -57,11 +57,11 @@ public class CompanyController {
     public ResponseEntity<?> create(@Validated @RequestBody CreateCompanyRequest request) {
         try {
             if (isEmailExisted(request.getEmail())) {
-                return GenericMessageResponseEntity.build(
+                return GenericResponse.build(
                         MessageUtil.getMessage(MessageConstant.Company.EMAIL_EXISTED), HttpStatus.BAD_REQUEST);
             }
             if (isTaxIDExisted(request.getTaxID())) {
-                return GenericMessageResponseEntity.build(
+                return GenericResponse.build(
                         MessageUtil.getMessage(MessageConstant.Company.TAX_ID_EXISTED),
                         HttpStatus.BAD_REQUEST);
             }
@@ -77,10 +77,10 @@ public class CompanyController {
                     .sizeId(request.getSizeId())
                     .build();
             CompanyEntity result = companyService.createCompany(dto);
-            return result != null ? GenericMessageResponseEntity.build(MessageUtil.getMessage(MessageConstant.Company.CREATE_SUCCESSFULLY), HttpStatus.CREATED)
-                    : GenericMessageResponseEntity.build(MessageUtil.getMessage(MessageConstant.Company.CREATE_FAILED), HttpStatus.NOT_FOUND);
+            return result != null ? GenericResponse.build(MessageUtil.getMessage(MessageConstant.Company.CREATE_SUCCESSFULLY), HttpStatus.CREATED)
+                    : GenericResponse.build(MessageUtil.getMessage(MessageConstant.Company.CREATE_FAILED), HttpStatus.NOT_FOUND);
         } catch (NoSuchElementException ex) {
-            return GenericMessageResponseEntity.build(ex.getMessage(), HttpStatus.BAD_REQUEST);
+            return GenericResponse.build(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -89,12 +89,12 @@ public class CompanyController {
     public ResponseEntity<?> update(@Valid @RequestBody UpdateCompanyRequest request) {
         try {
             if (request.getEmail() != null && isEmailExisted(request.getEmail())) {
-                return GenericMessageResponseEntity.build(
+                return GenericResponse.build(
                         MessageUtil.getMessage(MessageConstant.Company.EMAIL_EXISTED),
                         HttpStatus.BAD_REQUEST);
             }
             if (request.getTaxId() != null && isTaxIDExisted(request.getTaxId())) {
-                return GenericMessageResponseEntity.build(
+                return GenericResponse.build(
                         MessageUtil.getMessage(MessageConstant.Company.TAX_ID_EXISTED),
                         HttpStatus.BAD_REQUEST);
             }
@@ -110,10 +110,10 @@ public class CompanyController {
                     .taxId(request.getTaxId())
                     .build();
             CompanyEntity result = companyService.updateCompany(dto);
-            return result != null ? GenericMessageResponseEntity.build(MessageUtil.getMessage(MessageConstant.Company.UPDATE_SUCCESSFULLY), HttpStatus.OK)
-                    : GenericMessageResponseEntity.build(MessageUtil.getMessage(MessageConstant.Company.UPDATE_FAILED), HttpStatus.NOT_FOUND);
+            return result != null ? GenericResponse.build(MessageUtil.getMessage(MessageConstant.Company.UPDATE_SUCCESSFULLY), HttpStatus.OK)
+                    : GenericResponse.build(MessageUtil.getMessage(MessageConstant.Company.UPDATE_FAILED), HttpStatus.NOT_FOUND);
         } catch (NoSuchElementException ex) {
-            return GenericMessageResponseEntity.build(ex.getMessage(), HttpStatus.NOT_FOUND);
+            return GenericResponse.build(ex.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 
@@ -121,8 +121,8 @@ public class CompanyController {
     @DeleteMapping(ApiEndPoint.Company.COMPANY_ENDPOINT + "/{id}")
     public ResponseEntity<?> delete(@PathVariable String id) {
         Boolean result = companyService.deleteCompany(id);
-        return result ? GenericMessageResponseEntity.build(MessageUtil.getMessage(MessageConstant.Company.DELETE_SUCCESSFULLY), HttpStatus.OK)
-                : GenericMessageResponseEntity.build(MessageUtil.getMessage(MessageConstant.Company.DELETE_FAILED), HttpStatus.BAD_REQUEST);
+        return result ? GenericResponse.build(MessageUtil.getMessage(MessageConstant.Company.DELETE_SUCCESSFULLY), HttpStatus.OK)
+                : GenericResponse.build(MessageUtil.getMessage(MessageConstant.Company.DELETE_FAILED), HttpStatus.BAD_REQUEST);
     }
 
 
