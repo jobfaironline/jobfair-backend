@@ -3,6 +3,8 @@ package org.capstone.job_fair.controllers.company;
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.controllers.payload.GenericMessageResponseEntity;
 import org.capstone.job_fair.controllers.payload.CreateJobPositionRequest;
+import org.capstone.job_fair.models.dtos.company.SkillTagDTO;
+import org.capstone.job_fair.models.dtos.company.SubCategoryDTO;
 import org.capstone.job_fair.models.dtos.company.job.JobPositionDTO;
 import org.capstone.job_fair.services.interfaces.company.CompanyService;
 import org.capstone.job_fair.services.interfaces.company.JobPositionService;
@@ -14,6 +16,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.stream.Collectors;
 
 @RestController
 public class JobController {
@@ -51,6 +55,8 @@ public class JobController {
                 .jobType(request.getJobType())
                 .locationId(request.getLocationId())
                 .comapnyId(request.getCompanyId())
+                .subCategoryDTOs(request.getSubCategoryIds().stream().map(SubCategoryDTO::new).collect(Collectors.toList()))
+                .skillTagDTOS(request.getSkillTagIds().stream().map(SkillTagDTO::new).collect(Collectors.toList()))
                 .build();
         jobPositionService.createNewJobPosition(jobPositionDTO);
         return GenericMessageResponseEntity.build(SUCCES_CREATE_JOB_POSITION, HttpStatus.OK);
