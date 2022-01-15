@@ -2,6 +2,7 @@ package org.capstone.job_fair.controllers.payload;
 
 import lombok.*;
 import org.capstone.job_fair.models.enums.Gender;
+import org.capstone.job_fair.models.enums.Marital;
 import org.capstone.job_fair.models.statuses.AccountStatus;
 import org.capstone.job_fair.validators.EmailConstraint;
 import org.capstone.job_fair.validators.PhoneConstraint;
@@ -31,7 +32,7 @@ public class UpdateAttendantRequest {
     @Pattern(message="Type can contain alphanumeric characters only", regexp = "[a-zA-Z0-9 ]+")
     private String jobTitle;
     private Double yearOfExp;
-    private Boolean maritalStatus;
+    private Marital maritalStatus;
     private String country ;
     private String residence;
     private String currentJobLevel;
