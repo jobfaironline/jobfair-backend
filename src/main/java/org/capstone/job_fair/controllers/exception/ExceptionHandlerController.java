@@ -2,6 +2,7 @@ package org.capstone.job_fair.controllers.exception;
 
 import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
+import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.response.ErrorResponse;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
@@ -23,44 +24,44 @@ public class ExceptionHandlerController {
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<?> resourceNotFound(ResourceNotFoundException ex) {
-        return buildErrorResponse(ex, MessageUtil.getMessage("MSG_RESOURCE_NOT_FOUND", ""), HttpStatus.NOT_FOUND);
+        return buildErrorResponse(ex, MessageUtil.getMessage(MessageConstant.Exception.RESOURCE_NOT_FOUND), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(JwtException.class)
     public ResponseEntity<?> customException(JwtException ex) {
-        return buildErrorResponse(ex, MessageUtil.getMessage("MSG_RESOURCE_BAD_REQUEST", ""), HttpStatus.BAD_REQUEST);
+        return buildErrorResponse(ex, MessageUtil.getMessage(MessageConstant.Exception.JWT_ERROR), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(NoSuchElementException.class)
     public ResponseEntity<?> noSuchElementFoundException(NoSuchElementException ex) {
-        return buildErrorResponse(ex, MessageUtil.getMessage("MSG_RESOURCE_NOT_FOUND", ""), HttpStatus.NOT_FOUND);
+        return buildErrorResponse(ex, MessageUtil.getMessage(MessageConstant.Exception.RESOURCE_NOT_FOUND), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<?> unauthorizedException(AccessDeniedException ex) {
-        return buildErrorResponse(ex, MessageUtil.getMessage("MSG_RESOURCE_NO_PERMISSION", ""), HttpStatus.UNAUTHORIZED);
+        return buildErrorResponse(ex, MessageUtil.getMessage(MessageConstant.Exception.NO_PERMISSION), HttpStatus.UNAUTHORIZED);
     }
 
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<?> MethodArgumentNotValid(MethodArgumentNotValidException ex) {
-        return buildErrorResponse(ex, MessageUtil.getMessage("MSG_METHOD_ARGUMENT_NOT_VALID", ""));
+        return buildErrorResponse(ex, MessageUtil.getMessage(MessageConstant.Exception.METHOD_ARGUMENT_NOT_VALID));
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<?> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
 
-        return buildErrorResponse(ex, MessageUtil.getMessage("MSG_HTTP_MESSAGE_NOT_VALID", ""), HttpStatus.BAD_REQUEST);
+        return buildErrorResponse(ex, MessageUtil.getMessage(MessageConstant.Exception.HTTP_MESSAGE_NOT_VALID), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<?> handleEntityNotFoundException(EntityNotFoundException ex) {
-        return buildErrorResponse(ex, MessageUtil.getMessage("MSG_ENTITY_NOT_FOUND"), HttpStatus.BAD_REQUEST);
+        return buildErrorResponse(ex, MessageUtil.getMessage(MessageConstant.Exception.ENTITY_NOT_FOUND), HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler({ Exception.class })
+    @ExceptionHandler({Exception.class})
     public ResponseEntity<?> handleGlobalException(Exception ex) {
-        return buildErrorResponse(ex, MessageUtil.getMessage("MSG_INTERNAL_ERROR"), HttpStatus.BAD_REQUEST);
+        return buildErrorResponse(ex, MessageUtil.getMessage(MessageConstant.Exception.INTERNAL_ERROR), HttpStatus.BAD_REQUEST);
     }
 
     private ResponseEntity<?> buildErrorResponse(Exception exception, String message, HttpStatus httpStatus) {

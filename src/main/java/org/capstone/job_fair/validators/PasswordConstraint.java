@@ -12,7 +12,7 @@ import java.lang.annotation.*;
 @Target( { ElementType.METHOD, ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface PasswordConstraint {
-    String message() default MessageConstant.InvalidFormat.INVALID_PASSWORD_FORMAT;
+    String message() default MessageConstant.InvalidFormatValidationMessage.INVALID_PASSWORD_FORMAT;
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

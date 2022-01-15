@@ -33,7 +33,7 @@ public class UpdateCompanyRequest {
     @EmailConstraint
     private String email;
 
-    @Min(value = MIN_EMPLOYEE , message = MessageConstant.InvalidFormat.MIN_EMPLOYEE_INVALID)
+    @Min(value = MIN_EMPLOYEE)
     private Integer employeeMaxNum;
 
     private String taxId;

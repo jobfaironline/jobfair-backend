@@ -1,7 +1,6 @@
 package org.capstone.job_fair.validators;
 
 import org.capstone.job_fair.constants.MessageConstant;
-import org.capstone.job_fair.validators.impl.PhoneValidator;
 import org.capstone.job_fair.validators.impl.XSSValidator;
 
 import javax.validation.Constraint;
@@ -13,7 +12,7 @@ import java.lang.annotation.*;
 @Target({ElementType.METHOD, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface XSSConstraint {
-    String message() default MessageConstant.InvalidFormat.XSS_MESSAGE;
+    String message() default MessageConstant.InvalidFormatValidationMessage.XSS_MESSAGE;
 
     Class<?>[] groups() default {};
 

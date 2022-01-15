@@ -25,10 +25,10 @@ public class CompanyManagerRegisterRequest {
     private String confirmPassword;
     @PhoneConstraint
     private String phone;
-    @NotBlank(message = "first name" + MessageConstant.InvalidFormat.NOT_BLANK_FORMAT)
+    @NotBlank(message = "first name" + MessageConstant.InvalidFormatValidationMessage.NOT_BLANK_FORMAT)
     @Size(max = 100)
     private String firstName;
-    @NotBlank(message = "last name" + MessageConstant.InvalidFormat.NOT_BLANK_FORMAT)
+    @NotBlank(message = "last name" + MessageConstant.InvalidFormatValidationMessage.NOT_BLANK_FORMAT)
     @Size(max = 100)
     private String lastName;
     @Size(max = 100)
