@@ -15,6 +15,7 @@ import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -71,6 +72,7 @@ public class AttendantController {
                 HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ATTENDANT)")
     @PostMapping(ApiEndPoint.Attendant.UPDATE_ENDPOINT)
     public ResponseEntity<?> update(@Validated @RequestBody UpdateAttendantRequest req) {
         AccountDTO accountDTO = req.getAccount() != null ? AccountDTO.builder()
@@ -105,6 +107,7 @@ public class AttendantController {
                 HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ATTENDANT) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
     @GetMapping(ApiEndPoint.Attendant.ATTENDANT_ENDPOINT + "/{email}")
     public ResponseEntity<?> getAttendant(@PathVariable("email") String email) {
         return ResponseEntity.status(HttpStatus.OK).body(attendantService.getAttendantByEmail(email));

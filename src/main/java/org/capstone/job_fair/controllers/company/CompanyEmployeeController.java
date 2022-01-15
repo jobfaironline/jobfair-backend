@@ -86,7 +86,7 @@ public class CompanyEmployeeController {
                 HttpStatus.CREATED);
     }
 
-    @PreAuthorize("hasAuthority('COMPANY_EMPLOYEE') or hasAuthority('COMPANY_MANAGER')")
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
     @PostMapping(ApiEndPoint.CompanyEmployee.UPDATE_PROFILE_ENDPOINT)
     public ResponseEntity<?> updateProfile(@Validated @RequestBody UpdateCompanyEmployeeProfileRequest request) {
 

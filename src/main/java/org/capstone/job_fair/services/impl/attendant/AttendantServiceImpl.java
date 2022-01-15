@@ -58,9 +58,17 @@ public class AttendantServiceImpl implements AttendantService {
         attendantRepository.save(attendantEntity);
     }
     @Override
-    public AttendantEntity getAttendantByEmail(String email) {
-        Optional<AccountEntity> accountEntity = accountService.getActiveAccountByEmail(email);
-        return attendantRepository.findById(accountEntity.get().getId()).orElseThrow(() ->  new NoSuchElementException("Account not found"));
+    public Optional<AttendantDTO> getAttendantByEmail(String email) {
+        Optional<AccountEntity> accountOpt = accountService.getActiveAccountByEmail(email);
+        if (!accountOpt.isPresent()){
+            return Optional.empty();
+        }
+        Optional<AttendantEntity> attendantOpt = attendantRepository.findById(accountOpt.get().getId());
+        if (!attendantOpt.isPresent()){
+            return Optional.empty();
+        }
+        AttendantDTO dto = mapper.toDTO(attendantOpt.get());
+        return Optional.of(dto);
     }
 
     @Override

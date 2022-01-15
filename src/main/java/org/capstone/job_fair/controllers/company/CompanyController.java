@@ -7,11 +7,13 @@ import org.capstone.job_fair.controllers.payload.requests.UpdateCompanyRequest;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.dtos.company.CompanyDTO;
 import org.capstone.job_fair.models.entities.company.CompanyEntity;
+import org.capstone.job_fair.models.enums.Role;
 import org.capstone.job_fair.services.interfaces.company.CompanyService;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -37,12 +39,13 @@ public class CompanyController {
     }
 
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
     @GetMapping(ApiEndPoint.Company.COMPANY_ENDPOINT)
     public ResponseEntity<?> getCompanies() {
         return new ResponseEntity<>(companyService.getAllCompanies(), HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
     @GetMapping(ApiEndPoint.Company.COMPANY_ENDPOINT + "/" + "{id}")
     public ResponseEntity<?> getByID(@PathVariable String id) {
         Optional<CompanyEntity> opt = companyService.getCompanyById(id);
@@ -84,7 +87,7 @@ public class CompanyController {
         }
     }
 
-    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('COMPANY_MANAGER')")
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
     @PutMapping(ApiEndPoint.Company.COMPANY_ENDPOINT)
     public ResponseEntity<?> update(@Valid @RequestBody UpdateCompanyRequest request) {
         try {
@@ -117,7 +120,7 @@ public class CompanyController {
         }
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
     @DeleteMapping(ApiEndPoint.Company.COMPANY_ENDPOINT + "/{id}")
     public ResponseEntity<?> delete(@PathVariable String id) {
         Boolean result = companyService.deleteCompany(id);

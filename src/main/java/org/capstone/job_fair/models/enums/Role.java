@@ -1,9 +1,20 @@
 package org.capstone.job_fair.models.enums;
 
-public enum Role {
+import org.springframework.security.core.GrantedAuthority;
+
+public enum Role implements GrantedAuthority {
     ADMIN,
     STAFF,
     COMPANY_MANAGER,
     COMPANY_EMPLOYEE,
-    ATTENDANT
+    ATTENDANT;
+
+    @Override
+    public String getAuthority() {
+        return this.name();
+    }
+
+
+
 }
+
