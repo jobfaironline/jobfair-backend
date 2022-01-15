@@ -1,41 +1,20 @@
 package org.capstone.job_fair.response;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
-@Getter
-@Setter
-@RequiredArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL)
+import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
+
 public class ErrorResponse {
-
-    private final int status;
-    private final String message;
-    @CreationTimestamp
-    private final Date timestamp;
-    private String stackTrace;
-    private List<ValidationError> errors;
-
-    @Getter
-    @Setter
-    @RequiredArgsConstructor
-    public class ValidationError {
-        private final String field;
-        private final String code;
-        private final String message;
-    }
-
-    public void addValidationError(String field, String code, String message) {
-        if (Objects.isNull(errors)) {
-            errors = new ArrayList<>();
-        }
-        errors.add(new ValidationError(field, code, message));
+    public static ResponseEntity<?> build(HttpStatus status, String message, Object detail) {
+        long timestamp = Instant.now().getEpochSecond();
+        Map<String, Object> body = new HashMap<>();
+        body.put("status", status.value());
+        body.put("message", message);
+        body.put("detail", detail);
+        body.put("timestamp", timestamp);
+        return new ResponseEntity<>(body, status);
     }
 }

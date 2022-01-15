@@ -1,4 +1,4 @@
-package org.capstone.job_fair.controllers.exception;
+package org.capstone.job_fair.models.custom_exceptions;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(value=HttpStatus.NOT_FOUND)

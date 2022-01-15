@@ -1,4 +1,4 @@
-package org.capstone.job_fair.controllers.exception;
+package org.capstone.job_fair.models.custom_exceptions;
 
 public class AppException extends RuntimeException {
 
