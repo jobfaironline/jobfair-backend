@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
+import org.capstone.job_fair.models.enums.Marital;
 
 import java.io.Serializable;
 
@@ -20,7 +21,7 @@ public class AttendantDTO implements Serializable {
     private Long dob;
     private String jobTitle;
     private Double yearOfExp;
-    private Boolean maritalStatus;
+    private Marital maritalStatus;
     private CountryDTO country;
     private ResidenceDTO residence;
     private JobLevelDTO currentJobLevel;
