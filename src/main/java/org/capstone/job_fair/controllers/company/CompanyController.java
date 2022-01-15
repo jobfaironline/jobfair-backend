@@ -30,17 +30,17 @@ public class CompanyController {
     private static final String UPDATE_COMPANY_SUCCESS = "Update company successfully.";
     private static final String UPDATE_COMPANY_FAIL = "CompanyId Not Found. Update company failed.";
     private static final String DELETE_COMPANY_SUCCESS = "Delete company successfully.";
-    private static final String DELETE_COMPANY_FAIL= "Delete company failed.";
-    private static final String SIZE_INVALID= "Chosen size is invalid";
+    private static final String DELETE_COMPANY_FAIL = "Delete company failed.";
+    private static final String SIZE_INVALID = "Chosen size is invalid";
 
     @Autowired
     private CompanyService companyService;
 
-    private boolean isEmailExisted(String email){
+    private boolean isEmailExisted(String email) {
         return companyService.getCountByEmail(email) != 0;
     }
 
-    private boolean isTaxIDExisted(String taxID){
+    private boolean isTaxIDExisted(String taxID) {
         return companyService.getCountByTaxId(taxID) != 0;
     }
 
@@ -51,76 +51,74 @@ public class CompanyController {
         return new ResponseEntity<>(companyService.getAllCompanies(), HttpStatus.OK);
     }
 
-    @GetMapping(ApiEndPoint.Company.COMPANY_ENDPOINT + "/"+ "{id}")
+    @GetMapping(ApiEndPoint.Company.COMPANY_ENDPOINT + "/" + "{id}")
     public ResponseEntity<?> getByID(@PathVariable String id) {
-        Optional<CompanyEntity> opt =  companyService.getCompanyById(id);
+        Optional<CompanyEntity> opt = companyService.getCompanyById(id);
         return opt.isPresent() ?
                 new ResponseEntity<>(opt.get(), HttpStatus.OK) :
-             GenericMessageResponseEntity.build(NOT_FOUND_COMPANY + id, HttpStatus.NOT_FOUND);
+                GenericMessageResponseEntity.build(NOT_FOUND_COMPANY + id, HttpStatus.NOT_FOUND);
     }
 
 
     @PostMapping(ApiEndPoint.Company.COMPANY_ENDPOINT)
     public ResponseEntity<?> create(@Validated @RequestBody CreateCompanyRequest request) {
-       try{
-           if (isEmailExisted(request.getEmail())){
-               return GenericMessageResponseEntity.build(EMAIL_EXIST_MSG, HttpStatus.BAD_REQUEST);
-           }
-           if (isTaxIDExisted(request.getTaxID())){
-               return GenericMessageResponseEntity.build(TAX_ID_EXIST_MSG, HttpStatus.BAD_REQUEST);
-           }
-           CompanyDTO dto = CompanyDTO.builder()
-                   .id(UUID.randomUUID().toString())
-                   .taxId(request.getTaxID())
-                   .name(request.getName())
-                   .address(request.getAddress())
-                   .phone(request.getPhone())
-                   .email(request.getEmail())
-                   .employeeMaxNum(request.getEmployeeMaxNum())
-                   .websiteUrl(request.getUrl())
-                   .sizeId(request.getSizeId())
-                   .build();
-           CompanyEntity result = companyService.createCompany(dto);
-           return result != null ? GenericMessageResponseEntity.build(CREATE_COMPANY_SUCCESS, HttpStatus.CREATED)
-           : GenericMessageResponseEntity.build(CREATE_COMPANY_FAIL, HttpStatus.NOT_FOUND);
-       }
-       catch(NoSuchElementException ex) {
-           return GenericMessageResponseEntity.build(ex.getMessage(), HttpStatus.BAD_REQUEST);
-       }
+        try {
+            if (isEmailExisted(request.getEmail())) {
+                return GenericMessageResponseEntity.build(EMAIL_EXIST_MSG, HttpStatus.BAD_REQUEST);
+            }
+            if (isTaxIDExisted(request.getTaxID())) {
+                return GenericMessageResponseEntity.build(TAX_ID_EXIST_MSG, HttpStatus.BAD_REQUEST);
+            }
+            CompanyDTO dto = CompanyDTO.builder()
+                    .id(UUID.randomUUID().toString())
+                    .taxId(request.getTaxID())
+                    .name(request.getName())
+                    .address(request.getAddress())
+                    .phone(request.getPhone())
+                    .email(request.getEmail())
+                    .employeeMaxNum(request.getEmployeeMaxNum())
+                    .websiteUrl(request.getUrl())
+                    .sizeId(request.getSizeId())
+                    .build();
+            CompanyEntity result = companyService.createCompany(dto);
+            return result != null ? GenericMessageResponseEntity.build(CREATE_COMPANY_SUCCESS, HttpStatus.CREATED)
+                    : GenericMessageResponseEntity.build(CREATE_COMPANY_FAIL, HttpStatus.NOT_FOUND);
+        } catch (NoSuchElementException ex) {
+            return GenericMessageResponseEntity.build(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('COMPANY_MANAGER')")
     @PutMapping(ApiEndPoint.Company.COMPANY_ENDPOINT)
     public ResponseEntity<?> update(@Valid @RequestBody UpdateCompanyRequest request) {
-       try {
-           if (request.getEmail() != null && isEmailExisted(request.getEmail())){
-               return GenericMessageResponseEntity.build(EMAIL_EXIST_MSG, HttpStatus.BAD_REQUEST);
-           }
-           if (request.getTaxId() != null && isTaxIDExisted(request.getTaxId())){
-               return GenericMessageResponseEntity.build(TAX_ID_EXIST_MSG, HttpStatus.BAD_REQUEST);
-           }
-           CompanyDTO dto = CompanyDTO.builder()
-                   .id(request.getId())
-                   .name(request.getName())
-                   .address(request.getAddress())
-                   .phone(request.getPhone())
-                   .email(request.getEmail())
-                   .employeeMaxNum(request.getEmployeeMaxNum())
-                   .websiteUrl(request.getUrl())
-                   .sizeId(request.getSizeId())
-                   .taxId(request.getTaxId())
-                   .build();
-           CompanyEntity result = companyService.updateCompany(dto);
-           return result != null ? GenericMessageResponseEntity.build(UPDATE_COMPANY_SUCCESS, HttpStatus.OK)
-                   : GenericMessageResponseEntity.build(UPDATE_COMPANY_FAIL, HttpStatus.NOT_FOUND);
-       }
-       catch (NoSuchElementException ex) {
-           return GenericMessageResponseEntity.build(ex.getMessage(), HttpStatus.NOT_FOUND);
-       }
+        try {
+            if (request.getEmail() != null && isEmailExisted(request.getEmail())) {
+                return GenericMessageResponseEntity.build(EMAIL_EXIST_MSG, HttpStatus.BAD_REQUEST);
+            }
+            if (request.getTaxId() != null && isTaxIDExisted(request.getTaxId())) {
+                return GenericMessageResponseEntity.build(TAX_ID_EXIST_MSG, HttpStatus.BAD_REQUEST);
+            }
+            CompanyDTO dto = CompanyDTO.builder()
+                    .id(request.getId())
+                    .name(request.getName())
+                    .address(request.getAddress())
+                    .phone(request.getPhone())
+                    .email(request.getEmail())
+                    .employeeMaxNum(request.getEmployeeMaxNum())
+                    .websiteUrl(request.getUrl())
+                    .sizeId(request.getSizeId())
+                    .taxId(request.getTaxId())
+                    .build();
+            CompanyEntity result = companyService.updateCompany(dto);
+            return result != null ? GenericMessageResponseEntity.build(UPDATE_COMPANY_SUCCESS, HttpStatus.OK)
+                    : GenericMessageResponseEntity.build(UPDATE_COMPANY_FAIL, HttpStatus.NOT_FOUND);
+        } catch (NoSuchElementException ex) {
+            return GenericMessageResponseEntity.build(ex.getMessage(), HttpStatus.NOT_FOUND);
+        }
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
-    @DeleteMapping(ApiEndPoint.Company.COMPANY_ENDPOINT + "/"+"{id}")
+    @DeleteMapping(ApiEndPoint.Company.COMPANY_ENDPOINT + "/" + "{id}")
     public ResponseEntity<?> delete(@PathVariable String id) {
         Boolean result = companyService.deleteCompany(id);
         return result ? new ResponseEntity<>(new UpdateCompanyResponse(DELETE_COMPANY_SUCCESS), HttpStatus.OK)

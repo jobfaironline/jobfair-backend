@@ -20,9 +20,6 @@ public class CompanySizeEntity {
     @Basic
     @Column(name = "name")
     private String name;
-    @Basic
-    @Column(name = "description")
-    private String description;
 
 
     @Override
@@ -32,16 +29,13 @@ public class CompanySizeEntity {
 
         CompanySizeEntity that = (CompanySizeEntity) o;
 
-        if (!Objects.equals(id, that.id)) return false;
-        if (!Objects.equals(name, that.name)) return false;
-        return Objects.equals(description, that.description);
+        return !Objects.equals(id, that.id);
     }
 
     @Override
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (description != null ? description.hashCode() : 0);
         return result;
     }
 }

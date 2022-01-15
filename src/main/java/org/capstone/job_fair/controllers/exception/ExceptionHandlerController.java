@@ -2,7 +2,6 @@ package org.capstone.job_fair.controllers.exception;
 
 import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
-import org.capstone.job_fair.models.custom_exceptions.AppException;
 import org.capstone.job_fair.response.ErrorResponse;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
@@ -42,10 +41,6 @@ public class ExceptionHandlerController {
         return buildErrorResponse(ex, MessageUtil.getMessage("MSG_RESOURCE_NO_PERMISSION", ""), HttpStatus.UNAUTHORIZED);
     }
 
-    @ExceptionHandler(AppException.class)
-    public ResponseEntity<?> customException(AppException ex) {
-        return buildErrorResponse(ex, MessageUtil.getMessage("MSG_INTERNAL_ERROR", ""), HttpStatus.BAD_REQUEST);
-    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<?> MethodArgumentNotValid(MethodArgumentNotValidException ex) {
@@ -63,8 +58,13 @@ public class ExceptionHandlerController {
         return buildErrorResponse(ex, MessageUtil.getMessage("MSG_ENTITY_NOT_FOUND"), HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler({ Exception.class })
+    public ResponseEntity<?> handleGlobalException(Exception ex) {
+        return buildErrorResponse(ex, MessageUtil.getMessage("MSG_INTERNAL_ERROR"), HttpStatus.BAD_REQUEST);
+    }
+
     private ResponseEntity<?> buildErrorResponse(Exception exception, String message, HttpStatus httpStatus) {
-        return ErrorResponse.build(httpStatus, message, exception.getCause().getMessage());
+        return ErrorResponse.build(httpStatus, message, exception.getClass().getSimpleName() + ": " + exception.getMessage());
     }
 
     private ResponseEntity<?> buildErrorResponse(MethodArgumentNotValidException exception, String message) {
