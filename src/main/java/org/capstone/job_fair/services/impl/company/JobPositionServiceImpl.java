@@ -37,34 +37,11 @@ public class JobPositionServiceImpl implements JobPositionService {
         JobPositionEntity entity = mapper.toEntity(dto);
         entity.setId(id);
 
-        LanguageEntity languageEntity = new LanguageEntity();
-        languageEntity.setId(dto.getLanguage().getCode());
-
-        JobLevelEntity jobLevelEntity = new JobLevelEntity();
-        jobLevelEntity.setId(dto.getLevel().ordinal());
-
-        JobTypeEntity jobTypeEntity = new JobTypeEntity();
-        jobTypeEntity.setId(dto.getJobType().ordinal());
-
         CompanyEntity companyEntity = new CompanyEntity();
         companyEntity.setId(dto.getComapnyId());
 
-        List<SubCategoryEntity> categoryEntities = dto.getSubCategoryDTOs().stream()
-                .map(SubCategoryDTO::getId)
-                .map(SubCategoryEntity::new)
-                .collect(Collectors.toList());
-
-        List<SkillTagEntity> skillTagEntities = dto.getSkillTagDTOS().stream()
-                .map(SkillTagDTO::getId)
-                .map(SkillTagEntity::new)
-                .collect(Collectors.toList());
 
         entity.setCompany(companyEntity);
-        entity.setLanguage(languageEntity);
-        entity.setJobTypeEntity(jobTypeEntity);
-        entity.setJobLevel(jobLevelEntity);
-        entity.setCategories(categoryEntities);
-        entity.setSkillTagEntities(skillTagEntities);
 
         jobPositionRepository.save(entity);
     }

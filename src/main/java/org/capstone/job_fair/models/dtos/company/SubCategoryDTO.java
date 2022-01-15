@@ -1,9 +1,7 @@
 package org.capstone.job_fair.models.dtos.company;
 
 import lombok.*;
-import org.capstone.job_fair.models.entities.company.ProfessionEntity;
 
-import javax.persistence.*;
 import java.io.Serializable;
 
 @Data

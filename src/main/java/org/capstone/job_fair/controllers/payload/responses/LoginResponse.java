@@ -1,4 +1,4 @@
-package org.capstone.job_fair.controllers.payload;
+package org.capstone.job_fair.controllers.payload.responses;
 
 import lombok.*;
 import org.capstone.job_fair.models.statuses.AccountStatus;
@@ -15,6 +15,4 @@ public class LoginResponse {
     private String roles;
     private String token;
     private String refreshToken;
-
-
 }

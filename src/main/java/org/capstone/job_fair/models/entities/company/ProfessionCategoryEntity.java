@@ -13,7 +13,7 @@ import java.util.Objects;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "profession_category", schema = "dbo")
-public class ProfessionEntity implements Serializable {
+public class ProfessionCategoryEntity implements Serializable {
     @Id
     @Column(name = "id")
     private int id;
@@ -27,7 +27,7 @@ public class ProfessionEntity implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        ProfessionEntity that = (ProfessionEntity) o;
+        ProfessionCategoryEntity that = (ProfessionCategoryEntity) o;
 
         return !Objects.equals(id, that.id);
     }

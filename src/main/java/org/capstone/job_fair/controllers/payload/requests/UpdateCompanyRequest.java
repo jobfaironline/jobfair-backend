@@ -1,12 +1,15 @@
-package org.capstone.job_fair.controllers.payload;
+package org.capstone.job_fair.controllers.payload.requests;
 
 import lombok.*;
+import org.capstone.job_fair.constants.DataConstraint;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.validators.EmailConstraint;
 import org.capstone.job_fair.validators.PhoneConstraint;
+import org.capstone.job_fair.validators.XSSConstraint;
 
 
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -16,15 +19,19 @@ import javax.validation.constraints.Size;
 @Getter
 @Setter
 public class UpdateCompanyRequest {
-    private static final int MIN_EMPLOYEE = 1;
+
 
     @NotNull
     private String id;
 
-    @Size(max = 1000)
+    @Size(max = DataConstraint.Company.NAME_LENGTH)
+    @NotEmpty
+    @XSSConstraint
     private String name;
 
-    @Size(max = 1000)
+    @Size(max = DataConstraint.Company.ADDRESS_LENGTH)
+    @NotEmpty
+    @XSSConstraint
     private String address;
 
     @PhoneConstraint
@@ -33,11 +40,13 @@ public class UpdateCompanyRequest {
     @EmailConstraint
     private String email;
 
-    @Min(value = MIN_EMPLOYEE , message = MessageConstant.InvalidFormat.MIN_EMPLOYEE_INVALID)
+    @Min(value = DataConstraint.Company.MIN_EMPLOYEE)
     private Integer employeeMaxNum;
 
     private String taxId;
 
+    @NotEmpty
+    @XSSConstraint
     private String url;
 
     private String sizeId;

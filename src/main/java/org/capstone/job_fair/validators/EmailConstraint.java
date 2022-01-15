@@ -13,7 +13,7 @@ import java.lang.annotation.*;
 @Target( { ElementType.METHOD, ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface EmailConstraint {
-    String message() default MessageConstant.InvalidFormat.INVALID_EMAIL_FORMAT;
+    String message() default MessageConstant.InvalidFormatValidationMessage.INVALID_EMAIL_FORMAT;
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

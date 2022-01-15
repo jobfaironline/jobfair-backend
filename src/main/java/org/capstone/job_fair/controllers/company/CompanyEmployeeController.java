@@ -2,21 +2,18 @@ package org.capstone.job_fair.controllers.company;
 
 
 import org.capstone.job_fair.constants.ApiEndPoint;
+import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
 import org.capstone.job_fair.models.dtos.company.CompanyDTO;
 import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
-import org.capstone.job_fair.controllers.payload.CompanyManagerRegisterRequest;
-import org.capstone.job_fair.controllers.payload.GenericMessageResponseEntity;
-import org.capstone.job_fair.controllers.payload.RegisterResponse;
-import org.capstone.job_fair.controllers.payload.UpdateCompanyEmployeeProfileRequest;
-import org.capstone.job_fair.models.dtos.account.AccountDTO;
-import org.capstone.job_fair.models.dtos.company.CompanyDTO;
-import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
-import org.capstone.job_fair.models.entities.account.AccountEntity;
+import org.capstone.job_fair.controllers.payload.requests.CompanyManagerRegisterRequest;
+import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
+import org.capstone.job_fair.controllers.payload.requests.UpdateCompanyEmployeeProfileRequest;
 import org.capstone.job_fair.services.interfaces.account.AccountService;
 import org.capstone.job_fair.services.interfaces.account.GenderService;
 import org.capstone.job_fair.services.interfaces.company.CompanyEmployeeService;
 import org.capstone.job_fair.services.interfaces.company.CompanyService;
+import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,16 +23,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Optional;
-import java.util.UUID;
-
 @RestController
 public class CompanyEmployeeController {
-    private static final String EMAIL_EXISTED = "Email has already existed. Please choose another one.";
-    private static final String FAIL_TO_REGISTER = "Failed to register new account. Please check again.";
-    private static final String SUCCESS_TO_REGISTER = "Register new account successfully.";
-    private static final String CONFIRM_NOT_MATCH_PASSWORD = "Confirm password must match with password. Please check again.";
-    private static final String GENDER_INVALID = "Chosen gender is invalid.";
 
     @Autowired
     private AccountService accountService;
@@ -62,15 +51,21 @@ public class CompanyEmployeeController {
     public ResponseEntity<?> register(@Validated @RequestBody CompanyManagerRegisterRequest request) {
         //check if email existed?
         if (isEmailExist(request.getEmail())) {
-            return GenericMessageResponseEntity.build(EMAIL_EXISTED, HttpStatus.BAD_REQUEST);
+            return GenericResponse.build(
+                    MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMAIL_EXISTED),
+                    HttpStatus.BAD_REQUEST);
         }
         //check if password match confirm password
         if (!request.getPassword().equals(request.getConfirmPassword())) {
-            return GenericMessageResponseEntity.build(CONFIRM_NOT_MATCH_PASSWORD, HttpStatus.BAD_REQUEST);
+            return GenericResponse.build(
+                    MessageUtil.getMessage(MessageConstant.AccessControlMessage.CONFIRM_PASSWORD_MISMATCH),
+                    HttpStatus.BAD_REQUEST);
         }
         //check gender validation
         if (!isGenderExist(request.getGender().ordinal())) {
-            return GenericMessageResponseEntity.build(GENDER_INVALID, HttpStatus.BAD_REQUEST);
+            return GenericResponse.build(
+                    MessageUtil.getMessage(MessageConstant.Gender.NOT_FOUND),
+                    HttpStatus.BAD_REQUEST);
         }
 
         AccountDTO accountDTO = new AccountDTO();
@@ -86,19 +81,25 @@ public class CompanyEmployeeController {
         dto.setAccount(accountDTO);
 
         companyEmployeeService.createNewCompanyManagerAccount(dto);
-        return new ResponseEntity<>(new RegisterResponse(SUCCESS_TO_REGISTER), HttpStatus.CREATED);
+        return GenericResponse.build(
+                MessageUtil.getMessage(MessageConstant.CompanyEmployee.CREATE_EMPLOYEE_MANAGER_SUCCESSFULLY),
+                HttpStatus.CREATED);
     }
 
-    @PreAuthorize("hasAuthority('COMPANY_EMPLOYEE') or hasAuthority('COMPANY_MANAGER')")
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
     @PostMapping(ApiEndPoint.CompanyEmployee.UPDATE_PROFILE_ENDPOINT)
     public ResponseEntity<?> updateProfile(@Validated @RequestBody UpdateCompanyEmployeeProfileRequest request) {
 
         if (!(accountService.getCountActiveAccountById(request.getAccountId()) == 0)) {
-            return GenericMessageResponseEntity.build("Account does not existed", HttpStatus.BAD_REQUEST);
+            return GenericResponse.build(
+                    MessageConstant.Account.NOT_FOUND,
+                    HttpStatus.BAD_REQUEST);
         }
 
         if (request.getAccountRequest() != null && request.getAccountRequest().getEmail() != null && isEmailExist(request.getAccountRequest().getEmail())) {
-            return GenericMessageResponseEntity.build(EMAIL_EXISTED, HttpStatus.BAD_REQUEST);
+            return GenericResponse.build(
+                    MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMAIL_EXISTED),
+                    HttpStatus.BAD_REQUEST);
         }
 
         AccountDTO accountDTO = request.getAccountRequest() != null ?
@@ -118,7 +119,9 @@ public class CompanyEmployeeController {
         CompanyDTO companyDTO = null;
         if (request.getCompanyId() != null) {
             if (!(companyService.getCountById(request.getCompanyId()) == 0)) {
-                return GenericMessageResponseEntity.build("Company not existed", HttpStatus.BAD_REQUEST);
+                return GenericResponse.build(
+                        MessageUtil.getMessage(MessageConstant.Company.NOT_FOUND)
+                        , HttpStatus.BAD_REQUEST);
             }
             companyDTO = new CompanyDTO();
             companyDTO.setId(request.getCompanyId());
@@ -131,7 +134,9 @@ public class CompanyEmployeeController {
                 .build();
         companyEmployeeService.updateProfile(companyEmployeeDTO);
 
-        return GenericMessageResponseEntity.build("noice", HttpStatus.OK);
+        return GenericResponse.build(
+                MessageUtil.getMessage(MessageConstant.CompanyEmployee.UPDATE_PROFILE_SUCCESSFULLY),
+                HttpStatus.OK);
     }
 
 
