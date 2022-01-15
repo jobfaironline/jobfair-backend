@@ -22,4 +22,5 @@ public class CountryEntity {
     @Column(name = "name", length = 1000)
     private String name;
 
+
 }
