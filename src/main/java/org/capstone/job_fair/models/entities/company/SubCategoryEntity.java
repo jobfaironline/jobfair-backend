@@ -16,7 +16,7 @@ public class SubCategoryEntity implements Serializable {
     @Column(name = "id", nullable = false)
     private int id;
     @Basic
-    @Column(name = "name", nullable = true, length = 100)
+    @Column(name = "name", length = 100)
     private String name;
 
     public SubCategoryEntity(int id){
@@ -25,7 +25,7 @@ public class SubCategoryEntity implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "category_id")
-    private ProfessionEntity category;
+    private ProfessionCategoryEntity category;
 
 
     @Override

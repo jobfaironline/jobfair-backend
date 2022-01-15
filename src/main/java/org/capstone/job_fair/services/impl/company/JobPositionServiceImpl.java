@@ -40,15 +40,6 @@ public class JobPositionServiceImpl implements JobPositionService {
         CompanyEntity companyEntity = new CompanyEntity();
         companyEntity.setId(dto.getComapnyId());
 
-        List<SubCategoryEntity> categoryEntities = dto.getSubCategoryDTOs().stream()
-                .map(SubCategoryDTO::getId)
-                .map(SubCategoryEntity::new)
-                .collect(Collectors.toList());
-
-        List<SkillTagEntity> skillTagEntities = dto.getSkillTagDTOS().stream()
-                .map(SkillTagDTO::getId)
-                .map(SkillTagEntity::new)
-                .collect(Collectors.toList());
 
         entity.setCompany(companyEntity);
 
