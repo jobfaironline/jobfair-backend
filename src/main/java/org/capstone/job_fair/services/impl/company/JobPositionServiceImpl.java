@@ -29,22 +29,10 @@ public class JobPositionServiceImpl implements JobPositionService {
         JobPositionEntity entity = mapper.toEntity(dto);
         entity.setId(id);
 
-        LanguageEntity languageEntity = new LanguageEntity();
-        languageEntity.setId(dto.getLanguage().getCode());
-
-        JobLevelEntity jobLevelEntity = new JobLevelEntity();
-        jobLevelEntity.setId(dto.getLevel().ordinal());
-
-        JobTypeEntity jobTypeEntity = new JobTypeEntity();
-        jobTypeEntity.setId(dto.getJobType().ordinal());
-
         CompanyEntity companyEntity = new CompanyEntity();
         companyEntity.setId(dto.getComapnyId());
 
         entity.setCompany(companyEntity);
-        entity.setLanguage(languageEntity);
-        entity.setJobTypeEntity(jobTypeEntity);
-        entity.setJobLevel(jobLevelEntity);
 
         jobPositionRepository.save(entity);
     }

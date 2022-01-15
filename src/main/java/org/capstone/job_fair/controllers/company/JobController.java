@@ -26,7 +26,7 @@ public class JobController {
     @Autowired
     private CompanyService companyService;
 
-    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) ")
     @PostMapping(ApiEndPoint.Job.JOB_POSITION_ENDPOINT)
     public ResponseEntity<?> createJobPosition(@Validated @RequestBody CreateJobPositionRequest request) {
 

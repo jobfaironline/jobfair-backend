@@ -52,9 +52,6 @@ public class AttendantServiceImpl implements AttendantService {
         role.setId(Role.ATTENDANT.ordinal());
         accountEntity.setRole(role);
 
-        GenderEntity gender = new GenderEntity();
-        gender.setId(dto.getAccount().getGender().ordinal());
-        accountEntity.setGender(gender);
         attendantRepository.save(attendantEntity);
     }
     @Override
