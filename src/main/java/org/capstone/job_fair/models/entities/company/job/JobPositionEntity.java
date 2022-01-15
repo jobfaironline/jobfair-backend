@@ -4,8 +4,12 @@ import lombok.*;
 import org.capstone.job_fair.models.entities.attendant.JobLevelEntity;
 import org.capstone.job_fair.models.entities.attendant.LanguageEntity;
 import org.capstone.job_fair.models.entities.company.CompanyEntity;
+import org.capstone.job_fair.models.entities.company.SkillTagEntity;
+import org.capstone.job_fair.models.entities.company.SubCategoryEntity;
 
 import javax.persistence.*;
+import java.io.Serializable;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -15,7 +19,7 @@ import java.util.Objects;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "job_position", schema = "dbo")
-public class JobPositionEntity {
+public class JobPositionEntity implements Serializable {
     @Id
     @Column(name = "id")
     private String id;
@@ -53,6 +57,20 @@ public class JobPositionEntity {
     @JoinColumn(name = "company_id")
     private CompanyEntity company;
 
+    @ManyToMany
+    @JoinTable(
+            name = "job_category",
+            joinColumns = @JoinColumn(name = "job_id"),
+            inverseJoinColumns = @JoinColumn(name = "sub_category_id"))
+    List<SubCategoryEntity> categories;
+
+    @ManyToMany
+    @JoinTable(
+            name = "job_position_skill_tag",
+            joinColumns = @JoinColumn(name = "position_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id"))
+    List<SkillTagEntity> skillTagEntities;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -60,20 +78,7 @@ public class JobPositionEntity {
 
         JobPositionEntity that = (JobPositionEntity) o;
 
-        if (!Objects.equals(id, that.id)) return false;
-        if (!Objects.equals(title, that.title)) return false;
-        if (!Objects.equals(description, that.description)) return false;
-        if (!Objects.equals(requirements, that.requirements)) return false;
-        if (!Objects.equals(minSalary, that.minSalary)) return false;
-        if (!Objects.equals(maxSalary, that.maxSalary)) return false;
-        if (!Objects.equals(contactPersonName, that.contactPersonName))
-            return false;
-        if (!Objects.equals(contactEmail, that.contactEmail)) return false;
-        if (!Objects.equals(language, that.language)) return false;
-        if (!Objects.equals(jobLevel, that.jobLevel)) return false;
-        if (!Objects.equals(jobTypeEntity, that.jobTypeEntity)) return false;
-        if (!Objects.equals(company, that.company)) return false;
-        return true;
+        return !Objects.equals(id, that.id);
     }
 
     @Override

@@ -14,9 +14,11 @@ public abstract class JobPositionEntityMapper {
     @Mapping(target = "language", ignore = true)
     @Mapping(target = "level", ignore = true)
     @Mapping(target = "jobType", ignore = true)
+    @Mapping(target = "subCategoryDTOs", ignore = true)
     public abstract JobPositionDTO toDTO(JobPositionEntity jobPosition);
     @Mapping(target = "language", ignore = true)
     @Mapping(target = "jobLevel", ignore = true)
     @Mapping(target = "jobTypeEntity", ignore = true)
+    @Mapping(target = "categories", ignore = true)
     public abstract JobPositionEntity toEntity(JobPositionDTO jobPositionDTO);
 }
