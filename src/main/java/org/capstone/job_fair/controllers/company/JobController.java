@@ -55,6 +55,8 @@ public class JobController {
                 .jobType(request.getJobType())
                 .locationId(request.getLocationId())
                 .comapnyId(request.getCompanyId())
+                .subCategoryDTOs(request.getSubCategoryIds().stream().map(SubCategoryDTO::new).collect(Collectors.toList()))
+                .skillTagDTOS(request.getSkillTagIds().stream().map(SkillTagDTO::new).collect(Collectors.toList()))
                 .build();
         jobPositionService.createNewJobPosition(jobPositionDTO);
         return GenericResponse.build(

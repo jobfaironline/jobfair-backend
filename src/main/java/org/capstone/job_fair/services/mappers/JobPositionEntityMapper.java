@@ -21,11 +21,13 @@ public abstract class JobPositionEntityMapper {
     @Mapping(target = "language", qualifiedByName = "toJobPositionDTOLanguage")
     @Mapping(target = "level", source = "jobLevel", qualifiedByName = "toJobPositionDTOJobLevel")
     @Mapping(target = "jobType", source = "jobTypeEntity", qualifiedByName = "toJobPositionDTOJobType")
+    @Mapping(target = "subCategoryDTOs", ignore = true)
     public abstract JobPositionDTO toDTO(JobPositionEntity jobPosition);
 
     @Mapping(target = "language", qualifiedByName = "toJobPositionEntityLanguage")
     @Mapping(target = "jobLevel", source = "level", qualifiedByName = "toJobPositionEntityJobLevel")
     @Mapping(target = "jobTypeEntity", source = "jobType", qualifiedByName = "toJobPositionEntityJobType")
+    @Mapping(target = "categories", ignore = true)
     public abstract JobPositionEntity toEntity(JobPositionDTO jobPositionDTO);
 
 
