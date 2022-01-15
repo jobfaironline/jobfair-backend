@@ -1,17 +1,21 @@
 package org.capstone.job_fair.models.entities.company;
 
 import lombok.*;
+import org.capstone.job_fair.models.entities.company.job.JobPositionEntity;
 
 import javax.persistence.*;
-import java.io.Serializable;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Table(name = "sub_category", schema = "dbo")
+@Data
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
-public class SubCategoryEntity implements Serializable {
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@Table(name = "sub_category", schema = "dbo")
+public class SubCategoryEntity {
+    @EqualsAndHashCode.Include
     @Id
     @Column(name = "id", nullable = false)
     private int id;
@@ -27,22 +31,4 @@ public class SubCategoryEntity implements Serializable {
     @JoinColumn(name = "category_id")
     private ProfessionCategoryEntity category;
 
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        SubCategoryEntity that = (SubCategoryEntity) o;
-
-        return !Objects.equals(id, that.id);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = id;
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (category != null ? category.hashCode() : 0);
-        return result;
-    }
 }

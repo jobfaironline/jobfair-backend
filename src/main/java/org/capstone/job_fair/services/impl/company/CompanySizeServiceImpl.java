@@ -15,7 +15,7 @@ public class CompanySizeServiceImpl implements CompanySizeService {
     private CompanySizeRepository sizeRepository;
 
     @Override
-    public Optional<CompanySizeEntity> findBySizeId(String id) {
-        return sizeRepository.findById(id);
+    public Integer getCountBySizeId(int id) {
+        return sizeRepository.countById(id);
     }
 }

@@ -1,6 +1,7 @@
 package org.capstone.job_fair.models.entities.company;
 
 import lombok.*;
+import org.capstone.job_fair.models.entities.attendant.cv.SkillEntity;
 
 import javax.persistence.*;
 import java.util.List;
@@ -45,6 +46,9 @@ public class CompanyEntity {
     @JoinColumn(name = "size_id")
     private CompanySizeEntity companySize;
 
+    @OneToMany(mappedBy = "company")
+    private List<MediaEntity> medias;
+
     @ManyToMany
     @JoinTable(
             name = "company_benefit",
@@ -52,14 +56,6 @@ public class CompanyEntity {
             inverseJoinColumns =  @JoinColumn(name = "benefit_id")
     )
     List<BenefitEntity> companyBenefits;
-
-    @ManyToMany
-    @JoinTable(
-            name = "company_media",
-            joinColumns = @JoinColumn(name = "company_id"),
-            inverseJoinColumns =  @JoinColumn(name = "media_id")
-    )
-    List<MediaEntity> companyMedias;
 
     @ManyToMany
     @JoinTable(

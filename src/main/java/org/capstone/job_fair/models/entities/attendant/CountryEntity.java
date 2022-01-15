@@ -22,11 +22,4 @@ public class CountryEntity {
     @Column(name = "name", length = 1000)
     private String name;
 
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-
 }

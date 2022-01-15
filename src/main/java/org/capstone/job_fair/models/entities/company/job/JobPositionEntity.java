@@ -8,57 +8,51 @@ import org.capstone.job_fair.models.entities.company.SkillTagEntity;
 import org.capstone.job_fair.models.entities.company.SubCategoryEntity;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Getter
-@Setter
+@Data
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Table(name = "job_position", schema = "dbo")
-public class JobPositionEntity implements Serializable {
+public class JobPositionEntity {
     @EqualsAndHashCode.Include
     @Id
-    @Column(name = "id", nullable = false, length = 36)
+    @Column(name = "id")
     private String id;
-
-    @Column(name = "title", nullable = false, length = 200)
+    @Basic
+    @Column(name = "title")
     private String title;
-
-    @Column(name = "description", nullable = false)
+    @Basic
+    @Column(name = "description")
     private String description;
-
-    @Column(name = "requirements", nullable = false)
+    @Basic
+    @Column(name = "requirements")
     private String requirements;
-
+    @Basic
     @Column(name = "min_salary")
     private Double minSalary;
-
+    @Basic
     @Column(name = "max_salary")
     private Double maxSalary;
-
-    @Column(name = "contact_person_name", nullable = false)
+    @Basic
+    @Column(name = "contact_person_name")
     private String contactPersonName;
-
+    @Basic
     @Column(name = "contact_email")
     private String contactEmail;
-
     @ManyToOne
     @JoinColumn(name = "preferred_language_id")
     private LanguageEntity language;
-
     @ManyToOne
     @JoinColumn(name = "level_id")
     private JobLevelEntity jobLevel;
-
     @ManyToOne
     @JoinColumn(name = "job_type_id")
     private JobTypeEntity jobTypeEntity;
-
     @ManyToOne
     @JoinColumn(name = "company_id")
     private CompanyEntity company;

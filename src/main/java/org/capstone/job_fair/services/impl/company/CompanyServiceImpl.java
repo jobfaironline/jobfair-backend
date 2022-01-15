@@ -1,9 +1,11 @@
 package org.capstone.job_fair.services.impl.company;
 
+import org.capstone.job_fair.models.dtos.company.BenefitDTO;
 import org.capstone.job_fair.models.dtos.company.CompanyDTO;
-import org.capstone.job_fair.models.entities.company.CompanyEntity;
-import org.capstone.job_fair.models.entities.company.CompanySizeEntity;
+import org.capstone.job_fair.models.dtos.company.SubCategoryDTO;
+import org.capstone.job_fair.models.entities.company.*;
 import org.capstone.job_fair.repositories.company.CompanyRepository;
+import org.capstone.job_fair.repositories.company.MediaRepository;
 import org.capstone.job_fair.services.interfaces.company.CompanyService;
 import org.capstone.job_fair.services.interfaces.company.CompanySizeService;
 import org.capstone.job_fair.services.mappers.CompanyEntityMapper;
@@ -12,9 +14,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class CompanyServiceImpl implements CompanyService {
@@ -24,6 +26,9 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Autowired
     private CompanyRepository companyRepository;
+
+    @Autowired
+    private MediaRepository mediaRepository;
 
     @Autowired
     private CompanySizeService sizeService;
@@ -41,40 +46,66 @@ public class CompanyServiceImpl implements CompanyService {
         return companyRepository.findById(id);
     }
 
-    private CompanySizeEntity findSizeById(String id) {
-        return sizeService.findBySizeId(id).isPresent() ? sizeService.findBySizeId(id).get() : null;
+    private boolean findSizeById(int id) {
+        return sizeService.getCountBySizeId(id) != 0;
     }
 
     @Override
-    public CompanyEntity createCompany(CompanyDTO dto) {
+    public void createCompany(CompanyDTO dto) {
         String id = UUID.randomUUID().toString();
         CompanyEntity entity = new CompanyEntity();
         mapper.DTOToEntity(dto, entity);
         entity.setId(id);
 
-        CompanySizeEntity sizeEntity = findSizeById(dto.getSizeId());
+        CompanySizeEntity sizeEntity = new CompanySizeEntity();
+        sizeEntity.setId(dto.getSizeId());
 
-        if (sizeEntity == null) {
-            throw new NoSuchElementException(NOT_FOUND_SIZE);
-        }
+        List<SubCategoryEntity> subCategoryEntities = dto.getSubCategoryDTOs().stream()
+                .map(SubCategoryDTO::getId)
+                .map(SubCategoryEntity::new)
+                .collect(Collectors.toList());
+
+        List<BenefitEntity> benefitEntities = dto.getBenefitDTOs().stream()
+                .map(BenefitDTO::getId)
+                .map(BenefitEntity::new)
+                .collect(Collectors.toList());
+
+        List<MediaEntity> mediaEntities = dto.getMediaDTOS().stream()
+                .map(mediaDTO -> {
+                    MediaEntity media = new MediaEntity();
+                    String uuid = UUID.randomUUID().toString();
+                    media.setId(uuid);
+                    media.setUrl(mediaDTO.getUrl());
+                    return mediaRepository.save(media);
+                })
+                .collect(Collectors.toList());
+
 
         entity.setCompanySize(sizeEntity);
-        return companyRepository.save(entity);
+        entity.setCompanyBenefits(benefitEntities);
+        entity.setCompanySubCategory(subCategoryEntities);
+        entity.setMedias(mediaEntities);
+        companyRepository.save(entity);
+
     }
 
     @Transactional
     @Override
     public CompanyEntity updateCompany(CompanyDTO dto) {
-        if (dto.getSizeId()!=null){
-            CompanySizeEntity sizeEntity = findSizeById(dto.getSizeId());
-            if (sizeEntity == null) {
-                throw new NoSuchElementException(NOT_FOUND_SIZE);
-            }
-        }
-        return companyRepository.findById(dto.getId()).map(com -> {
-            mapper.DTOToEntity(dto, com);
-            return companyRepository.save(com);
-        }).orElse(null);
+
+        CompanyEntity entity = new CompanyEntity();
+        mapper.DTOToEntity(dto, entity);
+
+        CompanySizeEntity sizeEntity = new CompanySizeEntity();
+        sizeEntity.setId(dto.getSizeId());
+
+        MediaEntity mediaEntity = new MediaEntity();
+        mediaEntity.setId(UUID.randomUUID().toString());
+        mediaEntity.setCompany(entity);
+        mediaRepository.save(mediaEntity);
+
+        entity.setCompanySize(sizeEntity);
+        return companyRepository.save(entity);
     }
 
     @Transactional
@@ -112,6 +143,11 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     public Optional<CompanyEntity> findCompanyById(String id) {
         return companyRepository.findById(id);
+    }
+
+    @Override
+    public Integer getCountByTaxIdAndId(String taxId, String id) {
+        return companyRepository.countByIdAndTaxId(id, taxId);
     }
 
 

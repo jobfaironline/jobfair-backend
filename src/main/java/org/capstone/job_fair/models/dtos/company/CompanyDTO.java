@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 
 @Data
 @NoArgsConstructor
@@ -19,5 +21,8 @@ public class CompanyDTO {
     private String email;
     private Integer employeeMaxNum;
     private String websiteUrl;
-    private String sizeId;
+    private Integer sizeId;
+    private List<SubCategoryDTO> subCategoryDTOs;
+    private List<BenefitDTO> benefitDTOs;
+    private List<MediaDTO> mediaDTOS;
 }

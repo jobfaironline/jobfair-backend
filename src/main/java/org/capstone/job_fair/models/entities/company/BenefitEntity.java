@@ -7,14 +7,17 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Getter
-@Setter
+@Data
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Table(name = "benefit", schema = "dbo")
 public class BenefitEntity {
+
+    public BenefitEntity(int id) {
+        this.id = id;
+    }
 
     @EqualsAndHashCode.Include
     @Id

@@ -23,10 +23,8 @@ public class MediaEntity {
     @Column(name = "url", nullable = false, length = 2048)
     private String url;
 
-    @Column(name = "description")
-    private String description;
-
-    @ManyToMany(mappedBy = "companyMedias")
-    List<CompanyEntity> companies;
+    @ManyToOne
+    @JoinColumn(name = "company_id")
+    private CompanyEntity company;
 
 }
