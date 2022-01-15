@@ -12,9 +12,11 @@ import java.util.Objects;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Table(name = "reference", schema = "dbo")
 public class ReferenceEntity {
 
+    @EqualsAndHashCode.Include
     @Id
     @Column(name = "id")
     private String id;
@@ -33,16 +35,4 @@ public class ReferenceEntity {
     @JoinColumn(name = "attendant_id")
     private AttendantEntity attendant;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ReferenceEntity)) return false;
-        ReferenceEntity that = (ReferenceEntity) o;
-        return getId().equals(that.getId()) && getFullName().equals(that.getFullName()) && getPosition().equals(that.getPosition()) && getCompany().equals(that.getCompany()) && getEmail().equals(that.getEmail()) && getPhoneNumber().equals(that.getPhoneNumber()) && getAttendant().equals(that.getAttendant());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId(), getFullName(), getPosition(), getCompany(), getEmail(), getPhoneNumber(), getAttendant());
-    }
 }

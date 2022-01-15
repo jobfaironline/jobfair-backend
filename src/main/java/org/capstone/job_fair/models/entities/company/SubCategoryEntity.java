@@ -1,5 +1,6 @@
 package org.capstone.job_fair.models.entities.company;
 
+import lombok.*;
 import org.capstone.job_fair.models.entities.company.job.JobPositionEntity;
 
 import javax.persistence.*;
@@ -7,8 +8,15 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
+@Getter
+@Setter
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Table(name = "sub_category", schema = "dbo")
 public class SubCategoryEntity {
+    @EqualsAndHashCode.Include
     @Id
     @Column(name = "id", nullable = false, length = 36)
     private int id;
@@ -25,16 +33,4 @@ public class SubCategoryEntity {
     @ManyToMany(mappedBy = "jobCategories")
     List<JobPositionEntity> jobPositions;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof SubCategoryEntity)) return false;
-        SubCategoryEntity that = (SubCategoryEntity) o;
-        return id == that.id && name.equals(that.name) && category.equals(that.category) && companies.equals(that.companies) && jobPositions.equals(that.jobPositions);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, name, category, companies, jobPositions);
-    }
 }

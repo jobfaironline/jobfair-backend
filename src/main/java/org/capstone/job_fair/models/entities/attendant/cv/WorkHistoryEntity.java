@@ -1,13 +1,21 @@
 package org.capstone.job_fair.models.entities.attendant.cv;
 
+import lombok.*;
 import org.capstone.job_fair.models.entities.attendant.AttendantEntity;
 
 import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
+@Getter
+@Setter
+@ToString
+@AllArgsConstructor
+@NoArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Table(name = "work_history", schema = "dbo")
 public class WorkHistoryEntity {
+    @EqualsAndHashCode.Include
     @Id
     @Column(name = "id", nullable = false, length = 36)
     private String id;
@@ -34,16 +42,5 @@ public class WorkHistoryEntity {
     @JoinColumn(name = "attendant_id")
     private AttendantEntity attendant;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof WorkHistoryEntity)) return false;
-        WorkHistoryEntity that = (WorkHistoryEntity) o;
-        return id.equals(that.id) && position.equals(that.position) && company.equals(that.company) && fromDate.equals(that.fromDate) && toDate.equals(that.toDate) && isCurrentJob.equals(that.isCurrentJob) && description.equals(that.description) && attendant.equals(that.attendant);
-    }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, position, company, fromDate, toDate, isCurrentJob, description, attendant);
-    }
 }

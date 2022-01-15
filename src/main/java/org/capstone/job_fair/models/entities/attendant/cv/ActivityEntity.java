@@ -12,8 +12,10 @@ import java.util.Objects;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Table(name = "activity", schema = "dbo")
 public class ActivityEntity {
+    @EqualsAndHashCode.Include
     @Id
     @Column(name = "id", nullable = false, length = 36)
     private String id;
@@ -43,16 +45,4 @@ public class ActivityEntity {
     @JoinColumn(name = "attendant_id")
     private AttendantEntity attendant;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ActivityEntity)) return false;
-        ActivityEntity that = (ActivityEntity) o;
-        return getId().equals(that.getId()) && getName().equals(that.getName()) && getFunctionTitle().equals(that.getFunctionTitle()) && getOrganization().equals(that.getOrganization()) && getFromDate().equals(that.getFromDate()) && getToDate().equals(that.getToDate()) && getIsCurrentActivity().equals(that.getIsCurrentActivity()) && getDescription().equals(that.getDescription()) && getAttendant().equals(that.getAttendant());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId(), getName(), getFunctionTitle(), getOrganization(), getFromDate(), getToDate(), getIsCurrentActivity(), getDescription(), getAttendant());
-    }
 }

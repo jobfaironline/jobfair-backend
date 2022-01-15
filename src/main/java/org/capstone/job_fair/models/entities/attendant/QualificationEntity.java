@@ -15,24 +15,14 @@ import java.util.Objects;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Table(name = "qualification", schema = "dbo")
 public class QualificationEntity {
+    @EqualsAndHashCode.Include
     @Id
     @Column(name = "id", nullable = false)
     private Integer id;
     @Column(name = "name", length = 100)
     private String name;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof QualificationEntity)) return false;
-        QualificationEntity that = (QualificationEntity) o;
-        return getId().equals(that.getId()) && getName().equals(that.getName());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId(), getName());
-    }
 }

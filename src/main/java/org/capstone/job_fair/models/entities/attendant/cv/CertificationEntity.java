@@ -13,8 +13,10 @@ import java.util.Objects;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Table(name = "certification", schema = "dbo")
 public class CertificationEntity {
+    @EqualsAndHashCode.Include
     @Id
     @Column(name = "id")
     private String id;
@@ -35,16 +37,4 @@ public class CertificationEntity {
     @JoinColumn(name = "attendant_id")
     private AttendantEntity attendant;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof CertificationEntity)) return false;
-        CertificationEntity that = (CertificationEntity) o;
-        return getId().equals(that.getId()) && getName().equals(that.getName()) && getInstitution().equals(that.getInstitution()) && getYear().equals(that.getYear()) && getCertificationLink().equals(that.getCertificationLink()) && getAttendant().equals(that.getAttendant());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId(), getName(), getInstitution(), getYear(), getCertificationLink(), getAttendant());
-    }
 }

@@ -11,8 +11,10 @@ import java.util.Objects;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Table(name = "job_type", schema = "dbo")
 public class JobTypeEntity {
+    @EqualsAndHashCode.Include
     @Id
     @Column(name = "id")
     private int id;
@@ -21,20 +23,4 @@ public class JobTypeEntity {
     private String name;
 
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        JobTypeEntity that = (JobTypeEntity) o;
-
-        return !Objects.equals(id, that.id);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = id;
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        return result;
-    }
 }

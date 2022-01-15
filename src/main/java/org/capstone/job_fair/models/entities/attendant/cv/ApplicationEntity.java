@@ -17,8 +17,10 @@ import java.util.Objects;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Table(name = "application", schema = "dbo")
 public class ApplicationEntity {
+    @EqualsAndHashCode.Include
     @Id
     @Column(name = "id")
     private String id;
@@ -41,16 +43,4 @@ public class ApplicationEntity {
     @JoinColumn(name = "job_position_id", nullable = false)
     private JobLevelEntity jobLevel;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ApplicationEntity)) return false;
-        ApplicationEntity that = (ApplicationEntity) o;
-        return getId().equals(that.getId()) && getSummary().equals(that.getSummary()) && getCreateDate().equals(that.getCreateDate()) && getAttendant().equals(that.getAttendant());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId(), getSummary(), getCreateDate(), getAttendant());
-    }
 }

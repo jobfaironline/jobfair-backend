@@ -11,8 +11,10 @@ import java.util.Objects;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Table(name = "profession_category", schema = "dbo")
 public class CategoryEntity {
+    @EqualsAndHashCode.Include
     @Id
     @Column(name = "id")
     private String id;
@@ -20,16 +22,4 @@ public class CategoryEntity {
     @Column(name = "name")
     private String name;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof CategoryEntity)) return false;
-        CategoryEntity that = (CategoryEntity) o;
-        return getId().equals(that.getId()) && getName().equals(that.getName());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId(), getName());
-    }
 }

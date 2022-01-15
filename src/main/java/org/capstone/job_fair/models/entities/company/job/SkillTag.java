@@ -12,8 +12,10 @@ import java.util.Objects;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Table(name = "skill_tag", schema = "dbo")
 public class SkillTag {
+    @EqualsAndHashCode.Include
     @Id
     @Column(name = "id" ,nullable = false)
     private Integer id;
@@ -23,16 +25,4 @@ public class SkillTag {
     @ManyToMany(mappedBy = "jobPositionSkillTags")
     List<JobPositionEntity> jobPositions;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof SkillTag)) return false;
-        SkillTag skillTag = (SkillTag) o;
-        return getId().equals(skillTag.getId()) && getName().equals(skillTag.getName());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId(), getName());
-    }
 }

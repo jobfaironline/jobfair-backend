@@ -11,7 +11,9 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "gender", schema = "dbo")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class GenderEntity {
+    @EqualsAndHashCode.Include
     @Id
     @Column(name = "id")
     private Integer id;
@@ -20,16 +22,4 @@ public class GenderEntity {
     @Column(name = "description")
     private String description;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        GenderEntity gender = (GenderEntity) o;
-        return id.equals(gender.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return id.hashCode();
-    }
 }

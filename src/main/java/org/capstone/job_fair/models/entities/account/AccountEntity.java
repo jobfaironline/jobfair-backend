@@ -11,8 +11,10 @@ import javax.persistence.*;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Table(name = "account", schema = "dbo")
 public class AccountEntity {
+    @EqualsAndHashCode.Include
     @Id
     @Column(name = "id", nullable = false, length = 36)
     private String id;
@@ -54,19 +56,4 @@ public class AccountEntity {
         return firstname + " " + middlename + " " + lastname;
     }
 
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        AccountEntity that = (AccountEntity) o;
-
-        return id.equals(that.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return id.hashCode();
-    }
 }

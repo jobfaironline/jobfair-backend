@@ -12,8 +12,10 @@ import java.util.Objects;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Table(name = "company", schema = "dbo")
 public class CompanyEntity {
+    @EqualsAndHashCode.Include
     @Id
     @Column(name = "id", nullable = false, length = 36)
     private String id;
@@ -66,7 +68,5 @@ public class CompanyEntity {
             inverseJoinColumns = @JoinColumn(name = "sub_category_id")
     )
     List<SubCategoryEntity> companySubCategory;
-
-
 
 }

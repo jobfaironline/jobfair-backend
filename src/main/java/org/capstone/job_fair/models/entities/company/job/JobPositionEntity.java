@@ -16,8 +16,10 @@ import java.util.Objects;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Table(name = "job_position", schema = "dbo")
 public class JobPositionEntity {
+    @EqualsAndHashCode.Include
     @Id
     @Column(name = "id", nullable = false, length = 36)
     private String id;
@@ -75,16 +77,4 @@ public class JobPositionEntity {
     )
     List<SkillTag> jobPositionSkillTags;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof JobPositionEntity)) return false;
-        JobPositionEntity that = (JobPositionEntity) o;
-        return getId().equals(that.getId()) && getTitle().equals(that.getTitle()) && getDescription().equals(that.getDescription()) && getRequirements().equals(that.getRequirements()) && getMinSalary().equals(that.getMinSalary()) && getMaxSalary().equals(that.getMaxSalary()) && getContactPersonName().equals(that.getContactPersonName()) && getContactEmail().equals(that.getContactEmail()) && getLanguage().equals(that.getLanguage()) && getJobLevel().equals(that.getJobLevel()) && getJobTypeEntity().equals(that.getJobTypeEntity()) && getCompany().equals(that.getCompany()) && getJobCategories().equals(that.getJobCategories());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId(), getTitle(), getDescription(), getRequirements(), getMinSalary(), getMaxSalary(), getContactPersonName(), getContactEmail(), getLanguage(), getJobLevel(), getJobTypeEntity(), getCompany(), getJobCategories());
-    }
 }

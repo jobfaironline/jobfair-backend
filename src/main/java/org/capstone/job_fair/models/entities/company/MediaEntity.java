@@ -12,8 +12,10 @@ import java.util.Objects;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Table(name = "media", schema = "dbo")
 public class MediaEntity {
+    @EqualsAndHashCode.Include
     @Id
     @Column(name = "id", nullable = false, length = 36)
     private String id;
@@ -27,23 +29,4 @@ public class MediaEntity {
     @ManyToMany(mappedBy = "companyMedias")
     List<CompanyEntity> companies;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        MediaEntity that = (MediaEntity) o;
-
-        if (!Objects.equals(id, that.id)) return false;
-        if (!Objects.equals(url, that.url)) return false;
-        return Objects.equals(description, that.description);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (url != null ? url.hashCode() : 0);
-        result = 31 * result + (description != null ? description.hashCode() : 0);
-        return result;
-    }
 }

@@ -15,8 +15,10 @@ import java.util.Objects;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Table(name = "attendant", schema = "dbo")
 public class AttendantEntity {
+    @EqualsAndHashCode.Include
     @Id
     @Column(name = "account_id", nullable = false, length = 36)
     private String accountId;
@@ -75,26 +77,4 @@ public class AttendantEntity {
     @OneToMany(mappedBy = "attendant")
     private List<ActivityEntity> activityEntities;
 
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        AttendantEntity that = (AttendantEntity) o;
-
-        return (!Objects.equals(accountId, that.accountId));
-    }
-
-    @Override
-    public int hashCode() {
-        int result = accountId != null ? accountId.hashCode() : 0;
-        result = 31 * result + (title != null ? title.hashCode() : 0);
-        result = 31 * result + (address != null ? address.hashCode() : 0);
-        result = 31 * result + (dob != null ? dob.hashCode() : 0);
-        result = 31 * result + (jobTitle != null ? jobTitle.hashCode() : 0);
-        result = 31 * result + (yearOfExp != null ? yearOfExp.hashCode() : 0);
-        result = 31 * result + (maritalStatus != null ? maritalStatus.hashCode() : 0);
-        return result;
-    }
 }
