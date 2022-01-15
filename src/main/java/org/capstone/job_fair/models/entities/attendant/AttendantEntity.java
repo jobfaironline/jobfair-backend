@@ -2,8 +2,11 @@ package org.capstone.job_fair.models.entities.attendant;
 
 import lombok.*;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
+import org.capstone.job_fair.models.entities.attendant.cv.*;
+import org.capstone.job_fair.models.enums.Marital;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -18,28 +21,28 @@ public class AttendantEntity {
     @Column(name = "account_id", nullable = false, length = 36)
     private String accountId;
 
+    @Column(name = "title", length = 100)
+    private String title;
+
+    @Column(name = "address", length = 1000)
+    private String address;
+
+    @Column(name = "dob")
+    private Long dob;
+
+    @Column(name = "job_title", length = 100)
+    private String jobTitle;
+
+    @Column(name = "year_of_exp")
+    private Double yearOfExp;
+
+    @Column(name = "marital_status")
+    @Enumerated(EnumType.ORDINAL)
+    private Marital maritalStatus;
+
     @OneToOne(cascade = {CascadeType.ALL})
     @JoinColumn(name = "account_id")
     private AccountEntity account;
-
-    @Basic
-    @Column(name = "title", nullable = true, length = 100)
-    private String title;
-    @Basic
-    @Column(name = "address", nullable = true, length = 1000)
-    private String address;
-    @Basic
-    @Column(name = "dob", nullable = true)
-    private Long dob;
-    @Basic
-    @Column(name = "job_title", nullable = true, length = 100)
-    private String jobTitle;
-    @Basic
-    @Column(name = "year_of_exp", nullable = true)
-    private Double yearOfExp;
-    @Basic
-    @Column(name = "marital_status", nullable = true)
-    private Boolean maritalStatus;
 
     @ManyToOne
     @JoinColumn(name = "country_id")
@@ -54,6 +57,23 @@ public class AttendantEntity {
     private JobLevelEntity currentJobLevel;
 
 
+    @OneToMany(mappedBy = "attendant")
+    private List<SkillEntity> skillEntities;
+
+    @OneToMany(mappedBy = "attendant")
+    private List<WorkHistoryEntity> workHistoryEntities;
+
+    @OneToMany(mappedBy = "attendant")
+    private List<EducationEntity> educationEntities;
+
+    @OneToMany(mappedBy = "attendant")
+    private List<CertificationEntity> certificationEntities;
+
+    @OneToMany(mappedBy = "attendant")
+    private List<ReferenceEntity> referenceEntities;
+
+    @OneToMany(mappedBy = "attendant")
+    private List<ActivityEntity> activityEntities;
 
 
     @Override

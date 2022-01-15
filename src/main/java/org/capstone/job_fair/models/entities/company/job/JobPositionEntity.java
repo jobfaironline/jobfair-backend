@@ -4,8 +4,10 @@ import lombok.*;
 import org.capstone.job_fair.models.entities.attendant.JobLevelEntity;
 import org.capstone.job_fair.models.entities.attendant.LanguageEntity;
 import org.capstone.job_fair.models.entities.company.CompanyEntity;
+import org.capstone.job_fair.models.entities.company.SubCategoryEntity;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -17,79 +19,72 @@ import java.util.Objects;
 @Table(name = "job_position", schema = "dbo")
 public class JobPositionEntity {
     @Id
-    @Column(name = "id")
+    @Column(name = "id", nullable = false, length = 36)
     private String id;
-    @Basic
-    @Column(name = "title")
+
+    @Column(name = "title", nullable = false, length = 200)
     private String title;
-    @Basic
-    @Column(name = "description")
+
+    @Column(name = "description", nullable = false)
     private String description;
-    @Basic
-    @Column(name = "requirements")
+
+    @Column(name = "requirements", nullable = false)
     private String requirements;
-    @Basic
+
     @Column(name = "min_salary")
     private Double minSalary;
-    @Basic
+
     @Column(name = "max_salary")
     private Double maxSalary;
-    @Basic
-    @Column(name = "contact_person_name")
+
+    @Column(name = "contact_person_name", nullable = false)
     private String contactPersonName;
-    @Basic
+
     @Column(name = "contact_email")
     private String contactEmail;
+
     @ManyToOne
     @JoinColumn(name = "preferred_language_id")
     private LanguageEntity language;
+
     @ManyToOne
     @JoinColumn(name = "level_id")
     private JobLevelEntity jobLevel;
+
     @ManyToOne
     @JoinColumn(name = "job_type_id")
     private JobTypeEntity jobTypeEntity;
+
     @ManyToOne
     @JoinColumn(name = "company_id")
     private CompanyEntity company;
 
+    @ManyToMany
+    @JoinTable(
+            name = "job_category",
+            joinColumns = @JoinColumn(name = "job_id"),
+            inverseJoinColumns = @JoinColumn(name = "sub_category_id")
+    )
+    List<SubCategoryEntity> jobCategories;
+
+    @ManyToMany
+    @JoinTable(
+            name = "job_position_skill_tag",
+            joinColumns = @JoinColumn(name = "tag_id"),
+            inverseJoinColumns =  @JoinColumn(name = "position_id")
+    )
+    List<SkillTag> jobPositionSkillTags;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
+        if (!(o instanceof JobPositionEntity)) return false;
         JobPositionEntity that = (JobPositionEntity) o;
-
-        if (!Objects.equals(id, that.id)) return false;
-        if (!Objects.equals(title, that.title)) return false;
-        if (!Objects.equals(description, that.description)) return false;
-        if (!Objects.equals(requirements, that.requirements)) return false;
-        if (!Objects.equals(minSalary, that.minSalary)) return false;
-        if (!Objects.equals(maxSalary, that.maxSalary)) return false;
-        if (!Objects.equals(contactPersonName, that.contactPersonName))
-            return false;
-        if (!Objects.equals(contactEmail, that.contactEmail)) return false;
-        if (!Objects.equals(language, that.language)) return false;
-        if (!Objects.equals(jobLevel, that.jobLevel)) return false;
-        if (!Objects.equals(jobTypeEntity, that.jobTypeEntity)) return false;
-        if (!Objects.equals(company, that.company)) return false;
-        return true;
+        return getId().equals(that.getId()) && getTitle().equals(that.getTitle()) && getDescription().equals(that.getDescription()) && getRequirements().equals(that.getRequirements()) && getMinSalary().equals(that.getMinSalary()) && getMaxSalary().equals(that.getMaxSalary()) && getContactPersonName().equals(that.getContactPersonName()) && getContactEmail().equals(that.getContactEmail()) && getLanguage().equals(that.getLanguage()) && getJobLevel().equals(that.getJobLevel()) && getJobTypeEntity().equals(that.getJobTypeEntity()) && getCompany().equals(that.getCompany()) && getJobCategories().equals(that.getJobCategories());
     }
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (title != null ? title.hashCode() : 0);
-        result = 31 * result + (description != null ? description.hashCode() : 0);
-        result = 31 * result + (requirements != null ? requirements.hashCode() : 0);
-        result = 31 * result + (minSalary != null ? minSalary.hashCode() : 0);
-        result = 31 * result + (maxSalary != null ? maxSalary.hashCode() : 0);
-        result = 31 * result + (contactPersonName != null ? contactPersonName.hashCode() : 0);
-        result = 31 * result + (contactEmail != null ? contactEmail.hashCode() : 0);
-        result = 31 * result + (language != null ? language.hashCode() : 0);
-        result = 31 * result + (jobLevel != null ? jobLevel.hashCode() : 0);
-        result = 31 * result + (jobTypeEntity != null ? jobTypeEntity.hashCode() : 0);
-        result = 31 * result + (company != null ? company.hashCode() : 0);
-        return result;
+        return Objects.hash(getId(), getTitle(), getDescription(), getRequirements(), getMinSalary(), getMaxSalary(), getContactPersonName(), getContactEmail(), getLanguage(), getJobLevel(), getJobTypeEntity(), getCompany(), getJobCategories());
     }
 }

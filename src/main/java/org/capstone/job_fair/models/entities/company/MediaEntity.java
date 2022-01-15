@@ -3,6 +3,7 @@ package org.capstone.job_fair.models.entities.company;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -14,15 +15,17 @@ import java.util.Objects;
 @Table(name = "media", schema = "dbo")
 public class MediaEntity {
     @Id
-    @Column(name = "id")
+    @Column(name = "id", nullable = false, length = 36)
     private String id;
-    @Basic
-    @Column(name = "url")
+
+    @Column(name = "url", nullable = false, length = 2048)
     private String url;
-    @Basic
+
     @Column(name = "description")
     private String description;
 
+    @ManyToMany(mappedBy = "companyMedias")
+    List<CompanyEntity> companies;
 
     @Override
     public boolean equals(Object o) {

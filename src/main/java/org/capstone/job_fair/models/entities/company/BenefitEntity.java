@@ -3,6 +3,7 @@ package org.capstone.job_fair.models.entities.company;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -13,34 +14,29 @@ import java.util.Objects;
 @NoArgsConstructor
 @Table(name = "benefit", schema = "dbo")
 public class BenefitEntity {
+
+
     @Id
     @Column(name = "id")
-    private String id;
-    @Basic
+    private int id;
     @Column(name = "name")
     private String name;
-    @Basic
     @Column(name = "description")
     private String description;
 
+    @ManyToMany(mappedBy = "companyBenefits")
+    List<CompanyEntity> companies;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
+        if (!(o instanceof BenefitEntity)) return false;
         BenefitEntity that = (BenefitEntity) o;
-
-        if (!Objects.equals(id, that.id)) return false;
-        if (!Objects.equals(name, that.name)) return false;
-        return Objects.equals(description, that.description);
+        return getId() == that.getId() && getName().equals(that.getName()) && getDescription().equals(that.getDescription());
     }
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (description != null ? description.hashCode() : 0);
-        return result;
+        return Objects.hash(getId(), getName(), getDescription());
     }
 }

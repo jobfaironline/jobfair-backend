@@ -1,6 +1,7 @@
 package org.capstone.job_fair.models.entities.attendant.cv;
 
 import lombok.*;
+import org.capstone.job_fair.models.entities.attendant.AttendantEntity;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -18,45 +19,32 @@ public class CertificationEntity {
     @Column(name = "id")
     private String id;
 
-    @Basic
     @Column(name = "name")
     private String name;
-    @Basic
+
     @Column(name = "institution")
     private String institution;
-    @Basic
+
     @Column(name = "year")
     private Integer year;
-    @Basic
+
     @Column(name = "certification_link")
     private String certificationLink;
+
     @ManyToOne
-    @JoinColumn(name = "cv_id")
-    private CvEntity cv;
+    @JoinColumn(name = "attendant_id")
+    private AttendantEntity attendant;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
+        if (!(o instanceof CertificationEntity)) return false;
         CertificationEntity that = (CertificationEntity) o;
-
-        if (!Objects.equals(id, that.id)) return false;
-        if (!Objects.equals(name, that.name)) return false;
-        if (!Objects.equals(institution, that.institution)) return false;
-        if (!Objects.equals(year, that.year)) return false;
-        if (!Objects.equals(cv, that.cv)) return false;
-        return Objects.equals(certificationLink, that.certificationLink);
+        return getId().equals(that.getId()) && getName().equals(that.getName()) && getInstitution().equals(that.getInstitution()) && getYear().equals(that.getYear()) && getCertificationLink().equals(that.getCertificationLink()) && getAttendant().equals(that.getAttendant());
     }
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (institution != null ? institution.hashCode() : 0);
-        result = 31 * result + (year != null ? year.hashCode() : 0);
-        result = 31 * result + (certificationLink != null ? certificationLink.hashCode() : 0);
-        result = 31 * result + (cv != null ? cv.hashCode() : 0);
-        return result;
+        return Objects.hash(getId(), getName(), getInstitution(), getYear(), getCertificationLink(), getAttendant());
     }
 }

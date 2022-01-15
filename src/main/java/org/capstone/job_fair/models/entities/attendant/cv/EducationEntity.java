@@ -1,6 +1,8 @@
 package org.capstone.job_fair.models.entities.attendant.cv;
 
 import lombok.*;
+import org.capstone.job_fair.models.entities.attendant.AttendantEntity;
+import org.capstone.job_fair.models.entities.attendant.QualificationEntity;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -14,60 +16,42 @@ import java.util.Objects;
 @Table(name = "education", schema = "dbo")
 public class EducationEntity {
     @Id
-    @Column(name = "id")
+    @Column(name = "id", nullable = false, length = 36)
     private String id;
-    @Basic
-    @Column(name = "subject")
+
+    @Column(name = "subject", nullable = false, length = 100)
     private String subject;
-    @Basic
-    @Column(name = "school")
+
+    @Column(name = "school", length = 100)
     private String school;
-    @Basic
-    @Column(name = "qualification_id")
-    private Integer qualificationId;
-    @Basic
+
     @Column(name = "from_date")
     private Long fromDate;
-    @Basic
+
     @Column(name = "to_date")
     private Long toDate;
-    @Basic
+
     @Column(name = "achievement")
     private String achievement;
 
     @ManyToOne
-    @JoinColumn(name = "cv_id")
-    private CvEntity cv;
+    @JoinColumn(name = "attendant_id")
+    private AttendantEntity attendant;
 
+    @ManyToOne
+    @JoinColumn(name = "qualification_id")
+    private QualificationEntity qualification;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
+        if (!(o instanceof EducationEntity)) return false;
         EducationEntity that = (EducationEntity) o;
-
-        if (!Objects.equals(id, that.id)) return false;
-        if (!Objects.equals(subject, that.subject)) return false;
-        if (!Objects.equals(school, that.school)) return false;
-        if (!Objects.equals(qualificationId, that.qualificationId))
-            return false;
-        if (!Objects.equals(toDate, that.toDate)) return false;
-        if (!Objects.equals(fromDate, that.fromDate)) return false;
-        if (!Objects.equals(cv, that.cv)) return false;
-        return Objects.equals(achievement, that.achievement);
+        return getId().equals(that.getId()) && getSubject().equals(that.getSubject()) && getSchool().equals(that.getSchool()) && getFromDate().equals(that.getFromDate()) && getToDate().equals(that.getToDate()) && getAchievement().equals(that.getAchievement()) && getAttendant().equals(that.getAttendant()) && getQualification().equals(that.getQualification());
     }
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (subject != null ? subject.hashCode() : 0);
-        result = 31 * result + (school != null ? school.hashCode() : 0);
-        result = 31 * result + (qualificationId != null ? qualificationId.hashCode() : 0);
-        result = 31 * result + (fromDate != null ? fromDate.hashCode() : 0);
-        result = 31 * result + (toDate != null ? toDate.hashCode() : 0);
-        result = 31 * result + (achievement != null ? achievement.hashCode() : 0);
-        result = 31 * result + (achievement != null ? achievement.hashCode() : 0);
-        return result;
+        return Objects.hash(getId(), getSubject(), getSchool(), getFromDate(), getToDate(), getAchievement(), getAttendant(), getQualification());
     }
 }

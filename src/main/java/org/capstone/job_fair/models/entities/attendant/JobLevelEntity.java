@@ -16,12 +16,11 @@ import java.util.Objects;
 public class JobLevelEntity {
     @Id
     @Column(name = "id")
-    private int id;
-    @Basic
+    private Integer id;
+
     @Column(name = "name", length = 100)
     private String name;
 
-    @Basic
 
     @Override
     public boolean equals(Object o) {

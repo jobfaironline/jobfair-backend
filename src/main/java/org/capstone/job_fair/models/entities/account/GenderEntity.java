@@ -15,10 +15,8 @@ public class GenderEntity {
     @Id
     @Column(name = "id")
     private Integer id;
-    @Basic
     @Column(name = "name")
     private String name;
-    @Basic
     @Column(name = "description")
     private String description;
 

@@ -3,6 +3,7 @@ package org.capstone.job_fair.models.entities.company;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -14,27 +15,27 @@ import java.util.Objects;
 @Table(name = "company", schema = "dbo")
 public class CompanyEntity {
     @Id
-    @Column(name = "id")
+    @Column(name = "id", nullable = false, length = 36)
     private String id;
-    @Basic
-    @Column(name = "taxID", unique = true)
+
+    @Column(name = "taxID", unique = true, length = 9, nullable = false)
     private String taxId;
-    @Basic
-    @Column(name = "name")
+
+    @Column(name = "name", length = 1000)
     private String name;
-    @Basic
-    @Column(name = "address")
+
+    @Column(name = "address",  length = 1000)
     private String address;
-    @Basic
-    @Column(name = "phone")
+
+    @Column(name = "phone", length = 11)
     private String phone;
-    @Basic
-    @Column(name = "email")
+
+    @Column(name = "email", unique = true)
     private String email;
-    @Basic
+
     @Column(name = "websiteURL")
     private String websiteUrl;
-    @Basic
+
     @Column(name = "employee_max_num")
     private Integer employeeMaxNum;
 
@@ -42,37 +43,30 @@ public class CompanyEntity {
     @JoinColumn(name = "size_id")
     private CompanySizeEntity companySize;
 
+    @ManyToMany
+    @JoinTable(
+            name = "company_benefit",
+            joinColumns = @JoinColumn(name = "company_id"),
+            inverseJoinColumns =  @JoinColumn(name = "benefit_id")
+    )
+    List<BenefitEntity> companyBenefits;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+    @ManyToMany
+    @JoinTable(
+            name = "company_media",
+            joinColumns = @JoinColumn(name = "company_id"),
+            inverseJoinColumns =  @JoinColumn(name = "media_id")
+    )
+    List<MediaEntity> companyMedias;
 
-        CompanyEntity that = (CompanyEntity) o;
+    @ManyToMany
+    @JoinTable(
+            name = "company_category",
+            joinColumns = @JoinColumn(name = "company_id"),
+            inverseJoinColumns = @JoinColumn(name = "sub_category_id")
+    )
+    List<SubCategoryEntity> companySubCategory;
 
-        if (!Objects.equals(id, that.id)) return false;
-        if (!Objects.equals(taxId, that.taxId)) return false;
-        if (!Objects.equals(name, that.name)) return false;
-        if (!Objects.equals(address, that.address)) return false;
-        if (!Objects.equals(phone, that.phone)) return false;
-        if (!Objects.equals(email, that.email)) return false;
-        if (!Objects.equals(employeeMaxNum, that.employeeMaxNum)) return false;
-        if (!Objects.equals(websiteUrl, that.websiteUrl)) return false;
-        if (!Objects.equals(companySize, that.companySize)) return false;
-        return true;
-    }
 
-    @Override
-    public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (taxId != null ? taxId.hashCode() : 0);
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (address != null ? address.hashCode() : 0);
-        result = 31 * result + (phone != null ? phone.hashCode() : 0);
-        result = 31 * result + (email != null ? email.hashCode() : 0);
-        result = 31 * result + (websiteUrl != null ? websiteUrl.hashCode() : 0);
-        result = 31 * result + (employeeMaxNum != null ? employeeMaxNum.hashCode() : 0);
-        result = 31 * result + (companySize != null ? companySize.hashCode() : 0);
-        return result;
-    }
+
 }

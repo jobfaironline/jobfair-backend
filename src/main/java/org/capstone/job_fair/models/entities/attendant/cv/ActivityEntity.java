@@ -1,6 +1,7 @@
 package org.capstone.job_fair.models.entities.attendant.cv;
 
 import lombok.*;
+import org.capstone.job_fair.models.entities.attendant.AttendantEntity;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -14,67 +15,44 @@ import java.util.Objects;
 @Table(name = "activity", schema = "dbo")
 public class ActivityEntity {
     @Id
-    @Column(name = "id")
+    @Column(name = "id", nullable = false, length = 36)
     private String id;
-    @Basic
-    @Column(name = "name")
+
+    @Column(name = "name", nullable = false, length = 100)
     private String name;
 
-    @Basic
-    @Column(name = "function_title")
+    @Column(name = "function_title", nullable = false, length = 100)
     private String functionTitle;
-    @Basic
-    @Column(name = "organization")
+
+    @Column(name = "organization", nullable = false, length = 100)
     private String organization;
-    @Basic
+
     @Column(name = "from_date")
     private Long fromDate;
-    @Basic
+
     @Column(name = "to_date")
     private Long toDate;
-    @Basic
+
     @Column(name = "is_current_activity")
     private Boolean isCurrentActivity;
-    @Basic
+
     @Column(name = "description")
     private String description;
 
     @ManyToOne
-    @JoinColumn(name = "cv_id")
-    private CvEntity cv;
-
+    @JoinColumn(name = "attendant_id")
+    private AttendantEntity attendant;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
+        if (!(o instanceof ActivityEntity)) return false;
         ActivityEntity that = (ActivityEntity) o;
-
-        if (!Objects.equals(id, that.id)) return false;
-        if (!Objects.equals(name, that.name)) return false;
-        if (!Objects.equals(functionTitle, that.functionTitle))
-            return false;
-        if (!Objects.equals(organization, that.organization)) return false;
-        if (!Objects.equals(fromDate, that.fromDate)) return false;
-        if (!Objects.equals(toDate, that.toDate)) return false;
-        if (!Objects.equals(cv, that.cv)) return false;
-        if (!Objects.equals(isCurrentActivity, that.isCurrentActivity))
-            return false;
-        return Objects.equals(description, that.description);
+        return getId().equals(that.getId()) && getName().equals(that.getName()) && getFunctionTitle().equals(that.getFunctionTitle()) && getOrganization().equals(that.getOrganization()) && getFromDate().equals(that.getFromDate()) && getToDate().equals(that.getToDate()) && getIsCurrentActivity().equals(that.getIsCurrentActivity()) && getDescription().equals(that.getDescription()) && getAttendant().equals(that.getAttendant());
     }
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (functionTitle != null ? functionTitle.hashCode() : 0);
-        result = 31 * result + (organization != null ? organization.hashCode() : 0);
-        result = 31 * result + (fromDate != null ? fromDate.hashCode() : 0);
-        result = 31 * result + (toDate != null ? toDate.hashCode() : 0);
-        result = 31 * result + (isCurrentActivity != null ? isCurrentActivity.hashCode() : 0);
-        result = 31 * result + (description != null ? description.hashCode() : 0);
-        result = 31 * result + (cv != null ? cv.hashCode() : 0);
-        return result;
+        return Objects.hash(getId(), getName(), getFunctionTitle(), getOrganization(), getFromDate(), getToDate(), getIsCurrentActivity(), getDescription(), getAttendant());
     }
 }
