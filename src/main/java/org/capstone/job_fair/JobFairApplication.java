@@ -17,7 +17,7 @@ public class JobFairApplication {
 
     public static void main(String[] args) {        
         System.out.print("Environment varriable: ");
-        System.out.print(Sysyem.getenv("DATASOURCE_PASSWORD"));
+        System.out.print(System.getenv("DATASOURCE_PASSWORD"));
         SpringApplication.run(JobFairApplication.class, args);
     }
 
