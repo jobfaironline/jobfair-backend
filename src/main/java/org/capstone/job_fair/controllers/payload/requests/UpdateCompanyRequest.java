@@ -34,11 +34,11 @@ public class UpdateCompanyRequest {
     @XSSConstraint
     private String address;
 
-    @NotNull
+    @NotEmpty
     @PhoneConstraint
     private String phone;
 
-    @NotNull
+    @NotEmpty
     @EmailConstraint
     private String email;
 
@@ -52,6 +52,6 @@ public class UpdateCompanyRequest {
     @XSSConstraint
     private String url;
 
-    @NotNull
+    @NotEmpty
     private Integer sizeId;
 }

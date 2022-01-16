@@ -27,7 +27,6 @@ import java.util.stream.Collectors;
 @RestController
 public class CompanyController {
 
-
     @Autowired
     private CompanyService companyService;
 
@@ -42,25 +41,13 @@ public class CompanyController {
         return companyService.getCountByTaxId(taxID) != 0;
     }
 
-    //false: not change, true: change
-    private boolean isEmailChange(String companyId, String email) {
-        Optional<CompanyEntity> opt = companyService.findCompanyById(companyId);
-        return opt.isPresent() && opt.get().getEmail() == email ? false : true;
-    }
-
-    //false: not change, true: change
-    private boolean isTaxIdChange(String companyId, String taxId) {
-        Optional<CompanyEntity> opt = companyService.findCompanyById(companyId);
-        return opt.isPresent() && opt.get().getTaxId() == taxId ? false : true;
-    }
-
 
     private boolean isSizeIdValid(int id) {
         return companySizeService.getCountBySizeId(id) == 0;
     }
 
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
     @GetMapping(ApiEndPoint.Company.COMPANY_ENDPOINT)
     public ResponseEntity<?> getCompanies() {
         return new ResponseEntity<>(companyService.getAllCompanies(), HttpStatus.OK);
@@ -102,17 +89,18 @@ public class CompanyController {
                 .benefitDTOs(request.getBenefitIds().stream().map(BenefitDTO::new).collect(Collectors.toList()))
                 .build();
         companyService.createCompany(dto);
-        return GenericResponse.build(MessageUtil.getMessage(MessageConstant.Company.CREATE_SUCCESSFULLY), HttpStatus.BAD_REQUEST);
+        return GenericResponse.build(MessageUtil.getMessage(MessageConstant.Company.CREATE_SUCCESSFULLY), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('COMPANY_MANAGER')")
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
     @PutMapping(ApiEndPoint.Company.COMPANY_ENDPOINT)
     public ResponseEntity<?> update(@Valid @RequestBody UpdateCompanyRequest request) {
         //check if email has changed and email is existed ?
-        if (!isEmailChange(request.getId(), request.getEmail()) && isEmailExisted(request.getEmail())) {
+        Optional<CompanyEntity> opt = companyService.getCompanyById(request.getId());
+        if (opt.isPresent() && opt.get().getEmail() != request.getEmail() && isEmailExisted(request.getEmail())) {
             return GenericResponse.build(MessageUtil.getMessage(MessageConstant.Company.EMAIL_EXISTED), HttpStatus.BAD_REQUEST);
         }
-        if (!isTaxIdChange(request.getId(), request.getTaxId()) && isTaxIDExisted(request.getTaxId())) {
+        if (opt.isPresent() && opt.get().getTaxId() != request.getTaxId() && isTaxIDExisted(request.getEmail())) {
             return GenericResponse.build(MessageUtil.getMessage(MessageConstant.Company.TAX_ID_EXISTED), HttpStatus.BAD_REQUEST);
         }
         CompanyDTO dto = CompanyDTO.builder()
@@ -132,7 +120,7 @@ public class CompanyController {
 
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
     @DeleteMapping(ApiEndPoint.Company.COMPANY_ENDPOINT + "/" + "{id}")
     public ResponseEntity<?> delete(@PathVariable String id) {
         Boolean result = companyService.deleteCompany(id);

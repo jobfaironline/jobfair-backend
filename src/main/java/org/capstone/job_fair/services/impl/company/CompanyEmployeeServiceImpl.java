@@ -63,17 +63,17 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
 
     @Override
     public void updateProfile(CompanyEmployeeDTO dto) {
-//        try {
-//            employeeRepository.findById(dto.getAccountId()).map((atd) -> {
-//                mapper.updateCompanyEmployeeMapperFromDto(dto, atd);
-//                if (dto.getCompanyDTO() != null){
-//                    CompanyEntity companyEntity = companyRepository.getById(dto.getCompanyDTO().getId());
-//                    atd.setCompany(companyEntity);
-//                }
-//                return employeeRepository.save(atd);
-//            }).orElseThrow(NoSuchElementException::new);
-//        } catch (EntityNotFoundException e){
-//            throw new NoSuchElementException();
-//        }
+        try {
+            employeeRepository.findById(dto.getAccountId()).map((atd) -> {
+                mapper.updateCompanyEmployeeMapperFromDto(dto, atd);
+                if (dto.getCompanyDTO() != null){
+                    CompanyEntity companyEntity = companyRepository.getById(dto.getCompanyDTO().getId());
+                    atd.setCompany(companyEntity);
+                }
+                return employeeRepository.save(atd);
+            }).orElseThrow(NoSuchElementException::new);
+        } catch (EntityNotFoundException e){
+            throw new NoSuchElementException();
+        }
     }
 }

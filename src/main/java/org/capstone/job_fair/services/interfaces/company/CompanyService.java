@@ -19,5 +19,4 @@ public interface CompanyService {
     Integer getCountByTaxId(String taxId);
     Integer getCountById(String id);
     Optional<CompanyEntity> findCompanyById(String id);
-    Integer getCountByTaxIdAndId(String taxId, String id);
 }

@@ -37,7 +37,6 @@ public class CreateCompanyRequest {
 
     @NotNull
     @PhoneConstraint
-    @XSSConstraint
     private String phone;
 
     @NotNull

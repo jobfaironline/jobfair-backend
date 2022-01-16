@@ -46,9 +46,6 @@ public class CompanyServiceImpl implements CompanyService {
         return companyRepository.findById(id);
     }
 
-    private boolean findSizeById(int id) {
-        return sizeService.getCountBySizeId(id) != 0;
-    }
 
     @Override
     public void createCompany(CompanyDTO dto) {
@@ -143,11 +140,6 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     public Optional<CompanyEntity> findCompanyById(String id) {
         return companyRepository.findById(id);
-    }
-
-    @Override
-    public Integer getCountByTaxIdAndId(String taxId, String id) {
-        return companyRepository.countByIdAndTaxId(id, taxId);
     }
 
 
