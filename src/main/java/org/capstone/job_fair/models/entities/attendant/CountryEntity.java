@@ -11,30 +11,15 @@ import java.util.Objects;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Table(name = "country", schema = "dbo")
 public class CountryEntity {
+    @EqualsAndHashCode.Include
     @Id
     @Column(name = "id")
     private String id;
-    @Basic
-    @Column(name = "name")
+
+    @Column(name = "name", length = 1000)
     private String name;
 
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        CountryEntity that = (CountryEntity) o;
-
-        return !Objects.equals(id, that.id);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        return result;
-    }
 }

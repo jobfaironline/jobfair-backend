@@ -1,11 +1,21 @@
 package org.capstone.job_fair.models.entities.attendant.cv;
 
+import lombok.*;
+import org.capstone.job_fair.models.entities.attendant.AttendantEntity;
+
 import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
+@Getter
+@Setter
+@ToString
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "skill", schema = "dbo")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class SkillEntity {
+    @EqualsAndHashCode.Include
     @Id
     @Column(name = "id", nullable = false, length = 36)
     private String id;
@@ -14,35 +24,11 @@ public class SkillEntity {
     private String name;
 
     @Basic
-    @Column(name = "proficiency", nullable = true)
+    @Column(name = "proficiency")
     private Integer proficiency;
 
     @ManyToOne
-    @JoinColumn(name = "cv_id")
-    private CvEntity cv;
+    @JoinColumn(name = "attendant_id")
+    private AttendantEntity attendant;
 
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        SkillEntity that = (SkillEntity) o;
-
-        if (!Objects.equals(id, that.id)) return false;
-        if (!Objects.equals(name, that.name)) return false;
-        if (!Objects.equals(proficiency, that.proficiency)) return false;
-        if (!Objects.equals(cv, that.cv)) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (proficiency != null ? proficiency.hashCode() : 0);
-        result = 31 * result + (cv != null ? cv.hashCode() : 0);
-        return result;
-    }
 }

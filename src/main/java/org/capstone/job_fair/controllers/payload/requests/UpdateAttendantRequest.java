@@ -3,6 +3,7 @@ package org.capstone.job_fair.controllers.payload.requests;
 import lombok.*;
 import org.capstone.job_fair.constants.DataConstraint;
 import org.capstone.job_fair.models.enums.Gender;
+import org.capstone.job_fair.models.enums.Marital;
 import org.capstone.job_fair.models.statuses.AccountStatus;
 import org.capstone.job_fair.validators.EmailConstraint;
 import org.capstone.job_fair.validators.PhoneConstraint;
@@ -33,10 +34,8 @@ public class UpdateAttendantRequest {
     private String jobTitle;
     @Min(DataConstraint.Attendant.YEAR_OF_EXPERIENCE_MIN)
     private Double yearOfExp;
-    private Boolean maritalStatus;
-    @NotEmpty
-    private String country;
-    @NotEmpty
+    private Marital maritalStatus;
+    private String country ;
     private String residence;
     @NotEmpty
     private String currentJobLevel;

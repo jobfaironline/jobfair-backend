@@ -8,18 +8,18 @@ import org.capstone.job_fair.models.entities.company.SkillTagEntity;
 import org.capstone.job_fair.models.entities.company.SubCategoryEntity;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Getter
-@Setter
+@Data
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Table(name = "job_position", schema = "dbo")
-public class JobPositionEntity implements Serializable {
+public class JobPositionEntity {
+    @EqualsAndHashCode.Include
     @Id
     @Column(name = "id")
     private String id;
@@ -71,30 +71,5 @@ public class JobPositionEntity implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "tag_id"))
     List<SkillTagEntity> skillTagEntities;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
 
-        JobPositionEntity that = (JobPositionEntity) o;
-
-        return !Objects.equals(id, that.id);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (title != null ? title.hashCode() : 0);
-        result = 31 * result + (description != null ? description.hashCode() : 0);
-        result = 31 * result + (requirements != null ? requirements.hashCode() : 0);
-        result = 31 * result + (minSalary != null ? minSalary.hashCode() : 0);
-        result = 31 * result + (maxSalary != null ? maxSalary.hashCode() : 0);
-        result = 31 * result + (contactPersonName != null ? contactPersonName.hashCode() : 0);
-        result = 31 * result + (contactEmail != null ? contactEmail.hashCode() : 0);
-        result = 31 * result + (language != null ? language.hashCode() : 0);
-        result = 31 * result + (jobLevel != null ? jobLevel.hashCode() : 0);
-        result = 31 * result + (jobTypeEntity != null ? jobTypeEntity.hashCode() : 0);
-        result = 31 * result + (company != null ? company.hashCode() : 0);
-        return result;
-    }
 }

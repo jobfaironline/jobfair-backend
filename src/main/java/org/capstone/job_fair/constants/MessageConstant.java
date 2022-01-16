@@ -56,6 +56,7 @@ public class MessageConstant {
         public static final String UPDATE_FAILED = "company.error.update";
         public static final String DELETE_SUCCESSFULLY = "company.success.delete";
         public static final String DELETE_FAILED = "company.error.delete";
+        public static final String SIZE_INVALID = "company.error.size-invalid";
     }
 
     public static final class CompanyEmployee {

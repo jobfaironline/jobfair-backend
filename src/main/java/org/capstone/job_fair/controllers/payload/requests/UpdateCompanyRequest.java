@@ -34,20 +34,24 @@ public class UpdateCompanyRequest {
     @XSSConstraint
     private String address;
 
+    @NotEmpty
     @PhoneConstraint
     private String phone;
 
+    @NotEmpty
     @EmailConstraint
     private String email;
 
-    @Min(value = DataConstraint.Company.MIN_EMPLOYEE)
+    @Min(value = DataConstraint.Company.COMPANY_MIN_NUM)
     private Integer employeeMaxNum;
 
+    @NotNull
     private String taxId;
 
     @NotEmpty
     @XSSConstraint
     private String url;
 
-    private String sizeId;
+    @NotEmpty
+    private Integer sizeId;
 }

@@ -75,6 +75,5 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
         } catch (EntityNotFoundException e){
             throw new NoSuchElementException();
         }
-
     }
 }

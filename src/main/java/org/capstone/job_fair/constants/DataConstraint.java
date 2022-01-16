@@ -28,14 +28,15 @@ public class DataConstraint {
     }
 
 
+    public static final class Residence {
+
+    }
     public static final class Company {
-        public static final int MIN_EMPLOYEE = 1;
-        public static final int TAX_ID = 9;
         public static final int NAME_LENGTH = 1000;
         public static final int ADDRESS_LENGTH = 1000;
-    }
-
-    public static final class Residence {
+        public static final int COMPANY_MIN_NUM = 1;
+        public static final int CATEGORY_MIN= 1;
+        public static final int CATEGORY_MAX= 4;
 
     }
 }

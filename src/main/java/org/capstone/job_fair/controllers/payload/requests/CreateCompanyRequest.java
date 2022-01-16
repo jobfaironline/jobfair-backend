@@ -11,6 +11,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -21,7 +22,6 @@ import javax.validation.constraints.Size;
 public class CreateCompanyRequest {
     @NotBlank
     @NotBlank(message = MessageConstant.InvalidFormatValidationMessage.NOT_BLANK_FORMAT)
-    @Size(max = DataConstraint.Company.TAX_ID)
     private String taxID;
 
     @NotNull
@@ -35,6 +35,7 @@ public class CreateCompanyRequest {
     @XSSConstraint
     private String address;
 
+    @NotNull
     @PhoneConstraint
     private String phone;
 
@@ -44,7 +45,7 @@ public class CreateCompanyRequest {
     private String email;
 
     @NotNull
-    @Min(value = DataConstraint.Company.MIN_EMPLOYEE)
+    @Min(value = DataConstraint.Company.COMPANY_MIN_NUM)
     private Integer employeeMaxNum;
 
     @XSSConstraint
@@ -52,5 +53,17 @@ public class CreateCompanyRequest {
     private String url;
 
     @NotNull
-    private String sizeId;
+    private Integer sizeId;
+
+    @NotNull
+    private List<String> mediaUrls;
+
+    @NotNull
+    @Size(min = DataConstraint.JobPosition.CATEGORY_MIN, max = DataConstraint.JobPosition.CATEGORY_MAX)
+    private List<Integer> benefitIds;
+
+    @NotNull
+    @Size(min = DataConstraint.Company.CATEGORY_MIN, max = DataConstraint.Company.CATEGORY_MAX)
+    private List<Integer> subCategoriesIds;
+
 }

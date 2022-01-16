@@ -8,5 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 @RepositoryRestResource(path = ApiEndPoint.RestDataEndpoint.COMPANY_SIZE)
-public interface CompanySizeRepository extends JpaRepository<CompanySizeEntity, String> {
+public interface CompanySizeRepository extends JpaRepository<CompanySizeEntity, Integer> {
+    Integer countById(int id);
 }

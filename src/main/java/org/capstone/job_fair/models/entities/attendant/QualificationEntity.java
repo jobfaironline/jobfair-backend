@@ -1,8 +1,12 @@
 package org.capstone.job_fair.models.entities.attendant;
 
 import lombok.*;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.Objects;
 
 @Entity
@@ -11,17 +15,14 @@ import java.util.Objects;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@Table(name = "job_level", schema = "dbo")
-public class JobLevelEntity {
+@Table(name = "qualification", schema = "dbo")
+public class QualificationEntity {
     @EqualsAndHashCode.Include
     @Id
-    @Column(name = "id")
+    @Column(name = "id", nullable = false)
     private Integer id;
-
     @Column(name = "name", length = 100)
     private String name;
-
 
 }

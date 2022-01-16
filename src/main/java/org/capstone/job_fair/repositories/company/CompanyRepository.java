@@ -16,4 +16,5 @@ public interface CompanyRepository extends JpaRepository<CompanyEntity, String> 
     Integer countByEmail(String email);
     Integer countByTaxId(String taxId);
     Integer countById(String id);
+    Integer countByIdAndTaxId(String id, String taxId);
 }

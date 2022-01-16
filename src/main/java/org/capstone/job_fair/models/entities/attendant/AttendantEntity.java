@@ -2,8 +2,11 @@ package org.capstone.job_fair.models.entities.attendant;
 
 import lombok.*;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
+import org.capstone.job_fair.models.entities.attendant.cv.*;
+import org.capstone.job_fair.models.enums.Marital;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -12,34 +15,36 @@ import java.util.Objects;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Table(name = "attendant", schema = "dbo")
 public class AttendantEntity {
+    @EqualsAndHashCode.Include
     @Id
     @Column(name = "account_id", nullable = false, length = 36)
     private String accountId;
 
+    @Column(name = "title", length = 100)
+    private String title;
+
+    @Column(name = "address", length = 1000)
+    private String address;
+
+    @Column(name = "dob")
+    private Long dob;
+
+    @Column(name = "job_title", length = 100)
+    private String jobTitle;
+
+    @Column(name = "year_of_exp")
+    private Double yearOfExp;
+
+    @Column(name = "marital_status")
+    @Enumerated(EnumType.ORDINAL)
+    private Marital maritalStatus;
+
     @OneToOne(cascade = {CascadeType.ALL})
     @JoinColumn(name = "account_id")
     private AccountEntity account;
-
-    @Basic
-    @Column(name = "title", nullable = true, length = 100)
-    private String title;
-    @Basic
-    @Column(name = "address", nullable = true, length = 1000)
-    private String address;
-    @Basic
-    @Column(name = "dob", nullable = true)
-    private Long dob;
-    @Basic
-    @Column(name = "job_title", nullable = true, length = 100)
-    private String jobTitle;
-    @Basic
-    @Column(name = "year_of_exp", nullable = true)
-    private Double yearOfExp;
-    @Basic
-    @Column(name = "marital_status", nullable = true)
-    private Boolean maritalStatus;
 
     @ManyToOne
     @JoinColumn(name = "country_id")
@@ -54,27 +59,22 @@ public class AttendantEntity {
     private JobLevelEntity currentJobLevel;
 
 
+    @OneToMany(mappedBy = "attendant")
+    private List<SkillEntity> skillEntities;
 
+    @OneToMany(mappedBy = "attendant")
+    private List<WorkHistoryEntity> workHistoryEntities;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+    @OneToMany(mappedBy = "attendant")
+    private List<EducationEntity> educationEntities;
 
-        AttendantEntity that = (AttendantEntity) o;
+    @OneToMany(mappedBy = "attendant")
+    private List<CertificationEntity> certificationEntities;
 
-        return (!Objects.equals(accountId, that.accountId));
-    }
+    @OneToMany(mappedBy = "attendant")
+    private List<ReferenceEntity> referenceEntities;
 
-    @Override
-    public int hashCode() {
-        int result = accountId != null ? accountId.hashCode() : 0;
-        result = 31 * result + (title != null ? title.hashCode() : 0);
-        result = 31 * result + (address != null ? address.hashCode() : 0);
-        result = 31 * result + (dob != null ? dob.hashCode() : 0);
-        result = 31 * result + (jobTitle != null ? jobTitle.hashCode() : 0);
-        result = 31 * result + (yearOfExp != null ? yearOfExp.hashCode() : 0);
-        result = 31 * result + (maritalStatus != null ? maritalStatus.hashCode() : 0);
-        return result;
-    }
+    @OneToMany(mappedBy = "attendant")
+    private List<ActivityEntity> activityEntities;
+
 }

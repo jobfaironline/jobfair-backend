@@ -56,7 +56,6 @@ public class ApiEndPoint {
         public static final String JOB_TYPE = "job-types";
         public static final String ROLE = "roles";
         public static final String RESIDENCE = "residences";
-        public static final String NATIONALITY = "nationalities";
         public static final String LANGUAGE = "languages";
         public static final String GENDER = "genders";
         public static final String CURRENT_JOB_LEVEL = "current-job-level";
