@@ -89,7 +89,7 @@ public class CompanyController {
                 .benefitDTOs(request.getBenefitIds().stream().map(BenefitDTO::new).collect(Collectors.toList()))
                 .build();
         companyService.createCompany(dto);
-        return GenericResponse.build(MessageUtil.getMessage(MessageConstant.Company.CREATE_SUCCESSFULLY), HttpStatus.OK);
+        return GenericResponse.build(MessageUtil.getMessage(MessageConstant.Company.CREATE_SUCCESSFULLY), HttpStatus.CREATED);
     }
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
