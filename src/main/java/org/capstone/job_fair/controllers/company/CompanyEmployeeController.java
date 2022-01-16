@@ -20,8 +20,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.validation.Valid;
 
 @RestController
 public class CompanyEmployeeController {
@@ -87,12 +90,13 @@ public class CompanyEmployeeController {
     }
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
-    @PostMapping(ApiEndPoint.CompanyEmployee.UPDATE_PROFILE_ENDPOINT)
-    public ResponseEntity<?> updateProfile(@Validated @RequestBody UpdateCompanyEmployeeProfileRequest request) {
+    @PutMapping(ApiEndPoint.CompanyEmployee.UPDATE_PROFILE_ENDPOINT)
+    public ResponseEntity<?> updateProfile(@Valid @RequestBody UpdateCompanyEmployeeProfileRequest request) {
 
-        if (!(accountService.getCountActiveAccountById(request.getAccountId()) == 0)) {
+        System.out.println(request);
+        if ((accountService.getCountActiveAccountById(request.getAccountId()) == 0)) {
             return GenericResponse.build(
-                    MessageConstant.Account.NOT_FOUND,
+                    MessageUtil.getMessage(MessageConstant.Account.NOT_FOUND),
                     HttpStatus.BAD_REQUEST);
         }
 
@@ -118,7 +122,7 @@ public class CompanyEmployeeController {
 
         CompanyDTO companyDTO = null;
         if (request.getCompanyId() != null) {
-            if (!(companyService.getCountById(request.getCompanyId()) == 0)) {
+            if ((companyService.getCountById(request.getCompanyId()) == 0)) {
                 return GenericResponse.build(
                         MessageUtil.getMessage(MessageConstant.Company.NOT_FOUND)
                         , HttpStatus.BAD_REQUEST);

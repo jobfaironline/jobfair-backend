@@ -96,12 +96,30 @@ public class CompanyServiceImpl implements CompanyService {
         CompanySizeEntity sizeEntity = new CompanySizeEntity();
         sizeEntity.setId(dto.getSizeId());
 
-        MediaEntity mediaEntity = new MediaEntity();
-        mediaEntity.setId(UUID.randomUUID().toString());
-        mediaEntity.setCompany(entity);
-        mediaRepository.save(mediaEntity);
+        List<SubCategoryEntity> subCategoryEntities = dto.getSubCategoryDTOs().stream()
+                .map(SubCategoryDTO::getId)
+                .map(SubCategoryEntity::new)
+                .collect(Collectors.toList());
+
+        List<BenefitEntity> benefitEntities = dto.getBenefitDTOs().stream()
+                .map(BenefitDTO::getId)
+                .map(BenefitEntity::new)
+                .collect(Collectors.toList());
+
+        List<MediaEntity> mediaEntities = dto.getMediaDTOS().stream()
+                .map(mediaDTO -> {
+                    MediaEntity media = new MediaEntity();
+                    String uuid = UUID.randomUUID().toString();
+                    media.setId(uuid);
+                    media.setUrl(mediaDTO.getUrl());
+                    return mediaRepository.save(media);
+                })
+                .collect(Collectors.toList());
 
         entity.setCompanySize(sizeEntity);
+        entity.setCompanyBenefits(benefitEntities);
+        entity.setCompanySubCategory(subCategoryEntities);
+        entity.setMedias(mediaEntities);
         return companyRepository.save(entity);
     }
 

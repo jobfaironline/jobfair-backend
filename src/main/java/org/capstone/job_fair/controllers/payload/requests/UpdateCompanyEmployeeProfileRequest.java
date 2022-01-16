@@ -12,10 +12,8 @@ import org.capstone.job_fair.validators.EmailConstraint;
 import org.capstone.job_fair.validators.PhoneConstraint;
 import org.capstone.job_fair.validators.XSSConstraint;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
+import javax.validation.Valid;
+import javax.validation.constraints.*;
 
 
 @Data
@@ -38,7 +36,7 @@ public class UpdateCompanyEmployeeProfileRequest {
         @XSSConstraint
         private String profileImageUrl;
         @NotNull
-        @NotEmpty
+        @NotBlank
         @Size(max = DataConstraint.Account.NAME_LENGTH)
         @XSSConstraint
         private String firstname;
@@ -57,6 +55,7 @@ public class UpdateCompanyEmployeeProfileRequest {
     }
 
     private String accountId;
+    @Valid
     private AccountRequest accountRequest;
     private String companyId;
 }

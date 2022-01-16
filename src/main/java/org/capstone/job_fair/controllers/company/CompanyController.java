@@ -103,7 +103,16 @@ public class CompanyController {
         if (opt.isPresent() && opt.get().getTaxId() != request.getTaxId() && isTaxIDExisted(request.getEmail())) {
             return GenericResponse.build(MessageUtil.getMessage(MessageConstant.Company.TAX_ID_EXISTED), HttpStatus.BAD_REQUEST);
         }
+
+        if (!opt.isPresent()) {
+            return GenericResponse.build(MessageUtil.getMessage(MessageConstant.Company.NOT_FOUND), HttpStatus.BAD_REQUEST);
+        }
+        if (isSizeIdValid(request.getSizeId())) {
+            return GenericResponse.build(MessageUtil.getMessage(MessageConstant.Company.SIZE_INVALID), HttpStatus.BAD_REQUEST);
+        }
+
         CompanyDTO dto = CompanyDTO.builder()
+                .id(request.getId())
                 .name(request.getName())
                 .address(request.getAddress())
                 .phone(request.getPhone())
@@ -112,6 +121,9 @@ public class CompanyController {
                 .websiteUrl(request.getUrl())
                 .sizeId(request.getSizeId())
                 .taxId(request.getTaxId())
+                .mediaDTOS(request.getMediaUrls().stream().map(MediaDTO::new).collect(Collectors.toList()))
+                .subCategoryDTOs(request.getSubCategoriesIds().stream().map(SubCategoryDTO::new).collect(Collectors.toList()))
+                .benefitDTOs(request.getBenefitIds().stream().map(BenefitDTO::new).collect(Collectors.toList()))
                 .build();
         CompanyEntity result = companyService.updateCompany(dto);
         return result != null
