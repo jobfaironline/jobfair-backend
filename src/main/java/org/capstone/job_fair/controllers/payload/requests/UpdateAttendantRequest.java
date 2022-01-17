@@ -9,6 +9,7 @@ import org.capstone.job_fair.validators.EmailConstraint;
 import org.capstone.job_fair.validators.PhoneConstraint;
 import org.capstone.job_fair.validators.XSSConstraint;
 
+import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 @Data
@@ -19,6 +20,7 @@ public class UpdateAttendantRequest {
     @NotNull
     private String accountId;
     @Builder.Default
+    @Valid
     private AccountRequest account = new AccountRequest();
     @NotEmpty
     @Size(max = DataConstraint.Attendant.TITTLE_LENGTH)

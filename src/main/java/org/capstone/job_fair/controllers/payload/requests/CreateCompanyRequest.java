@@ -7,6 +7,7 @@ import org.capstone.job_fair.validators.EmailConstraint;
 import org.capstone.job_fair.validators.PhoneConstraint;
 import org.capstone.job_fair.validators.XSSConstraint;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -20,17 +21,14 @@ import java.util.List;
 @Setter
 @ToString
 public class CreateCompanyRequest {
-    @NotBlank
     @NotBlank(message = MessageConstant.InvalidFormatValidationMessage.NOT_BLANK_FORMAT)
     private String taxID;
 
     @NotNull
-    @NotBlank(message = MessageConstant.InvalidFormatValidationMessage.NOT_BLANK_FORMAT)
     @Size(max = DataConstraint.Company.NAME_LENGTH)
     private String name;
 
     @NotNull
-    @NotBlank(message = MessageConstant.InvalidFormatValidationMessage.NOT_BLANK_FORMAT)
     @Size(max = DataConstraint.Company.ADDRESS_LENGTH)
     @XSSConstraint
     private String address;
@@ -49,20 +47,23 @@ public class CreateCompanyRequest {
     private Integer employeeMaxNum;
 
     @XSSConstraint
-    @NotBlank
+    @NotNull
     private String url;
 
-    @NotNull
+
     private Integer sizeId;
 
     @NotNull
+    @Valid
     private List<String> mediaUrls;
 
     @NotNull
+    @Valid
     @Size(min = DataConstraint.JobPosition.CATEGORY_MIN, max = DataConstraint.JobPosition.CATEGORY_MAX)
     private List<Integer> benefitIds;
 
     @NotNull
+    @Valid
     @Size(min = DataConstraint.Company.CATEGORY_MIN, max = DataConstraint.Company.CATEGORY_MAX)
     private List<Integer> subCategoriesIds;
 
