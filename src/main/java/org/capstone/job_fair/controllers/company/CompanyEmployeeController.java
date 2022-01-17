@@ -93,7 +93,6 @@ public class CompanyEmployeeController {
     @PutMapping(ApiEndPoint.CompanyEmployee.UPDATE_PROFILE_ENDPOINT)
     public ResponseEntity<?> updateProfile(@Valid @RequestBody UpdateCompanyEmployeeProfileRequest request) {
 
-        System.out.println(request);
         if ((accountService.getCountActiveAccountById(request.getAccountId()) == 0)) {
             return GenericResponse.build(
                     MessageUtil.getMessage(MessageConstant.Account.NOT_FOUND),
