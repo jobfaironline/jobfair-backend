@@ -54,6 +54,7 @@ public class JobController {
                 .maxSalary(request.getMaxSalary())
                 .contactPersonName(request.getContactPerson())
                 .contactEmail(request.getContactEmail())
+                .numOfExp(request.getNumOfEmp())
                 .language(request.getPreferredLanguage())
                 .level(request.getLevel())
                 .jobType(request.getJobType())

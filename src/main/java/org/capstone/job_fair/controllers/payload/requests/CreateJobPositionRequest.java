@@ -51,6 +51,10 @@ public class CreateJobPositionRequest {
     @NotNull
     private String contactEmail;
     @NotNull
+    @Min(value = DataConstraint.JobPosition.EMPLOYEE_MIN)
+    @Max(value = DataConstraint.JobPosition.EMPLOYEE_MAX)
+    private Integer numOfEmp;
+    @NotNull
     private Language preferredLanguage;
     @NotNull
     private JobLevel level;

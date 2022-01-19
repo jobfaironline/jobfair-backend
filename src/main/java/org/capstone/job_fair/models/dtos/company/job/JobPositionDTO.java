@@ -28,6 +28,7 @@ public class JobPositionDTO implements Serializable {
     private String contactPersonName;
     private String contactEmail;
     private String companyName;
+    private Integer numOfExp;
     private Language language;
     private JobLevel level;
     private JobType jobType;
