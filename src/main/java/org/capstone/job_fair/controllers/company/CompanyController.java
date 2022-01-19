@@ -1,6 +1,7 @@
 package org.capstone.job_fair.controllers.company;
 
 import org.capstone.job_fair.constants.ApiEndPoint;
+import org.capstone.job_fair.constants.DataConstraint;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.controllers.payload.requests.CreateCompanyRequest;
 import org.capstone.job_fair.controllers.payload.requests.UpdateCompanyRequest;
@@ -82,7 +83,7 @@ public class CompanyController {
                 .address(request.getAddress())
                 .phone(request.getPhone())
                 .email(request.getEmail())
-                .employeeMaxNum(request.getEmployeeMaxNum())
+                .employeeMaxNum(DataConstraint.Company.DEFAULT_EMPLOYEE_MAX_NUM)
                 .websiteUrl(request.getUrl())
                 .sizeId(request.getSizeId())
                 .status(CompanyStatus.ACTIVE)
