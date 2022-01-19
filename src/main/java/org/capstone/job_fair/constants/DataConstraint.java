@@ -13,6 +13,8 @@ public class DataConstraint {
         public static final int CATEGORY_MAX = 3;
         public static final int SKILL_TAG_MAX = 5;
         public static final int SKILL_TAG_MIN = 1;
+        public static final int EMPLOYEE_MIN = 1;
+        public static final int EMPLOYEE_MAX = 100000;
     }
 
     public static final class Account {

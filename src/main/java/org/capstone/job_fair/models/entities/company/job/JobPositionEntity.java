@@ -44,6 +44,8 @@ public class JobPositionEntity {
     @Basic
     @Column(name = "contact_email")
     private String contactEmail;
+    @Column(name = "num_of_emp")
+    private Integer numOfEmp;
     @ManyToOne
     @JoinColumn(name = "preferred_language_id")
     private LanguageEntity language;
