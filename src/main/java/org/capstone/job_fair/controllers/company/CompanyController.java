@@ -85,7 +85,7 @@ public class CompanyController {
                 .employeeMaxNum(request.getEmployeeMaxNum())
                 .websiteUrl(request.getUrl())
                 .sizeId(request.getSizeId())
-                .status(CompanyStatus.ACTIVE.ordinal())
+                .status(CompanyStatus.ACTIVE)
                 .mediaDTOS(request.getMediaUrls().stream().map(MediaDTO::new).collect(Collectors.toList()))
                 .subCategoryDTOs(request.getSubCategoriesIds().stream().map(SubCategoryDTO::new).collect(Collectors.toList()))
                 .benefitDTOs(request.getBenefitIds().stream().map(BenefitDTO::new).collect(Collectors.toList()))

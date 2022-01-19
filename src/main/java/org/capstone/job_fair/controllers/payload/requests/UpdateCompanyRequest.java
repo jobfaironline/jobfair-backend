@@ -3,6 +3,7 @@ package org.capstone.job_fair.controllers.payload.requests;
 import lombok.*;
 import org.capstone.job_fair.constants.DataConstraint;
 import org.capstone.job_fair.constants.MessageConstant;
+import org.capstone.job_fair.models.statuses.CompanyStatus;
 import org.capstone.job_fair.validators.EmailConstraint;
 import org.capstone.job_fair.validators.PhoneConstraint;
 import org.capstone.job_fair.validators.XSSConstraint;
@@ -56,7 +57,7 @@ public class UpdateCompanyRequest {
 
     private Integer sizeId;
 
-    private Integer status;
+    private CompanyStatus status;
 
     @NotNull
     @Valid
