@@ -66,6 +66,6 @@ public class JobController {
         jobPositionService.createNewJobPosition(jobPositionDTO);
         return GenericResponse.build(
                 MessageUtil.getMessage(MessageConstant.Job.CREATE_JOB_SUCCESSFULLY),
-                HttpStatus.OK);
+                HttpStatus.CREATED);
     }
 }
