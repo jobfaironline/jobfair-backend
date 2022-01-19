@@ -2,6 +2,7 @@ package org.capstone.job_fair.models.entities.company;
 
 import lombok.*;
 import org.capstone.job_fair.models.entities.attendant.cv.SkillEntity;
+import org.capstone.job_fair.models.statuses.CompanyStatus;
 
 import javax.persistence.*;
 import java.util.List;
@@ -41,6 +42,10 @@ public class CompanyEntity {
 
     @Column(name = "employee_max_num")
     private Integer employeeMaxNum;
+
+    @Column(name = "status")
+    @Enumerated(EnumType.ORDINAL)
+    private CompanyStatus status;
 
     @ManyToOne
     @JoinColumn(name = "size_id")

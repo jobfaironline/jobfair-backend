@@ -10,6 +10,7 @@ import org.capstone.job_fair.models.dtos.company.CompanyDTO;
 import org.capstone.job_fair.models.dtos.company.MediaDTO;
 import org.capstone.job_fair.models.dtos.company.SubCategoryDTO;
 import org.capstone.job_fair.models.entities.company.CompanyEntity;
+import org.capstone.job_fair.models.statuses.CompanyStatus;
 import org.capstone.job_fair.services.interfaces.company.CompanyService;
 import org.capstone.job_fair.services.interfaces.company.CompanySizeService;
 import org.capstone.job_fair.utils.MessageUtil;
@@ -84,6 +85,7 @@ public class CompanyController {
                 .employeeMaxNum(request.getEmployeeMaxNum())
                 .websiteUrl(request.getUrl())
                 .sizeId(request.getSizeId())
+                .status(CompanyStatus.ACTIVE.ordinal())
                 .mediaDTOS(request.getMediaUrls().stream().map(MediaDTO::new).collect(Collectors.toList()))
                 .subCategoryDTOs(request.getSubCategoriesIds().stream().map(SubCategoryDTO::new).collect(Collectors.toList()))
                 .benefitDTOs(request.getBenefitIds().stream().map(BenefitDTO::new).collect(Collectors.toList()))
@@ -119,6 +121,7 @@ public class CompanyController {
                 .email(request.getEmail())
                 .employeeMaxNum(request.getEmployeeMaxNum())
                 .websiteUrl(request.getUrl())
+                .status(request.getStatus())
                 .sizeId(request.getSizeId())
                 .taxId(request.getTaxId())
                 .mediaDTOS(request.getMediaUrls().stream().map(MediaDTO::new).collect(Collectors.toList()))

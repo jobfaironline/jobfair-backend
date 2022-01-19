@@ -56,6 +56,8 @@ public class UpdateCompanyRequest {
 
     private Integer sizeId;
 
+    private Integer status;
+
     @NotNull
     @Valid
     private List<String> mediaUrls;

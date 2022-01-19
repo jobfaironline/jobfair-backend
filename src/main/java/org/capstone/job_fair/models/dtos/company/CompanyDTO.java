@@ -21,6 +21,7 @@ public class CompanyDTO {
     private String email;
     private Integer employeeMaxNum;
     private String websiteUrl;
+    private Integer status;
     private Integer sizeId;
     private List<SubCategoryDTO> subCategoryDTOs;
     private List<BenefitDTO> benefitDTOs;
