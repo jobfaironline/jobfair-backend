@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
@@ -76,4 +77,11 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
             throw new NoSuchElementException();
         }
     }
+
+    @Override
+    public List<CompanyEmployeeEntity> getAllCompanyEmployees(String id) {
+        return employeeRepository.findByCompanyId(id);
+//        return  employeeRepository.findAll();
+    }
+
 }

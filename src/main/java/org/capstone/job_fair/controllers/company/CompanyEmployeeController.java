@@ -9,6 +9,7 @@ import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
 import org.capstone.job_fair.controllers.payload.requests.CompanyManagerRegisterRequest;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.controllers.payload.requests.UpdateCompanyEmployeeProfileRequest;
+import org.capstone.job_fair.models.entities.company.CompanyEmployeeEntity;
 import org.capstone.job_fair.services.interfaces.account.AccountService;
 import org.capstone.job_fair.services.interfaces.account.GenderService;
 import org.capstone.job_fair.services.interfaces.company.CompanyEmployeeService;
@@ -19,12 +20,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 public class CompanyEmployeeController {
@@ -140,6 +139,15 @@ public class CompanyEmployeeController {
         return GenericResponse.build(
                 MessageUtil.getMessage(MessageConstant.CompanyEmployee.UPDATE_PROFILE_SUCCESSFULLY),
                 HttpStatus.OK);
+    }
+
+//    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
+    @GetMapping(ApiEndPoint.CompanyEmployee.COMPANY_EMPLOYEE_ENDPOINT + "/{companyId}")
+    public ResponseEntity<?> getCompanies(@PathVariable String companyId) {
+        List<CompanyEmployeeEntity> employee = companyEmployeeService.getAllCompanyEmployees(companyId);
+        System.out.println("Hello again");
+        if(employee.isEmpty()) return new ResponseEntity<>(MessageUtil.getMessage(MessageConstant.Exception.RESOURCE_NOT_FOUND), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(employee ,HttpStatus.OK);
     }
 
 

@@ -28,7 +28,7 @@ public class BenefitEntity {
     @Column(name = "description")
     private String description;
 
-    @ManyToMany(mappedBy = "companyBenefits")
-    List<CompanyEntity> companies;
+//    @ManyToMany(mappedBy = "companyBenefits")
+//    List<CompanyEntity> companies;
 
 }
