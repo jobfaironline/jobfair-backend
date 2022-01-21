@@ -52,6 +52,7 @@ public class CompanyController {
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
     @GetMapping(ApiEndPoint.Company.COMPANY_ENDPOINT)
     public ResponseEntity<?> getCompanies() {
+
         return new ResponseEntity<>(companyService.getAllCompanies(), HttpStatus.OK);
     }
 
@@ -100,10 +101,11 @@ public class CompanyController {
     public ResponseEntity<?> update(@Valid @RequestBody UpdateCompanyRequest request) {
         //check if email has changed and email is existed ?
         Optional<CompanyEntity> opt = companyService.getCompanyById(request.getId());
-        if (opt.isPresent() && opt.get().getEmail() != request.getEmail() && isEmailExisted(request.getEmail())) {
+
+        if (opt.isPresent() && !opt.get().getEmail().equals(request.getEmail()) && isEmailExisted(request.getEmail())) {
             return GenericResponse.build(MessageUtil.getMessage(MessageConstant.Company.EMAIL_EXISTED), HttpStatus.BAD_REQUEST);
         }
-        if (opt.isPresent() && opt.get().getTaxId() != request.getTaxId() && isTaxIDExisted(request.getEmail())) {
+        if (opt.isPresent() && !opt.get().getTaxId().equals(request.getTaxId()) && isTaxIDExisted(request.getEmail())) {
             return GenericResponse.build(MessageUtil.getMessage(MessageConstant.Company.TAX_ID_EXISTED), HttpStatus.BAD_REQUEST);
         }
 
