@@ -9,6 +9,7 @@ import org.capstone.job_fair.models.entities.company.CompanyEntity;
 import org.capstone.job_fair.models.enums.Role;
 import org.capstone.job_fair.repositories.account.AccountRepository;
 import org.capstone.job_fair.repositories.company.CompanyRepository;
+import org.capstone.job_fair.services.interfaces.company.CompanyService;
 import org.capstone.job_fair.services.mappers.CompanyEmployeeEntityMapper;
 import org.capstone.job_fair.models.statuses.AccountStatus;
 import org.capstone.job_fair.repositories.company.CompanyEmployeeRepository;
@@ -41,8 +42,6 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
     @Autowired
     private CompanyRepository companyRepository;
 
-    @Autowired
-    private AccountRepository accountRepository;
 
     @Override
     public void createNewCompanyManagerAccount(CompanyEmployeeDTO dto) {
@@ -66,6 +65,31 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
 
         employeeRepository.save(entity);
 
+    }
+
+    @Override
+    public void createNewCompanyEmployeeAccount(CompanyEmployeeDTO dto, String companyId) {
+        String id = UUID.randomUUID().toString();
+        CompanyEmployeeEntity entity = mapper.toEntity(dto);
+        entity.setAccountId(id);
+
+        entity.setCompany(companyRepository.findById(companyId).get());
+
+        AccountEntity accountEntity = entity.getAccount();
+        accountEntity.setId(id);
+        accountEntity.setPassword(encoder.encode(accountEntity.getPassword()));
+        accountEntity.setProfileImageUrl(AccountConstant.DEFAULT_PROFILE_IMAGE_URL);
+        accountEntity.setStatus(AccountStatus.REGISTERED);
+
+        RoleEntity role = new RoleEntity();
+        role.setId(Role.COMPANY_EMPLOYEE.ordinal());
+        accountEntity.setRole(role);
+
+        GenderEntity gender = new GenderEntity();
+        gender.setId(dto.getAccount().getGender().ordinal());
+        accountEntity.setGender(gender);
+
+        employeeRepository.save(entity);
     }
 
     @Override

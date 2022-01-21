@@ -62,9 +62,12 @@ public class MessageConstant {
     public static final class CompanyEmployee {
         public static final String EMAIL_EXISTED = "company-employee.error.email-existed";
         public static final String CREATE_EMPLOYEE_MANAGER_SUCCESSFULLY = "company-employee.success.create-company-manager";
+        public static final String CREATE_EMPLOYEE_EMPLOYEE_SUCCESSFULLY = "company-employee.success.create-company-employee";
         public static final String UPDATE_PROFILE_SUCCESSFULLY = "company-employee.success.update-profile";
         public static final String DELETE_SUCCESSFULLY = "company-employee.success.delete-employee";
         public static final String DELETE_FAILED = "company-employee.error.delete";
+        public static final String EMAIL_SUBJECT = "company-employee.email.subject";
+        public static final String EMAIL_CONTENT = "company-employee.email.body";
     }
 
     public static final class Gender {

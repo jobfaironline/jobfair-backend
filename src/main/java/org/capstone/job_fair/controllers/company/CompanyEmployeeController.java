@@ -3,18 +3,21 @@ package org.capstone.job_fair.controllers.company;
 
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
+import org.capstone.job_fair.constants.ResetPasswordTokenConstants;
+import org.capstone.job_fair.controllers.payload.requests.CompanyEmployeeRegisterRequest;
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
 import org.capstone.job_fair.models.dtos.company.CompanyDTO;
 import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
 import org.capstone.job_fair.controllers.payload.requests.CompanyManagerRegisterRequest;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.controllers.payload.requests.UpdateCompanyEmployeeProfileRequest;
-import org.capstone.job_fair.models.entities.company.CompanyEmployeeEntity;
 import org.capstone.job_fair.services.interfaces.account.AccountService;
 import org.capstone.job_fair.services.interfaces.account.GenderService;
 import org.capstone.job_fair.services.interfaces.company.CompanyEmployeeService;
 import org.capstone.job_fair.services.interfaces.company.CompanyService;
+import org.capstone.job_fair.services.interfaces.util.MailService;
 import org.capstone.job_fair.utils.MessageUtil;
+import org.capstone.job_fair.utils.PasswordGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,6 +42,10 @@ public class CompanyEmployeeController {
 
     @Autowired
     private CompanyService companyService;
+
+    @Autowired
+    private MailService mailService;
+
 
     private boolean isGenderExist(int genderID) {
         return genderService.findById(genderID).isPresent();
@@ -155,6 +162,43 @@ public class CompanyEmployeeController {
         return result
                 ? GenericResponse.build(MessageUtil.getMessage(MessageConstant.CompanyEmployee.DELETE_SUCCESSFULLY), HttpStatus.OK)
                 : GenericResponse.build(MessageUtil.getMessage(MessageConstant.CompanyEmployee.DELETE_FAILED), HttpStatus.NOT_FOUND);
+    }
+
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
+    @PostMapping(ApiEndPoint.CompanyEmployee.COMPANY_EMPLOYEE_ENDPOINT)
+    public ResponseEntity<?> createEmployee(@Validated @RequestBody CompanyEmployeeRegisterRequest request){
+        //check if email existed?
+        if (isEmailExist(request.getEmail())) {
+            return GenericResponse.build(
+                    MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMAIL_EXISTED),
+                    HttpStatus.BAD_REQUEST);
+        }
+        //check gender validation
+        if (!isGenderExist(request.getGender().ordinal())) {
+            return GenericResponse.build(
+                    MessageUtil.getMessage(MessageConstant.Gender.NOT_FOUND),
+                    HttpStatus.BAD_REQUEST);
+        }
+        PasswordGenerator  passwordGenerator = new PasswordGenerator();
+        AccountDTO accountDTO = new AccountDTO();
+        accountDTO.setEmail(request.getEmail());
+        accountDTO.setPassword(passwordGenerator.generatePassword());
+        accountDTO.setPhone(request.getPhone());
+        accountDTO.setFirstname(request.getFirstName());
+        accountDTO.setLastname(request.getLastName());
+        accountDTO.setMiddlename(request.getMiddleName());
+        accountDTO.setGender(request.getGender());
+
+        CompanyEmployeeDTO dto = new CompanyEmployeeDTO();
+        dto.setAccount(accountDTO);
+
+        companyEmployeeService.createNewCompanyEmployeeAccount(dto, request.getCompanyId());
+        this.mailService.sendMail(request.getEmail(),
+                MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMAIL_SUBJECT),
+                MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMAIL_CONTENT) + dto.getAccount().getPassword());
+        return GenericResponse.build(
+                MessageUtil.getMessage(MessageConstant.CompanyEmployee.CREATE_EMPLOYEE_EMPLOYEE_SUCCESSFULLY),
+                HttpStatus.CREATED);
     }
 
 }

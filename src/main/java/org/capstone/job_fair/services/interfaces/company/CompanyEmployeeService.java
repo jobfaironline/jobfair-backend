@@ -8,6 +8,8 @@ import java.util.List;
 public interface CompanyEmployeeService {
     void createNewCompanyManagerAccount(CompanyEmployeeDTO dto);
 
+    void createNewCompanyEmployeeAccount(CompanyEmployeeDTO dto, String companyId);
+
     void updateProfile(CompanyEmployeeDTO dto);
 
     List<CompanyEmployeeDTO> getAllCompanyEmployees (String id);
