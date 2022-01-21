@@ -10,5 +10,5 @@ import org.springframework.transaction.annotation.Transactional;
 @RepositoryRestResource(path = ApiEndPoint.RestDataEndpoint.COUNTRY)
 @Transactional
 public interface CountryRepository extends JpaRepository<CountryEntity, String> {
-
+    Integer countById(String id);
 }

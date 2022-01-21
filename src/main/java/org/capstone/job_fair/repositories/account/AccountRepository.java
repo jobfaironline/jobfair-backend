@@ -1,5 +1,6 @@
 package org.capstone.job_fair.repositories.account;
 
+import org.capstone.job_fair.models.enums.Role;
 import org.capstone.job_fair.models.statuses.AccountStatus;
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
@@ -8,6 +9,7 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.transaction.annotation.Transactional;
 import springfox.documentation.annotations.ApiIgnore;
 
+import java.util.List;
 import java.util.Optional;
 
 @Transactional
@@ -19,4 +21,5 @@ public interface AccountRepository extends JpaRepository<AccountEntity, String> 
     Integer countByEmailAndStatus(String email, AccountStatus status);
     Integer countByIdAndStatus(String id, AccountStatus status);
     Integer countByIdAndEmailAndStatus(String id, String email, AccountStatus status);
+    List<AccountEntity> findAllByRoleAndStatus(Role role, AccountStatus status);
 }

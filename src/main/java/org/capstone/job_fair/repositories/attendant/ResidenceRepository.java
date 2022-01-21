@@ -10,4 +10,5 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @RepositoryRestResource(path = ApiEndPoint.RestDataEndpoint.RESIDENCE)
 public interface ResidenceRepository extends JpaRepository<ResidenceEntity, String> {
+    Integer countById(String id);
 }

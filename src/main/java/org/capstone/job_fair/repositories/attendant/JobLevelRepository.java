@@ -8,5 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 @RepositoryRestResource(path = ApiEndPoint.RestDataEndpoint.CURRENT_JOB_LEVEL)
-public interface JobLevelRepository extends JpaRepository<JobLevelEntity, String> {
+public interface JobLevelRepository extends JpaRepository<JobLevelEntity, Integer> {
+    Integer countById(int id);
 }

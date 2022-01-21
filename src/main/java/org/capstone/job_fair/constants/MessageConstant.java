@@ -39,6 +39,17 @@ public class MessageConstant {
         public static final String NOT_FOUND = "account.error.not-found";
         public static final String EXISTED = "account.error.existed";
         public static final String EMAIL_EXISTED = "account.error.email-existed";
+        public static final String NOT_FOUND_COUNTRY = "account.error.not-found-country";
+        public static final String NOT_FOUND_RESIDENCE = "account.error.not-found-residence";
+        public static final String NOT_FOUND_JOB_LEVEL = "account.error.not-found-job-level";
+        public static final String NOT_FOUND_QUALIFICATION = "account.error.not-found-qualification";
+        public static final String SKILL_INVALID = "account.error.skill_invalid";
+        public static final String WORK_HISTORY_INVALID = "account.error.work_history_invalid";
+        public static final String EDUCATION_INVALID = "account.error.education_invalid";
+        public static final String CERTIFICATION_INVALID = "account.error.certification_invalid";
+        public static final String ACTIVITY_INVALID = "account.error.activity_invalid";
+        public static final String DOB_INVALID = "account.error.dob_invalid";
+        public static final String YOE_INVALID = "account.error.yoe_invalid";
     }
 
     public static final class Attendant {

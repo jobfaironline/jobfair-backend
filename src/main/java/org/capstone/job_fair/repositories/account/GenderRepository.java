@@ -9,4 +9,5 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @RepositoryRestResource(path = ApiEndPoint.RestDataEndpoint.GENDER)
 public interface GenderRepository extends JpaRepository<GenderEntity, Integer> {
+    Integer countById(int id);
 }
