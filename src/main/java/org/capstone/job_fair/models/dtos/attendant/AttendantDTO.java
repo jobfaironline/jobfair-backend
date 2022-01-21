@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
 import org.capstone.job_fair.models.dtos.attendant.cv.*;
+import org.capstone.job_fair.models.enums.JobLevel;
 import org.capstone.job_fair.models.enums.Marital;
 
 import java.io.Serializable;
@@ -25,7 +26,7 @@ public class AttendantDTO implements Serializable {
     private Marital maritalStatus;
     private String countryId;
     private String residenceId;
-    private Integer jobLevelId;
+    private JobLevel jobLevel;
 
     private List<SkillDTO> skills;
     private List<WorkHistoryDTO>  workHistories;

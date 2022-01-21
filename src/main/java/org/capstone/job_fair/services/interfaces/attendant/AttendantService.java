@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface AttendantService{
-    void createNewAccount(AttendantDTO dto);
+    void updateAccount(AttendantDTO dto);
     Optional<AttendantDTO> getAttendantByEmail(String email);
-    AttendantEntity update(AttendantDTO attendantDTO);
+    AttendantEntity createNewAccount(AttendantDTO attendantDTO);
     List<AttendantDTO> getAllAttendants();
 }

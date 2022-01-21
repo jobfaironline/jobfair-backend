@@ -10,9 +10,4 @@ public class QualificationServiceImpl implements QualificationService {
     @Autowired
     private QualificationRepository qualificationRepository;
 
-
-    @Override
-    public Integer getCountById(int id) {
-        return qualificationRepository.countById(id);
-    }
 }

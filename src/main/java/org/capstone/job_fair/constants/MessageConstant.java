@@ -49,7 +49,7 @@ public class MessageConstant {
         public static final String CERTIFICATION_INVALID = "account.error.certification_invalid";
         public static final String ACTIVITY_INVALID = "account.error.activity_invalid";
         public static final String DOB_INVALID = "account.error.dob_invalid";
-        public static final String YOE_INVALID = "account.error.yoe_invalid";
+        public static final String YEAR_OF_EXP_INVALID = "account.error.year_of_exp_invalid";
     }
 
     public static final class Attendant {

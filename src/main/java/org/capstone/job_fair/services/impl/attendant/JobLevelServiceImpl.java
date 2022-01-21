@@ -11,9 +11,4 @@ public class JobLevelServiceImpl implements JobLevelService {
     @Autowired
     private JobLevelRepository jobLevelRepository;
 
-    @Override
-    public Integer getCountJobLevelById(Integer id) {
-        return jobLevelRepository.countById(id);
-    }
-
 }

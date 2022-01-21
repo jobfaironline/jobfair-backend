@@ -1,6 +1,11 @@
 package org.capstone.job_fair.constants;
 
 public class DataConstraint {
+    public static final class Skill {
+        public static final int MIN_PROFICIENCY = 1;
+        public static final int MAX_PROFICIENCY = 5;
+    }
+
     public static final class JobPosition {
         public static final int TITLE_LENGTH = 200;
         public static final int DESCRIPTION_LENGTH = 1000;
@@ -26,6 +31,8 @@ public class DataConstraint {
         public static final int TITTLE_LENGTH = 100;
         public static final int JOB_TITTLE_LENGTH = 100;
         public static final int YEAR_OF_EXPERIENCE_MIN = 0;
+        public static final long MIN_DOB = -2208988800000L;
+        public static final long MAX_DOB = 1420071120000L;
 
     }
 

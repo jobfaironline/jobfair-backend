@@ -2,21 +2,16 @@ package org.capstone.job_fair.controllers.attendant;
 
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
+import org.capstone.job_fair.controllers.payload.requests.RegisterAttendantRequest;
 import org.capstone.job_fair.controllers.payload.requests.UpdateAttendantRequest;
+import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
 import org.capstone.job_fair.models.dtos.attendant.AttendantDTO;
-
-import org.capstone.job_fair.models.dtos.attendant.CountryDTO;
 import org.capstone.job_fair.models.dtos.attendant.cv.*;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
-import org.capstone.job_fair.controllers.payload.requests.AttendantRegisterRequest;
-import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
-import org.capstone.job_fair.models.entities.account.GenderEntity;
 import org.capstone.job_fair.models.enums.Role;
 import org.capstone.job_fair.models.statuses.AccountStatus;
 import org.capstone.job_fair.services.interfaces.account.AccountService;
-import org.capstone.job_fair.services.interfaces.account.GenderService;
-import org.capstone.job_fair.services.interfaces.account.RoleService;
 import org.capstone.job_fair.services.interfaces.attendant.*;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +21,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -59,28 +53,14 @@ public class AttendantController {
     }
 
 
-    @PostMapping(ApiEndPoint.Attendant.REGISTER_ENDPOINT)
-    public ResponseEntity<?> register(@Validated @RequestBody AttendantRegisterRequest request) {
-        if (!request.getPassword().equals(request.getConfirmPassword())) {
-            return GenericResponse.build(
-                    MessageUtil.getMessage(MessageConstant.AccessControlMessage.CONFIRM_PASSWORD_MISMATCH),
-                    HttpStatus.BAD_REQUEST);
-        }
-        if (isEmailExist(request.getAccount().getEmail())) {
-            return GenericResponse.build(
-                    MessageUtil.getMessage(MessageConstant.Account.EXISTED),
-                    HttpStatus.BAD_REQUEST);
-        }
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ATTENDANT)")
+    @PutMapping(ApiEndPoint.Attendant.UPDATE_ENDPOINT)
+    public ResponseEntity<?> update(@Validated @RequestBody UpdateAttendantRequest request) {
 
-        if (request.getDob() <= 0) {
+        Optional<AccountEntity> opt = accountService.getActiveAccountById(request.getAccountId());
+        if (opt.isPresent() && !opt.get().getEmail().equals(request.getAccount().getEmail()) && isEmailExist(request.getAccount().getEmail())) {
             return GenericResponse.build(
-                    MessageUtil.getMessage(MessageConstant.Account.DOB_INVALID),
-                    HttpStatus.BAD_REQUEST);
-        }
-
-        if (request.getYearOfExp() <= 0) {
-            return GenericResponse.build(
-                    MessageUtil.getMessage(MessageConstant.Account.YOE_INVALID),
+                    MessageUtil.getMessage(MessageConstant.Account.EMAIL_EXISTED),
                     HttpStatus.BAD_REQUEST);
         }
 
@@ -90,19 +70,11 @@ public class AttendantController {
                     HttpStatus.BAD_REQUEST);
         }
 
-        if (!isResidenceExist(request.getResidenceID())){
+        if (!isResidenceExist(request.getResidenceID())) {
             return GenericResponse.build(
                     MessageUtil.getMessage(MessageConstant.Account.NOT_FOUND_RESIDENCE),
                     HttpStatus.BAD_REQUEST);
         }
-
-        if (!isJobLevelExist(request.getJobLevelID())) {
-            return GenericResponse.build(
-                    MessageUtil.getMessage(MessageConstant.Account.NOT_FOUND_JOB_LEVEL),
-                    HttpStatus.BAD_REQUEST);
-        }
-
-
 
         List<SkillDTO> skillDTOs = request.getSkillRequests()
                 .stream().map(req -> {
@@ -137,7 +109,7 @@ public class AttendantController {
                             .fromDate(req.getFromDate())
                             .toDate(req.getToDate())
                             .achievement(req.getAchievement())
-                            .qualificationId(req.getQualificationId())
+                            .qualificationId(req.getQualification().ordinal())
                             .build();
                     return dto;
                 }).collect(Collectors.toList());
@@ -182,11 +154,6 @@ public class AttendantController {
                     return dto;
                 }).collect(Collectors.toList());
 
-        if (!isSkillValid(skillDTOs)) {
-            return GenericResponse.build(
-                    MessageUtil.getMessage(MessageConstant.Account.SKILL_INVALID),
-                    HttpStatus.BAD_REQUEST);
-        }
 
         if (!isWorkHistoryValid(historyDTOs)) {
             return GenericResponse.build(
@@ -200,12 +167,6 @@ public class AttendantController {
                     HttpStatus.BAD_REQUEST);
         }
 
-        if (!isCertificationValid(certificationDTOs)) {
-            return GenericResponse.build(
-                    MessageUtil.getMessage(MessageConstant.Account.CERTIFICATION_INVALID),
-                    HttpStatus.BAD_REQUEST);
-        }
-
         if (!isActivityValid(activityDTOs)) {
             return GenericResponse.build(
                     MessageUtil.getMessage(MessageConstant.Account.ACTIVITY_INVALID),
@@ -213,9 +174,10 @@ public class AttendantController {
         }
 
         AccountDTO accountDTO = AccountDTO.builder()
+                .id(request.getAccountId())
                 .email(request.getAccount().getEmail())
                 .password(request.getPassword())
-                .status(AccountStatus.ACTIVE)
+                .status(request.getAccount().getStatus())
                 .firstname(request.getAccount().getFirstname())
                 .lastname(request.getAccount().getLastname())
                 .middlename(request.getAccount().getMiddlename())
@@ -233,7 +195,7 @@ public class AttendantController {
                 .maritalStatus(request.getMaritalStatus())
                 .countryId(request.getCountryID())
                 .residenceId(request.getResidenceID())
-                .jobLevelId(request.getJobLevelID())
+                .jobLevel(request.getJobLevel())
                 .skills(skillDTOs)
                 .workHistories(historyDTOs)
                 .educations(educationDTOs)
@@ -241,18 +203,22 @@ public class AttendantController {
                 .references(referenceDTOs)
                 .activities(activityDTOs)
                 .build();
-        attendantService.createNewAccount(attendantDTO);
+        attendantService.updateAccount(attendantDTO);
         return GenericResponse.build(
-                MessageUtil.getMessage(MessageConstant.Attendant.REGISTER_SUCCESSFULLY),
+                MessageUtil.getMessage(MessageConstant.Attendant.UPDATE_PROFILE_SUCCESSFULLY),
                 HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ATTENDANT)")
-    @PostMapping(ApiEndPoint.Attendant.UPDATE_ENDPOINT)
-    public ResponseEntity<?> update(@Validated @RequestBody UpdateAttendantRequest req) {
+    @PostMapping(ApiEndPoint.Attendant.REGISTER_ENDPOINT)
+    public ResponseEntity<?> register(@Validated @RequestBody RegisterAttendantRequest req) {
 
-        Optional<AccountEntity> opt = accountService.getActiveAccountById(req.getAccountId());
-        if (opt.isPresent() && !opt.get().getEmail().equals(req.getAccount().getEmail()) && isEmailExist(req.getAccount().getEmail())) {
+        if (!req.getPassword().equals(req.getConfirmPassword())) {
+            return GenericResponse.build(
+                    MessageUtil.getMessage(MessageConstant.AccessControlMessage.CONFIRM_PASSWORD_MISMATCH),
+                    HttpStatus.BAD_REQUEST);
+        }
+
+        if (isEmailExist(req.getAccount().getEmail())){
             return GenericResponse.build(
                     MessageUtil.getMessage(MessageConstant.Account.EMAIL_EXISTED),
                     HttpStatus.BAD_REQUEST);
@@ -260,29 +226,36 @@ public class AttendantController {
 
 
         AccountDTO accountDTO = req.getAccount() != null ? AccountDTO.builder()
-                .id(req.getAccountId())
+                .id(UUID.randomUUID().toString())
+                .status(AccountStatus.ACTIVE)
                 .lastname(req.getAccount().getLastname())
                 .firstname(req.getAccount().getFirstname())
                 .middlename(req.getAccount().getMiddlename())
                 .email(req.getAccount().getEmail())
+                .password(req.getPassword())
                 .gender(req.getAccount().getGender())
+                .role(Role.ATTENDANT)
                 .phone(req.getAccount().getPhone())
                 .profileImageUrl(req.getAccount().getProfileImageUrl())
                 .build() : new AccountDTO();
         AttendantDTO dto = AttendantDTO.builder()
                 .account(accountDTO)
+                .jobTitle(req.getJobTitle())
                 .address(req.getAddress())
                 .dob(req.getDob())
                 .yearOfExp(req.getYearOfExp())
                 .title(req.getTitle())
                 .maritalStatus(req.getMaritalStatus())
+                .countryId(req.getCountry())
+                .residenceId(req.getResidence())
+                .jobLevel(req.getCurrentJobLevel())
                 .build();
 
 
-        attendantService.update(dto);
+        attendantService.createNewAccount(dto);
         return GenericResponse.build(
-                MessageUtil.getMessage(MessageConstant.Attendant.UPDATE_PROFILE_SUCCESSFULLY),
-                HttpStatus.OK);
+                MessageUtil.getMessage(MessageConstant.Attendant.REGISTER_SUCCESSFULLY),
+                HttpStatus.CREATED);
     }
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ATTENDANT) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
@@ -292,32 +265,15 @@ public class AttendantController {
     }
 
     private boolean isEmailExist(String email) {
-        return accountService.getCountByActiveEmail(email) != 0 ? true : false;
+        return accountService.getCountByActiveEmail(email) != 0;
     }
 
     private boolean isCountryExist(String id) {
-        return countryService.getCountCountryById(id) != 0 ? true : false;
+        return countryService.getCountCountryById(id) != 0;
     }
 
     private boolean isResidenceExist(String id) {
-        return residenceService.getCountResidenceById(id) != 0 ? true : false;
-    }
-
-    private boolean isJobLevelExist(Integer id) {
-        return jobLevelService.getCountJobLevelById(id) != 0 ? true : false;
-    }
-
-    private boolean isQualificationExist(Integer id) {
-        return qualicationService.getCountById(id) != 0 ? true : false;
-    }
-
-    private boolean isSkillValid(List<SkillDTO> skills) {
-        for (SkillDTO dto : skills) {
-            if (dto.getProficiency() <=0 || dto.getProficiency() >= 5) {
-                return false;
-            }
-        }
-        return true;
+        return residenceService.getCountResidenceById(id) != 0;
     }
 
     private boolean isWorkHistoryValid(List<WorkHistoryDTO> workHistories) {
@@ -331,21 +287,13 @@ public class AttendantController {
 
     private boolean isEducationValid(List<EducationDTO> educations) {
         for (EducationDTO dto : educations) {
-            if (dto.getFromDate() > dto.getToDate() || !isQualificationExist(dto.getQualificationId())) {
+            if (dto.getFromDate() > dto.getToDate()) {
                 return false;
             }
         }
         return true;
     }
 
-    private boolean isCertificationValid(List<CertificationDTO> certifications) {
-        for (CertificationDTO dto : certifications) {
-            if (dto.getYear() < 1970) {
-                 return false;
-            }
-        }
-        return true;
-    }
 
     private boolean isActivityValid(List<ActivityDTO> activities) {
         for (ActivityDTO dto : activities) {

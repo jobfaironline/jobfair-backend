@@ -6,5 +6,4 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface QualificationRepository extends JpaRepository<QualificationEntity, Integer> {
-    Integer countById(int id);
 }
