@@ -42,6 +42,9 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
     @Autowired
     private CompanyRepository companyRepository;
 
+    @Autowired
+    private AccountRepository accountRepository;
+
 
     @Override
     public void createNewCompanyManagerAccount(CompanyEmployeeDTO dto) {
@@ -122,6 +125,13 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
         companyEmployeeEntity.get().getAccount().setStatus(AccountStatus.INACTIVE);
         employeeRepository.save(companyEmployeeEntity.get());
        return true;
+    }
+
+    @Override
+    public void updateEmployeeStatus(String email){
+        AccountEntity accountEntity = accountRepository.findByEmail(email).get();
+        accountEntity.setStatus(AccountStatus.ACTIVE);
+        accountRepository.save(accountEntity);
     }
 
 }

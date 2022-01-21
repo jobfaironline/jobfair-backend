@@ -19,6 +19,5 @@ public interface AccountService {
 
     Integer getCountActiveAccountById(String id);
 
-    void updateEmployeeStatus(String email);
 
 }

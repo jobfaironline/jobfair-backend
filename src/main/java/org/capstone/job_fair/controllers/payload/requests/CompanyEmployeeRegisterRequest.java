@@ -7,6 +7,8 @@ import org.capstone.job_fair.validators.EmailConstraint;
 import org.capstone.job_fair.validators.PhoneConstraint;
 import org.capstone.job_fair.validators.XSSConstraint;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 @Data
 @NoArgsConstructor
@@ -14,19 +16,27 @@ import javax.validation.constraints.Size;
 @Getter
 @Setter
 public class CompanyEmployeeRegisterRequest {
+    @NotNull
     private String companyId;
+    @NotNull
     @EmailConstraint
     private String email;
+    @NotNull
+    @NotBlank
     @Size(max = DataConstraint.Account.NAME_LENGTH)
     @XSSConstraint
     private String firstName;
     @Size(max = DataConstraint.Account.NAME_LENGTH)
     @XSSConstraint
     private String middleName;
+    @NotNull
+    @NotBlank
     @Size(max = DataConstraint.Account.NAME_LENGTH)
     @XSSConstraint
     private String lastName;
+    @NotNull
     @PhoneConstraint
     private String phone;
+    @NotNull
     private Gender gender;
 }

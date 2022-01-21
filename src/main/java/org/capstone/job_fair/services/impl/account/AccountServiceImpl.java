@@ -49,11 +49,6 @@ public class AccountServiceImpl implements AccountService {
         return accountRepository.countByIdAndStatus(id, AccountStatus.ACTIVE);
     }
 
-    @Override
-    public void updateEmployeeStatus(String email){
-        AccountEntity accountEntity = accountRepository.findByEmail(email).get();
-        accountEntity.setStatus(AccountStatus.ACTIVE);
-        accountRepository.save(accountEntity);
-    }
+
 
 }

@@ -15,4 +15,6 @@ public interface CompanyEmployeeService {
     List<CompanyEmployeeDTO> getAllCompanyEmployees (String id);
 
     Boolean deleteEmployee(String id);
+
+    public void updateEmployeeStatus(String email);
 }

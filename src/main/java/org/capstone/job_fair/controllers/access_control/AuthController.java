@@ -14,6 +14,7 @@ import lombok.AllArgsConstructor;
 import org.capstone.job_fair.models.enums.Role;
 import org.capstone.job_fair.models.statuses.AccountStatus;
 import org.capstone.job_fair.services.interfaces.account.AccountService;
+import org.capstone.job_fair.services.interfaces.company.CompanyEmployeeService;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,6 +40,8 @@ public class AuthController {
 
     private final AccountService accountService;
 
+    private final CompanyEmployeeService companyEmployeeService;
+
     private boolean isAccountHasRole(UserDetailsImpl userDetails, Role role){
         return userDetails.getAuthorities().stream().anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals(role.getAuthority()));
     }
@@ -61,7 +64,7 @@ public class AuthController {
             //check if the Company Employee first time login with provided password
             boolean isEmployeeFirstTime = false;
             if(isAccountHasRole(userDetails, Role.COMPANY_EMPLOYEE) && userDetails.getStatus().equals(AccountStatus.REGISTERED)) {
-                accountService.updateEmployeeStatus(userDetails.getEmail());
+                companyEmployeeService.updateEmployeeStatus(userDetails.getEmail());
                 isEmployeeFirstTime = true;
             }
 

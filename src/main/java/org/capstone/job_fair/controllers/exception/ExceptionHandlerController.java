@@ -61,7 +61,6 @@ public class ExceptionHandlerController {
 
     @ExceptionHandler({Exception.class})
     public ResponseEntity<?> handleGlobalException(Exception ex) {
-        ex.printStackTrace();
         return buildErrorResponse(ex, MessageUtil.getMessage(MessageConstant.Exception.INTERNAL_ERROR), HttpStatus.BAD_REQUEST);
     }
 
