@@ -55,6 +55,8 @@ public class CompanyEmployeeController {
         return accountService.getCountByActiveEmail(email) != 0;
     }
 
+    private boolean isCompanyExist(String companyId) {return companyService.getCompanyById(companyId).isPresent();}
+
 
     @PostMapping(ApiEndPoint.CompanyEmployee.REGISTER_COMPANY_MANAGER)
     public ResponseEntity<?> register(@Validated @RequestBody CompanyManagerRegisterRequest request) {
@@ -173,6 +175,13 @@ public class CompanyEmployeeController {
                     MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMAIL_EXISTED),
                     HttpStatus.BAD_REQUEST);
         }
+        //check if company existed?
+        if (!isCompanyExist(request.getCompanyId())) {
+            return GenericResponse.build(
+                    MessageUtil.getMessage(MessageConstant.CompanyEmployee.COMPANY_NOT_EXIST),
+                    HttpStatus.BAD_REQUEST);
+        }
+
         //check gender validation
         if (!isGenderExist(request.getGender().ordinal())) {
             return GenericResponse.build(
