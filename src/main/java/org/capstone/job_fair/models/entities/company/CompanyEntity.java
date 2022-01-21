@@ -16,20 +16,6 @@ import java.util.List;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Table(name = "company", schema = "dbo")
 public class CompanyEntity {
-    @ManyToMany
-    @JoinTable(
-            name = "company_benefit",
-            joinColumns = @JoinColumn(name = "company_id"),
-            inverseJoinColumns = @JoinColumn(name = "benefit_id")
-    )
-    List<BenefitEntity> companyBenefits;
-    @ManyToMany
-    @JoinTable(
-            name = "company_category",
-            joinColumns = @JoinColumn(name = "company_id"),
-            inverseJoinColumns = @JoinColumn(name = "sub_category_id")
-    )
-    List<SubCategoryEntity> companySubCategory;
     @EqualsAndHashCode.Include
     @Id
     @Column(name = "id", nullable = false, length = 36)
@@ -54,8 +40,22 @@ public class CompanyEntity {
     @ManyToOne
     @JoinColumn(name = "size_id")
     private CompanySizeEntity companySize;
-    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
     @JsonManagedReference
     private List<MediaEntity> medias;
+    @ManyToMany
+    @JoinTable(
+            name = "company_benefit",
+            joinColumns = @JoinColumn(name = "company_id"),
+            inverseJoinColumns = @JoinColumn(name = "benefit_id")
+    )
+    List<BenefitEntity> companyBenefits;
+    @ManyToMany
+    @JoinTable(
+            name = "company_category",
+            joinColumns = @JoinColumn(name = "company_id"),
+            inverseJoinColumns = @JoinColumn(name = "sub_category_id")
+    )
+    List<SubCategoryEntity> companySubCategory;
 
 }

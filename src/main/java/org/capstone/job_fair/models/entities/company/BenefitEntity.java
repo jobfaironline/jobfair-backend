@@ -30,8 +30,5 @@ public class BenefitEntity {
     private String description;
 
 
-//    @ManyToMany(mappedBy = "companyBenefits")
-//    @JsonManagedReference
-//    List<CompanyEntity> companies;
 
 }
