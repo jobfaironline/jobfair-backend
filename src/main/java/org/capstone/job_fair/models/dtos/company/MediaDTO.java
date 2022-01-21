@@ -11,10 +11,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class MediaDTO {
-    private Integer id;
+    private String id;
     private String url;
-    private String description;
-    private String companyId;
     public MediaDTO(String url) {
         this.url = url;
     }

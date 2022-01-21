@@ -1,5 +1,6 @@
 package org.capstone.job_fair.models.entities.company;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 
 import javax.persistence.*;
@@ -28,7 +29,6 @@ public class BenefitEntity {
     @Column(name = "description")
     private String description;
 
-//    @ManyToMany(mappedBy = "companyBenefits")
-//    List<CompanyEntity> companies;
+
 
 }

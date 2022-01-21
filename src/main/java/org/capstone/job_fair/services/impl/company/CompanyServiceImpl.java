@@ -2,6 +2,7 @@ package org.capstone.job_fair.services.impl.company;
 
 import org.capstone.job_fair.models.dtos.company.BenefitDTO;
 import org.capstone.job_fair.models.dtos.company.CompanyDTO;
+import org.capstone.job_fair.models.dtos.company.MediaDTO;
 import org.capstone.job_fair.models.dtos.company.SubCategoryDTO;
 import org.capstone.job_fair.models.entities.company.*;
 import org.capstone.job_fair.repositories.company.CompanyRepository;
@@ -30,15 +31,18 @@ public class CompanyServiceImpl implements CompanyService {
     @Autowired
     private MediaRepository mediaRepository;
 
-    @Autowired
-    private CompanySizeService sizeService;
 
     @Autowired
     private CompanyEntityMapper mapper;
 
+
     @Override
-    public List<CompanyEntity> getAllCompanies() {
-        return companyRepository.findAll();
+    public List<CompanyDTO> getAllCompanies() {
+        return companyRepository.findAll()
+                .stream()
+                .map(CompanyEntity -> mapper.toDTO(CompanyEntity)
+                )
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -50,9 +54,9 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     public void createCompany(CompanyDTO dto) {
         String id = UUID.randomUUID().toString();
-        CompanyEntity entity = new CompanyEntity();
-        mapper.DTOToEntity(dto, entity);
+        CompanyEntity entity = mapper.toEntity(dto);
         entity.setId(id);
+
 
         CompanySizeEntity sizeEntity = new CompanySizeEntity();
         sizeEntity.setId(dto.getSizeId());
@@ -90,8 +94,7 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     public CompanyEntity updateCompany(CompanyDTO dto) {
 
-        CompanyEntity entity = new CompanyEntity();
-        mapper.DTOToEntity(dto, entity);
+        CompanyEntity entity = mapper.toEntity(dto);
 
         CompanySizeEntity sizeEntity = new CompanySizeEntity();
         sizeEntity.setId(dto.getSizeId());
