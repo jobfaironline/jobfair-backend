@@ -58,14 +58,6 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
         accountEntity.setProfileImageUrl(AccountConstant.DEFAULT_PROFILE_IMAGE_URL);
         accountEntity.setStatus(AccountStatus.ACTIVE);
 
-        RoleEntity role = new RoleEntity();
-        role.setId(Role.COMPANY_MANAGER.ordinal());
-        accountEntity.setRole(role);
-
-        GenderEntity gender = new GenderEntity();
-        gender.setId(dto.getAccount().getGender().ordinal());
-        accountEntity.setGender(gender);
-
         employeeRepository.save(entity);
 
     }
@@ -73,6 +65,7 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
     @Override
     public void createNewCompanyEmployeeAccount(CompanyEmployeeDTO dto, String companyId) {
         String id = UUID.randomUUID().toString();
+        dto.getAccount().setRole(Role.COMPANY_EMPLOYEE);
         CompanyEmployeeEntity entity = mapper.toEntity(dto);
         entity.setAccountId(id);
 
@@ -83,14 +76,6 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
         accountEntity.setPassword(encoder.encode(accountEntity.getPassword()));
         accountEntity.setProfileImageUrl(AccountConstant.DEFAULT_PROFILE_IMAGE_URL);
         accountEntity.setStatus(AccountStatus.REGISTERED);
-
-        RoleEntity role = new RoleEntity();
-        role.setId(Role.COMPANY_EMPLOYEE.ordinal());
-        accountEntity.setRole(role);
-
-        GenderEntity gender = new GenderEntity();
-        gender.setId(dto.getAccount().getGender().ordinal());
-        accountEntity.setGender(gender);
 
         employeeRepository.save(entity);
     }
