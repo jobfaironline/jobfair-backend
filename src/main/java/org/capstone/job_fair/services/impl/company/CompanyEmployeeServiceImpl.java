@@ -7,6 +7,7 @@ import org.capstone.job_fair.models.entities.account.GenderEntity;
 import org.capstone.job_fair.models.entities.account.RoleEntity;
 import org.capstone.job_fair.models.entities.company.CompanyEntity;
 import org.capstone.job_fair.models.enums.Role;
+import org.capstone.job_fair.repositories.account.AccountRepository;
 import org.capstone.job_fair.repositories.company.CompanyRepository;
 import org.capstone.job_fair.services.mappers.CompanyEmployeeEntityMapper;
 import org.capstone.job_fair.models.statuses.AccountStatus;
@@ -21,7 +22,9 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -37,6 +40,9 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
 
     @Autowired
     private CompanyRepository companyRepository;
+
+    @Autowired
+    private AccountRepository accountRepository;
 
     @Override
     public void createNewCompanyManagerAccount(CompanyEmployeeDTO dto) {
@@ -79,9 +85,19 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
     }
 
     @Override
-    public List<CompanyEmployeeEntity> getAllCompanyEmployees(String id) {
-        return employeeRepository.findByCompanyId(id);
-//        return  employeeRepository.findAll();
+    public List<CompanyEmployeeDTO> getAllCompanyEmployees(String id) {
+        return employeeRepository.findAllByCompanyId(id).stream().map(companyEmployeeEntity -> {
+            return mapper.toDTO(companyEmployeeEntity);
+        }).collect(Collectors.toList());
+    }
+
+    @Override
+    public Boolean deleteEmployee(String id) {
+       Optional<CompanyEmployeeEntity> companyEmployeeEntity = employeeRepository.findById(id);
+       if(!companyEmployeeEntity.isPresent()) return false;
+        companyEmployeeEntity.get().getAccount().setStatus(AccountStatus.INACTIVE);
+        employeeRepository.save(companyEmployeeEntity.get());
+       return true;
     }
 
 }

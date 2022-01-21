@@ -141,14 +141,20 @@ public class CompanyEmployeeController {
                 HttpStatus.OK);
     }
 
-//    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
     @GetMapping(ApiEndPoint.CompanyEmployee.COMPANY_EMPLOYEE_ENDPOINT + "/{companyId}")
-    public ResponseEntity<?> getCompanies(@PathVariable String companyId) {
-        List<CompanyEmployeeEntity> employee = companyEmployeeService.getAllCompanyEmployees(companyId);
-        System.out.println("Hello again");
-        if(employee.isEmpty()) return new ResponseEntity<>(MessageUtil.getMessage(MessageConstant.Exception.RESOURCE_NOT_FOUND), HttpStatus.NOT_FOUND);
-        return new ResponseEntity<>(employee ,HttpStatus.OK);
+    public ResponseEntity<?> getCompanyEmployees(@PathVariable String companyId) {
+        List<CompanyEmployeeDTO> employees = companyEmployeeService.getAllCompanyEmployees(companyId);
+        if(employees.isEmpty()) return new ResponseEntity<>(MessageUtil.getMessage(MessageConstant.Exception.RESOURCE_NOT_FOUND), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(employees ,HttpStatus.OK);
     }
-
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
+    @DeleteMapping(ApiEndPoint.CompanyEmployee.COMPANY_EMPLOYEE_ENDPOINT + "/{id}")
+    public ResponseEntity<?> deleteCompanyEmp(@PathVariable String id){
+        Boolean result = companyEmployeeService.deleteEmployee(id);
+        return result
+                ? GenericResponse.build(MessageUtil.getMessage(MessageConstant.CompanyEmployee.DELETE_SUCCESSFULLY), HttpStatus.OK)
+                : GenericResponse.build(MessageUtil.getMessage(MessageConstant.CompanyEmployee.DELETE_FAILED), HttpStatus.NOT_FOUND);
+    }
 
 }

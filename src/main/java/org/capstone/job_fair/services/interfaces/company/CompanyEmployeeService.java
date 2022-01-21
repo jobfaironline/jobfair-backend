@@ -10,5 +10,7 @@ public interface CompanyEmployeeService {
 
     void updateProfile(CompanyEmployeeDTO dto);
 
-    List<CompanyEmployeeEntity> getAllCompanyEmployees (String id);
+    List<CompanyEmployeeDTO> getAllCompanyEmployees (String id);
+
+    Boolean deleteEmployee(String id);
 }
