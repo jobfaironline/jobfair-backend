@@ -1,20 +1,73 @@
 package org.capstone.job_fair.services.mappers;
 
 
-import org.capstone.job_fair.models.dtos.company.CompanyDTO;
-import org.capstone.job_fair.models.entities.company.CompanyEntity;
-import org.mapstruct.BeanMapping;
-import org.mapstruct.Mapper;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.capstone.job_fair.models.dtos.company.*;
+import org.capstone.job_fair.models.entities.company.*;
+import org.mapstruct.*;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Mapper(componentModel = "spring")
 public abstract class CompanyEntityMapper {
 
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    public abstract void DTOToEntity(CompanyDTO dto, @MappingTarget CompanyEntity entity);
+    @Autowired
+    private SubCategoryMapper subCategoryMapper;
 
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    public abstract void EntityToDTO(CompanyEntity entity, @MappingTarget CompanyDTO dto);
+    @Autowired
+    private BenefitEntityMapper benefitMapper;
+
+    @Autowired
+    private MediaEntityMapper mediaMapper;
+
+
+    @Mapping(target = "companySubCategory", source = "subCategoryDTOs", qualifiedByName = "subCategoryDTOToEntity")
+    @Mapping(target = "companyBenefits", source = "benefitDTOs", qualifiedByName = "companyBenefitDTOToEntity")
+    @Mapping(target = "medias", source = "mediaDTOS", qualifiedByName = "mediaDTOToEntity")
+    public abstract CompanyEntity toEntity(CompanyDTO dto);
+
+    @Mapping(target = "subCategoryDTOs", source = "companySubCategory", qualifiedByName = "subCategoryEntityToDTO")
+    @Mapping(target = "benefitDTOs", source = "companyBenefits", qualifiedByName = "companyBenefitEntityToDTO")
+    @Mapping(target = "mediaDTOS", source = "medias", qualifiedByName = "mediaEntityToDTO")
+    @Mapping(target = "sizeId", source = "companySize", qualifiedByName = "sizeEntityToSizeId")
+    public abstract CompanyDTO toDTO(CompanyEntity entity);
+
+/////////////////
+    @Named("subCategoryEntityToDTO")
+    public List<SubCategoryDTO> subCategoryEntityToDTO(List<SubCategoryEntity> entities) {
+        return entities.stream().map(entity -> subCategoryMapper.toDTO(entity)).collect(Collectors.toList());
+    }
+
+    @Named("companyBenefitEntityToDTO")
+    public List<BenefitDTO> companyBenefitEntityToDTO(List<BenefitEntity> entities) {
+        return entities.stream().map(entity -> benefitMapper.toDTO(entity)).collect(Collectors.toList());
+    }
+
+    @Named("mediaEntityToDTO")
+    public List<MediaDTO> mediaEntityToDTO(List<MediaEntity> entities){
+        return entities.stream().map(entity -> mediaMapper.toDTO(entity)).collect(Collectors.toList());
+    }
+
+    @Named("sizeEntityToSizeId")
+    public Integer sizeEntityToSizeId(CompanySizeEntity entity) {
+        return entity.getId();
+    }
+////////////////
+    @Named("subCategoryDTOToEntity")
+    public List<SubCategoryEntity> subCategoryDTOToEntity(List<SubCategoryDTO> dtos) {
+        return dtos.stream().map(dto -> subCategoryMapper.toEntity(dto)).collect(Collectors.toList());
+    }
+
+    @Named("companyBenefitDTOToEntity")
+    public List<BenefitEntity> companyBenefitDTOToEntity(List<BenefitDTO> dtos) {
+        return dtos.stream().map(dto -> benefitMapper.toEntity(dto)).collect(Collectors.toList());
+    }
+
+    @Named("mediaDTOToEntity")
+    public List<MediaEntity> mediaDTOToEntity(List<MediaDTO> dtos) {
+        return dtos.stream().map(dto -> mediaMapper.toEntity(dto)).collect(Collectors.toList());
+    }
+
 }

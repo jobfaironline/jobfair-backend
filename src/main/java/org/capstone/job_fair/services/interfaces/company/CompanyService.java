@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface CompanyService {
 
-    List<CompanyEntity> getAllCompanies();
+    List<CompanyDTO> getAllCompanies();
     Optional<CompanyEntity> getCompanyById(String id);
     void createCompany(CompanyDTO dto);
     CompanyEntity updateCompany(CompanyDTO dto) ;

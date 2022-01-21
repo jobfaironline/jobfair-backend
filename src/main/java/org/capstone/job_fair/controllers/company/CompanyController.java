@@ -1,6 +1,7 @@
 package org.capstone.job_fair.controllers.company;
 
 import org.capstone.job_fair.constants.ApiEndPoint;
+import org.capstone.job_fair.constants.DataConstraint;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.controllers.payload.requests.CreateCompanyRequest;
 import org.capstone.job_fair.controllers.payload.requests.UpdateCompanyRequest;
@@ -10,6 +11,7 @@ import org.capstone.job_fair.models.dtos.company.CompanyDTO;
 import org.capstone.job_fair.models.dtos.company.MediaDTO;
 import org.capstone.job_fair.models.dtos.company.SubCategoryDTO;
 import org.capstone.job_fair.models.entities.company.CompanyEntity;
+import org.capstone.job_fair.models.statuses.CompanyStatus;
 import org.capstone.job_fair.services.interfaces.company.CompanyService;
 import org.capstone.job_fair.services.interfaces.company.CompanySizeService;
 import org.capstone.job_fair.utils.MessageUtil;
@@ -50,6 +52,7 @@ public class CompanyController {
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
     @GetMapping(ApiEndPoint.Company.COMPANY_ENDPOINT)
     public ResponseEntity<?> getCompanies() {
+
         return new ResponseEntity<>(companyService.getAllCompanies(), HttpStatus.OK);
     }
 
@@ -81,9 +84,10 @@ public class CompanyController {
                 .address(request.getAddress())
                 .phone(request.getPhone())
                 .email(request.getEmail())
-                .employeeMaxNum(request.getEmployeeMaxNum())
+                .employeeMaxNum(DataConstraint.Company.DEFAULT_EMPLOYEE_MAX_NUM)
                 .websiteUrl(request.getUrl())
                 .sizeId(request.getSizeId())
+                .status(CompanyStatus.ACTIVE)
                 .mediaDTOS(request.getMediaUrls().stream().map(MediaDTO::new).collect(Collectors.toList()))
                 .subCategoryDTOs(request.getSubCategoriesIds().stream().map(SubCategoryDTO::new).collect(Collectors.toList()))
                 .benefitDTOs(request.getBenefitIds().stream().map(BenefitDTO::new).collect(Collectors.toList()))
@@ -97,10 +101,11 @@ public class CompanyController {
     public ResponseEntity<?> update(@Valid @RequestBody UpdateCompanyRequest request) {
         //check if email has changed and email is existed ?
         Optional<CompanyEntity> opt = companyService.getCompanyById(request.getId());
-        if (opt.isPresent() && opt.get().getEmail() != request.getEmail() && isEmailExisted(request.getEmail())) {
+
+        if (opt.isPresent() && !opt.get().getEmail().equals(request.getEmail()) && isEmailExisted(request.getEmail())) {
             return GenericResponse.build(MessageUtil.getMessage(MessageConstant.Company.EMAIL_EXISTED), HttpStatus.BAD_REQUEST);
         }
-        if (opt.isPresent() && opt.get().getTaxId() != request.getTaxId() && isTaxIDExisted(request.getEmail())) {
+        if (opt.isPresent() && !opt.get().getTaxId().equals(request.getTaxId()) && isTaxIDExisted(request.getEmail())) {
             return GenericResponse.build(MessageUtil.getMessage(MessageConstant.Company.TAX_ID_EXISTED), HttpStatus.BAD_REQUEST);
         }
 
@@ -119,6 +124,7 @@ public class CompanyController {
                 .email(request.getEmail())
                 .employeeMaxNum(request.getEmployeeMaxNum())
                 .websiteUrl(request.getUrl())
+                .status(request.getStatus())
                 .sizeId(request.getSizeId())
                 .taxId(request.getTaxId())
                 .mediaDTOS(request.getMediaUrls().stream().map(MediaDTO::new).collect(Collectors.toList()))

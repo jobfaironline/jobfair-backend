@@ -42,9 +42,6 @@ public class CreateCompanyRequest {
     @XSSConstraint
     private String email;
 
-    @NotNull
-    @Min(value = DataConstraint.Company.COMPANY_MIN_NUM)
-    private Integer employeeMaxNum;
 
     @XSSConstraint
     @NotNull
