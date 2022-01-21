@@ -11,6 +11,7 @@ import org.capstone.job_fair.controllers.payload.responses.LoginResponse;
 import org.capstone.job_fair.controllers.payload.requests.RefreshTokenRequest;
 import org.capstone.job_fair.controllers.payload.responses.RefreshTokenResponse;
 import lombok.AllArgsConstructor;
+import org.capstone.job_fair.models.statuses.AccountStatus;
 import org.capstone.job_fair.services.interfaces.account.AccountService;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.http.HttpStatus;
@@ -53,6 +54,10 @@ public class AuthController {
             String refreshToken = tokenProvider.generateRefreshToken(authentication);
             //get user principle from authentication obj
             UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+            if(userDetails.getAuthorities().stream().findAny().get().toString().equals("COMPANY_EMPLOYEE") && userDetails.getStatus().toString().equals("REGISTERED")) {
+                accountService.updateEmployeeStatus(userDetails.getEmail());
+            }
+
             //get list of roles
             String role = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.joining());
             //then return login response which include email and password in userDetails

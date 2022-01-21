@@ -4,7 +4,6 @@ import java.util.Random;
 
 public class PasswordGenerator {
     public static String generatePassword() {
-        final String OTP;
         final String digits = "0123456789QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm!@#$%^&*()_";
         Random random = new Random();
         StringBuilder str = new StringBuilder(10);
