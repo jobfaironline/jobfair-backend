@@ -22,6 +22,7 @@ public interface AccountRepository extends JpaRepository<AccountEntity, String> 
     Integer countByEmailAndStatus(String email, AccountStatus status);
     Integer countByIdAndStatus(String id, AccountStatus status);
     Integer countByIdAndEmailAndStatus(String id, String email, AccountStatus status);
+    Integer countByEmail(String email);
     Optional<AccountEntity> findByEmail(String email);
     Optional<AccountEntity> findByEmailAndStatusIn(String email, List<AccountStatus> statuses);
 }

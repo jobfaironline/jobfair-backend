@@ -47,15 +47,14 @@ public class CompanyEmployeeController {
     private MailService mailService;
 
 
-    private boolean isGenderExist(int genderID) {
-        return genderService.findById(genderID).isPresent();
-    }
 
     private boolean isEmailExist(String email) {
-        return accountService.getCountByActiveEmail(email) != 0;
+        return accountService.getCountByEmail(email) != 0;
     }
 
-    private boolean isCompanyExist(String companyId) {return companyService.getCompanyById(companyId).isPresent();}
+    private boolean isCompanyExist(String companyId) {
+        return companyService.getCountById(companyId) != 0;
+    }
 
 
     @PostMapping(ApiEndPoint.CompanyEmployee.REGISTER_COMPANY_MANAGER)
@@ -70,12 +69,6 @@ public class CompanyEmployeeController {
         if (!request.getPassword().equals(request.getConfirmPassword())) {
             return GenericResponse.build(
                     MessageUtil.getMessage(MessageConstant.AccessControlMessage.CONFIRM_PASSWORD_MISMATCH),
-                    HttpStatus.BAD_REQUEST);
-        }
-        //check gender validation
-        if (!isGenderExist(request.getGender().ordinal())) {
-            return GenericResponse.build(
-                    MessageUtil.getMessage(MessageConstant.Gender.NOT_FOUND),
                     HttpStatus.BAD_REQUEST);
         }
 
@@ -182,16 +175,9 @@ public class CompanyEmployeeController {
                     HttpStatus.BAD_REQUEST);
         }
 
-        //check gender validation
-        if (!isGenderExist(request.getGender().ordinal())) {
-            return GenericResponse.build(
-                    MessageUtil.getMessage(MessageConstant.Gender.NOT_FOUND),
-                    HttpStatus.BAD_REQUEST);
-        }
-        PasswordGenerator  passwordGenerator = new PasswordGenerator();
         AccountDTO accountDTO = new AccountDTO();
         accountDTO.setEmail(request.getEmail());
-        accountDTO.setPassword(passwordGenerator.generatePassword());
+        accountDTO.setPassword(PasswordGenerator.generatePassword());
         accountDTO.setPhone(request.getPhone());
         accountDTO.setFirstname(request.getFirstName());
         accountDTO.setLastname(request.getLastName());
@@ -200,6 +186,10 @@ public class CompanyEmployeeController {
 
         CompanyEmployeeDTO dto = new CompanyEmployeeDTO();
         dto.setAccount(accountDTO);
+
+        CompanyDTO companyDTO = new CompanyDTO();
+        companyDTO.setId(request.getCompanyId());
+        dto.setCompanyDTO(companyDTO);
 
         companyEmployeeService.createNewCompanyEmployeeAccount(dto, request.getCompanyId());
         this.mailService.sendMail(request.getEmail(),

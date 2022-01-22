@@ -19,5 +19,7 @@ public interface AccountService {
 
     Integer getCountActiveAccountById(String id);
 
+    Integer getCountByEmail(String email);
+
 
 }

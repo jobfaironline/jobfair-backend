@@ -49,6 +49,7 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
     @Override
     public void createNewCompanyManagerAccount(CompanyEmployeeDTO dto) {
         String id = UUID.randomUUID().toString();
+        dto.getAccount().setRole(Role.COMPANY_MANAGER);
         CompanyEmployeeEntity entity = mapper.toEntity(dto);
         entity.setAccountId(id);
 

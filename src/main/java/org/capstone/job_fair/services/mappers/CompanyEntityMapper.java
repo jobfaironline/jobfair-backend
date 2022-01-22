@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {SubCategoryMapper.class, BenefitEntityMapper.class, MediaEntityMapper.class})
 public abstract class CompanyEntityMapper {
 
     @Autowired
@@ -37,11 +37,13 @@ public abstract class CompanyEntityMapper {
 /////////////////
     @Named("subCategoryEntityToDTO")
     public List<SubCategoryDTO> subCategoryEntityToDTO(List<SubCategoryEntity> entities) {
+        if (entities == null) return null;
         return entities.stream().map(entity -> subCategoryMapper.toDTO(entity)).collect(Collectors.toList());
     }
 
     @Named("companyBenefitEntityToDTO")
     public List<BenefitDTO> companyBenefitEntityToDTO(List<BenefitEntity> entities) {
+        if (entities == null) return null;
         return entities.stream().map(entity -> benefitMapper.toDTO(entity)).collect(Collectors.toList());
     }
 
@@ -52,21 +54,25 @@ public abstract class CompanyEntityMapper {
 
     @Named("sizeEntityToSizeId")
     public Integer sizeEntityToSizeId(CompanySizeEntity entity) {
+        if (entity == null) return null;
         return entity.getId();
     }
 ////////////////
     @Named("subCategoryDTOToEntity")
     public List<SubCategoryEntity> subCategoryDTOToEntity(List<SubCategoryDTO> dtos) {
+        if (dtos == null) return null;
         return dtos.stream().map(dto -> subCategoryMapper.toEntity(dto)).collect(Collectors.toList());
     }
 
     @Named("companyBenefitDTOToEntity")
     public List<BenefitEntity> companyBenefitDTOToEntity(List<BenefitDTO> dtos) {
+        if (dtos == null) return null;
         return dtos.stream().map(dto -> benefitMapper.toEntity(dto)).collect(Collectors.toList());
     }
 
     @Named("mediaDTOToEntity")
     public List<MediaEntity> mediaDTOToEntity(List<MediaDTO> dtos) {
+        if (dtos == null) return null;
         return dtos.stream().map(dto -> mediaMapper.toEntity(dto)).collect(Collectors.toList());
     }
 
