@@ -33,7 +33,7 @@ public class CertificationEntity {
     @Column(name = "certification_link")
     private String certificationLink;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "attendant_id")
     private AttendantEntity attendant;
 

@@ -64,21 +64,15 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
     }
 
     @Override
-    public void createNewCompanyEmployeeAccount(CompanyEmployeeDTO dto, String companyId) {
-        String id = UUID.randomUUID().toString();
+    public void createNewCompanyEmployeeAccount(CompanyEmployeeDTO dto) {
         dto.getAccount().setRole(Role.COMPANY_EMPLOYEE);
         CompanyEmployeeEntity entity = mapper.toEntity(dto);
-        entity.setAccountId(id);
-
-        entity.setCompany(companyRepository.findById(companyId).get());
 
         AccountEntity accountEntity = entity.getAccount();
-        accountEntity.setId(id);
         accountEntity.setPassword(encoder.encode(accountEntity.getPassword()));
         accountEntity.setProfileImageUrl(AccountConstant.DEFAULT_PROFILE_IMAGE_URL);
         accountEntity.setStatus(AccountStatus.REGISTERED);
-
-        employeeRepository.save(entity);
+        employeeRepository.customSave(entity, true);
     }
 
     @Override

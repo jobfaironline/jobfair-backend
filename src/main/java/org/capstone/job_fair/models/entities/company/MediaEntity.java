@@ -26,7 +26,7 @@ public class MediaEntity {
     @Column(name = "url", nullable = false, length = 2048)
     private String url;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id")
     @JsonBackReference
     private CompanyEntity company;

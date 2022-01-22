@@ -2,6 +2,7 @@ package org.capstone.job_fair.models.entities.account;
 
 import lombok.*;
 import org.capstone.job_fair.models.statuses.AccountStatus;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 
@@ -17,6 +18,8 @@ public class AccountEntity {
     @EqualsAndHashCode.Include
     @Id
     @Column(name = "id", nullable = false, length = 36)
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "org.hibernate.id.UUIDGenerator")
     private String id;
 
     @Column(name = "email", nullable = false, length = 322)
@@ -44,11 +47,11 @@ public class AccountEntity {
     @Column(name = "middlename", nullable = true, length = 100)
     private String middlename;
 
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "role_id", nullable = false)
     private RoleEntity role;
 
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "gender_id", nullable = false)
     private GenderEntity gender;
 

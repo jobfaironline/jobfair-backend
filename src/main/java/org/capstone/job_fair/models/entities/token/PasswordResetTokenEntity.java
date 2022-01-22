@@ -31,7 +31,7 @@ public class PasswordResetTokenEntity {
     @Column(name = "is_invalidated")
     private boolean isInvalidated;
 
-    @OneToOne(targetEntity = AccountEntity.class, fetch = FetchType.EAGER)
+    @OneToOne(targetEntity = AccountEntity.class, fetch = FetchType.LAZY)
     @JoinColumn(nullable = false, name = "account_id")
     private AccountEntity account;
 

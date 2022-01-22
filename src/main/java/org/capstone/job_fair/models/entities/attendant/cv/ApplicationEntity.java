@@ -35,11 +35,11 @@ public class ApplicationEntity {
     @Enumerated(EnumType.ORDINAL)
     private Application status;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "attendant_id")
     private AttendantEntity attendant;
 
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "job_position_id", nullable = false)
     private JobLevelEntity jobLevel;
 

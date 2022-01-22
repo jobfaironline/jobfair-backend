@@ -27,7 +27,7 @@ public class SubCategoryEntity {
         this.id = id;
     }
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private ProfessionCategoryEntity category;
 

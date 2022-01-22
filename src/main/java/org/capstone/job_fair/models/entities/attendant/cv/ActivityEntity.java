@@ -41,7 +41,7 @@ public class ActivityEntity {
     @Column(name = "description")
     private String description;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "attendant_id")
     private AttendantEntity attendant;
 

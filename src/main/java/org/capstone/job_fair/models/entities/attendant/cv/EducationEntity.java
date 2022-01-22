@@ -36,11 +36,11 @@ public class EducationEntity {
     @Column(name = "achievement")
     private String achievement;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "attendant_id")
     private AttendantEntity attendant;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "qualification_id")
     private QualificationEntity qualification;
 

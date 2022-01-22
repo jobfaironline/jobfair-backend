@@ -191,7 +191,7 @@ public class CompanyEmployeeController {
         companyDTO.setId(request.getCompanyId());
         dto.setCompanyDTO(companyDTO);
 
-        companyEmployeeService.createNewCompanyEmployeeAccount(dto, request.getCompanyId());
+        companyEmployeeService.createNewCompanyEmployeeAccount(dto);
         this.mailService.sendMail(request.getEmail(),
                 MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMAIL_SUBJECT),
                 MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMAIL_CONTENT) + dto.getAccount().getPassword());

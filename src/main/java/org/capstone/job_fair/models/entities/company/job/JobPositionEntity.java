@@ -46,27 +46,27 @@ public class JobPositionEntity {
     private String contactEmail;
     @Column(name = "num_of_emp")
     private Integer numOfEmp;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "preferred_language_id")
     private LanguageEntity language;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "level_id")
     private JobLevelEntity jobLevel;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "job_type_id")
     private JobTypeEntity jobTypeEntity;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id")
     private CompanyEntity company;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "job_category",
             joinColumns = @JoinColumn(name = "job_id"),
             inverseJoinColumns = @JoinColumn(name = "sub_category_id"))
     List<SubCategoryEntity> categories;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "job_position_skill_tag",
             joinColumns = @JoinColumn(name = "position_id"),

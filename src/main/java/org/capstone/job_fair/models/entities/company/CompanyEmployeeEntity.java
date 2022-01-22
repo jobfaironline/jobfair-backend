@@ -4,7 +4,6 @@ import lombok.*;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
 
 import javax.persistence.*;
-import java.util.Objects;
 
 
 @Entity
@@ -21,11 +20,12 @@ public class CompanyEmployeeEntity {
     @Column(name = "account_id", nullable = false, length = 36)
     private String accountId;
 
-    @OneToOne(cascade = {CascadeType.ALL})
+    @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
     @JoinColumn(name = "account_id")
+    @MapsId
     private  AccountEntity account;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id")
     private CompanyEntity company;
 

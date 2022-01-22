@@ -37,20 +37,20 @@ public class CompanyEntity {
     @Column(name = "status")
     @Enumerated(EnumType.ORDINAL)
     private CompanyStatus status;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "size_id")
     private CompanySizeEntity companySize;
     @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
     @JsonManagedReference
     private List<MediaEntity> medias;
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "company_benefit",
             joinColumns = @JoinColumn(name = "company_id"),
             inverseJoinColumns = @JoinColumn(name = "benefit_id")
     )
     List<BenefitEntity> companyBenefits;
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "company_category",
             joinColumns = @JoinColumn(name = "company_id"),
