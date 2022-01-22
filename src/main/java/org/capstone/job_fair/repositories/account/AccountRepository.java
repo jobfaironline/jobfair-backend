@@ -5,6 +5,8 @@ import org.capstone.job_fair.models.statuses.AccountStatus;
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.transaction.annotation.Transactional;
 import springfox.documentation.annotations.ApiIgnore;
@@ -22,4 +24,7 @@ public interface AccountRepository extends JpaRepository<AccountEntity, String> 
     Integer countByIdAndStatus(String id, AccountStatus status);
     List<AccountEntity> findAllByRoleAndStatus(Role role, AccountStatus status);
     Integer countByEmail(String email);
+    Integer countByIdAndEmailAndStatus(String id, String email, AccountStatus status);
+    Optional<AccountEntity> findByEmail(String email);
+    Optional<AccountEntity> findByEmailAndStatusIn(String email, List<AccountStatus> statuses);
 }
