@@ -15,4 +15,5 @@ public class LoginResponse {
     private String roles;
     private String token;
     private String refreshToken;
+    private boolean isEmployeeFirstTime;
 }

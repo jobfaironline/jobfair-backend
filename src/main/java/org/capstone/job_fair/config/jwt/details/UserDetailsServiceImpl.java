@@ -10,6 +10,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
+import java.util.Optional;
+
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
@@ -23,8 +26,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        AccountEntity account = accountRepository
-                .findByEmailAndStatus(email, AccountStatus.ACTIVE)
+       AccountEntity account = accountRepository
+                .findByEmailAndStatusIn(email, Arrays.asList(AccountStatus.ACTIVE,AccountStatus.REGISTERED))
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with -> email : " + email));
         return UserDetailsImpl.build(account);
     }
