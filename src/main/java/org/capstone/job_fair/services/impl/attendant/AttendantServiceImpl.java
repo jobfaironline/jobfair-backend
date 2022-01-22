@@ -1,7 +1,6 @@
 package org.capstone.job_fair.services.impl.attendant;
 
 import org.capstone.job_fair.constants.AccountConstant;
-import org.capstone.job_fair.models.dtos.account.AccountDTO;
 import org.capstone.job_fair.models.dtos.attendant.AttendantDTO;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
 import org.capstone.job_fair.models.entities.attendant.*;
@@ -88,6 +87,7 @@ public class AttendantServiceImpl implements AttendantService {
 
     @Override
     public void updateAccount(AttendantDTO dto) {
+
         if (dto.getAccount().getProfileImageUrl() == null) {
             dto.getAccount().setProfileImageUrl(AccountConstant.DEFAULT_PROFILE_IMAGE_URL);
         }
@@ -116,49 +116,73 @@ public class AttendantServiceImpl implements AttendantService {
         entity.setCurrentJobLevel(jobLevelEntity);
 
 
-        List<SkillEntity> skillEntities = dto.getSkills()
-                .stream().map(skillDTO -> {
-                    SkillEntity skillEntity = skillMapper.toEntity(skillDTO);
-                    return skillRepository.save(skillEntity);
-                })
-                .collect(Collectors.toList());
+        if (dto.getSkills().stream().count() != 0) {
+            List<SkillEntity> skillEntities = dto.getSkills()
+                    .stream().map(skillDTO -> {
+                        SkillEntity skillEntity = skillMapper.toEntity(skillDTO);
+                        skillEntity.setId(UUID.randomUUID().toString());
+                        skillEntity.setAttendant(entity);
+                        return skillRepository.save(skillEntity);
+                    })
+                    .collect(Collectors.toList());
+        }
 
-        List<WorkHistoryEntity> workHistoryEntities = dto.getWorkHistories()
-                .stream().map(workHistoryDTO -> {
-                    WorkHistoryEntity workHistoryEntity = workHistoryEntityMapper.toEntity(workHistoryDTO);
-                    return workHistoryRepository.save(workHistoryEntity);
-                })
-                .collect(Collectors.toList());
+        if (dto.getWorkHistories().stream().count() != 0) {
+            List<WorkHistoryEntity> workHistoryEntities = dto.getWorkHistories()
+                    .stream().map(workHistoryDTO -> {
+                        WorkHistoryEntity workHistoryEntity = workHistoryEntityMapper.toEntity(workHistoryDTO);
+                        workHistoryEntity.setId(UUID.randomUUID().toString());
+                        workHistoryEntity.setAttendant(entity);
+                        return workHistoryRepository.save(workHistoryEntity);
+                    })
+                    .collect(Collectors.toList());
+        }
 
-        List<EducationEntity> educationEntities = dto.getEducations()
-                .stream().map(educationDTO -> {
-                    EducationEntity educationEntity = educationEntityMapper.toEntity(educationDTO);
-                    QualificationEntity qualificationEntity = qualificationRepository.findById(educationDTO.getQualificationId()).get();
-                    educationEntity.setQualification(qualificationEntity);
-                    return educationRepository.save(educationEntity);
-                })
-                .collect(Collectors.toList());
+        if (dto.getEducations().stream().count() != 0) {
+            List<EducationEntity> educationEntities = dto.getEducations()
+                    .stream().map(educationDTO -> {
+                        EducationEntity educationEntity = educationEntityMapper.toEntity(educationDTO);
+                        QualificationEntity qualificationEntity = qualificationRepository.findById(educationDTO.getQualificationId()).get();
+                        educationEntity.setQualification(qualificationEntity);
+                        educationEntity.setId(UUID.randomUUID().toString());
+                        educationEntity.setAttendant(entity);
+                        return educationRepository.save(educationEntity);
+                    })
+                    .collect(Collectors.toList());
+        }
 
-        List<CertificationEntity> certificationEntities = dto.getCertifications()
-                .stream().map(certificationDTO -> {
-                    CertificationEntity certificationEntity = certificationEntityMapper.toEntity(certificationDTO);
-                    return certificationRepository.save(certificationEntity);
-                })
-                .collect(Collectors.toList());
+        if (dto.getCertifications().stream().count() != 0) {
+            List<CertificationEntity> certificationEntities = dto.getCertifications()
+                    .stream().map(certificationDTO -> {
+                        CertificationEntity certificationEntity = certificationEntityMapper.toEntity(certificationDTO);
+                        certificationEntity.setId(UUID.randomUUID().toString());
+                        certificationEntity.setAttendant(entity);
+                        return certificationRepository.save(certificationEntity);
+                    })
+                    .collect(Collectors.toList());
+        }
 
-        List<ReferenceEntity> referenceEntities = dto.getReferences()
-                .stream().map(referenceDTO -> {
-                    ReferenceEntity referenceEntity = referenceEntityMapper.toEntity(referenceDTO);
-                    return referenceRepository.save(referenceEntity);
-                })
-                .collect(Collectors.toList());
+        if (dto.getReferences().stream().count() != 0) {
+            List<ReferenceEntity> referenceEntities = dto.getReferences()
+                    .stream().map(referenceDTO -> {
+                        ReferenceEntity referenceEntity = referenceEntityMapper.toEntity(referenceDTO);
+                        referenceEntity.setId(UUID.randomUUID().toString());
+                        referenceEntity.setAttendant(entity);
+                        return referenceRepository.save(referenceEntity);
+                    })
+                    .collect(Collectors.toList());
+        }
 
-        List<ActivityEntity> activityEntities = dto.getActivities()
-                .stream().map(activityDTO -> {
-                    ActivityEntity activityEntity = activityEntityMapper.toEntity(activityDTO);
-                    return activityRepository.save(activityEntity);
-                })
-                .collect(Collectors.toList());
+        if (dto.getActivities().stream().count() != 0) {
+            List<ActivityEntity> activityEntities = dto.getActivities()
+                    .stream().map(activityDTO -> {
+                        ActivityEntity activityEntity = activityEntityMapper.toEntity(activityDTO);
+                        activityEntity.setId(UUID.randomUUID().toString());
+                        activityEntity.setAttendant(entity);
+                        return activityRepository.save(activityEntity);
+                    })
+                    .collect(Collectors.toList());
+        }
 
         attendantRepository.save(entity);
     }
@@ -179,27 +203,13 @@ public class AttendantServiceImpl implements AttendantService {
 
     @Override
     public AttendantEntity createNewAccount(AttendantDTO dto) {
-        AccountDTO accountDTO = dto.getAccount();
-        AccountEntity accountEntity = accountMapper.toEntity(accountDTO);
+        AttendantEntity attendantEntity = mapper.toEntity(dto);
+        AccountEntity accountEntity = accountMapper.toEntity(dto.getAccount());
+        attendantEntity.setAccountId(dto.getAccount().getId());
         String hashPassword = encoder.encode(dto.getAccount().getPassword());
         accountEntity.setPassword(hashPassword);
-        accountRepository.save(accountEntity);
+        accountEntity.setProfileImageUrl(AccountConstant.DEFAULT_PROFILE_IMAGE_URL);
 
-        AttendantEntity attendantEntity = mapper.toEntity(dto);
-        attendantEntity.setAccountId(accountEntity.getId());
-
-        CountryEntity countryEntity = new CountryEntity();
-        countryEntity.setId(dto.getCountryId());
-
-        ResidenceEntity residenceEntity = new ResidenceEntity();
-        residenceEntity.setId(dto.getResidenceId());
-
-        JobLevelEntity jobLevelEntity = new JobLevelEntity();
-        jobLevelEntity.setId(dto.getJobLevel().ordinal());
-
-        attendantEntity.setCountry(countryEntity);
-        attendantEntity.setResidence(residenceEntity);
-        attendantEntity.setCurrentJobLevel(jobLevelEntity);
 
         return attendantRepository.save(attendantEntity);
 

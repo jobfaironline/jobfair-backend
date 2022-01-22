@@ -72,5 +72,10 @@ public class AccountServiceImpl implements AccountService {
 
     }
 
+    @Override
+    public Integer getCountAccountByEmail(String email) {
+        return accountRepository.countByEmail(email);
+    }
+
 
 }

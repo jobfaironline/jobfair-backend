@@ -12,7 +12,10 @@ import org.capstone.job_fair.models.entities.account.AccountEntity;
 import org.capstone.job_fair.models.enums.Role;
 import org.capstone.job_fair.models.statuses.AccountStatus;
 import org.capstone.job_fair.services.interfaces.account.AccountService;
-import org.capstone.job_fair.services.interfaces.attendant.*;
+import org.capstone.job_fair.services.interfaces.attendant.AttendantService;
+import org.capstone.job_fair.services.interfaces.attendant.CountryService;
+import org.capstone.job_fair.services.interfaces.attendant.ResidenceService;
+import org.capstone.job_fair.services.mappers.*;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,6 +24,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -42,10 +46,23 @@ public class AttendantController {
     private ResidenceService residenceService;
 
     @Autowired
-    private JobLevelService jobLevelService;
+    private SkillEntityMapper skillMapper;
 
     @Autowired
-    private QualificationService qualicationService;
+    private WorkHistoryEntityMapper workHistoryMapper;
+
+    @Autowired
+    private EducationEntityMapper educationEntityMapper;
+
+    @Autowired
+    private CertificationEntityMapper certMapper;
+
+    @Autowired
+    private ReferenceEntityMapper refMapper;
+
+    @Autowired
+    private ActivityEntityMapper actMapper;
+
 
     @GetMapping(ApiEndPoint.Attendant.ATTENDANT_ENDPOINT)
     public ResponseEntity<List<AttendantDTO>> getAllAccounts() {
@@ -76,83 +93,65 @@ public class AttendantController {
                     HttpStatus.BAD_REQUEST);
         }
 
-        List<SkillDTO> skillDTOs = request.getSkillRequests()
-                .stream().map(req -> {
-                    SkillDTO dto = SkillDTO.builder()
-                            .id(UUID.randomUUID().toString())
-                            .name(req.getName())
-                            .proficiency(req.getProficiency())
-                            .build();
-                    return dto;
-                }).collect(Collectors.toList());
+        List<SkillDTO> skillDTOs = new ArrayList<>();
+        if (request.getSkillRequests() != null) {
+            skillDTOs = request.getSkillRequests()
+                    .stream()
+                    .filter(req -> isNotNullSkillRequest(req))
+                    .map(req -> {
+                        return skillMapper.toDTO(req);
+                    }).collect(Collectors.toList());
+        }
 
-        List<WorkHistoryDTO> historyDTOs = request.getWorkHistoryRequests()
-                .stream().map(req -> {
-                    WorkHistoryDTO dto = WorkHistoryDTO.builder()
-                            .id(UUID.randomUUID().toString())
-                            .position(req.getPosition())
-                            .company(req.getCompany())
-                            .fromDate(req.getFromDate())
-                            .toDate(req.getToDate())
-                            .isCurrentJob(req.getIsCurrentJob())
-                            .description(req.getDescription())
-                            .build();
-                    return dto;
-                }).collect(Collectors.toList());
+        List<WorkHistoryDTO> historyDTOs = new ArrayList<WorkHistoryDTO>();
+        if (request.getWorkHistoryRequests() != null) {
+            historyDTOs = request.getWorkHistoryRequests()
+                    .stream()
+                    .filter(req -> isNotNullWorkHistoryRequest(req))
+                    .map(req -> {
+                        return workHistoryMapper.toDTO(req);
+                    }).collect(Collectors.toList());
+        }
 
-        List<EducationDTO> educationDTOs = request.getEducationRequests()
-                .stream().map(req -> {
-                    EducationDTO dto = EducationDTO.builder()
-                            .id(UUID.randomUUID().toString())
-                            .subject(req.getSubject())
-                            .school(req.getSchool())
-                            .fromDate(req.getFromDate())
-                            .toDate(req.getToDate())
-                            .achievement(req.getAchievement())
-                            .qualificationId(req.getQualification().ordinal())
-                            .build();
-                    return dto;
-                }).collect(Collectors.toList());
+        List<EducationDTO> educationDTOs = new ArrayList<>();
+        if (request.getEducationRequests() != null) {
+            educationDTOs = request.getEducationRequests()
+                    .stream()
+                    .filter(req -> isNotNullEducation(req))
+                    .map(req -> {
+                        return educationEntityMapper.toDTO(req);
+                    }).collect(Collectors.toList());
+        }
 
-        List<CertificationDTO> certificationDTOs = request.getCertificateRequests()
-                .stream().map(req -> {
-                    CertificationDTO dto = CertificationDTO.builder()
-                            .id(UUID.randomUUID().toString())
-                            .name(req.getName())
-                            .institution(req.getInstitution())
-                            .year(req.getYear())
-                            .certificationLink(req.getCertificationLink())
-                            .build();
-                    return dto;
-                }).collect(Collectors.toList());
+        List<CertificationDTO> certificationDTOs = new ArrayList<>();
+        if (request.getCertificateRequests() != null) {
+            certificationDTOs = request.getCertificateRequests()
+                    .stream()
+                    .filter(req -> isNotNullCertificate(req))
+                    .map(req -> {
+                        return certMapper.toDTO(req);
+                    }).collect(Collectors.toList());
+        }
 
-        List<ReferenceDTO> referenceDTOs = request.getReferenceRequests()
-                .stream().map(req -> {
-                    ReferenceDTO dto = ReferenceDTO.builder()
-                            .id(UUID.randomUUID().toString())
-                            .fullname(req.getFullname())
-                            .position(req.getPosition())
-                            .company(req.getCompany())
-                            .email(req.getEmail())
-                            .phone(req.getPhone())
-                            .build();
-                    return dto;
-                }).collect(Collectors.toList());
+        List<ReferenceDTO> referenceDTOs = new ArrayList<>();
+        if (request.getReferenceRequests() != null) {
+            referenceDTOs = request.getReferenceRequests()
+                    .stream()
+                    .filter(req -> isNotNullReferenceRequest(req))
+                    .map(req -> {
+                        return refMapper.toDTO(req);
+                    }).collect(Collectors.toList());
+        }
 
-        List<ActivityDTO> activityDTOs = request.getActivityRequestList()
-                .stream().map(req -> {
-                    ActivityDTO dto = ActivityDTO.builder()
-                            .id(UUID.randomUUID().toString())
-                            .name(req.getName())
-                            .functionTitle(req.getFunctionTitle())
-                            .organization(req.getOrganization())
-                            .fromDate(req.getFromDate())
-                            .toDate(req.getToDate())
-                            .isCurrentActivity(req.getIsCurrentActivity())
-                            .description(req.getDescription())
-                            .build();
-                    return dto;
-                }).collect(Collectors.toList());
+        List<ActivityDTO> activityDTOs = new ArrayList<>();
+        if (request.getActivityRequestList() != null) {
+            activityDTOs = request.getActivityRequestList()
+                    .stream()
+                    .filter(req -> isNotNullActivityRequest(req))
+                    .map(req -> {
+                        return actMapper.toDTO(req);
+                    }).collect(Collectors.toList());
+        }
 
 
         if (!isWorkHistoryValid(historyDTOs)) {
@@ -177,12 +176,14 @@ public class AttendantController {
                 .id(request.getAccountId())
                 .email(request.getAccount().getEmail())
                 .password(request.getPassword())
-                .status(request.getAccount().getStatus())
                 .firstname(request.getAccount().getFirstname())
                 .lastname(request.getAccount().getLastname())
                 .middlename(request.getAccount().getMiddlename())
                 .gender(request.getAccount().getGender())
                 .role(Role.ATTENDANT)
+                .phone(request.getAccount().getPhone())
+                .profileImageUrl(request.getAccount().getProfileImageUrl())
+                .status(AccountStatus.ACTIVE)
                 .build();
 
         AttendantDTO attendantDTO = AttendantDTO.builder()
@@ -218,7 +219,7 @@ public class AttendantController {
                     HttpStatus.BAD_REQUEST);
         }
 
-        if (isEmailExist(req.getAccount().getEmail())){
+        if (isEmailExist(req.getAccount().getEmail())) {
             return GenericResponse.build(
                     MessageUtil.getMessage(MessageConstant.Account.EMAIL_EXISTED),
                     HttpStatus.BAD_REQUEST);
@@ -236,19 +237,9 @@ public class AttendantController {
                 .gender(req.getAccount().getGender())
                 .role(Role.ATTENDANT)
                 .phone(req.getAccount().getPhone())
-                .profileImageUrl(req.getAccount().getProfileImageUrl())
                 .build() : new AccountDTO();
         AttendantDTO dto = AttendantDTO.builder()
                 .account(accountDTO)
-                .jobTitle(req.getJobTitle())
-                .address(req.getAddress())
-                .dob(req.getDob())
-                .yearOfExp(req.getYearOfExp())
-                .title(req.getTitle())
-                .maritalStatus(req.getMaritalStatus())
-                .countryId(req.getCountry())
-                .residenceId(req.getResidence())
-                .jobLevel(req.getCurrentJobLevel())
                 .build();
 
 
@@ -265,7 +256,7 @@ public class AttendantController {
     }
 
     private boolean isEmailExist(String email) {
-        return accountService.getCountByActiveEmail(email) != 0;
+        return accountService.getCountAccountByEmail(email) != 0;
     }
 
     private boolean isCountryExist(String id) {
@@ -302,5 +293,37 @@ public class AttendantController {
             }
         }
         return true;
+    }
+
+    private boolean isNotNullSkillRequest(UpdateAttendantRequest.SkillRequest request) {
+        return request.getName() != null && request.getProficiency() != null;
+    }
+
+    private boolean isNotNullWorkHistoryRequest(UpdateAttendantRequest.WorkHistoryRequest request) {
+        return request.getCompany() != null
+                && request.getPosition() != null
+                && request.getDescription() != null;
+    }
+
+    private boolean isNotNullEducation(UpdateAttendantRequest.EducationRequest request) {
+        return request.getSubject() != null
+                && request.getSchool() != null
+                && request.getAchievement() != null;
+    }
+
+    private boolean isNotNullCertificate(UpdateAttendantRequest.CertificateRequest request) {
+        return request.getName() != null
+                && request.getInstitution() != null
+                && request.getCertificationLink() != null;
+    }
+
+    private boolean isNotNullReferenceRequest(UpdateAttendantRequest.ReferenceRequest request) {
+        return request.getCompany() != null
+                && request.getPosition() != null
+                && request.getFullname() != null;
+    }
+
+    private boolean isNotNullActivityRequest(UpdateAttendantRequest.ActivityRequest request) {
+        return request.getDescription() != null;
     }
 }

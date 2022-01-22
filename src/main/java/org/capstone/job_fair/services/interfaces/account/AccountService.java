@@ -24,4 +24,6 @@ public interface AccountService {
 
     List<AccountDTO> getActiveAccountDTOByRole(Role role);
 
+    Integer getCountAccountByEmail(String email);
+
 }

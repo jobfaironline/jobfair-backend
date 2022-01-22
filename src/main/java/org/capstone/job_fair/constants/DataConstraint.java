@@ -1,9 +1,63 @@
 package org.capstone.job_fair.constants;
 
+import java.util.Calendar;
+
 public class DataConstraint {
     public static final class Skill {
         public static final int MIN_PROFICIENCY = 1;
         public static final int MAX_PROFICIENCY = 5;
+        public static final int MIN_NAME_LENGTH = 1;
+        public static final int MAX_NAME_LENGTH = 100;
+
+    }
+
+    public static final class WorkHistory {
+        public static final int POSITION_MIN_LENGTH = 1;
+        public static final int POSITION_MAX_LENGTH = 100;
+        public static final int COMPANY_MIN_LENGTH = 1;
+        public static final int COMPANY_MAX_LENGTH = 100;
+        public static final long FROM_DATE = -2208988800000L;
+        public static final int MIN_DESCRIPTION = 1;
+        public static final int MAX_DESCRIPTION = 5000;
+    }
+
+    public static final class Education {
+        public static final int SUBJECT_MIN_LENGTH = 1;
+        public static final int SUBJECT_MAX_LENGTH = 100;
+        public static final int SCHOOL_MIN_LENGTH = 1;
+        public static final int SCHOOL_MAX_LENGTH = 100;
+        public static final long FROM_DATE = -2208988800000L;
+        public static final int ACHIEVEMENT_MIN_LENGTH = 1;
+        public static final int ACHIEVEMENT_MAX_LENGTH = 5000;
+    }
+
+    public static final class Certification {
+        public static final int NAME_MIN_LENGTH = 1;
+        public static final int NAME_MAX_LENGTH = 1000;
+        public static final int INSTITUTION_MIN_LENGTH = 1;
+        public static final int INSTITUTION_MAX_LENGTH = 100;
+        public static final int YEAR_MIN = 1900;
+        public static final int CERTIFICATION_LINK_MIN = 1;
+        public static final int CERTIFICATION_LINK_MAX = 2048;
+    }
+
+    public static final class Reference {
+        public static final int FULLNAME_MIN_LENGTH = 1;
+        public static final int FULLNAME_MAX_LENGTH = 1000;
+        public static final int POSITION_MIN_LENGTH = 1;
+        public static final int POSITION_MAX_LENGTH = 100;
+        public static final int COMPANY_MIN_LENGTH = 1;
+        public static final int COMPANY_MAX_LENGTH = 100;
+    }
+
+    public static final class Activity {
+        public static final int MAX_NAME_LENGTH = 100;
+        public static final int FUNCTION_MAX_LENGTH = 100;
+        public static final int ORGANIZATION_MAX_LENGTH = 100;
+        public static final long FROM_DATE = -2208988800000L;
+        public static final int MIN_DESCRIPTION = 1;
+        public static final int MAX_DESCRIPTION = 5000;
+
     }
 
     public static final class JobPosition {
@@ -24,6 +78,9 @@ public class DataConstraint {
 
     public static final class Account {
         public static final int NAME_LENGTH = 100;
+        public static final int MIN_IMAGE_URL = 1;
+        public static final int MAX_IMAGE_URL = 2048;
+
     }
 
     public static final class Attendant {
@@ -31,9 +88,15 @@ public class DataConstraint {
         public static final int TITTLE_LENGTH = 100;
         public static final int JOB_TITTLE_LENGTH = 100;
         public static final int YEAR_OF_EXPERIENCE_MIN = 0;
+        public static final int YEAR_OF_EXPERIENCE_MAX = 70;
         public static final long MIN_DOB = -2208988800000L;
         public static final long MAX_DOB = 1420071120000L;
-
+        public static final int TITLE_MIN = 1;
+        public static final int TITLE_MAX = 100;
+        public static final int ADDRESS_MIN = 1;
+        public static final int ADDRESS_MAX = 1000;
+        public static final int JOB_TITLE_MIN = 1;
+        public static final int JOB_TITLE_MAX = 100;
     }
 
 
