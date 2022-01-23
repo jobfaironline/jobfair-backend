@@ -137,9 +137,9 @@ public class AttendantController {
     }
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ATTENDANT) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
-    @GetMapping(ApiEndPoint.Attendant.ATTENDANT_ENDPOINT + "/{email}")
-    public ResponseEntity<?> getAttendant(@PathVariable("email") String email) {
-        return ResponseEntity.status(HttpStatus.OK).body(attendantService.getAttendantByEmail(email));
+    @GetMapping(ApiEndPoint.Attendant.ATTENDANT_ENDPOINT + "/{id}")
+    public ResponseEntity<?> getAttendant(@PathVariable("id") String id) {
+        return ResponseEntity.status(HttpStatus.OK).body(attendantService.getAttendantById(id));
     }
 
     private boolean isEmailExist(String email) {

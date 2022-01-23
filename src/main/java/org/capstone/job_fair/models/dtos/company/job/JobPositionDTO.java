@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.capstone.job_fair.models.dtos.company.CompanyDTO;
 import org.capstone.job_fair.models.dtos.company.SkillTagDTO;
 import org.capstone.job_fair.models.dtos.company.SubCategoryDTO;
 import org.capstone.job_fair.models.enums.JobLevel;
@@ -27,13 +28,11 @@ public class JobPositionDTO implements Serializable {
     private Double maxSalary;
     private String contactPersonName;
     private String contactEmail;
-    private String companyName;
-    private Integer numOfExp;
+    private Integer numOfEmp;
     private Language language;
     private JobLevel level;
     private JobType jobType;
-    private String locationId;
-    private String comapnyId;
+    private CompanyDTO companyDTO;
     private List<SubCategoryDTO> subCategoryDTOs;
     private List<SkillTagDTO> skillTagDTOS;
 }

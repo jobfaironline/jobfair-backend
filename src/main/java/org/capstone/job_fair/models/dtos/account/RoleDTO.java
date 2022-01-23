@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 public class RoleDTO {
     private int id;
     private String name;
-    private String description;
 
     @Override
     public boolean equals(Object o) {

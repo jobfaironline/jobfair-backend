@@ -38,10 +38,16 @@ public abstract class AttendantMapper {
     @Autowired
     private CertificationMapper certificationMapper;
 
-    @Autowired
-    SmartValidator validator;
 
-
+    @Mapping(target = "countryId", source = "country", qualifiedByName = "fromCountryEntityOfAttendantEntity")
+    @Mapping(target = "residenceId", source = "residence", qualifiedByName = "fromResidenceEntityOfAttendantEntity")
+    @Mapping(target = "jobLevel", source = "currentJobLevel")
+    @Mapping(target = "skills", source = "skillEntities")
+    @Mapping(target = "workHistories", source = "workHistoryEntities")
+    @Mapping(target = "educations", source = "educationEntities")
+    @Mapping(target = "certifications", source = "certificationEntities")
+    @Mapping(target = "references", source = "referenceEntities")
+    @Mapping(target = "activities", source = "activityEntities")
     public abstract AttendantDTO toDTO(AttendantEntity attendant);
 
     @Mapping(target = "accountId", source = "account.id")
@@ -81,12 +87,22 @@ public abstract class AttendantMapper {
         return entity;
     }
 
+    @Named("fromCountryEntityOfAttendantEntity")
+    public String fromCountryEntityOfAttendantEntity(CountryEntity entity){
+        return entity.getId();
+    }
+
     @Named("fromResidenceIdOfAttendantDTO")
     public ResidenceEntity fromResidenceIdOfAttendantDTO(String residenceId) {
         if (residenceId == null) return null;
         ResidenceEntity entity = new ResidenceEntity();
         entity.setId(residenceId);
         return entity;
+    }
+
+    @Named("fromResidenceEntityOfAttendantEntity")
+    public String fromResidenceEntityOfAttendantEntity(ResidenceEntity entity){
+        return entity.getId();
     }
 
     public void mapToSkillEntities(List<SkillDTO> dtos, @MappingTarget List<SkillEntity> entities) {

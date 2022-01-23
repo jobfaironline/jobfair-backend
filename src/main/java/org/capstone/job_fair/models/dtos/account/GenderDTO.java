@@ -17,5 +17,4 @@ public class GenderDTO {
     @EqualsAndHashCode.Include
     private int id;
     private String name;
-    private String description;
 }

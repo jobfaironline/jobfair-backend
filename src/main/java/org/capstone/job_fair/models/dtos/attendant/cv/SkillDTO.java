@@ -13,5 +13,4 @@ public class SkillDTO {
     private String id;
     private String name;
     private Integer proficiency;
-    private String attendantId;
 }

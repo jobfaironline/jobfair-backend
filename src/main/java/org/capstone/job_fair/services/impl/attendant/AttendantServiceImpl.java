@@ -85,4 +85,15 @@ public class AttendantServiceImpl implements AttendantService {
     public List<AttendantDTO> getAllAttendants() {
         return attendantRepository.findAll().stream().map(entity -> attendantMapper.toDTO(entity)).collect(Collectors.toList());
     }
+
+    @Override
+    public Optional<AttendantDTO> getAttendantById(String id) {
+        Optional<AttendantEntity> opt = attendantRepository.findById(id);
+        if (!opt.isPresent()){
+            return Optional.empty();
+        }
+        AttendantEntity entity = opt.get();
+        AttendantDTO dto = attendantMapper.toDTO(entity);
+        return Optional.of(dto);
+    }
 }

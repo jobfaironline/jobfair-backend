@@ -16,5 +16,4 @@ public class ReferenceDTO {
     private String company;
     private String email;
     private String phone;
-    private String attendantId;
 }

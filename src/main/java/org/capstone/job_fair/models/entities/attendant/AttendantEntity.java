@@ -44,6 +44,7 @@ public class AttendantEntity {
 
     @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
     @JoinColumn(name = "account_id")
+    @MapsId
     private AccountEntity account;
 
     @ManyToOne(fetch = FetchType.LAZY)

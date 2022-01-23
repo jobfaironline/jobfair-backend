@@ -27,7 +27,7 @@ public class JobPositionServiceImpl implements JobPositionService {
         JobPositionEntity entity = mapper.toEntity(dto);
 
         CompanyEntity companyEntity = new CompanyEntity();
-        companyEntity.setId(dto.getComapnyId());
+        companyEntity.setId(dto.getCompanyDTO().getId());
 
 
         entity.setCompany(companyEntity);

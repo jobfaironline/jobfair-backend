@@ -12,4 +12,6 @@ public interface AttendantService{
     Optional<AttendantDTO> getAttendantByEmail(String email);
     AttendantEntity createNewAccount(AttendantDTO attendantDTO);
     List<AttendantDTO> getAllAttendants();
+    Optional<AttendantDTO> getAttendantById(String id);
+
 }
