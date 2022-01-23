@@ -101,8 +101,10 @@ public class AttendantController {
         List<SkillDTO> skillDTOs = null;
 
         if (request.getSkillRequests() != null) {
-            //if any field of request is null -> return error message
-            if (request.getSkillRequests().stream().anyMatch(req -> !isNotNullSkillRequest(req))) {
+            //if a request has id => update
+            //if a request don't have id => must have full fields
+            //and those fields must be not null
+            if (request.getSkillRequests().stream().anyMatch(req -> !isNotNullSkillRequest(req) && req.getId() == null)) {
                 return GenericResponse.build(
                         MessageUtil.getMessage(MessageConstant.Skill.INVALID_SKILL),
                         HttpStatus.BAD_REQUEST);
@@ -125,7 +127,7 @@ public class AttendantController {
 
         List<WorkHistoryDTO> historyDTOs = null;
         if (request.getWorkHistoryRequests() != null) {
-            if (request.getWorkHistoryRequests().stream().anyMatch(req -> !isNotNullWorkHistoryRequest(req))) {
+            if (request.getWorkHistoryRequests().stream().anyMatch(req -> !isNotNullWorkHistoryRequest(req) && req.getId() == null)) {
                 return GenericResponse.build(
                         MessageUtil.getMessage(MessageConstant.WorkHistory.INVALID_WORK_HISTORY),
                         HttpStatus.BAD_REQUEST);
@@ -146,7 +148,7 @@ public class AttendantController {
 
         List<EducationDTO> educationDTOs = null;
         if (request.getEducationRequests() != null) {
-            if (request.getEducationRequests().stream().anyMatch(req -> !isNotNullEducation(req))) {
+            if (request.getEducationRequests().stream().anyMatch(req -> !isNotNullEducation(req) && req.getId() == null)) {
                 return GenericResponse.build(
                         MessageUtil.getMessage(MessageConstant.Education.INVALID_EDUCATION),
                         HttpStatus.BAD_REQUEST);
@@ -167,7 +169,7 @@ public class AttendantController {
 
         List<CertificationDTO> certificationDTOs = null;
         if (request.getCertificateRequests() != null) {
-            if (request.getCertificateRequests().stream().anyMatch(req -> !isNotNullCertificate(req))) {
+            if (request.getCertificateRequests().stream().anyMatch(req -> !isNotNullCertificate(req) && req.getId() == null)) {
                 return GenericResponse.build(
                         MessageUtil.getMessage(MessageConstant.Certification.INVALID_CERTIFICATION),
                         HttpStatus.BAD_REQUEST);
@@ -188,7 +190,7 @@ public class AttendantController {
 
         List<ReferenceDTO> referenceDTOs = null;
         if (request.getReferenceRequests() != null) {
-            if (request.getReferenceRequests().stream().anyMatch(req -> !isNotNullReferenceRequest(req))) {
+            if (request.getReferenceRequests().stream().anyMatch(req -> !isNotNullReferenceRequest(req) && req.getId() == null)) {
                 return GenericResponse.build(
                         MessageUtil.getMessage(MessageConstant.Reference.INVALID_REFERENCE),
                         HttpStatus.BAD_REQUEST);
@@ -208,7 +210,7 @@ public class AttendantController {
 
         List<ActivityDTO> activityDTOs = null;
         if (request.getActivityRequestList() != null) {
-            if (request.getActivityRequestList().stream().anyMatch(req -> !isNotNullActivityRequest(req))) {
+            if (request.getActivityRequestList().stream().anyMatch(req -> !isNotNullActivityRequest(req) && req.getId() == null)) {
                 return GenericResponse.build(
                         MessageUtil.getMessage(MessageConstant.Activity.INVALID_ACTIVITY),
                         HttpStatus.BAD_REQUEST);
