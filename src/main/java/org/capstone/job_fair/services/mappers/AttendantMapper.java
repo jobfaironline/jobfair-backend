@@ -1,6 +1,7 @@
 package org.capstone.job_fair.services.mappers;
 
 import org.capstone.job_fair.constants.MessageConstant;
+import org.capstone.job_fair.controllers.payload.requests.RegisterAttendantRequest;
 import org.capstone.job_fair.controllers.payload.requests.UpdateAttendantRequest;
 import org.capstone.job_fair.models.dtos.attendant.AttendantDTO;
 import org.capstone.job_fair.models.dtos.attendant.cv.*;
@@ -78,6 +79,16 @@ public abstract class AttendantMapper {
     @Mapping(source = "account", target = "account")
     public abstract AttendantDTO toDTO(UpdateAttendantRequest request);
 
+
+    @Mapping(source = "password", target = "account.password")
+    @Mapping(source = "email", target = "account.email")
+    @Mapping(source = "phone", target = "account.phone")
+    @Mapping(source = "firstname", target = "account.firstname")
+    @Mapping(source = "lastname", target = "account.lastname")
+    @Mapping(source = "middlename", target = "account.middlename")
+    @Mapping(source = "gender", target = "account.gender")
+    public abstract AttendantDTO toDTO(RegisterAttendantRequest request);
+
     @Named("fromCountryIdOfAttendantDTO")
     public CountryEntity fromCountryIdOfAttendantDTO(String countryId) {
         if (countryId == null) return null;
@@ -109,7 +120,7 @@ public abstract class AttendantMapper {
         dtos.forEach(skillDTO -> {
             if (skillDTO.getId() == null) { // if skill id null: create new skill
                 if (!isValidSkillDTO(skillDTO)){
-                    throw new NoSuchElementException(MessageConstant.Skill.INVALID_SKILL);
+                    throw new IllegalArgumentException(MessageConstant.Skill.INVALID_SKILL);
                 }
                 SkillEntity entity = skillMapper.toEntity(skillDTO);
                 entities.add(entity);
@@ -127,7 +138,7 @@ public abstract class AttendantMapper {
         dtos.forEach(workHistoryDTO -> {
             if (workHistoryDTO.getId() == null) { // if skill id null: create new skill
                 if (!isValidWorkHistoryDTO(workHistoryDTO)){
-                    throw new NoSuchElementException(MessageConstant.WorkHistory.INVALID_WORK_HISTORY);
+                    throw new IllegalArgumentException(MessageConstant.WorkHistory.INVALID_WORK_HISTORY);
                 }
                 WorkHistoryEntity entity = workHistoryMapper.toEntity(workHistoryDTO);
                 entities.add(entity);
@@ -146,7 +157,7 @@ public abstract class AttendantMapper {
         dtos.forEach(educationDTO -> {
             if (educationDTO.getId() == null) { // if skill id null: create new skill
                 if (!isValidEducationDTO(educationDTO)){
-                    throw new NoSuchElementException(MessageConstant.Education.INVALID_EDUCATION);
+                    throw new IllegalArgumentException(MessageConstant.Education.INVALID_EDUCATION);
                 }
                 EducationEntity entity = educationMapper.toEntity(educationDTO);
                 entities.add(entity);
@@ -165,7 +176,7 @@ public abstract class AttendantMapper {
         dtos.forEach(certificationDTO -> {
             if (certificationDTO.getId() == null) { // if skill id null: create new skill
                 if (!isValidCertificationDTO(certificationDTO)){
-                    throw new NoSuchElementException(MessageConstant.Certification.INVALID_CERTIFICATION);
+                    throw new IllegalArgumentException(MessageConstant.Certification.INVALID_CERTIFICATION);
                 }
                 CertificationEntity entity = certificationMapper.toEntity(certificationDTO);
                 entities.add(entity);
@@ -184,7 +195,7 @@ public abstract class AttendantMapper {
         dtos.forEach(referenceDTO -> {
             if (referenceDTO.getId() == null) { // if skill id null: create new skill
                 if (!isValidReferenceDTO(referenceDTO)){
-                    throw new NoSuchElementException(MessageConstant.Reference.INVALID_REFERENCE);
+                    throw new IllegalArgumentException(MessageConstant.Reference.INVALID_REFERENCE);
                 }
                 ReferenceEntity entity = referenceMapper.toEntity(referenceDTO);
                 entities.add(entity);
@@ -203,7 +214,7 @@ public abstract class AttendantMapper {
         dtos.forEach(activityDTO -> {
             if (activityDTO.getId() == null) { // if skill id null: create new skill
                 if (!isValidActivityDTO(activityDTO)){
-                    throw new NoSuchElementException(MessageConstant.Activity.INVALID_ACTIVITY);
+                    throw new IllegalArgumentException(MessageConstant.Activity.INVALID_ACTIVITY);
                 }
                 ActivityEntity entity = activityMapper.toEntity(activityDTO);
                 entities.add(entity);

@@ -2,17 +2,12 @@ package org.capstone.job_fair.services.mappers;
 
 import org.capstone.job_fair.controllers.payload.requests.UpdateAttendantRequest;
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
-import org.capstone.job_fair.models.dtos.account.GenderDTO;
-import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
+import org.capstone.job_fair.models.entities.account.AccountEntity;
 import org.capstone.job_fair.models.entities.account.GenderEntity;
 import org.capstone.job_fair.models.entities.account.RoleEntity;
-import org.capstone.job_fair.models.entities.company.CompanyEmployeeEntity;
 import org.capstone.job_fair.models.enums.Gender;
 import org.capstone.job_fair.models.enums.Role;
-import org.capstone.job_fair.repositories.account.RoleRepository;
 import org.mapstruct.*;
-import org.capstone.job_fair.models.entities.account.AccountEntity;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public abstract class AccountMapper {
@@ -28,11 +23,13 @@ public abstract class AccountMapper {
 
     @Named("toAccountDTOGender")
     public static Gender toAccountDTOGender(GenderEntity gender) {
+        if (gender == null) return null;
         return Gender.values()[gender.getId()];
     }
 
     @Named("toAccountEntityGender")
     public static GenderEntity toAccountEntityGender(Gender gender) {
+        if (gender == null) return null;
         GenderEntity genderEntity = new GenderEntity();
         genderEntity.setId(gender.ordinal());
         return genderEntity;
@@ -40,6 +37,7 @@ public abstract class AccountMapper {
 
     @Named("toAccountEntityRole")
     public static RoleEntity toAccountEntityRole(Role role) {
+        if (role == null) return null;
         RoleEntity entity = new RoleEntity();
         entity.setId(role.ordinal());
         entity.setName(role.name());
@@ -48,6 +46,7 @@ public abstract class AccountMapper {
 
     @Named("toAccountDTORole")
     public Role roleEntityToRole(RoleEntity entity) {
+        if (entity == null) return null;
         return Role.values()[entity.getId()];
     }
 
