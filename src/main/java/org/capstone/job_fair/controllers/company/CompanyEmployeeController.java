@@ -49,7 +49,7 @@ public class CompanyEmployeeController {
 
 
     private boolean isEmailExist(String email) {
-        return accountService.getCountByEmail(email) != 0;
+        return accountService.getCountAccountByEmail(email) != 0;
     }
 
     private boolean isCompanyExist(String companyId) {
@@ -171,7 +171,7 @@ public class CompanyEmployeeController {
         //check if company existed?
         if (!isCompanyExist(request.getCompanyId())) {
             return GenericResponse.build(
-                    MessageUtil.getMessage(MessageConstant.CompanyEmployee.COMPANY_NOT_EXIST),
+                    MessageUtil.getMessage(MessageConstant.Company.NOT_FOUND),
                     HttpStatus.BAD_REQUEST);
         }
 

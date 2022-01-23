@@ -1,33 +1,39 @@
 package org.capstone.job_fair.services.impl.attendant;
 
 import org.capstone.job_fair.constants.AccountConstant;
+import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.models.dtos.attendant.AttendantDTO;
+import org.capstone.job_fair.models.dtos.attendant.cv.*;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
-import org.capstone.job_fair.models.entities.account.GenderEntity;
-import org.capstone.job_fair.models.entities.account.RoleEntity;
-import org.capstone.job_fair.models.entities.attendant.AttendantEntity;
-import org.capstone.job_fair.models.enums.Gender;
-import org.capstone.job_fair.models.enums.Role;
-import org.capstone.job_fair.services.interfaces.account.AccountService;
-import org.capstone.job_fair.services.mappers.AttendantEntityMapper;
-import org.capstone.job_fair.models.statuses.AccountStatus;
+import org.capstone.job_fair.models.entities.attendant.*;
+import org.capstone.job_fair.models.entities.attendant.cv.*;
+import org.capstone.job_fair.repositories.account.AccountRepository;
 import org.capstone.job_fair.repositories.attendant.AttendantRepository;
+import org.capstone.job_fair.repositories.attendant.cv.*;
+import org.capstone.job_fair.services.interfaces.account.AccountService;
 import org.capstone.job_fair.services.interfaces.attendant.AttendantService;
+import org.capstone.job_fair.services.mappers.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
+
 
 @Service
 @Transactional
 public class AttendantServiceImpl implements AttendantService {
 
     @Autowired
-    private AttendantEntityMapper mapper;
+    private AttendantMapper attendantMapper;
+
+    @Autowired
+    private AccountEntityMapper accountMapper;
 
     @Autowired
     private BCryptPasswordEncoder encoder;
@@ -39,45 +45,53 @@ public class AttendantServiceImpl implements AttendantService {
     private AccountService accountService;
 
     @Override
-    public void createNewAccount(AttendantDTO dto) {
-        String id = UUID.randomUUID().toString();
-        AttendantEntity attendantEntity = mapper.toEntity(dto);
-        AccountEntity accountEntity = attendantEntity.getAccount();
-        attendantEntity.setAccountId(id);
-        accountEntity.setId(id);
-        accountEntity.setPassword(encoder.encode(accountEntity.getPassword()));
-        accountEntity.setProfileImageUrl(AccountConstant.DEFAULT_PROFILE_IMAGE_URL);
-        accountEntity.setStatus(AccountStatus.ACTIVE);
-        RoleEntity role = new RoleEntity();
-        role.setId(Role.ATTENDANT.ordinal());
-        accountEntity.setRole(role);
+    public void updateAccount(AttendantDTO dto) {
+        if (dto.getAccount() != null && dto.getAccount().getPassword() != null) {
+            String hashedPassword = encoder.encode(dto.getAccount().getPassword());
+            dto.getAccount().setPassword(hashedPassword);
+        }
+        System.out.println(dto);
+        String id = dto.getAccount().getId();
+        Optional<AttendantEntity> attendantOpt = attendantRepository.findById(id);
 
-        attendantRepository.save(attendantEntity);
+        if (attendantOpt.isPresent()) {
+            AttendantEntity entity = attendantOpt.get();
+            System.out.println(entity);
+            attendantMapper.updateAttendantMapperFromDto(dto, entity);
+            System.out.println(entity);
+        }
     }
+
     @Override
     public Optional<AttendantDTO> getAttendantByEmail(String email) {
         Optional<AccountEntity> accountOpt = accountService.getActiveAccountByEmail(email);
-        if (!accountOpt.isPresent()){
+        if (!accountOpt.isPresent()) {
             return Optional.empty();
         }
         Optional<AttendantEntity> attendantOpt = attendantRepository.findById(accountOpt.get().getId());
-        if (!attendantOpt.isPresent()){
+        if (!attendantOpt.isPresent()) {
             return Optional.empty();
         }
-        AttendantDTO dto = mapper.toDTO(attendantOpt.get());
+        AttendantDTO dto = attendantMapper.toDTO(attendantOpt.get());
         return Optional.of(dto);
     }
 
     @Override
-    public AttendantEntity update(AttendantDTO attendantDTO) {
-        return attendantRepository.findById(attendantDTO.getAccountId()).map((atd) -> {
-            mapper.updateAttendantMapperFromDto(attendantDTO, atd);
-            if (attendantDTO.getAccount().getGender() != null){
-                GenderEntity genderEntity = new GenderEntity();
-                genderEntity.setId(attendantDTO.getAccount().getGender().ordinal());
-                atd.getAccount().setGender(genderEntity);
-            }
-            return attendantRepository.save(atd);
-        }).orElseThrow(() ->  new NoSuchElementException("Account not found"));
+    public AttendantEntity createNewAccount(AttendantDTO dto) {
+
+        AttendantEntity attendantEntity = attendantMapper.toEntity(dto);
+        AccountEntity accountEntity = attendantEntity.getAccount();
+        attendantEntity.setAccountId(dto.getAccount().getId());
+        String hashPassword = encoder.encode(dto.getAccount().getPassword());
+        accountEntity.setPassword(hashPassword);
+        accountEntity.setProfileImageUrl(AccountConstant.DEFAULT_PROFILE_IMAGE_URL);
+
+        return attendantRepository.save(attendantEntity);
+
+    }
+
+    @Override
+    public List<AttendantDTO> getAllAttendants() {
+        return attendantRepository.findAll().stream().map(entity -> attendantMapper.toDTO(entity)).collect(Collectors.toList());
     }
 }

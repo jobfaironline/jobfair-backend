@@ -3,7 +3,9 @@ package org.capstone.job_fair.models.entities.attendant;
 import lombok.*;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
 import org.capstone.job_fair.models.entities.attendant.cv.*;
+import org.capstone.job_fair.models.enums.JobLevel;
 import org.capstone.job_fair.models.enums.Marital;
+import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import java.util.List;
@@ -15,10 +17,8 @@ import java.util.Objects;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Table(name = "attendant", schema = "dbo")
 public class AttendantEntity {
-    @EqualsAndHashCode.Include
     @Id
     @Column(name = "account_id", nullable = false, length = 36)
     private String accountId;
@@ -46,35 +46,54 @@ public class AttendantEntity {
     @JoinColumn(name = "account_id")
     private AccountEntity account;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "country_id")
     private CountryEntity country;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "residence_id")
     private ResidenceEntity residence;
 
-    @ManyToOne
-    @JoinColumn(name = "job_level_id")
-    private JobLevelEntity currentJobLevel;
+    @Column(name = "job_level_id")
+    @Enumerated(EnumType.ORDINAL)
+    private JobLevel currentJobLevel;
 
 
-    @OneToMany(mappedBy = "attendant")
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @JoinColumn(name = "attendant_id", referencedColumnName = "account_id")
     private List<SkillEntity> skillEntities;
 
-    @OneToMany(mappedBy = "attendant")
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @JoinColumn(name = "attendant_id", referencedColumnName = "account_id")
     private List<WorkHistoryEntity> workHistoryEntities;
 
-    @OneToMany(mappedBy = "attendant")
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @JoinColumn(name = "attendant_id", referencedColumnName = "account_id")
     private List<EducationEntity> educationEntities;
 
-    @OneToMany(mappedBy = "attendant")
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @JoinColumn(name = "attendant_id", referencedColumnName = "account_id")
     private List<CertificationEntity> certificationEntities;
 
-    @OneToMany(mappedBy = "attendant")
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @JoinColumn(name = "attendant_id", referencedColumnName = "account_id")
     private List<ReferenceEntity> referenceEntities;
 
-    @OneToMany(mappedBy = "attendant")
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @JoinColumn(name = "attendant_id", referencedColumnName = "account_id")
     private List<ActivityEntity> activityEntities;
 
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        AttendantEntity entity = (AttendantEntity) o;
+        return accountId != null && Objects.equals(accountId, entity.accountId);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }

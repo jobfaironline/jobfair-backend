@@ -1,18 +1,17 @@
 package org.capstone.job_fair.models.dtos.account;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.capstone.job_fair.models.enums.Gender;
 import org.capstone.job_fair.models.enums.Role;
 import org.capstone.job_fair.models.statuses.AccountStatus;
-import org.capstone.job_fair.models.enums.Gender;
 
 import java.io.Serializable;
 
 @Data
 @AllArgsConstructor
 @Builder
+@Getter
+@Setter
 public class AccountDTO implements Serializable {
     private String id;
     private String email;

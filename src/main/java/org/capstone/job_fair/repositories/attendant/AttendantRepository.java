@@ -8,12 +8,11 @@ import org.springframework.data.rest.core.annotation.RestResource;
 import org.springframework.transaction.annotation.Transactional;
 import springfox.documentation.annotations.ApiIgnore;
 
+import java.util.List;
 import java.util.Optional;
 
 @Transactional
 @RepositoryRestResource(path = ApiEndPoint.RestDataEndpoint.ATTENDANT)
 public interface AttendantRepository extends JpaRepository<AttendantEntity, String> {
-
-
-
+    List<AttendantEntity> findAll();
 }
