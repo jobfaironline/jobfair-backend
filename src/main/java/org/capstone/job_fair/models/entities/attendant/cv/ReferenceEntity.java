@@ -1,7 +1,8 @@
 package org.capstone.job_fair.models.entities.attendant.cv;
 
 import lombok.*;
-import org.capstone.job_fair.models.entities.attendant.AttendantEntity;
+import org.hibernate.Hibernate;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -12,13 +13,13 @@ import java.util.Objects;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Table(name = "reference", schema = "dbo")
 public class ReferenceEntity {
 
-    @EqualsAndHashCode.Include
     @Id
     @Column(name = "id")
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "org.hibernate.id.UUIDGenerator")
     private String id;
     @Column(name = "full_name", length = 100)
     private String fullName;
@@ -31,8 +32,16 @@ public class ReferenceEntity {
     @Column(name = "phone_number")
     private String phoneNumber;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "attendant_id")
-    private AttendantEntity attendant;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        ReferenceEntity that = (ReferenceEntity) o;
+        return id != null && Objects.equals(id, that.id);
+    }
 
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }

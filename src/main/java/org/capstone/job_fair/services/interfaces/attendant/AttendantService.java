@@ -4,10 +4,12 @@ import org.capstone.job_fair.models.dtos.account.AccountDTO;
 import org.capstone.job_fair.models.dtos.attendant.AttendantDTO;
 import org.capstone.job_fair.models.entities.attendant.AttendantEntity;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface AttendantService{
-    void createNewAccount(AttendantDTO dto);
+    void updateAccount(AttendantDTO dto);
     Optional<AttendantDTO> getAttendantByEmail(String email);
-    AttendantEntity update(AttendantDTO attendantDTO);
+    AttendantEntity createNewAccount(AttendantDTO attendantDTO);
+    List<AttendantDTO> getAllAttendants();
 }

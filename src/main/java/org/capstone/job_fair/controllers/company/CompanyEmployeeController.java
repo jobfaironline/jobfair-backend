@@ -174,7 +174,7 @@ public class CompanyEmployeeController {
         //check if company existed?
         if (!isCompanyExist(request.getCompanyId())) {
             return CompletableFuture.completedFuture(GenericResponse.build(
-                    MessageUtil.getMessage(MessageConstant.CompanyEmployee.COMPANY_NOT_EXIST),
+                    MessageUtil.getMessage(MessageConstant.Company.NOT_FOUND),
                     HttpStatus.BAD_REQUEST));
         }
 

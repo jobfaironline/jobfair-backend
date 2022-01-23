@@ -39,10 +39,22 @@ public class MessageConstant {
         public static final String NOT_FOUND = "account.error.not-found";
         public static final String EXISTED = "account.error.existed";
         public static final String EMAIL_EXISTED = "account.error.email-existed";
+        public static final String NOT_FOUND_COUNTRY = "account.error.not-found-country";
+        public static final String NOT_FOUND_RESIDENCE = "account.error.not-found-residence";
+        public static final String NOT_FOUND_JOB_LEVEL = "account.error.not-found-job-level";
+        public static final String NOT_FOUND_QUALIFICATION = "account.error.not-found-qualification";
+        public static final String SKILL_INVALID = "account.error.skill_invalid";
+        public static final String WORK_HISTORY_INVALID = "account.error.work_history_invalid";
+        public static final String EDUCATION_INVALID = "account.error.education_invalid";
+        public static final String CERTIFICATION_INVALID = "account.error.certification_invalid";
+        public static final String ACTIVITY_INVALID = "account.error.activity_invalid";
+        public static final String DOB_INVALID = "account.error.dob_invalid";
+        public static final String YEAR_OF_EXP_INVALID = "account.error.year_of_exp_invalid";
     }
 
     public static final class Attendant {
         public static final String UPDATE_PROFILE_SUCCESSFULLY = "attendant.success.update-profile";
+        public static final String UPDATE_PROFILE_FAILED = "attendant.fail.update-profile";
         public static final String REGISTER_SUCCESSFULLY = "attendant.success.create";
     }
 
@@ -68,7 +80,6 @@ public class MessageConstant {
         public static final String DELETE_FAILED = "company-employee.error.delete";
         public static final String EMAIL_SUBJECT = "company-employee.email.subject";
         public static final String EMAIL_CONTENT = "company-employee.email.body";
-        public static final String COMPANY_NOT_EXIST = "company-empoyee.company.not-existed";
     }
 
     public static final class Gender {
@@ -79,5 +90,36 @@ public class MessageConstant {
         public static final String CREATE_JOB_SUCCESSFULLY = "job.success.create";
         public static final String SALARY_ERROR = "job.error.salary-error";
     }
+
+    public static final class Skill {
+        public static final String INVALID_SKILL = "skill.fields.invalid";
+        public static final String SKILL_NOT_FOUND = "skill.notfound";
+    }
+
+    public static final class WorkHistory {
+        public static final String INVALID_WORK_HISTORY = "work.history.invalid";
+        public static final String WORK_HISTORY_NOT_FOUND = "work.history.notfound";
+    }
+
+    public static final class Education {
+        public static final String INVALID_EDUCATION = "education.invalid";
+        public static final String EDUCATION_NOT_FOUND = "education.notfound";
+    }
+
+    public static final class Certification {
+        public static final String INVALID_CERTIFICATION = "certification.invalid";
+        public static final String CERTIFICATION_NOT_FOUND = "certification.notfound";
+    }
+
+    public static final class Reference {
+        public static final String INVALID_REFERENCE = "reference.invalid";
+        public static final String REFERENCE_NOT_FOUND = "reference.notfound";
+    }
+
+    public static final class Activity {
+        public static final String INVALID_ACTIVITY = "activity.invalid";
+        public static final String ACTIVITY_NOT_FOUND = "activity.notfound";
+    }
+
 }
 

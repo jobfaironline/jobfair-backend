@@ -1,7 +1,8 @@
 package org.capstone.job_fair.models.entities.attendant.cv;
 
 import lombok.*;
-import org.capstone.job_fair.models.entities.attendant.AttendantEntity;
+import org.hibernate.Hibernate;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -12,12 +13,12 @@ import java.util.Objects;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Table(name = "work_history", schema = "dbo")
 public class WorkHistoryEntity {
-    @EqualsAndHashCode.Include
     @Id
     @Column(name = "id", nullable = false, length = 36)
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "org.hibernate.id.UUIDGenerator")
     private String id;
     @Basic
     @Column(name = "position", length = 100)
@@ -35,12 +36,19 @@ public class WorkHistoryEntity {
     @Column(name = "is_current_job")
     private Boolean isCurrentJob;
     @Basic
-    @Column(name = "description", nullable = true, length = 5000)
+    @Column(name = "description", length = 5000)
     private String description;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "attendant_id")
-    private AttendantEntity attendant;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        WorkHistoryEntity that = (WorkHistoryEntity) o;
+        return id != null && Objects.equals(id, that.id);
+    }
 
-
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }

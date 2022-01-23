@@ -20,8 +20,5 @@ public class RoleEntity {
     @Basic
     @Column(name = "name")
     private String name;
-    @Basic
-    @Column(name = "description")
-    private String description;
 
 }
