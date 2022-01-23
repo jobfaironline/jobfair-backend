@@ -27,7 +27,7 @@ public class SkillEntity {
     @Column(name = "proficiency")
     private Integer proficiency;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "attendant_id")
     private AttendantEntity attendant;
 

@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.capstone.job_fair.models.enums.Qualification;
 
 @Data
 @NoArgsConstructor
@@ -16,7 +17,7 @@ public class EducationDTO {
     private Long fromDate;
     private Long toDate;
     private String achievement;
-    private Integer qualificationId;
+    private Qualification qualification;
     private String attendantId;
 
 }

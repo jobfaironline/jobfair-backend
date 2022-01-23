@@ -91,8 +91,9 @@ public class AttendantServiceImpl implements AttendantService {
     @Override
     public void updateAccount(AttendantDTO dto) {
 
-        if (dto.getAccount().getProfileImageUrl() == null) {
-            dto.getAccount().setProfileImageUrl(AccountConstant.DEFAULT_PROFILE_IMAGE_URL);
+        if (dto.getAccount().getPassword() != null){
+            String hashedPassword = encoder.encode(dto.getAccount().getPassword());
+            dto.getAccount().setPassword(hashedPassword);
         }
 
         String id = dto.getAccount().getId();
@@ -127,6 +128,8 @@ public class AttendantServiceImpl implements AttendantService {
         entity.setCountry(countryEntity);
         entity.setResidence(residenceEntity);
         entity.setCurrentJobLevel(jobLevelEntity);
+
+
         attendantRepository.save(entity);
 
 
@@ -268,13 +271,8 @@ public class AttendantServiceImpl implements AttendantService {
     //Create Education
     private void createEducation(EducationDTO dto, AttendantEntity entity) {
         EducationEntity educationEntity = educationEntityMapper.toEntity(dto);
-        QualificationEntity qualificationEntity = qualificationRepository.findById(dto.getQualificationId()).get();
-        if (qualificationEntity == null) {
-            throw new NoSuchElementException(MessageConstant.Qualification.INVALID_QUALIFICATION);
-        }
-        educationEntity.setQualification(qualificationEntity);
+        educationEntity.setQualification(dto.getQualification());
         educationEntity.setId(UUID.randomUUID().toString());
-        educationEntity.setAttendant(entity);
         educationRepository.save(educationEntity);
     }
 
@@ -284,11 +282,7 @@ public class AttendantServiceImpl implements AttendantService {
             throw new NoSuchElementException(MessageConstant.Education.EDUCATION_NOT_FOUND);
         }
         EducationEntity educationEntity = educationEntityMapper.toEntity(dto);
-        QualificationEntity qualificationEntity = qualificationRepository.findById(dto.getQualificationId()).get();
-        if (qualificationEntity == null) {
-            throw new NoSuchElementException(MessageConstant.Qualification.INVALID_QUALIFICATION);
-        }
-        educationEntity.setQualification(qualificationEntity);
+        educationEntity.setQualification(dto.getQualification());
         educationEntity.setId(dto.getId());
         educationEntity.setAttendant(entity);
         educationRepository.save(educationEntity);

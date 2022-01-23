@@ -46,35 +46,35 @@ public class AttendantEntity {
     @JoinColumn(name = "account_id")
     private AccountEntity account;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "country_id")
     private CountryEntity country;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "residence_id")
     private ResidenceEntity residence;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "job_level_id")
     private JobLevelEntity currentJobLevel;
 
 
-    @OneToMany(mappedBy = "attendant")
+    @OneToMany(mappedBy = "attendant", fetch = FetchType.LAZY)
     private List<SkillEntity> skillEntities;
 
-    @OneToMany(mappedBy = "attendant")
+    @OneToMany(mappedBy = "attendant", fetch = FetchType.LAZY)
     private List<WorkHistoryEntity> workHistoryEntities;
 
-    @OneToMany(mappedBy = "attendant")
+    @OneToMany(mappedBy = "attendant", fetch = FetchType.LAZY)
     private List<EducationEntity> educationEntities;
 
-    @OneToMany(mappedBy = "attendant")
+    @OneToMany(mappedBy = "attendant", fetch = FetchType.LAZY)
     private List<CertificationEntity> certificationEntities;
 
-    @OneToMany(mappedBy = "attendant")
+    @OneToMany(mappedBy = "attendant", fetch = FetchType.LAZY)
     private List<ReferenceEntity> referenceEntities;
 
-    @OneToMany(mappedBy = "attendant")
+    @OneToMany(mappedBy = "attendant", fetch = FetchType.LAZY)
     private List<ActivityEntity> activityEntities;
 
 }

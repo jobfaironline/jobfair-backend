@@ -38,7 +38,7 @@ public class WorkHistoryEntity {
     @Column(name = "description", nullable = true, length = 5000)
     private String description;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "attendant_id")
     private AttendantEntity attendant;
 

@@ -81,8 +81,7 @@ public class AttendantController {
                     HttpStatus.NOT_FOUND);
         }
 
-        if (opt.isPresent()
-                && request.getAccount() != null //request must have account
+        if ( request.getAccount() != null //request must have account
                 && request.getAccount().getEmail() != null //then have email in account
                 && !opt.get().getEmail().equals(request.getAccount().getEmail())
                 && isEmailExist(request.getAccount().getEmail())) {
@@ -102,8 +101,8 @@ public class AttendantController {
                     MessageUtil.getMessage(MessageConstant.Account.NOT_FOUND_RESIDENCE),
                     HttpStatus.BAD_REQUEST);
         }
-        List<SkillDTO> skillDTOs = null;
 
+        List<SkillDTO> skillDTOs = null;
         if (request.getSkills() != null) {
             //if a request has id => update
             //if a request don't have id => must have full fields
@@ -116,7 +115,7 @@ public class AttendantController {
 
             skillDTOs = request.getSkills()
                     .stream()
-                    .filter(req -> isNotNullSkillRequest(req))
+                    .filter(this::isNotNullSkillRequest)
                     .map(req -> {
                         SkillDTO dto = new SkillDTO();
                         dto = skillMapper.toDTO(req);
@@ -290,7 +289,10 @@ public class AttendantController {
         try {
             attendantService.updateAccount(attendantDTO);
         } catch (NoSuchElementException ex) {
-            return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+            ex.printStackTrace();
+            return GenericResponse.build(
+                    ex.getMessage(),
+                    HttpStatus.BAD_REQUEST);
         }
         return GenericResponse.build(
                 MessageUtil.getMessage(MessageConstant.Attendant.UPDATE_PROFILE_SUCCESSFULLY),

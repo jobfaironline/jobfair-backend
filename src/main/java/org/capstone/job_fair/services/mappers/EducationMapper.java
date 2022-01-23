@@ -14,12 +14,7 @@ public abstract class EducationMapper {
     public abstract EducationEntity toEntity(EducationDTO dto);
     public abstract EducationDTO toDTO(EducationEntity entity);
 
-    @Mapping(target = "qualificationId", source = "qualification", qualifiedByName = "toQualificationIdOfEducationDTO")
     public abstract EducationDTO toDTO(UpdateAttendantRequest.Educations request);
 
-    @Named("toQualificationIdOfEducationDTO")
-    public Integer toQualificationIdOfEducationDTO(Qualification qualification) {
-        return qualification.ordinal();
-    }
 
 }

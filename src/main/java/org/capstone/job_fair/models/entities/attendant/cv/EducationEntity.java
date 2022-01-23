@@ -3,6 +3,7 @@ package org.capstone.job_fair.models.entities.attendant.cv;
 import lombok.*;
 import org.capstone.job_fair.models.entities.attendant.AttendantEntity;
 import org.capstone.job_fair.models.entities.attendant.QualificationEntity;
+import org.capstone.job_fair.models.enums.Qualification;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -40,8 +41,8 @@ public class EducationEntity {
     @JoinColumn(name = "attendant_id")
     private AttendantEntity attendant;
 
-    @ManyToOne
-    @JoinColumn(name = "qualification_id")
-    private QualificationEntity qualification;
+    @Column(name = "qualification_id", nullable = false)
+    @Enumerated(EnumType.ORDINAL)
+    private Qualification qualification;
 
 }

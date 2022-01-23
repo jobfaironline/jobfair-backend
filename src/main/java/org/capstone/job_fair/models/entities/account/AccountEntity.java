@@ -44,11 +44,11 @@ public class AccountEntity {
     @Column(name = "middlename", nullable = true, length = 100)
     private String middlename;
 
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "role_id", nullable = false)
     private RoleEntity role;
 
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "gender_id", nullable = false)
     private GenderEntity gender;
 
