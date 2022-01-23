@@ -110,6 +110,6 @@ public class DataConstraint {
         public static final int CATEGORY_MIN= 1;
         public static final int CATEGORY_MAX= 4;
         public static final int DEFAULT_EMPLOYEE_MAX_NUM = 5;
-
     }
+
 }

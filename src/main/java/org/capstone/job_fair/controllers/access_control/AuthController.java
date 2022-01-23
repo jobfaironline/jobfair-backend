@@ -11,7 +11,10 @@ import org.capstone.job_fair.controllers.payload.responses.LoginResponse;
 import org.capstone.job_fair.controllers.payload.requests.RefreshTokenRequest;
 import org.capstone.job_fair.controllers.payload.responses.RefreshTokenResponse;
 import lombok.AllArgsConstructor;
+import org.capstone.job_fair.models.enums.Role;
+import org.capstone.job_fair.models.statuses.AccountStatus;
 import org.capstone.job_fair.services.interfaces.account.AccountService;
+import org.capstone.job_fair.services.interfaces.company.CompanyEmployeeService;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +40,11 @@ public class AuthController {
 
     private final AccountService accountService;
 
+    private final CompanyEmployeeService companyEmployeeService;
+
+    private boolean isAccountHasRole(UserDetailsImpl userDetails, Role role){
+        return userDetails.getAuthorities().stream().anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals(role.getAuthority()));
+    }
 
     @PostMapping(path = ApiEndPoint.Authentication.LOGIN_ENDPOINT)
     public ResponseEntity<LoginResponse> authenticateUser(@Validated @RequestBody LoginRequest request) {
@@ -53,6 +61,13 @@ public class AuthController {
             String refreshToken = tokenProvider.generateRefreshToken(authentication);
             //get user principle from authentication obj
             UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+            //check if the Company Employee first time login with provided password
+            boolean isEmployeeFirstTime = false;
+            if(isAccountHasRole(userDetails, Role.COMPANY_EMPLOYEE) && userDetails.getStatus().equals(AccountStatus.REGISTERED)) {
+                companyEmployeeService.updateEmployeeStatus(userDetails.getEmail());
+                isEmployeeFirstTime = true;
+            }
+
             //get list of roles
             String role = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.joining());
             //then return login response which include email and password in userDetails
@@ -62,7 +77,8 @@ public class AuthController {
                     userDetails.getStatus(),
                     role,
                     jwt,
-                    refreshToken
+                    refreshToken,
+                    isEmployeeFirstTime
             );
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
