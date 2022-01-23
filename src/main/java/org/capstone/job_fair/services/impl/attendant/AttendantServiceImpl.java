@@ -95,7 +95,10 @@ public class AttendantServiceImpl implements AttendantService {
             dto.getAccount().setProfileImageUrl(AccountConstant.DEFAULT_PROFILE_IMAGE_URL);
         }
 
-        AttendantEntity entity = mapper.toEntity(dto);
+        String id = dto.getAccount().getId();
+        AttendantEntity entity = attendantRepository.findById(id).get();
+
+        mapper.updateAttendantMapperFromDto(dto, entity);
         AccountEntity accountEntity = entity.getAccount();
         accountEntity.setId(dto.getAccount().getId());
 
@@ -104,13 +107,22 @@ public class AttendantServiceImpl implements AttendantService {
         accountRepository.save(accountEntity);
 
         CountryEntity countryEntity = new CountryEntity();
-        countryEntity.setId(dto.getCountryId());
+        countryEntity.setId(entity.getCountry().getId());
+        if (dto.getCountryId() != null) {
+            countryEntity.setId(dto.getCountryId());
+        }
 
         ResidenceEntity residenceEntity = new ResidenceEntity();
-        residenceEntity.setId(dto.getResidenceId());
+        residenceEntity.setId(entity.getResidence().getId());
+        if (dto.getResidenceId() != null) {
+            residenceEntity.setId(dto.getResidenceId());
+        }
 
         JobLevelEntity jobLevelEntity = new JobLevelEntity();
-        jobLevelEntity.setId(dto.getJobLevel().ordinal());
+        jobLevelEntity.setId(entity.getCurrentJobLevel().getId());
+        if (dto.getJobLevel() != null) {
+            jobLevelEntity.setId(dto.getJobLevel().ordinal());
+        }
 
         entity.setCountry(countryEntity);
         entity.setResidence(residenceEntity);
@@ -172,8 +184,7 @@ public class AttendantServiceImpl implements AttendantService {
             dto.getActivities().forEach(activityDTO -> {
                 if (activityDTO.getId() == null) {
                     createActivity(activityDTO, entity);
-                }
-                else {
+                } else {
                     updateActivity(activityDTO, entity);
                 }
             });
@@ -331,6 +342,7 @@ public class AttendantServiceImpl implements AttendantService {
         activityEntity.setAttendant(entity);
         activityRepository.save(activityEntity);
     }
+
     //update activity
     private void updateActivity(ActivityDTO dto, AttendantEntity entity) {
         if (!activityRepository.findById(dto.getId()).isPresent()) {

@@ -11,5 +11,5 @@ public abstract class SkillMapper {
     public abstract SkillEntity toEntity(SkillDTO dto);
     public abstract SkillDTO toDTO(SkillEntity entity);
 
-    public abstract SkillDTO toDTO(UpdateAttendantRequest.SkillRequest request);
+    public abstract SkillDTO toDTO(UpdateAttendantRequest.Skills request);
 }

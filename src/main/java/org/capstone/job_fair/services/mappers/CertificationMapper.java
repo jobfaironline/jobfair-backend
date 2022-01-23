@@ -11,5 +11,5 @@ public abstract class CertificationMapper {
     public abstract CertificationEntity toEntity(CertificationDTO dto);
     public abstract CertificationDTO toDTO(CertificationEntity entity);
 
-    public abstract CertificationDTO toDTO(UpdateAttendantRequest.CertificateRequest request);
+    public abstract CertificationDTO toDTO(UpdateAttendantRequest.Certifications request);
 }

@@ -10,5 +10,5 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 public abstract class ActivityMapper {
     public abstract ActivityEntity toEntity(ActivityDTO dto);
     public abstract ActivityDTO toDTO(ActivityEntity entity);
-    public abstract ActivityDTO toDTO(UpdateAttendantRequest.ActivityRequest request);
+    public abstract ActivityDTO toDTO(UpdateAttendantRequest.Activities request);
 }

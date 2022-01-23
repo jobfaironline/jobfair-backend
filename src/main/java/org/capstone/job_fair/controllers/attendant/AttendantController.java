@@ -81,36 +81,40 @@ public class AttendantController {
                     HttpStatus.NOT_FOUND);
         }
 
-        if (opt.isPresent() && !opt.get().getEmail().equals(request.getAccount().getEmail()) && isEmailExist(request.getAccount().getEmail())) {
+        if (opt.isPresent()
+                && request.getAccount() != null //request must have account
+                && request.getAccount().getEmail() != null //then have email in account
+                && !opt.get().getEmail().equals(request.getAccount().getEmail())
+                && isEmailExist(request.getAccount().getEmail())) {
             return GenericResponse.build(
                     MessageUtil.getMessage(MessageConstant.Account.EMAIL_EXISTED),
                     HttpStatus.BAD_REQUEST);
         }
 
-        if (!isCountryExist(request.getCountryID())) {
+        if (request.getCountryID() != null && !isCountryExist(request.getCountryID())) {
             return GenericResponse.build(
                     MessageUtil.getMessage(MessageConstant.Account.NOT_FOUND_COUNTRY),
                     HttpStatus.BAD_REQUEST);
         }
 
-        if (!isResidenceExist(request.getResidenceID())) {
+        if (request.getResidenceID() != null && !isResidenceExist(request.getResidenceID())) {
             return GenericResponse.build(
                     MessageUtil.getMessage(MessageConstant.Account.NOT_FOUND_RESIDENCE),
                     HttpStatus.BAD_REQUEST);
         }
         List<SkillDTO> skillDTOs = null;
 
-        if (request.getSkillRequests() != null) {
+        if (request.getSkills() != null) {
             //if a request has id => update
             //if a request don't have id => must have full fields
             //and those fields must be not null
-            if (request.getSkillRequests().stream().anyMatch(req -> !isNotNullSkillRequest(req) && req.getId() == null)) {
+            if (request.getSkills().stream().anyMatch(req -> !isNotNullSkillRequest(req) && req.getId() == null)) {
                 return GenericResponse.build(
                         MessageUtil.getMessage(MessageConstant.Skill.INVALID_SKILL),
                         HttpStatus.BAD_REQUEST);
             }
 
-            skillDTOs = request.getSkillRequests()
+            skillDTOs = request.getSkills()
                     .stream()
                     .filter(req -> isNotNullSkillRequest(req))
                     .map(req -> {
@@ -126,14 +130,14 @@ public class AttendantController {
 
 
         List<WorkHistoryDTO> historyDTOs = null;
-        if (request.getWorkHistoryRequests() != null) {
-            if (request.getWorkHistoryRequests().stream().anyMatch(req -> !isNotNullWorkHistoryRequest(req) && req.getId() == null)) {
+        if (request.getWorkHistories() != null) {
+            if (request.getWorkHistories().stream().anyMatch(req -> !isNotNullWorkHistoryRequest(req) && req.getId() == null)) {
                 return GenericResponse.build(
                         MessageUtil.getMessage(MessageConstant.WorkHistory.INVALID_WORK_HISTORY),
                         HttpStatus.BAD_REQUEST);
             }
 
-            historyDTOs = request.getWorkHistoryRequests()
+            historyDTOs = request.getWorkHistories()
                     .stream()
                     .filter(req -> isNotNullWorkHistoryRequest(req))
                     .map(req -> {
@@ -147,14 +151,14 @@ public class AttendantController {
         }
 
         List<EducationDTO> educationDTOs = null;
-        if (request.getEducationRequests() != null) {
-            if (request.getEducationRequests().stream().anyMatch(req -> !isNotNullEducation(req) && req.getId() == null)) {
+        if (request.getEducations() != null) {
+            if (request.getEducations().stream().anyMatch(req -> !isNotNullEducation(req) && req.getId() == null)) {
                 return GenericResponse.build(
                         MessageUtil.getMessage(MessageConstant.Education.INVALID_EDUCATION),
                         HttpStatus.BAD_REQUEST);
             }
 
-            educationDTOs = request.getEducationRequests()
+            educationDTOs = request.getEducations()
                     .stream()
                     .filter(req -> isNotNullEducation(req))
                     .map(req -> {
@@ -168,14 +172,14 @@ public class AttendantController {
         }
 
         List<CertificationDTO> certificationDTOs = null;
-        if (request.getCertificateRequests() != null) {
-            if (request.getCertificateRequests().stream().anyMatch(req -> !isNotNullCertificate(req) && req.getId() == null)) {
+        if (request.getCertifications() != null) {
+            if (request.getCertifications().stream().anyMatch(req -> !isNotNullCertificate(req) && req.getId() == null)) {
                 return GenericResponse.build(
                         MessageUtil.getMessage(MessageConstant.Certification.INVALID_CERTIFICATION),
                         HttpStatus.BAD_REQUEST);
             }
 
-            certificationDTOs = request.getCertificateRequests()
+            certificationDTOs = request.getCertifications()
                     .stream()
                     .filter(req -> isNotNullCertificate(req))
                     .map(req -> {
@@ -189,13 +193,13 @@ public class AttendantController {
         }
 
         List<ReferenceDTO> referenceDTOs = null;
-        if (request.getReferenceRequests() != null) {
-            if (request.getReferenceRequests().stream().anyMatch(req -> !isNotNullReferenceRequest(req) && req.getId() == null)) {
+        if (request.getReferences() != null) {
+            if (request.getReferences().stream().anyMatch(req -> !isNotNullReferenceRequest(req) && req.getId() == null)) {
                 return GenericResponse.build(
                         MessageUtil.getMessage(MessageConstant.Reference.INVALID_REFERENCE),
                         HttpStatus.BAD_REQUEST);
             }
-            referenceDTOs = request.getReferenceRequests()
+            referenceDTOs = request.getReferences()
                     .stream()
                     .filter(req -> isNotNullReferenceRequest(req))
                     .map(req -> {
@@ -209,13 +213,13 @@ public class AttendantController {
         }
 
         List<ActivityDTO> activityDTOs = null;
-        if (request.getActivityRequestList() != null) {
-            if (request.getActivityRequestList().stream().anyMatch(req -> !isNotNullActivityRequest(req) && req.getId() == null)) {
+        if (request.getActivitiesList() != null) {
+            if (request.getActivitiesList().stream().anyMatch(req -> !isNotNullActivityRequest(req) && req.getId() == null)) {
                 return GenericResponse.build(
                         MessageUtil.getMessage(MessageConstant.Activity.INVALID_ACTIVITY),
                         HttpStatus.BAD_REQUEST);
             }
-            activityDTOs = request.getActivityRequestList()
+            activityDTOs = request.getActivitiesList()
                     .stream()
                     .filter(req -> isNotNullActivityRequest(req))
                     .map(req -> {
@@ -229,38 +233,41 @@ public class AttendantController {
         }
 
 
-        if (!isWorkHistoryValid(historyDTOs)) {
+        if (historyDTOs != null && !isWorkHistoryValid(historyDTOs)) {
             return GenericResponse.build(
                     MessageUtil.getMessage(MessageConstant.Account.WORK_HISTORY_INVALID),
                     HttpStatus.BAD_REQUEST);
         }
 
-        if (!isEducationValid(educationDTOs)) {
+        if (educationDTOs != null && !isEducationValid(educationDTOs)) {
             return GenericResponse.build(
                     MessageUtil.getMessage(MessageConstant.Account.EDUCATION_INVALID),
                     HttpStatus.BAD_REQUEST);
         }
 
-        if (!isActivityValid(activityDTOs)) {
+        if (activityDTOs != null && !isActivityValid(activityDTOs)) {
             return GenericResponse.build(
                     MessageUtil.getMessage(MessageConstant.Account.ACTIVITY_INVALID),
                     HttpStatus.BAD_REQUEST);
         }
 
-        AccountDTO accountDTO = AccountDTO.builder()
-                .id(request.getAccountId())
-                .email(request.getAccount().getEmail())
-                .password(request.getPassword())
-                .firstname(request.getAccount().getFirstname())
-                .lastname(request.getAccount().getLastname())
-                .middlename(request.getAccount().getMiddlename())
-                .gender(request.getAccount().getGender())
-                .role(Role.ATTENDANT)
-                .phone(request.getAccount().getPhone())
-                .profileImageUrl(request.getAccount().getProfileImageUrl())
-                .status(AccountStatus.ACTIVE)
-                .build();
-
+        AccountDTO accountDTO = new AccountDTO();
+        accountDTO.setId(request.getAccountId());
+        if (request.getAccount() != null) {
+            accountDTO = AccountDTO.builder()
+                    .id(request.getAccountId())
+                    .email(request.getAccount().getEmail())
+                    .password(request.getAccount().getPassword())
+                    .firstname(request.getAccount().getFirstname())
+                    .lastname(request.getAccount().getLastname())
+                    .middlename(request.getAccount().getMiddlename())
+                    .gender(request.getAccount().getGender())
+                    .role(Role.ATTENDANT)
+                    .phone(request.getAccount().getPhone())
+                    .profileImageUrl(request.getAccount().getProfileImageUrl())
+                    .status(AccountStatus.ACTIVE)
+                    .build();
+        }
 
         AttendantDTO attendantDTO = AttendantDTO.builder()
                 .account(accountDTO)
@@ -375,35 +382,35 @@ public class AttendantController {
         return true;
     }
 
-    private boolean isNotNullSkillRequest(UpdateAttendantRequest.SkillRequest request) {
+    private boolean isNotNullSkillRequest(UpdateAttendantRequest.Skills request) {
         return request.getName() != null && request.getProficiency() != null;
     }
 
-    private boolean isNotNullWorkHistoryRequest(UpdateAttendantRequest.WorkHistoryRequest request) {
+    private boolean isNotNullWorkHistoryRequest(UpdateAttendantRequest.WorkHistories request) {
         return request.getCompany() != null
                 && request.getPosition() != null
                 && request.getDescription() != null;
     }
 
-    private boolean isNotNullEducation(UpdateAttendantRequest.EducationRequest request) {
+    private boolean isNotNullEducation(UpdateAttendantRequest.Educations request) {
         return request.getSubject() != null
                 && request.getSchool() != null
                 && request.getAchievement() != null;
     }
 
-    private boolean isNotNullCertificate(UpdateAttendantRequest.CertificateRequest request) {
+    private boolean isNotNullCertificate(UpdateAttendantRequest.Certifications request) {
         return request.getName() != null
                 && request.getInstitution() != null
                 && request.getCertificationLink() != null;
     }
 
-    private boolean isNotNullReferenceRequest(UpdateAttendantRequest.ReferenceRequest request) {
+    private boolean isNotNullReferenceRequest(UpdateAttendantRequest.References request) {
         return request.getCompany() != null
                 && request.getPosition() != null
                 && request.getFullname() != null;
     }
 
-    private boolean isNotNullActivityRequest(UpdateAttendantRequest.ActivityRequest request) {
+    private boolean isNotNullActivityRequest(UpdateAttendantRequest.Activities request) {
         return request.getDescription() != null;
     }
 }

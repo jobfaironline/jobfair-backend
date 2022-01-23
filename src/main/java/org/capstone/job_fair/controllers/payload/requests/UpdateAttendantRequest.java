@@ -30,9 +30,7 @@ public class UpdateAttendantRequest {
     @Valid
     private UpdateAttendantRequest.AccountRequest account = new UpdateAttendantRequest.AccountRequest();
 
-    @XSSConstraint
-    @PasswordConstraint
-    private String password;
+
 
 
     @XSSConstraint
@@ -64,22 +62,22 @@ public class UpdateAttendantRequest {
     private JobLevel jobLevel;
 
     @Valid
-    private List<SkillRequest> skillRequests;
+    private List<Skills> skills;
 
     @Valid
-    private List<WorkHistoryRequest> workHistoryRequests;
+    private List<WorkHistories> workHistories;
 
     @Valid
-    private List<EducationRequest> educationRequests;
+    private List<Educations> educations;
 
     @Valid
-    private List<CertificateRequest> certificateRequests;
+    private List<Certifications> certifications;
 
     @Valid
-    private List<ReferenceRequest> referenceRequests;
+    private List<References> references;
 
     @Valid
-    private List<ActivityRequest> activityRequestList;
+    private List<Activities> activitiesList;
 
     @Data
     @AllArgsConstructor
@@ -88,6 +86,8 @@ public class UpdateAttendantRequest {
     public static class AccountRequest {
         @EmailConstraint
         private String email;
+        @PasswordConstraint
+        private String password;
         @PhoneConstraint
         private String phone;
         @Size(min = DataConstraint.Account.URL_MIN_LENGTH, max = DataConstraint.Account.URL_MAX_LENGTH)
@@ -109,7 +109,7 @@ public class UpdateAttendantRequest {
     @AllArgsConstructor
     @NoArgsConstructor
     @ToString
-    public static class SkillRequest {
+    public static class Skills {
         private String id;
         @XSSConstraint
         @Size(min = DataConstraint.Skill.MIN_NAME_LENGTH, max = DataConstraint.Skill.MAX_NAME_LENGTH)
@@ -123,7 +123,7 @@ public class UpdateAttendantRequest {
     @AllArgsConstructor
     @NoArgsConstructor
     @ToString
-    public static class WorkHistoryRequest {
+    public static class WorkHistories {
         private String id;
         @Size(min = DataConstraint.WorkHistory.POSITION_MIN_LENGTH, max =DataConstraint.WorkHistory.POSITION_MAX_LENGTH)
         @XSSConstraint
@@ -146,7 +146,7 @@ public class UpdateAttendantRequest {
     @AllArgsConstructor
     @NoArgsConstructor
     @ToString
-    public static class EducationRequest {
+    public static class Educations {
         private String id;
         @XSSConstraint
         @Size(min = DataConstraint.Education.SUBJECT_MIN_LENGTH, max = DataConstraint.Education.SUBJECT_MAX_LENGTH)
@@ -168,7 +168,7 @@ public class UpdateAttendantRequest {
     @AllArgsConstructor
     @NoArgsConstructor
     @ToString
-    public static class CertificateRequest {
+    public static class Certifications {
         private String id;
         @NotEmpty
         @XSSConstraint
@@ -188,7 +188,7 @@ public class UpdateAttendantRequest {
     @AllArgsConstructor
     @NoArgsConstructor
     @ToString
-    public static class ReferenceRequest {
+    public static class References {
         private String id;
         @XSSConstraint
         @Size(min = DataConstraint.Reference.FULLNAME_MIN_LENGTH, max = DataConstraint.Reference.FULLNAME_MAX_LENGTH)
@@ -209,7 +209,7 @@ public class UpdateAttendantRequest {
     @AllArgsConstructor
     @NoArgsConstructor
     @ToString
-    public static class ActivityRequest {
+    public static class Activities {
         private String id;
         @XSSConstraint
         @NotEmpty

@@ -13,5 +13,5 @@ public abstract class WorkHistoryMapper {
     public abstract WorkHistoryEntity toEntity(WorkHistoryDTO dto);
     public abstract WorkHistoryDTO toDTO(WorkHistoryEntity entity);
 
-    public abstract  WorkHistoryDTO toDTO(UpdateAttendantRequest.WorkHistoryRequest request);
+    public abstract  WorkHistoryDTO toDTO(UpdateAttendantRequest.WorkHistories request);
 }

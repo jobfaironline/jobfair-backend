@@ -10,4 +10,7 @@ public abstract class AttendantEntityMapper {
     public abstract AttendantEntity toEntity(AttendantDTO dto);
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE, nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS)
     public abstract void updateAttendantMapperFromDto(AttendantDTO dto, @MappingTarget AttendantEntity entity);
+
+
+
 }
