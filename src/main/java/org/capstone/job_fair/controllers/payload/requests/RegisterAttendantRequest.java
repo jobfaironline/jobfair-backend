@@ -17,9 +17,8 @@ import javax.validation.constraints.Size;
 @ToString
 public class RegisterAttendantRequest {
 
-    @Builder.Default
     @Valid
-    private RegisterAttendantRequest.AccountRequest account = new RegisterAttendantRequest.AccountRequest();
+    private RegisterAttendantRequest.AccountRequest account;
     @XSSConstraint
     @NotEmpty
     @PasswordConstraint

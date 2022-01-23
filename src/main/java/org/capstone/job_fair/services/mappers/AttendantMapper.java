@@ -6,12 +6,11 @@ import org.capstone.job_fair.models.dtos.attendant.AttendantDTO;
 import org.capstone.job_fair.models.dtos.attendant.cv.*;
 import org.capstone.job_fair.models.entities.attendant.AttendantEntity;
 import org.capstone.job_fair.models.entities.attendant.CountryEntity;
-import org.capstone.job_fair.models.entities.attendant.JobLevelEntity;
 import org.capstone.job_fair.models.entities.attendant.ResidenceEntity;
 import org.capstone.job_fair.models.entities.attendant.cv.*;
-import org.capstone.job_fair.models.enums.JobLevel;
 import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.SmartValidator;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -38,6 +37,9 @@ public abstract class AttendantMapper {
 
     @Autowired
     private CertificationMapper certificationMapper;
+
+    @Autowired
+    SmartValidator validator;
 
     public abstract AttendantDTO toDTO(AttendantEntity attendant);
 
@@ -90,6 +92,9 @@ public abstract class AttendantMapper {
         if (dtos == null) return;
         dtos.forEach(skillDTO -> {
             if (skillDTO.getId() == null) { // if skill id null: create new skill
+                if (!isValidSkillDTO(skillDTO)){
+                    throw new NoSuchElementException(MessageConstant.Skill.INVALID_SKILL);
+                }
                 SkillEntity entity = skillMapper.toEntity(skillDTO);
                 entities.add(entity);
             } else {
@@ -105,6 +110,9 @@ public abstract class AttendantMapper {
         if (dtos == null) return;
         dtos.forEach(workHistoryDTO -> {
             if (workHistoryDTO.getId() == null) { // if skill id null: create new skill
+                if (!isValidWorkHistoryDTO(workHistoryDTO)){
+                    throw new NoSuchElementException(MessageConstant.WorkHistory.INVALID_WORK_HISTORY);
+                }
                 WorkHistoryEntity entity = workHistoryMapper.toEntity(workHistoryDTO);
                 entities.add(entity);
             } else {
@@ -121,6 +129,9 @@ public abstract class AttendantMapper {
         if (dtos == null) return;
         dtos.forEach(educationDTO -> {
             if (educationDTO.getId() == null) { // if skill id null: create new skill
+                if (!isValidEducationDTO(educationDTO)){
+                    throw new NoSuchElementException(MessageConstant.Education.INVALID_EDUCATION);
+                }
                 EducationEntity entity = educationMapper.toEntity(educationDTO);
                 entities.add(entity);
             } else {
@@ -137,6 +148,9 @@ public abstract class AttendantMapper {
         if (dtos == null) return;
         dtos.forEach(certificationDTO -> {
             if (certificationDTO.getId() == null) { // if skill id null: create new skill
+                if (!isValidCertificationDTO(certificationDTO)){
+                    throw new NoSuchElementException(MessageConstant.Certification.INVALID_CERTIFICATION);
+                }
                 CertificationEntity entity = certificationMapper.toEntity(certificationDTO);
                 entities.add(entity);
             } else {
@@ -153,6 +167,9 @@ public abstract class AttendantMapper {
         if (dtos == null) return;
         dtos.forEach(referenceDTO -> {
             if (referenceDTO.getId() == null) { // if skill id null: create new skill
+                if (!isValidReferenceDTO(referenceDTO)){
+                    throw new NoSuchElementException(MessageConstant.Reference.INVALID_REFERENCE);
+                }
                 ReferenceEntity entity = referenceMapper.toEntity(referenceDTO);
                 entities.add(entity);
             } else {
@@ -169,6 +186,9 @@ public abstract class AttendantMapper {
         if (dtos == null) return;
         dtos.forEach(activityDTO -> {
             if (activityDTO.getId() == null) { // if skill id null: create new skill
+                if (!isValidActivityDTO(activityDTO)){
+                    throw new NoSuchElementException(MessageConstant.Activity.INVALID_ACTIVITY);
+                }
                 ActivityEntity entity = activityMapper.toEntity(activityDTO);
                 entities.add(entity);
             } else {
@@ -181,5 +201,42 @@ public abstract class AttendantMapper {
         });
     }
 
+    private boolean isValidSkillDTO(SkillDTO dto) {
+        return dto.getName() != null && dto.getProficiency() != null;
+    }
+
+    private boolean isValidWorkHistoryDTO(WorkHistoryDTO dto) {
+        return dto.getCompany() != null
+                && dto.getPosition() != null
+                && dto.getDescription() != null;
+    }
+
+    private boolean isValidEducationDTO(EducationDTO dto) {
+        return dto.getSubject() != null
+                && dto.getSchool() != null
+                && dto.getAchievement() != null;
+    }
+
+    private boolean isValidCertificationDTO(CertificationDTO dto) {
+        return dto.getName() != null
+                && dto.getInstitution() != null
+                && dto.getCertificationLink() != null;
+    }
+
+    private boolean isValidReferenceDTO(ReferenceDTO dto) {
+        return dto.getCompany() != null
+                && dto.getPosition() != null
+                && dto.getFullname() != null;
+    }
+
+    private boolean isValidActivityDTO(ActivityDTO dto) {
+        return dto.getDescription() != null
+                && dto.getOrganization() != null
+                && dto.getIsCurrentActivity() != null
+                && dto.getFromDate() != null
+                && dto.getToDate() != null
+                && dto.getFunctionTitle() != null
+                && dto.getName() != null;
+    }
 
 }

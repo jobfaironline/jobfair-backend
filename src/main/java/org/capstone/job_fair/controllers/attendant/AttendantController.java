@@ -91,7 +91,9 @@ public class AttendantController {
         try {
             attendantService.updateAccount(attendantDTO);
         } catch (NoSuchElementException ex) {
-            return GenericResponse.build(ex.getMessage(), HttpStatus.BAD_REQUEST);
+            return GenericResponse.build(
+                    MessageUtil.getMessage(ex.getMessage()),
+                    HttpStatus.BAD_REQUEST);
         }
         return GenericResponse.build(
                 MessageUtil.getMessage(MessageConstant.Attendant.UPDATE_PROFILE_SUCCESSFULLY),

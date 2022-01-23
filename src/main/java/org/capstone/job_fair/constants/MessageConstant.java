@@ -80,7 +80,6 @@ public class MessageConstant {
         public static final String DELETE_FAILED = "company-employee.error.delete";
         public static final String EMAIL_SUBJECT = "company-employee.email.subject";
         public static final String EMAIL_CONTENT = "company-employee.email.body";
-        public static final String COMPANY_NOT_EXIST = "company-empoyee.company.not-existed";
     }
 
     public static final class Gender {
@@ -122,8 +121,5 @@ public class MessageConstant {
         public static final String ACTIVITY_NOT_FOUND = "activity.notfound";
     }
 
-    public static final class Qualification {
-        public static final String INVALID_QUALIFICATION = "qualification.invalid";
-    }
 }
 

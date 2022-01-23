@@ -46,18 +46,19 @@ public class AttendantServiceImpl implements AttendantService {
 
     @Override
     public void updateAccount(AttendantDTO dto) {
-
         if (dto.getAccount() != null && dto.getAccount().getPassword() != null) {
             String hashedPassword = encoder.encode(dto.getAccount().getPassword());
             dto.getAccount().setPassword(hashedPassword);
         }
-
+        System.out.println(dto);
         String id = dto.getAccount().getId();
         Optional<AttendantEntity> attendantOpt = attendantRepository.findById(id);
 
         if (attendantOpt.isPresent()) {
             AttendantEntity entity = attendantOpt.get();
+            System.out.println(entity);
             attendantMapper.updateAttendantMapperFromDto(dto, entity);
+            System.out.println(entity);
         }
     }
 

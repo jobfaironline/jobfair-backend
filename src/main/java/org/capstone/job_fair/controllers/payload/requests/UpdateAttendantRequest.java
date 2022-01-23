@@ -24,7 +24,6 @@ public class UpdateAttendantRequest {
     @NotNull
     private String accountId;
 
-    @Builder.Default
     @Valid
     private AccountRequest account;
 
