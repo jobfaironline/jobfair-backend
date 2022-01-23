@@ -24,8 +24,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -46,22 +46,22 @@ public class AttendantController {
     private ResidenceService residenceService;
 
     @Autowired
-    private SkillEntityMapper skillMapper;
+    private SkillMapper skillMapper;
 
     @Autowired
-    private WorkHistoryEntityMapper workHistoryMapper;
+    private WorkHistoryMapper workHistoryMapper;
 
     @Autowired
-    private EducationEntityMapper educationEntityMapper;
+    private EducationMapper educationEntityMapper;
 
     @Autowired
-    private CertificationEntityMapper certMapper;
+    private CertificationMapper certMapper;
 
     @Autowired
-    private ReferenceEntityMapper refMapper;
+    private ReferenceMapper refMapper;
 
     @Autowired
-    private ActivityEntityMapper actMapper;
+    private ActivityMapper actMapper;
 
 
     @GetMapping(ApiEndPoint.Attendant.ATTENDANT_ENDPOINT)
@@ -75,6 +75,12 @@ public class AttendantController {
     public ResponseEntity<?> update(@Validated @RequestBody UpdateAttendantRequest request) {
 
         Optional<AccountEntity> opt = accountService.getActiveAccountById(request.getAccountId());
+        if (!opt.isPresent()) {
+            return GenericResponse.build(
+                    MessageUtil.getMessage(MessageConstant.Account.NOT_FOUND),
+                    HttpStatus.NOT_FOUND);
+        }
+
         if (opt.isPresent() && !opt.get().getEmail().equals(request.getAccount().getEmail()) && isEmailExist(request.getAccount().getEmail())) {
             return GenericResponse.build(
                     MessageUtil.getMessage(MessageConstant.Account.EMAIL_EXISTED),
@@ -92,64 +98,131 @@ public class AttendantController {
                     MessageUtil.getMessage(MessageConstant.Account.NOT_FOUND_RESIDENCE),
                     HttpStatus.BAD_REQUEST);
         }
+        List<SkillDTO> skillDTOs = null;
 
-        List<SkillDTO> skillDTOs = new ArrayList<>();
         if (request.getSkillRequests() != null) {
+            //if any field of request is null -> return error message
+            if (request.getSkillRequests().stream().anyMatch(req -> !isNotNullSkillRequest(req))) {
+                return GenericResponse.build(
+                        MessageUtil.getMessage(MessageConstant.Skill.INVALID_SKILL),
+                        HttpStatus.BAD_REQUEST);
+            }
+
             skillDTOs = request.getSkillRequests()
                     .stream()
                     .filter(req -> isNotNullSkillRequest(req))
                     .map(req -> {
-                        return skillMapper.toDTO(req);
+                        SkillDTO dto = new SkillDTO();
+                        dto = skillMapper.toDTO(req);
+                        //if want to update skill, send req that include skill's id
+                        if (req.getId() != null) {
+                            dto.setId(req.getId());
+                        }
+                        return dto;
                     }).collect(Collectors.toList());
         }
 
-        List<WorkHistoryDTO> historyDTOs = new ArrayList<WorkHistoryDTO>();
+
+        List<WorkHistoryDTO> historyDTOs = null;
         if (request.getWorkHistoryRequests() != null) {
+            if (request.getWorkHistoryRequests().stream().anyMatch(req -> !isNotNullWorkHistoryRequest(req))) {
+                return GenericResponse.build(
+                        MessageUtil.getMessage(MessageConstant.WorkHistory.INVALID_WORK_HISTORY),
+                        HttpStatus.BAD_REQUEST);
+            }
+
             historyDTOs = request.getWorkHistoryRequests()
                     .stream()
                     .filter(req -> isNotNullWorkHistoryRequest(req))
                     .map(req -> {
-                        return workHistoryMapper.toDTO(req);
+                        WorkHistoryDTO dto = new WorkHistoryDTO();
+                        dto = workHistoryMapper.toDTO(req);
+                        if (req.getId() != null) {
+                            dto.setId(req.getId());
+                        }
+                        return dto;
                     }).collect(Collectors.toList());
         }
 
-        List<EducationDTO> educationDTOs = new ArrayList<>();
+        List<EducationDTO> educationDTOs = null;
         if (request.getEducationRequests() != null) {
+            if (request.getEducationRequests().stream().anyMatch(req -> !isNotNullEducation(req))) {
+                return GenericResponse.build(
+                        MessageUtil.getMessage(MessageConstant.Education.INVALID_EDUCATION),
+                        HttpStatus.BAD_REQUEST);
+            }
+
             educationDTOs = request.getEducationRequests()
                     .stream()
                     .filter(req -> isNotNullEducation(req))
                     .map(req -> {
-                        return educationEntityMapper.toDTO(req);
+                        EducationDTO dto = new EducationDTO();
+                        dto = educationEntityMapper.toDTO(req);
+                        if (req.getId() != null) {
+                            dto.setId(req.getId());
+                        }
+                        return dto;
                     }).collect(Collectors.toList());
         }
 
-        List<CertificationDTO> certificationDTOs = new ArrayList<>();
+        List<CertificationDTO> certificationDTOs = null;
         if (request.getCertificateRequests() != null) {
+            if (request.getCertificateRequests().stream().anyMatch(req -> !isNotNullCertificate(req))) {
+                return GenericResponse.build(
+                        MessageUtil.getMessage(MessageConstant.Certification.INVALID_CERTIFICATION),
+                        HttpStatus.BAD_REQUEST);
+            }
+
             certificationDTOs = request.getCertificateRequests()
                     .stream()
                     .filter(req -> isNotNullCertificate(req))
                     .map(req -> {
-                        return certMapper.toDTO(req);
+                        CertificationDTO dto = new CertificationDTO();
+                        dto = certMapper.toDTO(req);
+                        if (req.getId() != null) {
+                            dto.setId(req.getId());
+                        }
+                        return dto;
                     }).collect(Collectors.toList());
         }
 
-        List<ReferenceDTO> referenceDTOs = new ArrayList<>();
+        List<ReferenceDTO> referenceDTOs = null;
         if (request.getReferenceRequests() != null) {
+            if (request.getReferenceRequests().stream().anyMatch(req -> !isNotNullReferenceRequest(req))) {
+                return GenericResponse.build(
+                        MessageUtil.getMessage(MessageConstant.Reference.INVALID_REFERENCE),
+                        HttpStatus.BAD_REQUEST);
+            }
             referenceDTOs = request.getReferenceRequests()
                     .stream()
                     .filter(req -> isNotNullReferenceRequest(req))
                     .map(req -> {
-                        return refMapper.toDTO(req);
+                        ReferenceDTO dto = new ReferenceDTO();
+                        dto = refMapper.toDTO(req);
+                        if (req.getId() != null) {
+                            dto.setId(req.getId());
+                        }
+                        return dto;
                     }).collect(Collectors.toList());
         }
 
-        List<ActivityDTO> activityDTOs = new ArrayList<>();
+        List<ActivityDTO> activityDTOs = null;
         if (request.getActivityRequestList() != null) {
+            if (request.getActivityRequestList().stream().anyMatch(req -> !isNotNullActivityRequest(req))) {
+                return GenericResponse.build(
+                        MessageUtil.getMessage(MessageConstant.Activity.INVALID_ACTIVITY),
+                        HttpStatus.BAD_REQUEST);
+            }
             activityDTOs = request.getActivityRequestList()
                     .stream()
                     .filter(req -> isNotNullActivityRequest(req))
                     .map(req -> {
-                        return actMapper.toDTO(req);
+                        ActivityDTO dto = new ActivityDTO();
+                        dto = actMapper.toDTO(req);
+                        if (req.getId() != null) {
+                            dto.setId(req.getId());
+                        }
+                        return dto;
                     }).collect(Collectors.toList());
         }
 
@@ -186,6 +259,7 @@ public class AttendantController {
                 .status(AccountStatus.ACTIVE)
                 .build();
 
+
         AttendantDTO attendantDTO = AttendantDTO.builder()
                 .account(accountDTO)
                 .title(request.getTitle())
@@ -204,7 +278,11 @@ public class AttendantController {
                 .references(referenceDTOs)
                 .activities(activityDTOs)
                 .build();
-        attendantService.updateAccount(attendantDTO);
+        try {
+            attendantService.updateAccount(attendantDTO);
+        } catch (NoSuchElementException ex) {
+            return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        }
         return GenericResponse.build(
                 MessageUtil.getMessage(MessageConstant.Attendant.UPDATE_PROFILE_SUCCESSFULLY),
                 HttpStatus.OK);

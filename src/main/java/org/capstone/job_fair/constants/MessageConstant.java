@@ -54,6 +54,7 @@ public class MessageConstant {
 
     public static final class Attendant {
         public static final String UPDATE_PROFILE_SUCCESSFULLY = "attendant.success.update-profile";
+        public static final String UPDATE_PROFILE_FAILED = "attendant.fail.update-profile";
         public static final String REGISTER_SUCCESSFULLY = "attendant.success.create";
     }
 
@@ -83,6 +84,40 @@ public class MessageConstant {
     public static final class Job {
         public static final String CREATE_JOB_SUCCESSFULLY = "job.success.create";
         public static final String SALARY_ERROR = "job.error.salary-error";
+    }
+
+    public static final class Skill {
+        public static final String INVALID_SKILL = "skill.fields.invalid";
+        public static final String SKILL_NOT_FOUND = "skill.notfound";
+    }
+
+    public static final class WorkHistory {
+        public static final String INVALID_WORK_HISTORY = "work.history.invalid";
+        public static final String WORK_HISTORY_NOT_FOUND = "work.history.notfound";
+    }
+
+    public static final class Education {
+        public static final String INVALID_EDUCATION = "education.invalid";
+        public static final String EDUCATION_NOT_FOUND = "education.notfound";
+    }
+
+    public static final class Certification {
+        public static final String INVALID_CERTIFICATION = "certification.invalid";
+        public static final String CERTIFICATION_NOT_FOUND = "certification.notfound";
+    }
+
+    public static final class Reference {
+        public static final String INVALID_REFERENCE = "reference.invalid";
+        public static final String REFERENCE_NOT_FOUND = "reference.notfound";
+    }
+
+    public static final class Activity {
+        public static final String INVALID_ACTIVITY = "activity.invalid";
+        public static final String ACTIVITY_NOT_FOUND = "activity.notfound";
+    }
+
+    public static final class Qualification {
+        public static final String INVALID_QUALIFICATION = "qualification.invalid";
     }
 }
 

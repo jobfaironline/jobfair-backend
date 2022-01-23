@@ -11,14 +11,15 @@ import org.mapstruct.Named;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-public abstract class EducationEntityMapper {
+public abstract class EducationMapper {
     public abstract EducationEntity toEntity(EducationDTO dto);
+    public abstract EducationDTO toDTO(EducationEntity entity);
 
-    @Mapping(target = "qualificationId", source = "qualification", qualifiedByName = "toQualificationID")
+    @Mapping(target = "qualificationId", source = "qualification", qualifiedByName = "toQualificationIdOfEducationDTO")
     public abstract EducationDTO toDTO(UpdateAttendantRequest.EducationRequest request);
 
-    @Named("toQualificationID")
-    public Integer toQualificationIdQualification(Qualification qualification) {
+    @Named("toQualificationIdOfEducationDTO")
+    public Integer toQualificationIdOfEducationDTO(Qualification qualification) {
         return qualification.ordinal();
     }
 

@@ -7,8 +7,9 @@ import org.mapstruct.Mapper;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-public abstract class SkillEntityMapper {
+public abstract class SkillMapper {
     public abstract SkillEntity toEntity(SkillDTO dto);
+    public abstract SkillDTO toDTO(SkillEntity entity);
 
     public abstract SkillDTO toDTO(UpdateAttendantRequest.SkillRequest request);
 }

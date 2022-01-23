@@ -7,8 +7,9 @@ import org.mapstruct.Mapper;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-public abstract class CertificationEntityMapper {
+public abstract class CertificationMapper {
     public abstract CertificationEntity toEntity(CertificationDTO dto);
+    public abstract CertificationDTO toDTO(CertificationEntity entity);
 
     public abstract CertificationDTO toDTO(UpdateAttendantRequest.CertificateRequest request);
 }

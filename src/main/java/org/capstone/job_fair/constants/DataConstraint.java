@@ -17,8 +17,8 @@ public class DataConstraint {
         public static final int COMPANY_MIN_LENGTH = 1;
         public static final int COMPANY_MAX_LENGTH = 100;
         public static final long FROM_DATE = -2208988800000L;
-        public static final int MIN_DESCRIPTION = 1;
-        public static final int MAX_DESCRIPTION = 5000;
+        public static final int MIN_DESCRIPTION_LENGTH = 1;
+        public static final int MAX_DESCRIPTION_LENGTH = 5000;
     }
 
     public static final class Education {
@@ -37,8 +37,8 @@ public class DataConstraint {
         public static final int INSTITUTION_MIN_LENGTH = 1;
         public static final int INSTITUTION_MAX_LENGTH = 100;
         public static final int YEAR_MIN = 1900;
-        public static final int CERTIFICATION_LINK_MIN = 1;
-        public static final int CERTIFICATION_LINK_MAX = 2048;
+        public static final int URL_MIN_LENGTH = 1;
+        public static final int URL_MAX_LENGTH = 2048;
     }
 
     public static final class Reference {
@@ -55,8 +55,8 @@ public class DataConstraint {
         public static final int FUNCTION_MAX_LENGTH = 100;
         public static final int ORGANIZATION_MAX_LENGTH = 100;
         public static final long FROM_DATE = -2208988800000L;
-        public static final int MIN_DESCRIPTION = 1;
-        public static final int MAX_DESCRIPTION = 5000;
+        public static final int MIN_DESCRIPTION_LENGTH = 1;
+        public static final int MAX_DESCRIPTION_LENGTH = 5000;
 
     }
 
@@ -78,8 +78,8 @@ public class DataConstraint {
 
     public static final class Account {
         public static final int NAME_LENGTH = 100;
-        public static final int MIN_IMAGE_URL = 1;
-        public static final int MAX_IMAGE_URL = 2048;
+        public static final int URL_MIN_LENGTH = 1;
+        public static final int URL_MAX_LENGTH = 2048;
 
     }
 
@@ -91,12 +91,12 @@ public class DataConstraint {
         public static final int YEAR_OF_EXPERIENCE_MAX = 70;
         public static final long MIN_DOB = -2208988800000L;
         public static final long MAX_DOB = 1420071120000L;
-        public static final int TITLE_MIN = 1;
-        public static final int TITLE_MAX = 100;
-        public static final int ADDRESS_MIN = 1;
-        public static final int ADDRESS_MAX = 1000;
-        public static final int JOB_TITLE_MIN = 1;
-        public static final int JOB_TITLE_MAX = 100;
+        public static final int TITLE_MIN_LENGTH = 1;
+        public static final int TITLE_MAX_LENGTH = 100;
+        public static final int ADDRESS_MIN_LENGTH = 1;
+        public static final int ADDRESS_MAX_LENGTH = 1000;
+        public static final int JOB_TITLE_MIN_LENGTH = 1;
+        public static final int JOB_TITLE_MAX_LENGTH = 100;
     }
 
 

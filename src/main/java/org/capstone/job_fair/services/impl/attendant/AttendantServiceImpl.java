@@ -1,7 +1,9 @@
 package org.capstone.job_fair.services.impl.attendant;
 
 import org.capstone.job_fair.constants.AccountConstant;
+import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.models.dtos.attendant.AttendantDTO;
+import org.capstone.job_fair.models.dtos.attendant.cv.*;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
 import org.capstone.job_fair.models.entities.attendant.*;
 import org.capstone.job_fair.models.entities.attendant.cv.*;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -45,22 +48,22 @@ public class AttendantServiceImpl implements AttendantService {
     private AccountService accountService;
 
     @Autowired
-    private SkillEntityMapper skillMapper;
+    private SkillMapper skillMapper;
 
     @Autowired
-    private WorkHistoryEntityMapper workHistoryEntityMapper;
+    private WorkHistoryMapper workHistoryMapper;
 
     @Autowired
-    private EducationEntityMapper educationEntityMapper;
+    private EducationMapper educationEntityMapper;
 
     @Autowired
-    private CertificationEntityMapper certificationEntityMapper;
+    private CertificationMapper certificationEntityMapper;
 
     @Autowired
-    private ReferenceEntityMapper referenceEntityMapper;
+    private ReferenceMapper referenceEntityMapper;
 
     @Autowired
-    private ActivityEntityMapper activityEntityMapper;
+    private ActivityMapper activityEntityMapper;
 
     @Autowired
     private SkillRepository skillRepository;
@@ -96,9 +99,7 @@ public class AttendantServiceImpl implements AttendantService {
         AccountEntity accountEntity = entity.getAccount();
         accountEntity.setId(dto.getAccount().getId());
 
-
         entity.setAccountId(dto.getAccount().getId());
-
 
         accountRepository.save(accountEntity);
 
@@ -114,77 +115,70 @@ public class AttendantServiceImpl implements AttendantService {
         entity.setCountry(countryEntity);
         entity.setResidence(residenceEntity);
         entity.setCurrentJobLevel(jobLevelEntity);
-
-
-        if (dto.getSkills().stream().count() != 0) {
-            List<SkillEntity> skillEntities = dto.getSkills()
-                    .stream().map(skillDTO -> {
-                        SkillEntity skillEntity = skillMapper.toEntity(skillDTO);
-                        skillEntity.setId(UUID.randomUUID().toString());
-                        skillEntity.setAttendant(entity);
-                        return skillRepository.save(skillEntity);
-                    })
-                    .collect(Collectors.toList());
-        }
-
-        if (dto.getWorkHistories().stream().count() != 0) {
-            List<WorkHistoryEntity> workHistoryEntities = dto.getWorkHistories()
-                    .stream().map(workHistoryDTO -> {
-                        WorkHistoryEntity workHistoryEntity = workHistoryEntityMapper.toEntity(workHistoryDTO);
-                        workHistoryEntity.setId(UUID.randomUUID().toString());
-                        workHistoryEntity.setAttendant(entity);
-                        return workHistoryRepository.save(workHistoryEntity);
-                    })
-                    .collect(Collectors.toList());
-        }
-
-        if (dto.getEducations().stream().count() != 0) {
-            List<EducationEntity> educationEntities = dto.getEducations()
-                    .stream().map(educationDTO -> {
-                        EducationEntity educationEntity = educationEntityMapper.toEntity(educationDTO);
-                        QualificationEntity qualificationEntity = qualificationRepository.findById(educationDTO.getQualificationId()).get();
-                        educationEntity.setQualification(qualificationEntity);
-                        educationEntity.setId(UUID.randomUUID().toString());
-                        educationEntity.setAttendant(entity);
-                        return educationRepository.save(educationEntity);
-                    })
-                    .collect(Collectors.toList());
-        }
-
-        if (dto.getCertifications().stream().count() != 0) {
-            List<CertificationEntity> certificationEntities = dto.getCertifications()
-                    .stream().map(certificationDTO -> {
-                        CertificationEntity certificationEntity = certificationEntityMapper.toEntity(certificationDTO);
-                        certificationEntity.setId(UUID.randomUUID().toString());
-                        certificationEntity.setAttendant(entity);
-                        return certificationRepository.save(certificationEntity);
-                    })
-                    .collect(Collectors.toList());
-        }
-
-        if (dto.getReferences().stream().count() != 0) {
-            List<ReferenceEntity> referenceEntities = dto.getReferences()
-                    .stream().map(referenceDTO -> {
-                        ReferenceEntity referenceEntity = referenceEntityMapper.toEntity(referenceDTO);
-                        referenceEntity.setId(UUID.randomUUID().toString());
-                        referenceEntity.setAttendant(entity);
-                        return referenceRepository.save(referenceEntity);
-                    })
-                    .collect(Collectors.toList());
-        }
-
-        if (dto.getActivities().stream().count() != 0) {
-            List<ActivityEntity> activityEntities = dto.getActivities()
-                    .stream().map(activityDTO -> {
-                        ActivityEntity activityEntity = activityEntityMapper.toEntity(activityDTO);
-                        activityEntity.setId(UUID.randomUUID().toString());
-                        activityEntity.setAttendant(entity);
-                        return activityRepository.save(activityEntity);
-                    })
-                    .collect(Collectors.toList());
-        }
-
         attendantRepository.save(entity);
+
+
+        if (dto.getSkills() != null) {
+            dto.getSkills().forEach(skillDTO -> {
+                if (skillDTO.getId() == null) { // if skill id null: create new skill
+                    createNewSkill(skillDTO, entity);
+                } else {
+                    updateSkill(skillDTO, entity); // else update skill
+                }
+            });
+        }
+
+        if (dto.getWorkHistories() != null) {
+            dto.getWorkHistories().forEach(workHistoryDTO -> {
+                if (workHistoryDTO.getId() == null) {
+                    createNewWorkHistory(workHistoryDTO, entity);
+                } else {
+                    updateWorkHistory(workHistoryDTO, entity);
+                }
+            });
+        }
+
+        if (dto.getEducations() != null) {
+            dto.getEducations().forEach(educationDTO -> {
+                if (educationDTO.getId() == null) {
+                    createEducation(educationDTO, entity);
+                } else {
+                    updateEducation(educationDTO, entity);
+                }
+            });
+        }
+
+        if (dto.getCertifications() != null) {
+            dto.getCertifications().forEach(certificationDTO -> {
+                if (certificationDTO.getId() == null) {
+                    createCertification(certificationDTO, entity);
+                } else {
+                    updateCertification(certificationDTO, entity);
+                }
+            });
+        }
+
+        if (dto.getReferences() != null) {
+            dto.getReferences().forEach(referenceDTO -> {
+                if (referenceDTO.getId() == null) {
+                    createReference(referenceDTO, entity);
+                } else {
+                    updateReference(referenceDTO, entity);
+                }
+            });
+        }
+
+        if (dto.getActivities() != null) {
+            dto.getActivities().forEach(activityDTO -> {
+                if (activityDTO.getId() == null) {
+                    createActivity(activityDTO, entity);
+                }
+                else {
+                    updateActivity(activityDTO, entity);
+                }
+            });
+        }
+
     }
 
     @Override
@@ -218,6 +212,134 @@ public class AttendantServiceImpl implements AttendantService {
     @Override
     public List<AttendantDTO> getAllAttendants() {
         return attendantRepository.findAll().stream().map(entity -> mapper.toDTO(entity)).collect(Collectors.toList());
+    }
+
+    //Create skill
+    private void createNewSkill(SkillDTO dto, AttendantEntity entity) {
+        SkillEntity skillEntity = skillMapper.toEntity(dto);
+        skillEntity.setId(UUID.randomUUID().toString());
+        skillEntity.setAttendant(entity);
+        skillRepository.save(skillEntity);
+    }
+
+    //Update skill
+    private void updateSkill(SkillDTO dto, AttendantEntity entity) {
+        if (!skillRepository.findById(dto.getId()).isPresent()) {
+            throw new NoSuchElementException(MessageConstant.Skill.SKILL_NOT_FOUND);
+        }
+        SkillEntity skillEntity = skillMapper.toEntity(dto);
+        skillEntity.setId(dto.getId());
+        skillEntity.setAttendant(entity);
+        skillRepository.save(skillEntity);
+    }
+    //End create-update skill
+
+    //Create work history
+    private void createNewWorkHistory(WorkHistoryDTO dto, AttendantEntity entity) {
+        WorkHistoryEntity workHistoryEntity = workHistoryMapper.toEntity(dto);
+        workHistoryEntity.setId(UUID.randomUUID().toString());
+        workHistoryEntity.setAttendant(entity);
+        workHistoryRepository.save(workHistoryEntity);
+    }
+
+    //Update work history
+    private void updateWorkHistory(WorkHistoryDTO dto, AttendantEntity entity) {
+        if (!workHistoryRepository.findById(dto.getId()).isPresent()) {
+            throw new NoSuchElementException(MessageConstant.WorkHistory.WORK_HISTORY_NOT_FOUND);
+        }
+        WorkHistoryEntity workHistoryEntity = workHistoryMapper.toEntity(dto);
+        workHistoryEntity.setId(dto.getId());
+        workHistoryEntity.setAttendant(entity);
+        workHistoryRepository.save(workHistoryEntity);
+    }
+    //End create-update work history
+
+    //Create Education
+    private void createEducation(EducationDTO dto, AttendantEntity entity) {
+        EducationEntity educationEntity = educationEntityMapper.toEntity(dto);
+        QualificationEntity qualificationEntity = qualificationRepository.findById(dto.getQualificationId()).get();
+        if (qualificationEntity == null) {
+            throw new NoSuchElementException(MessageConstant.Qualification.INVALID_QUALIFICATION);
+        }
+        educationEntity.setQualification(qualificationEntity);
+        educationEntity.setId(UUID.randomUUID().toString());
+        educationEntity.setAttendant(entity);
+        educationRepository.save(educationEntity);
+    }
+
+    //Update education
+    private void updateEducation(EducationDTO dto, AttendantEntity entity) {
+        if (!educationRepository.findById(dto.getId()).isPresent()) {
+            throw new NoSuchElementException(MessageConstant.Education.EDUCATION_NOT_FOUND);
+        }
+        EducationEntity educationEntity = educationEntityMapper.toEntity(dto);
+        QualificationEntity qualificationEntity = qualificationRepository.findById(dto.getQualificationId()).get();
+        if (qualificationEntity == null) {
+            throw new NoSuchElementException(MessageConstant.Qualification.INVALID_QUALIFICATION);
+        }
+        educationEntity.setQualification(qualificationEntity);
+        educationEntity.setId(dto.getId());
+        educationEntity.setAttendant(entity);
+        educationRepository.save(educationEntity);
+    }
+    //End create-update education
+
+    //Create certification
+    private void createCertification(CertificationDTO dto, AttendantEntity entity) {
+        CertificationEntity certificationEntity = certificationEntityMapper.toEntity(dto);
+        certificationEntity.setId(UUID.randomUUID().toString());
+        certificationEntity.setAttendant(entity);
+        certificationRepository.save(certificationEntity);
+    }
+
+    //update certification
+    private void updateCertification(CertificationDTO dto, AttendantEntity entity) {
+        if (!certificationRepository.findById(dto.getId()).isPresent()) {
+            throw new NoSuchElementException(MessageConstant.Certification.CERTIFICATION_NOT_FOUND);
+        }
+        CertificationEntity certificationEntity = certificationEntityMapper.toEntity(dto);
+        certificationEntity.setId(dto.getId());
+        certificationEntity.setAttendant(entity);
+        certificationRepository.save(certificationEntity);
+    }
+    //End create-update certification
+
+    //Create reference
+    private void createReference(ReferenceDTO dto, AttendantEntity entity) {
+        ReferenceEntity referenceEntity = referenceEntityMapper.toEntity(dto);
+        referenceEntity.setId(UUID.randomUUID().toString());
+        referenceEntity.setAttendant(entity);
+        referenceRepository.save(referenceEntity);
+    }
+
+    //update reference
+    private void updateReference(ReferenceDTO dto, AttendantEntity entity) {
+        if (!referenceRepository.findById(dto.getId()).isPresent()) {
+            throw new NoSuchElementException(MessageConstant.Reference.REFERENCE_NOT_FOUND);
+        }
+        ReferenceEntity referenceEntity = referenceEntityMapper.toEntity(dto);
+        referenceEntity.setId(dto.getId());
+        referenceEntity.setAttendant(entity);
+        referenceRepository.save(referenceEntity);
+    }
+    //end create-update reference
+
+    //create activity
+    private void createActivity(ActivityDTO dto, AttendantEntity entity) {
+        ActivityEntity activityEntity = activityEntityMapper.toEntity(dto);
+        activityEntity.setId(UUID.randomUUID().toString());
+        activityEntity.setAttendant(entity);
+        activityRepository.save(activityEntity);
+    }
+    //update activity
+    private void updateActivity(ActivityDTO dto, AttendantEntity entity) {
+        if (!activityRepository.findById(dto.getId()).isPresent()) {
+            throw new NoSuchElementException(MessageConstant.Activity.ACTIVITY_NOT_FOUND);
+        }
+        ActivityEntity activityEntity = activityEntityMapper.toEntity(dto);
+        activityEntity.setId(dto.getId());
+        activityEntity.setAttendant(entity);
+        activityRepository.save(activityEntity);
     }
 
 }

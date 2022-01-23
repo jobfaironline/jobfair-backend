@@ -3,13 +3,10 @@ package org.capstone.job_fair.controllers.payload.requests;
 import lombok.*;
 import org.capstone.job_fair.constants.DataConstraint;
 import org.capstone.job_fair.constants.MessageConstant;
-import org.capstone.job_fair.models.dtos.attendant.cv.*;
 import org.capstone.job_fair.models.enums.Gender;
 import org.capstone.job_fair.models.enums.JobLevel;
 import org.capstone.job_fair.models.enums.Marital;
 import org.capstone.job_fair.models.enums.Qualification;
-import org.capstone.job_fair.models.statuses.AccountStatus;
-import org.capstone.job_fair.utils.MessageUtil;
 import org.capstone.job_fair.validators.EmailConstraint;
 import org.capstone.job_fair.validators.PasswordConstraint;
 import org.capstone.job_fair.validators.PhoneConstraint;
@@ -39,15 +36,15 @@ public class UpdateAttendantRequest {
 
 
     @XSSConstraint
-    @Size(min = DataConstraint.Attendant.TITLE_MIN, max = DataConstraint.Attendant.TITLE_MAX)
+    @Size(min = DataConstraint.Attendant.TITLE_MIN_LENGTH, max = DataConstraint.Attendant.TITLE_MAX_LENGTH)
     private String title;
 
     @XSSConstraint
-    @Size(min = DataConstraint.Attendant.ADDRESS_MIN, max = DataConstraint.Attendant.ADDRESS_MAX)
+    @Size(min = DataConstraint.Attendant.ADDRESS_MIN_LENGTH, max = DataConstraint.Attendant.ADDRESS_MAX_LENGTH)
     private String address;
 
     @XSSConstraint
-    @Size(min = DataConstraint.Attendant.JOB_TITLE_MIN, max = DataConstraint.Attendant.JOB_TITLE_MAX)
+    @Size(min = DataConstraint.Attendant.JOB_TITLE_MIN_LENGTH, max = DataConstraint.Attendant.JOB_TITLE_MAX_LENGTH)
     private String jobTitle;
 
     @Min(value = DataConstraint.Attendant.MIN_DOB, message = MessageConstant.Account.DOB_INVALID)
@@ -93,7 +90,7 @@ public class UpdateAttendantRequest {
         private String email;
         @PhoneConstraint
         private String phone;
-        @Size(min = DataConstraint.Account.MIN_IMAGE_URL, max = DataConstraint.Account.MAX_IMAGE_URL)
+        @Size(min = DataConstraint.Account.URL_MIN_LENGTH, max = DataConstraint.Account.URL_MAX_LENGTH)
         @XSSConstraint
         private String profileImageUrl;
         @Size(max = DataConstraint.Account.NAME_LENGTH)
@@ -113,6 +110,7 @@ public class UpdateAttendantRequest {
     @NoArgsConstructor
     @ToString
     public static class SkillRequest {
+        private String id;
         @XSSConstraint
         @Size(min = DataConstraint.Skill.MIN_NAME_LENGTH, max = DataConstraint.Skill.MAX_NAME_LENGTH)
         private String name;
@@ -126,6 +124,7 @@ public class UpdateAttendantRequest {
     @NoArgsConstructor
     @ToString
     public static class WorkHistoryRequest {
+        private String id;
         @Size(min = DataConstraint.WorkHistory.POSITION_MIN_LENGTH, max =DataConstraint.WorkHistory.POSITION_MAX_LENGTH)
         @XSSConstraint
         private String position;
@@ -139,7 +138,7 @@ public class UpdateAttendantRequest {
         private Long toDate;
         private Boolean isCurrentJob;
         @XSSConstraint
-        @Size(min = DataConstraint.WorkHistory.MIN_DESCRIPTION, max = DataConstraint.WorkHistory.MAX_DESCRIPTION)
+        @Size(min = DataConstraint.WorkHistory.MIN_DESCRIPTION_LENGTH, max = DataConstraint.WorkHistory.MAX_DESCRIPTION_LENGTH)
         private String description;
     }
 
@@ -148,6 +147,7 @@ public class UpdateAttendantRequest {
     @NoArgsConstructor
     @ToString
     public static class EducationRequest {
+        private String id;
         @XSSConstraint
         @Size(min = DataConstraint.Education.SUBJECT_MIN_LENGTH, max = DataConstraint.Education.SUBJECT_MAX_LENGTH)
         private String subject;
@@ -169,6 +169,7 @@ public class UpdateAttendantRequest {
     @NoArgsConstructor
     @ToString
     public static class CertificateRequest {
+        private String id;
         @NotEmpty
         @XSSConstraint
         @Size(min = DataConstraint.Certification.NAME_MIN_LENGTH, max =DataConstraint.Certification.NAME_MAX_LENGTH)
@@ -179,7 +180,7 @@ public class UpdateAttendantRequest {
         @Min(value = DataConstraint.Certification.YEAR_MIN)
         private Integer year;
         @XSSConstraint
-        @Size(min = DataConstraint.Certification.CERTIFICATION_LINK_MIN, max = DataConstraint.Certification.CERTIFICATION_LINK_MAX)
+        @Size(min = DataConstraint.Certification.URL_MIN_LENGTH, max = DataConstraint.Certification.URL_MAX_LENGTH)
         private String certificationLink;
     }
 
@@ -188,6 +189,7 @@ public class UpdateAttendantRequest {
     @NoArgsConstructor
     @ToString
     public static class ReferenceRequest {
+        private String id;
         @XSSConstraint
         @Size(min = DataConstraint.Reference.FULLNAME_MIN_LENGTH, max = DataConstraint.Reference.FULLNAME_MAX_LENGTH)
         private String fullname;
@@ -208,6 +210,7 @@ public class UpdateAttendantRequest {
     @NoArgsConstructor
     @ToString
     public static class ActivityRequest {
+        private String id;
         @XSSConstraint
         @NotEmpty
         @Size(max = DataConstraint.Activity.MAX_NAME_LENGTH)
@@ -227,7 +230,7 @@ public class UpdateAttendantRequest {
         private Boolean isCurrentActivity;
 
         @XSSConstraint
-        @Size(min = DataConstraint.Activity.MIN_DESCRIPTION, max = DataConstraint.Activity.MAX_DESCRIPTION)
+        @Size(min = DataConstraint.Activity.MIN_DESCRIPTION_LENGTH, max = DataConstraint.Activity.MAX_DESCRIPTION_LENGTH)
         private String description;
     }
 

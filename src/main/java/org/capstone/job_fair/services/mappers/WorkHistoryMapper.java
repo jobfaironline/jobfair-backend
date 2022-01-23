@@ -8,9 +8,10 @@ import org.mapstruct.Mapper;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-public abstract class WorkHistoryEntityMapper {
+public abstract class WorkHistoryMapper {
 
     public abstract WorkHistoryEntity toEntity(WorkHistoryDTO dto);
+    public abstract WorkHistoryDTO toDTO(WorkHistoryEntity entity);
 
     public abstract  WorkHistoryDTO toDTO(UpdateAttendantRequest.WorkHistoryRequest request);
 }
