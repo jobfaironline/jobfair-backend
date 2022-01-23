@@ -3,9 +3,12 @@ package org.capstone.job_fair.models.entities.company;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 import org.capstone.job_fair.models.statuses.CompanyStatus;
+import org.hibernate.Hibernate;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -13,12 +16,12 @@ import java.util.List;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Table(name = "company", schema = "dbo")
 public class CompanyEntity {
-    @EqualsAndHashCode.Include
     @Id
     @Column(name = "id", nullable = false, length = 36)
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "org.hibernate.id.UUIDGenerator")
     private String id;
     @Column(name = "taxID", unique = true, length = 9, nullable = false)
     private String taxId;
@@ -49,13 +52,25 @@ public class CompanyEntity {
             joinColumns = @JoinColumn(name = "company_id"),
             inverseJoinColumns = @JoinColumn(name = "benefit_id")
     )
-    List<BenefitEntity> companyBenefits;
+    private List<BenefitEntity> companyBenefits;
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "company_category",
             joinColumns = @JoinColumn(name = "company_id"),
             inverseJoinColumns = @JoinColumn(name = "sub_category_id")
     )
-    List<SubCategoryEntity> companySubCategory;
+    private List<SubCategoryEntity> companySubCategory;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        CompanyEntity that = (CompanyEntity) o;
+        return id != null && Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }

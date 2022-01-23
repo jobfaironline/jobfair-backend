@@ -1,24 +1,22 @@
 package org.capstone.job_fair.models.entities.company;
 
 import lombok.*;
-import org.capstone.job_fair.models.entities.company.job.JobPositionEntity;
+import org.hibernate.Hibernate;
 
 import javax.persistence.*;
-import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Data
+@Setter
+@Getter
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Table(name = "sub_category", schema = "dbo")
 public class SubCategoryEntity {
-    @EqualsAndHashCode.Include
     @Id
     @Column(name = "id", nullable = false)
-    private int id;
+    private Integer id;
     @Basic
     @Column(name = "name", length = 100)
     private String name;
@@ -31,4 +29,16 @@ public class SubCategoryEntity {
     @JoinColumn(name = "category_id")
     private ProfessionCategoryEntity category;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        SubCategoryEntity entity = (SubCategoryEntity) o;
+        return id != null && Objects.equals(id, entity.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }

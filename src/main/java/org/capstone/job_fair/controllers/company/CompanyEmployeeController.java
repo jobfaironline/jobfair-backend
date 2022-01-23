@@ -3,7 +3,6 @@ package org.capstone.job_fair.controllers.company;
 
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
-import org.capstone.job_fair.constants.ResetPasswordTokenConstants;
 import org.capstone.job_fair.controllers.payload.requests.CompanyEmployeeRegisterRequest;
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
 import org.capstone.job_fair.models.dtos.company.CompanyDTO;
@@ -51,7 +50,7 @@ public class CompanyEmployeeController {
 
 
     private boolean isEmailExist(String email) {
-        return accountService.getCountByEmail(email) != 0;
+        return accountService.getCountAccountByEmail(email) != 0;
     }
 
     private boolean isCompanyExist(String companyId) {

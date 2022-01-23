@@ -27,8 +27,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 @RestController
 public class AttendantController {
@@ -117,7 +115,6 @@ public class AttendantController {
 
 
         AccountDTO accountDTO = req.getAccount() != null ? AccountDTO.builder()
-                .id(UUID.randomUUID().toString())
                 .status(AccountStatus.ACTIVE)
                 .lastname(req.getAccount().getLastname())
                 .firstname(req.getAccount().getFirstname())

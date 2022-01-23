@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -53,9 +52,7 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     public void createCompany(CompanyDTO dto) {
-        String id = UUID.randomUUID().toString();
         CompanyEntity entity = mapper.toEntity(dto);
-        entity.setId(id);
 
 
         CompanySizeEntity sizeEntity = new CompanySizeEntity();
@@ -74,8 +71,6 @@ public class CompanyServiceImpl implements CompanyService {
         List<MediaEntity> mediaEntities = dto.getMediaDTOS().stream()
                 .map(mediaDTO -> {
                     MediaEntity media = new MediaEntity();
-                    String uuid = UUID.randomUUID().toString();
-                    media.setId(uuid);
                     media.setUrl(mediaDTO.getUrl());
                     return mediaRepository.save(media);
                 })
@@ -112,8 +107,6 @@ public class CompanyServiceImpl implements CompanyService {
         List<MediaEntity> mediaEntities = dto.getMediaDTOS().stream()
                 .map(mediaDTO -> {
                     MediaEntity media = new MediaEntity();
-                    String uuid = UUID.randomUUID().toString();
-                    media.setId(uuid);
                     media.setUrl(mediaDTO.getUrl());
                     return mediaRepository.save(media);
                 })

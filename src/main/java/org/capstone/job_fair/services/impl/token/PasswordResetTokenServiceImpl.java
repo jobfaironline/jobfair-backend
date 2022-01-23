@@ -40,8 +40,6 @@ public class PasswordResetTokenServiceImpl implements PasswordResetTokenService 
         String otp = OTPGenerator.generateOTP();
         //generate token
         PasswordResetTokenEntity resetToken = new PasswordResetTokenEntity();
-        UUID id = UUID.randomUUID();
-        resetToken.setId(id.toString());
         resetToken.setOtp(otp);
         resetToken.setCreateTime(new Date().getTime());
         resetToken.setExpiredTime(resetToken.getCreateTime() + Integer.parseInt(RESET_PASSWORD_TOKEN_EXPIRED_TIME)* 1000L);

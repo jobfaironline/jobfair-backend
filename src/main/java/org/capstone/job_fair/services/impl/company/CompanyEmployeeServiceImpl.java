@@ -24,7 +24,6 @@ import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -48,13 +47,10 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
 
     @Override
     public void createNewCompanyManagerAccount(CompanyEmployeeDTO dto) {
-        String id = UUID.randomUUID().toString();
         dto.getAccount().setRole(Role.COMPANY_MANAGER);
         CompanyEmployeeEntity entity = mapper.toEntity(dto);
-        entity.setAccountId(id);
 
         AccountEntity accountEntity = entity.getAccount();
-        accountEntity.setId(id);
         accountEntity.setPassword(encoder.encode(accountEntity.getPassword()));
         accountEntity.setProfileImageUrl(AccountConstant.DEFAULT_PROFILE_IMAGE_URL);
         accountEntity.setStatus(AccountStatus.ACTIVE);

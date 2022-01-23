@@ -1,27 +1,21 @@
 package org.capstone.job_fair.services.impl.attendant;
 
 import org.capstone.job_fair.constants.AccountConstant;
-import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.models.dtos.attendant.AttendantDTO;
-import org.capstone.job_fair.models.dtos.attendant.cv.*;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
-import org.capstone.job_fair.models.entities.attendant.*;
-import org.capstone.job_fair.models.entities.attendant.cv.*;
-import org.capstone.job_fair.repositories.account.AccountRepository;
+import org.capstone.job_fair.models.entities.attendant.AttendantEntity;
 import org.capstone.job_fair.repositories.attendant.AttendantRepository;
-import org.capstone.job_fair.repositories.attendant.cv.*;
 import org.capstone.job_fair.services.interfaces.account.AccountService;
 import org.capstone.job_fair.services.interfaces.attendant.AttendantService;
-import org.capstone.job_fair.services.mappers.*;
+import org.capstone.job_fair.services.mappers.AccountEntityMapper;
+import org.capstone.job_fair.services.mappers.AttendantMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 
@@ -31,9 +25,6 @@ public class AttendantServiceImpl implements AttendantService {
 
     @Autowired
     private AttendantMapper attendantMapper;
-
-    @Autowired
-    private AccountEntityMapper accountMapper;
 
     @Autowired
     private BCryptPasswordEncoder encoder;

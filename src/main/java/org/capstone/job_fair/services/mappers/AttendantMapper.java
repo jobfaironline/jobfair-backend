@@ -41,6 +41,7 @@ public abstract class AttendantMapper {
     @Autowired
     SmartValidator validator;
 
+
     public abstract AttendantDTO toDTO(AttendantEntity attendant);
 
     @Mapping(target = "accountId", source = "account.id")

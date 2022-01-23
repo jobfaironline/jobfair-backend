@@ -2,6 +2,7 @@ package org.capstone.job_fair.models.entities.token;
 
 import lombok.*;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
+import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.domain.Persistable;
 
 import javax.persistence.*;
@@ -16,6 +17,8 @@ import javax.persistence.*;
 public class PasswordResetTokenEntity {
     @Id
     @Column(name = "id", updatable = false, nullable = false)
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "org.hibernate.id.UUIDGenerator")
     private String id;
 
     @Column(name = "otp")

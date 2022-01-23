@@ -24,9 +24,7 @@ public class JobPositionServiceImpl implements JobPositionService {
 
     @Override
     public void createNewJobPosition(JobPositionDTO dto) {
-        String id = UUID.randomUUID().toString();
         JobPositionEntity entity = mapper.toEntity(dto);
-        entity.setId(id);
 
         CompanyEntity companyEntity = new CompanyEntity();
         companyEntity.setId(dto.getComapnyId());
