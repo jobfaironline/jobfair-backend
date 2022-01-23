@@ -72,7 +72,7 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
         accountEntity.setPassword(encoder.encode(accountEntity.getPassword()));
         accountEntity.setProfileImageUrl(AccountConstant.DEFAULT_PROFILE_IMAGE_URL);
         accountEntity.setStatus(AccountStatus.REGISTERED);
-        employeeRepository.customSave(entity, true);
+        employeeRepository.save(entity);
     }
 
     @Override
