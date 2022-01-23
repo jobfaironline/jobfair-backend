@@ -22,16 +22,11 @@ import java.util.List;
 public class UpdateAttendantRequest {
 
     @NotNull
-    @NotEmpty
-    @XSSConstraint
     private String accountId;
 
     @Builder.Default
     @Valid
-    private UpdateAttendantRequest.AccountRequest account = new UpdateAttendantRequest.AccountRequest();
-
-
-
+    private AccountRequest account;
 
     @XSSConstraint
     @Size(min = DataConstraint.Attendant.TITLE_MIN_LENGTH, max = DataConstraint.Attendant.TITLE_MAX_LENGTH)
@@ -55,9 +50,9 @@ public class UpdateAttendantRequest {
 
     private Marital maritalStatus;
 
-    private String countryID;
+    private String countryId;
 
-    private String residenceID;
+    private String residenceId;
 
     private JobLevel jobLevel;
 
@@ -77,7 +72,7 @@ public class UpdateAttendantRequest {
     private List<References> references;
 
     @Valid
-    private List<Activities> activitiesList;
+    private List<Activities> activities;
 
     @Data
     @AllArgsConstructor
@@ -212,16 +207,13 @@ public class UpdateAttendantRequest {
     public static class Activities {
         private String id;
         @XSSConstraint
-        @NotEmpty
-        @Size(max = DataConstraint.Activity.MAX_NAME_LENGTH)
+        @Size(min = DataConstraint.Activity.MIN_NAME_LENGTH, max = DataConstraint.Activity.MAX_NAME_LENGTH)
         private String name;
-        @NotEmpty
         @XSSConstraint
-        @Size(max = DataConstraint.Activity.FUNCTION_MAX_LENGTH)
+        @Size(min = DataConstraint.Activity.FUNCTION_MIN_LENGTH, max = DataConstraint.Activity.FUNCTION_MAX_LENGTH)
         private String functionTitle;
-        @NotEmpty
         @XSSConstraint
-        @Size(max = DataConstraint.Activity.ORGANIZATION_MAX_LENGTH)
+        @Size(min = DataConstraint.Activity.ORGANIZATION_MIN_LENGTH, max = DataConstraint.Activity.ORGANIZATION_MAX_LENGTH)
         private String organization;
 
         @Min(value = DataConstraint.Education.FROM_DATE)

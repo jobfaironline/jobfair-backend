@@ -51,8 +51,11 @@ public class DataConstraint {
     }
 
     public static final class Activity {
+        public static final int MIN_NAME_LENGTH = 1;
         public static final int MAX_NAME_LENGTH = 100;
+        public static final int FUNCTION_MIN_LENGTH = 1;
         public static final int FUNCTION_MAX_LENGTH = 100;
+        public static final int ORGANIZATION_MIN_LENGTH = 1;
         public static final int ORGANIZATION_MAX_LENGTH = 100;
         public static final long FROM_DATE = -2208988800000L;
         public static final int MIN_DESCRIPTION_LENGTH = 1;

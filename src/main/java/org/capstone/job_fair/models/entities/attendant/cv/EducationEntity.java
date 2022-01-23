@@ -1,9 +1,9 @@
 package org.capstone.job_fair.models.entities.attendant.cv;
 
 import lombok.*;
-import org.capstone.job_fair.models.entities.attendant.AttendantEntity;
-import org.capstone.job_fair.models.entities.attendant.QualificationEntity;
 import org.capstone.job_fair.models.enums.Qualification;
+import org.hibernate.Hibernate;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -14,12 +14,12 @@ import java.util.Objects;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Table(name = "education", schema = "dbo")
 public class EducationEntity {
-    @EqualsAndHashCode.Include
     @Id
     @Column(name = "id", nullable = false, length = 36)
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "org.hibernate.id.UUIDGenerator")
     private String id;
 
     @Column(name = "subject", nullable = false, length = 100)
@@ -37,12 +37,20 @@ public class EducationEntity {
     @Column(name = "achievement")
     private String achievement;
 
-    @ManyToOne
-    @JoinColumn(name = "attendant_id")
-    private AttendantEntity attendant;
-
     @Column(name = "qualification_id", nullable = false)
     @Enumerated(EnumType.ORDINAL)
     private Qualification qualification;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        EducationEntity that = (EducationEntity) o;
+        return id != null && Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }
