@@ -1,12 +1,11 @@
 package org.capstone.job_fair.services.impl.account;
 
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
-import org.capstone.job_fair.models.enums.Role;
 import org.capstone.job_fair.models.statuses.AccountStatus;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
 import org.capstone.job_fair.repositories.account.AccountRepository;
 import org.capstone.job_fair.services.interfaces.account.AccountService;
-import org.capstone.job_fair.services.mappers.AccountEntityMapper;
+import org.capstone.job_fair.services.mappers.AccountMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,13 +22,13 @@ public class AccountServiceImpl implements AccountService {
     private AccountRepository accountRepository;
 
     @Autowired
-    private AccountEntityMapper mapper;
+    private AccountMapper accountMapper;
 
 
     @Override
     public List<AccountDTO> getAllAccounts() {
         return accountRepository.findAll()
-                .stream().map(AccountEntity -> mapper.toDTO(AccountEntity))
+                .stream().map(AccountEntity -> accountMapper.toDTO(AccountEntity))
                 .collect(Collectors.toList());
     }
 
@@ -49,14 +48,13 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Optional<AccountDTO> getActiveAccountDTOByEmail(String email) {
-        return accountRepository.findByEmailAndStatus(email, AccountStatus.ACTIVE)
-                .map(entity -> mapper.toDTO(entity));
-    }
-
-    @Override
-    public Integer getCountByActiveEmail(String email) {
-        return accountRepository.countByEmailAndStatus(email, AccountStatus.ACTIVE);
+    public Optional<AccountDTO> getAccountById(String id) {
+        Optional<AccountEntity> opt = accountRepository.findById(id);
+        if (!opt.isPresent()){
+            return Optional.empty();
+        }
+        AccountDTO accountDTO = accountMapper.toDTO(opt.get());
+        return Optional.of(accountDTO);
     }
 
     @Override
@@ -64,13 +62,6 @@ public class AccountServiceImpl implements AccountService {
         return accountRepository.countByIdAndStatus(id, AccountStatus.ACTIVE);
     }
 
-    @Override
-    public List<AccountDTO> getActiveAccountDTOByRole(Role role) {
-       return  accountRepository.findAllByRoleAndStatus(role, AccountStatus.ACTIVE)
-        .stream()
-        .map(entity -> mapper.toDTO(entity)).collect(Collectors.toList());
-
-    }
 
     @Override
     public Integer getCountAccountByEmail(String email) {

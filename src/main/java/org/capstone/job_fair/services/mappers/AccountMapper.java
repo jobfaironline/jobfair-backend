@@ -15,7 +15,7 @@ import org.capstone.job_fair.models.entities.account.AccountEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-public abstract class AccountEntityMapper {
+public abstract class AccountMapper {
     @Mapping(target = "gender", qualifiedByName = "toAccountDTOGender")
     @Mapping(target = "role", qualifiedByName = "toAccountDTORole")
     public abstract AccountDTO toDTO(AccountEntity account);

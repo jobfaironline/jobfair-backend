@@ -10,12 +10,11 @@ import org.capstone.job_fair.models.entities.attendant.ResidenceEntity;
 import org.capstone.job_fair.models.entities.attendant.cv.*;
 import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.SmartValidator;
 
 import java.util.List;
 import java.util.NoSuchElementException;
 
-@Mapper(componentModel = "spring", uses = {AccountEntityMapper.class, SkillMapper.class, WorkHistoryMapper.class, EducationMapper.class, CertificationMapper.class, ReferenceMapper.class, ActivityMapper.class},
+@Mapper(componentModel = "spring", uses = {AccountMapper.class, SkillMapper.class, WorkHistoryMapper.class, EducationMapper.class, CertificationMapper.class, ReferenceMapper.class, ActivityMapper.class},
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
         collectionMappingStrategy = CollectionMappingStrategy.ADDER_PREFERRED
 )

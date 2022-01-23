@@ -7,7 +7,6 @@ import org.capstone.job_fair.models.entities.attendant.AttendantEntity;
 import org.capstone.job_fair.repositories.attendant.AttendantRepository;
 import org.capstone.job_fair.services.interfaces.account.AccountService;
 import org.capstone.job_fair.services.interfaces.attendant.AttendantService;
-import org.capstone.job_fair.services.mappers.AccountEntityMapper;
 import org.capstone.job_fair.services.mappers.AttendantMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;

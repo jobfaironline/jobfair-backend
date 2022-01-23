@@ -18,11 +18,8 @@ import java.util.Optional;
 public interface AccountRepository extends JpaRepository<AccountEntity, String> {
     Optional<AccountEntity> findByEmailAndStatus(String email, AccountStatus status);
     Optional<AccountEntity> findByIdAndStatus(String id, AccountStatus status);
-    Integer countByEmailAndStatus(String email, AccountStatus status);
     Integer countByIdAndStatus(String id, AccountStatus status);
-    List<AccountEntity> findAllByRoleAndStatus(Role role, AccountStatus status);
     Integer countByEmail(String email);
-    Integer countByIdAndEmailAndStatus(String id, String email, AccountStatus status);
     Optional<AccountEntity> findByEmail(String email);
     Optional<AccountEntity> findByEmailAndStatusIn(String email, List<AccountStatus> statuses);
 }

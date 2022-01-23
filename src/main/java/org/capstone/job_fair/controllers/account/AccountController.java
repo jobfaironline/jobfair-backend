@@ -21,13 +21,13 @@ public class AccountController {
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
     @GetMapping(ApiEndPoint.Account.ACCOUNT_ENDPOINT)
-    public ResponseEntity<List<AccountDTO>> getAccounts(){
+    public ResponseEntity<List<AccountDTO>> getAccounts() {
         return new ResponseEntity<>(accountService.getAllAccounts(), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
-    @GetMapping(ApiEndPoint.Account.ACCOUNT_ENDPOINT + "/{email}")
-    public ResponseEntity<?> getAttendant(@PathVariable("email") String email) {
-        return ResponseEntity.status(HttpStatus.OK).body(accountService.getActiveAccountDTOByEmail(email));
+    @GetMapping(ApiEndPoint.Account.ACCOUNT_ENDPOINT + "/{id}")
+    public ResponseEntity<?> getAttendant(@PathVariable("id") String id) {
+        return ResponseEntity.status(HttpStatus.OK).body(accountService.getAccountById(id));
     }
 }
