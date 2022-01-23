@@ -49,7 +49,7 @@ public class CompanyEmployeeController {
 
 
     private boolean isEmailExist(String email) {
-        return accountService.getCountByEmail(email) != 0;
+        return accountService.getCountAccountByEmail(email) != 0;
     }
 
     private boolean isCompanyExist(String companyId) {
