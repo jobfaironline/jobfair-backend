@@ -4,6 +4,7 @@ import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.controllers.payload.requests.CreateJobPositionRequest;
+import org.capstone.job_fair.models.dtos.company.CompanyDTO;
 import org.capstone.job_fair.models.dtos.company.SkillTagDTO;
 import org.capstone.job_fair.models.dtos.company.SubCategoryDTO;
 import org.capstone.job_fair.models.dtos.company.job.JobPositionDTO;
@@ -54,12 +55,11 @@ public class JobController {
                 .maxSalary(request.getMaxSalary())
                 .contactPersonName(request.getContactPerson())
                 .contactEmail(request.getContactEmail())
-                .numOfExp(request.getNumOfEmp())
+                .numOfEmp(request.getNumOfEmp())
                 .language(request.getPreferredLanguage())
                 .level(request.getLevel())
                 .jobType(request.getJobType())
-                .locationId(request.getLocationId())
-                .comapnyId(request.getCompanyId())
+                .companyDTO(new CompanyDTO(request.getCompanyId()))
                 .subCategoryDTOs(request.getSubCategoryIds().stream().map(SubCategoryDTO::new).collect(Collectors.toList()))
                 .skillTagDTOS(request.getSkillTagIds().stream().map(SkillTagDTO::new).collect(Collectors.toList()))
                 .build();

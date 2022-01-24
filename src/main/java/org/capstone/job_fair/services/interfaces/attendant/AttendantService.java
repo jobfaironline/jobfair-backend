@@ -10,6 +10,8 @@ import java.util.Optional;
 public interface AttendantService{
     void updateAccount(AttendantDTO dto);
     Optional<AttendantDTO> getAttendantByEmail(String email);
-    AttendantEntity createNewAccount(AttendantDTO attendantDTO);
+    AttendantDTO createNewAccount(AttendantDTO attendantDTO);
     List<AttendantDTO> getAllAttendants();
+    Optional<AttendantDTO> getAttendantById(String id);
+
 }

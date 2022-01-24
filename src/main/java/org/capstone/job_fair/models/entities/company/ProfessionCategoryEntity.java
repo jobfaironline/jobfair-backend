@@ -16,7 +16,7 @@ import java.util.Objects;
 public class ProfessionCategoryEntity implements Serializable {
     @Id
     @Column(name = "id")
-    private int id;
+    private Integer id;
     @Basic
     @Column(name = "name", length = 100)
     private String name;

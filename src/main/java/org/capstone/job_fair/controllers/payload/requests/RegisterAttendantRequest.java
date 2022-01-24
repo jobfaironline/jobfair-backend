@@ -17,40 +17,26 @@ import javax.validation.constraints.Size;
 @ToString
 public class RegisterAttendantRequest {
 
-    @Valid
-    private RegisterAttendantRequest.AccountRequest account;
     @XSSConstraint
     @NotEmpty
     @PasswordConstraint
     private String password;
+    @EmailConstraint
+    private String email;
+    @PhoneConstraint
+    private String phone;
+    @NotEmpty
+    @Size(max = DataConstraint.Account.NAME_LENGTH)
     @XSSConstraint
     @NotEmpty
-    @PasswordConstraint
-    private String confirmPassword;
-
-
-    @Data
-    @AllArgsConstructor
-    @NoArgsConstructor
-    @ToString
-    public static class AccountRequest {
-        @EmailConstraint
-        private String email;
-        @PhoneConstraint
-        private String phone;
-        @NotEmpty
-        @Size(max = DataConstraint.Account.NAME_LENGTH)
-        @XSSConstraint
-        @NotEmpty
-        private String firstname;
-        @Size(max = DataConstraint.Account.NAME_LENGTH)
-        @XSSConstraint
-        @NotEmpty
-        private String lastname;
-        @Size(max = DataConstraint.Account.NAME_LENGTH)
-        @XSSConstraint
-        @NotEmpty
-        private String middlename;
-        private Gender gender;
-    }
+    private String firstname;
+    @Size(max = DataConstraint.Account.NAME_LENGTH)
+    @XSSConstraint
+    @NotEmpty
+    private String lastname;
+    @Size(max = DataConstraint.Account.NAME_LENGTH)
+    @XSSConstraint
+    @NotEmpty
+    private String middlename;
+    private Gender gender;
 }

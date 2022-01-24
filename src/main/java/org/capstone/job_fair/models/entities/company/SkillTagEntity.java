@@ -1,9 +1,6 @@
 package org.capstone.job_fair.models.entities.company;
 
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -13,8 +10,10 @@ import java.util.Objects;
 @Table(name = "skill_tag", schema = "dbo")
 @AllArgsConstructor
 @NoArgsConstructor
+@Setter
+@Getter
 public class SkillTagEntity implements Serializable {
-    public SkillTagEntity(int id){
+    public SkillTagEntity(int id) {
         this.id = id;
     }
 

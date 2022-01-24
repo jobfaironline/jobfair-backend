@@ -8,7 +8,7 @@ import java.util.List;
 public interface CompanyEmployeeService {
     void createNewCompanyManagerAccount(CompanyEmployeeDTO dto);
 
-    void createNewCompanyEmployeeAccount(CompanyEmployeeDTO dto, String companyId);
+    void createNewCompanyEmployeeAccount(CompanyEmployeeDTO dto);
 
     void updateProfile(CompanyEmployeeDTO dto);
 

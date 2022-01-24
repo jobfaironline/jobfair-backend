@@ -9,5 +9,5 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 @RepositoryRestResource(path = ApiEndPoint.RestDataEndpoint.BENEFIT)
-public interface BenefitRepository extends JpaRepository<BenefitEntity, String> {
+public interface BenefitRepository extends JpaRepository<BenefitEntity, Integer> {
 }

@@ -3,7 +3,6 @@ package org.capstone.job_fair.controllers.company;
 
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
-import org.capstone.job_fair.constants.ResetPasswordTokenConstants;
 import org.capstone.job_fair.controllers.payload.requests.CompanyEmployeeRegisterRequest;
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
 import org.capstone.job_fair.models.dtos.company.CompanyDTO;
@@ -21,12 +20,14 @@ import org.capstone.job_fair.utils.PasswordGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @RestController
 public class CompanyEmployeeController {
@@ -161,18 +162,19 @@ public class CompanyEmployeeController {
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
     @PostMapping(ApiEndPoint.CompanyEmployee.COMPANY_EMPLOYEE_ENDPOINT)
-    public ResponseEntity<?> createEmployee(@Validated @RequestBody CompanyEmployeeRegisterRequest request){
+    @Async("threadPoolTaskExecutor")
+    public CompletableFuture<ResponseEntity<?>> createEmployee(@Validated @RequestBody CompanyEmployeeRegisterRequest request){
         //check if email existed?
         if (isEmailExist(request.getEmail())) {
-            return GenericResponse.build(
+            return CompletableFuture.completedFuture(GenericResponse.build(
                     MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMAIL_EXISTED),
-                    HttpStatus.BAD_REQUEST);
+                    HttpStatus.BAD_REQUEST));
         }
         //check if company existed?
         if (!isCompanyExist(request.getCompanyId())) {
-            return GenericResponse.build(
+            return CompletableFuture.completedFuture(GenericResponse.build(
                     MessageUtil.getMessage(MessageConstant.Company.NOT_FOUND),
-                    HttpStatus.BAD_REQUEST);
+                    HttpStatus.BAD_REQUEST));
         }
 
         AccountDTO accountDTO = new AccountDTO();
@@ -191,13 +193,13 @@ public class CompanyEmployeeController {
         companyDTO.setId(request.getCompanyId());
         dto.setCompanyDTO(companyDTO);
 
-        companyEmployeeService.createNewCompanyEmployeeAccount(dto, request.getCompanyId());
+        companyEmployeeService.createNewCompanyEmployeeAccount(dto);
         this.mailService.sendMail(request.getEmail(),
                 MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMAIL_SUBJECT),
                 MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMAIL_CONTENT) + dto.getAccount().getPassword());
-        return GenericResponse.build(
+        return CompletableFuture.completedFuture(GenericResponse.build(
                 MessageUtil.getMessage(MessageConstant.CompanyEmployee.CREATE_EMPLOYEE_EMPLOYEE_SUCCESSFULLY),
-                HttpStatus.CREATED);
+                HttpStatus.CREATED));
     }
 
 }

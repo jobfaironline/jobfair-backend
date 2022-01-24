@@ -1,4 +1,4 @@
-package org.capstone.job_fair.models.entities.company.job;
+package org.capstone.job_fair.models.entities.attendant.cv;
 
 import lombok.*;
 import org.hibernate.Hibernate;
@@ -12,12 +12,11 @@ import java.util.Objects;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "job_type", schema = "dbo")
-public class JobTypeEntity {
+@Table(name = "qualification", schema = "dbo")
+public class QualificationEntity {
     @Id
-    @Column(name = "id")
+    @Column(name = "id", nullable = false)
     private Integer id;
-    @Basic
     @Column(name = "name", length = 100)
     private String name;
 
@@ -25,7 +24,7 @@ public class JobTypeEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        JobTypeEntity that = (JobTypeEntity) o;
+        QualificationEntity that = (QualificationEntity) o;
         return id != null && Objects.equals(id, that.id);
     }
 

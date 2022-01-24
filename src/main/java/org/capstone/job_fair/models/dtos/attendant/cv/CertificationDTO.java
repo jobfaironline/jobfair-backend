@@ -15,5 +15,4 @@ public class CertificationDTO {
     private String institution;
     private Integer year;
     private String certificationLink;
-    private String attendantId;
 }

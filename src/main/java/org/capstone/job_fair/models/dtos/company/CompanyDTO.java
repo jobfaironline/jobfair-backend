@@ -1,12 +1,10 @@
 package org.capstone.job_fair.models.dtos.company;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.capstone.job_fair.models.statuses.CompanyStatus;
 
 import java.util.List;
+import java.util.Set;
 
 
 @Data
@@ -14,6 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class CompanyDTO {
+
     private String id;
     private String taxId;
     private String name;
@@ -24,7 +23,13 @@ public class CompanyDTO {
     private String websiteUrl;
     private CompanyStatus status;
     private Integer sizeId;
-    private List<SubCategoryDTO> subCategoryDTOs;
-    private List<BenefitDTO> benefitDTOs;
+    private Set<SubCategoryDTO> subCategoryDTOs;
+    private Set<BenefitDTO> benefitDTOs;
     private List<MediaDTO> mediaDTOS;
+
+    public CompanyDTO(String id) {
+        this.id = id;
+    }
+
+
 }

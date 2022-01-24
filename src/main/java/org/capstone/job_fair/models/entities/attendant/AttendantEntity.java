@@ -42,8 +42,9 @@ public class AttendantEntity {
     @Enumerated(EnumType.ORDINAL)
     private Marital maritalStatus;
 
-    @OneToOne(cascade = {CascadeType.ALL})
+    @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
     @JoinColumn(name = "account_id")
+    @MapsId
     private AccountEntity account;
 
     @ManyToOne(fetch = FetchType.LAZY)

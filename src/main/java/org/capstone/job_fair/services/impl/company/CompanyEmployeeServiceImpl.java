@@ -3,14 +3,11 @@ package org.capstone.job_fair.services.impl.company;
 import org.capstone.job_fair.constants.AccountConstant;
 import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
-import org.capstone.job_fair.models.entities.account.GenderEntity;
-import org.capstone.job_fair.models.entities.account.RoleEntity;
 import org.capstone.job_fair.models.entities.company.CompanyEntity;
 import org.capstone.job_fair.models.enums.Role;
 import org.capstone.job_fair.repositories.account.AccountRepository;
 import org.capstone.job_fair.repositories.company.CompanyRepository;
-import org.capstone.job_fair.services.interfaces.company.CompanyService;
-import org.capstone.job_fair.services.mappers.CompanyEmployeeEntityMapper;
+import org.capstone.job_fair.services.mappers.CompanyEmployeeMapper;
 import org.capstone.job_fair.models.statuses.AccountStatus;
 import org.capstone.job_fair.repositories.company.CompanyEmployeeRepository;
 import org.capstone.job_fair.services.interfaces.company.CompanyEmployeeService;
@@ -24,14 +21,13 @@ import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
 @Transactional
 public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
     @Autowired
-    private CompanyEmployeeEntityMapper mapper;
+    private CompanyEmployeeMapper mapper;
 
     @Autowired
     private BCryptPasswordEncoder encoder;
@@ -48,13 +44,10 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
 
     @Override
     public void createNewCompanyManagerAccount(CompanyEmployeeDTO dto) {
-        String id = UUID.randomUUID().toString();
         dto.getAccount().setRole(Role.COMPANY_MANAGER);
         CompanyEmployeeEntity entity = mapper.toEntity(dto);
-        entity.setAccountId(id);
 
         AccountEntity accountEntity = entity.getAccount();
-        accountEntity.setId(id);
         accountEntity.setPassword(encoder.encode(accountEntity.getPassword()));
         accountEntity.setProfileImageUrl(AccountConstant.DEFAULT_PROFILE_IMAGE_URL);
         accountEntity.setStatus(AccountStatus.ACTIVE);
@@ -64,20 +57,14 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
     }
 
     @Override
-    public void createNewCompanyEmployeeAccount(CompanyEmployeeDTO dto, String companyId) {
-        String id = UUID.randomUUID().toString();
+    public void createNewCompanyEmployeeAccount(CompanyEmployeeDTO dto) {
         dto.getAccount().setRole(Role.COMPANY_EMPLOYEE);
         CompanyEmployeeEntity entity = mapper.toEntity(dto);
-        entity.setAccountId(id);
-
-        entity.setCompany(companyRepository.findById(companyId).get());
 
         AccountEntity accountEntity = entity.getAccount();
-        accountEntity.setId(id);
         accountEntity.setPassword(encoder.encode(accountEntity.getPassword()));
         accountEntity.setProfileImageUrl(AccountConstant.DEFAULT_PROFILE_IMAGE_URL);
         accountEntity.setStatus(AccountStatus.REGISTERED);
-
         employeeRepository.save(entity);
     }
 
