@@ -18,9 +18,16 @@ public class ApiEndPoint {
         public static final String RESET_PASSWORD_ENDPOINT = AUTHENTICATION_ENDPOINT + "/reset-password";
 
     }
+    public static final class Authorization {
+        public static final String VERIFY_USER = ROOT_ENDPOINT + VERSION + "/verify";
+    }
 
     public static final class Company {
         public static final String COMPANY_ENDPOINT = ROOT_ENDPOINT + VERSION + "/companies";
+    }
+    public static final class Domain{
+        public static final String LOCAL = "domain.local";
+        public static final String CLOUD = "domain.cloud";
     }
     public static final class Job {
         public static final String JOB_POSITION_ENDPOINT = ROOT_ENDPOINT + VERSION + "/job";
@@ -68,6 +75,8 @@ public class ApiEndPoint {
         public static final String RESET_PASSWORD = "reset-password";
         public static final String COMPANY_EMPLOYEE = "company-employee";
         public static final String SUB_CATEGORY = "sub-category";
+        public static final String VERIFY = "verifies";
+
 
     }
 

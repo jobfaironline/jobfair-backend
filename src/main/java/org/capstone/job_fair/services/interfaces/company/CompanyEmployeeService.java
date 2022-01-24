@@ -6,7 +6,7 @@ import org.capstone.job_fair.models.entities.company.CompanyEmployeeEntity;
 import java.util.List;
 
 public interface CompanyEmployeeService {
-    void createNewCompanyManagerAccount(CompanyEmployeeDTO dto);
+    CompanyEmployeeEntity createNewCompanyManagerAccount(CompanyEmployeeDTO dto);
 
     void createNewCompanyEmployeeAccount(CompanyEmployeeDTO dto);
 

@@ -10,10 +10,13 @@ import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
 import org.capstone.job_fair.controllers.payload.requests.CompanyManagerRegisterRequest;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.controllers.payload.requests.UpdateCompanyEmployeeProfileRequest;
+import org.capstone.job_fair.models.entities.company.CompanyEmployeeEntity;
+import org.capstone.job_fair.models.entities.token.AccountVerifyTokenEntity;
 import org.capstone.job_fair.services.interfaces.account.AccountService;
 import org.capstone.job_fair.services.interfaces.account.GenderService;
 import org.capstone.job_fair.services.interfaces.company.CompanyEmployeeService;
 import org.capstone.job_fair.services.interfaces.company.CompanyService;
+import org.capstone.job_fair.services.interfaces.token.AccountVerifyTokenService;
 import org.capstone.job_fair.services.interfaces.util.MailService;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.capstone.job_fair.utils.PasswordGenerator;
@@ -46,6 +49,9 @@ public class CompanyEmployeeController {
 
     @Autowired
     private MailService mailService;
+
+    @Autowired
+    private AccountVerifyTokenService accountVerifyTokenService;
 
 
 
@@ -85,7 +91,11 @@ public class CompanyEmployeeController {
         CompanyEmployeeDTO dto = new CompanyEmployeeDTO();
         dto.setAccount(accountDTO);
 
-        companyEmployeeService.createNewCompanyManagerAccount(dto);
+        CompanyEmployeeEntity entity = companyEmployeeService.createNewCompanyManagerAccount(dto);
+        AccountVerifyTokenEntity token = accountVerifyTokenService.createToken(entity.getAccount().getId());
+        this.mailService.sendMail(request.getEmail(),
+                MessageUtil.getMessage(MessageConstant.Attendant.ACCOUNT_VERIFY_MAIL_TITLE),
+                MessageUtil.getMessage(ApiEndPoint.Domain.LOCAL) + ApiEndPoint.Authorization.VERIFY_USER+"/"+entity.getAccount().getId()+"/"+token.getId());
         return GenericResponse.build(
                 MessageUtil.getMessage(MessageConstant.CompanyEmployee.CREATE_EMPLOYEE_MANAGER_SUCCESSFULLY),
                 HttpStatus.CREATED);

@@ -33,6 +33,10 @@ public class MessageConstant {
         public static final String RESET_PASSWORD_SUCCESSFULLY = "access-control.success.reset-password";
         public static final String INTERVAL_OTP_REQUEST = "access-control.error.interval-otp-request";
         public static final String REQUEST_RESET_PASSWORD_SUCCESSFULLY = "access-control.success.request-reset-password";
+        public static final String INVALID_VERIFY_TOKEN = "access-control.error.invalid-account-verify-token";
+        public static final String INVALIDATED_VERIFY_TOKEN = "access-control.error.invalidated-account-verify-token";
+        public static final String EXPIRED_TOKEN = "access-control.error.expired-account-verify-token";
+        public static final String VERIFY_ACCOUNT_SUCCESSFULLY="access-control.success.verify-account";
     }
 
     public static final class Account {
@@ -56,6 +60,8 @@ public class MessageConstant {
         public static final String UPDATE_PROFILE_SUCCESSFULLY = "attendant.success.update-profile";
         public static final String UPDATE_PROFILE_FAILED = "attendant.fail.update-profile";
         public static final String REGISTER_SUCCESSFULLY = "attendant.success.create";
+        public static final String ACCOUNT_VERIFY_MAIL_TITLE = "attendant.verify.email-title";
+        public static final String ACCOUNT_VERIFY_MAIL_CONTENT = "attendant.verify.email-title";
     }
 
     public static final class Company {

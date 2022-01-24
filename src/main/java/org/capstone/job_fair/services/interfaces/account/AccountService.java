@@ -23,4 +23,6 @@ public interface AccountService {
 
     Integer getCountAccountByEmail(String email);
 
+    void changeAccountStatus(String id);
+
 }

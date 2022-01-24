@@ -5,12 +5,13 @@ import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.controllers.payload.requests.RegisterAttendantRequest;
 import org.capstone.job_fair.controllers.payload.requests.UpdateAttendantRequest;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
-import org.capstone.job_fair.models.dtos.account.AccountDTO;
 import org.capstone.job_fair.models.dtos.attendant.AttendantDTO;
-import org.capstone.job_fair.models.enums.Role;
-import org.capstone.job_fair.models.statuses.AccountStatus;
-import org.capstone.job_fair.services.interfaces.account.AccountService;
+import org.capstone.job_fair.models.entities.token.AccountVerifyTokenEntity;
 import org.capstone.job_fair.services.interfaces.attendant.AttendantService;
+import org.capstone.job_fair.services.interfaces.attendant.CountryService;
+import org.capstone.job_fair.services.interfaces.attendant.ResidenceService;
+import org.capstone.job_fair.services.interfaces.token.AccountVerifyTokenService;
+import org.capstone.job_fair.services.interfaces.util.MailService;
 import org.capstone.job_fair.services.mappers.AttendantMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 @RestController
 public class AttendantController {
@@ -32,6 +34,20 @@ public class AttendantController {
 
     @Autowired
     private AttendantService attendantService;
+
+    @Autowired
+    private CountryService countryService;
+
+    @Autowired
+    private ResidenceService residenceService;
+
+    @Autowired
+    private AccountVerifyTokenService accountVerifyTokenService;
+
+    @Autowired
+    private MailService mailService;
+
+
 
     @GetMapping(ApiEndPoint.Attendant.ATTENDANT_ENDPOINT)
     public ResponseEntity<List<AttendantDTO>> getAllAccounts() {
@@ -59,7 +75,12 @@ public class AttendantController {
 
         try {
             AttendantDTO attendantDTO = attendantMapper.toDTO(req);
-            attendantService.createNewAccount(attendantDTO);
+            attendantDTO = attendantService.createNewAccount(attendantDTO);
+            AccountVerifyTokenEntity token = accountVerifyTokenService.createToken(attendantDTO.getAccount().getId());
+
+            this.mailService.sendMail(req.getEmail(),
+                    MessageUtil.getMessage(MessageConstant.Attendant.ACCOUNT_VERIFY_MAIL_TITLE),
+                    MessageUtil.getMessage(ApiEndPoint.Domain.LOCAL) + ApiEndPoint.Authorization.VERIFY_USER+"/"+attendantDTO.getAccount().getId()+"/"+token.getId());
             return GenericResponse.build(
                     MessageUtil.getMessage(MessageConstant.Attendant.REGISTER_SUCCESSFULLY),
                     HttpStatus.CREATED);
