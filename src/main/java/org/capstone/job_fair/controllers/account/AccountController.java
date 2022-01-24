@@ -1,8 +1,11 @@
 package org.capstone.job_fair.controllers.account;
 
 import org.capstone.job_fair.constants.ApiEndPoint;
+import org.capstone.job_fair.constants.MessageConstant;
+import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
 import org.capstone.job_fair.services.interfaces.account.AccountService;
+import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class AccountController {
@@ -28,6 +32,10 @@ public class AccountController {
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
     @GetMapping(ApiEndPoint.Account.ACCOUNT_ENDPOINT + "/{id}")
     public ResponseEntity<?> getAttendant(@PathVariable("id") String id) {
-        return ResponseEntity.status(HttpStatus.OK).body(accountService.getAccountById(id));
+        Optional<AccountDTO> opt = accountService.getAccountById(id);
+        if (opt.isPresent()) {
+            return ResponseEntity.status(HttpStatus.OK).body(opt);
+        }
+        return GenericResponse.build(MessageUtil.getMessage(MessageConstant.Account.NOT_FOUND), HttpStatus.NOT_FOUND);
     }
 }

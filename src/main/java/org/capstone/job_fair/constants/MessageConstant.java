@@ -121,5 +121,13 @@ public class MessageConstant {
         public static final String ACTIVITY_NOT_FOUND = "activity.notfound";
     }
 
+    public static final class Benefit{
+        public static final String NOT_FOUND = "benefit.error.not-found";
+    }
+
+    public static final class SubCategory{
+        public static final String NOT_FOUND = "sub-category.error.not-found";
+    }
+
 }
 

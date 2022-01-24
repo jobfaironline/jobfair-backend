@@ -29,6 +29,7 @@ public class MediaEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id")
     @JsonBackReference
+    @ToString.Exclude
     private CompanyEntity company;
 
     @Override

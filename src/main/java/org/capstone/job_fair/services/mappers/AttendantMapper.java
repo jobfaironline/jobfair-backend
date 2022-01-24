@@ -9,6 +9,7 @@ import org.capstone.job_fair.models.entities.attendant.AttendantEntity;
 import org.capstone.job_fair.models.entities.attendant.CountryEntity;
 import org.capstone.job_fair.models.entities.attendant.ResidenceEntity;
 import org.capstone.job_fair.models.entities.attendant.cv.*;
+import org.capstone.job_fair.utils.MessageUtil;
 import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -120,14 +121,14 @@ public abstract class AttendantMapper {
         dtos.forEach(skillDTO -> {
             if (skillDTO.getId() == null) { // if skill id null: create new skill
                 if (!isValidSkillDTO(skillDTO)){
-                    throw new IllegalArgumentException(MessageConstant.Skill.INVALID_SKILL);
+                    throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Skill.INVALID_SKILL));
                 }
                 SkillEntity entity = skillMapper.toEntity(skillDTO);
                 entities.add(entity);
             } else {
                 SkillEntity existedEntity = entities.stream().filter(skillEntity -> skillEntity.getId().equals(skillDTO.getId()))
                         .findFirst()
-                        .orElseThrow(() -> new NoSuchElementException(MessageConstant.Skill.SKILL_NOT_FOUND));
+                        .orElseThrow(() -> new NoSuchElementException(MessageUtil.getMessage(MessageConstant.Skill.SKILL_NOT_FOUND)));
                 skillMapper.updateSkillEntityFromSkillDTO(skillDTO, existedEntity);
             }
         });
@@ -138,7 +139,7 @@ public abstract class AttendantMapper {
         dtos.forEach(workHistoryDTO -> {
             if (workHistoryDTO.getId() == null) { // if skill id null: create new skill
                 if (!isValidWorkHistoryDTO(workHistoryDTO)){
-                    throw new IllegalArgumentException(MessageConstant.WorkHistory.INVALID_WORK_HISTORY);
+                    throw new IllegalArgumentException(MessageUtil.getMessage((MessageConstant.WorkHistory.INVALID_WORK_HISTORY)));
                 }
                 WorkHistoryEntity entity = workHistoryMapper.toEntity(workHistoryDTO);
                 entities.add(entity);
@@ -146,7 +147,7 @@ public abstract class AttendantMapper {
                 WorkHistoryEntity existedEntity = entities.stream()
                         .filter(workHistoryEntity -> workHistoryEntity.getId().equals(workHistoryDTO.getId()))
                         .findFirst()
-                        .orElseThrow(() -> new NoSuchElementException(MessageConstant.WorkHistory.WORK_HISTORY_NOT_FOUND));
+                        .orElseThrow(() -> new NoSuchElementException(MessageUtil.getMessage(MessageConstant.WorkHistory.WORK_HISTORY_NOT_FOUND)));
                 workHistoryMapper.updateWorkHistoryEntityFromWorkHistoryDTO(workHistoryDTO, existedEntity);
             }
         });
@@ -157,7 +158,7 @@ public abstract class AttendantMapper {
         dtos.forEach(educationDTO -> {
             if (educationDTO.getId() == null) { // if skill id null: create new skill
                 if (!isValidEducationDTO(educationDTO)){
-                    throw new IllegalArgumentException(MessageConstant.Education.INVALID_EDUCATION);
+                    throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Education.INVALID_EDUCATION));
                 }
                 EducationEntity entity = educationMapper.toEntity(educationDTO);
                 entities.add(entity);
@@ -165,7 +166,7 @@ public abstract class AttendantMapper {
                 EducationEntity existedEntity = entities.stream()
                         .filter(educationEntity -> educationEntity.getId().equals(educationDTO.getId()))
                         .findFirst()
-                        .orElseThrow(() -> new NoSuchElementException(MessageConstant.Education.EDUCATION_NOT_FOUND));
+                        .orElseThrow(() -> new NoSuchElementException(MessageUtil.getMessage(MessageConstant.Education.EDUCATION_NOT_FOUND)));
                 educationMapper.updateEducationEntityFromEducationDTO(educationDTO, existedEntity);
             }
         });
@@ -176,7 +177,7 @@ public abstract class AttendantMapper {
         dtos.forEach(certificationDTO -> {
             if (certificationDTO.getId() == null) { // if skill id null: create new skill
                 if (!isValidCertificationDTO(certificationDTO)){
-                    throw new IllegalArgumentException(MessageConstant.Certification.INVALID_CERTIFICATION);
+                    throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Certification.INVALID_CERTIFICATION));
                 }
                 CertificationEntity entity = certificationMapper.toEntity(certificationDTO);
                 entities.add(entity);
@@ -184,7 +185,7 @@ public abstract class AttendantMapper {
                 CertificationEntity existedEntity = entities.stream()
                         .filter(certificationEntity -> certificationEntity.getId().equals(certificationDTO.getId()))
                         .findFirst()
-                        .orElseThrow(() -> new NoSuchElementException(MessageConstant.Certification.CERTIFICATION_NOT_FOUND));
+                        .orElseThrow(() -> new NoSuchElementException(MessageUtil.getMessage(MessageConstant.Certification.CERTIFICATION_NOT_FOUND)));
                 certificationMapper.updateCertificationEntityFromCertificationDTO(certificationDTO, existedEntity);
             }
         });
@@ -195,7 +196,7 @@ public abstract class AttendantMapper {
         dtos.forEach(referenceDTO -> {
             if (referenceDTO.getId() == null) { // if skill id null: create new skill
                 if (!isValidReferenceDTO(referenceDTO)){
-                    throw new IllegalArgumentException(MessageConstant.Reference.INVALID_REFERENCE);
+                    throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Reference.INVALID_REFERENCE));
                 }
                 ReferenceEntity entity = referenceMapper.toEntity(referenceDTO);
                 entities.add(entity);
@@ -203,7 +204,7 @@ public abstract class AttendantMapper {
                 ReferenceEntity existedEntity = entities.stream()
                         .filter(referenceEntity -> referenceEntity.getId().equals(referenceDTO.getId()))
                         .findFirst()
-                        .orElseThrow(() -> new NoSuchElementException(MessageConstant.Reference.REFERENCE_NOT_FOUND));
+                        .orElseThrow(() -> new NoSuchElementException(MessageUtil.getMessage(MessageConstant.Reference.REFERENCE_NOT_FOUND)));
                 referenceMapper.updateReferenceEntityFromRefereceDTO(referenceDTO, existedEntity);
             }
         });
@@ -214,7 +215,7 @@ public abstract class AttendantMapper {
         dtos.forEach(activityDTO -> {
             if (activityDTO.getId() == null) { // if skill id null: create new skill
                 if (!isValidActivityDTO(activityDTO)){
-                    throw new IllegalArgumentException(MessageConstant.Activity.INVALID_ACTIVITY);
+                    throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Activity.INVALID_ACTIVITY));
                 }
                 ActivityEntity entity = activityMapper.toEntity(activityDTO);
                 entities.add(entity);
@@ -222,7 +223,7 @@ public abstract class AttendantMapper {
                 ActivityEntity existedEntity = entities.stream()
                         .filter(activityEntity -> activityEntity.getId().equals(activityDTO.getId()))
                         .findFirst()
-                        .orElseThrow(() -> new NoSuchElementException(MessageConstant.Activity.ACTIVITY_NOT_FOUND));
+                        .orElseThrow(() -> new NoSuchElementException(MessageUtil.getMessage(MessageConstant.Activity.ACTIVITY_NOT_FOUND)));
                 activityMapper.updateActivityEntityFromActivityDTO(activityDTO, existedEntity);
             }
         });

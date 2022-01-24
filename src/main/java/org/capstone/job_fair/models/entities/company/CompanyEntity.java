@@ -9,6 +9,7 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -52,14 +53,14 @@ public class CompanyEntity {
             joinColumns = @JoinColumn(name = "company_id"),
             inverseJoinColumns = @JoinColumn(name = "benefit_id")
     )
-    private List<BenefitEntity> companyBenefits;
+    private Set<BenefitEntity> companyBenefits;
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "company_category",
             joinColumns = @JoinColumn(name = "company_id"),
             inverseJoinColumns = @JoinColumn(name = "sub_category_id")
     )
-    private List<SubCategoryEntity> companySubCategory;
+    private Set<SubCategoryEntity> subCategories;
 
     @Override
     public boolean equals(Object o) {

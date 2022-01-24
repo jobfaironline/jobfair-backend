@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @RestController
 public class AttendantController {
@@ -44,13 +45,13 @@ public class AttendantController {
         try {
             AttendantDTO attendantDTO = attendantMapper.toDTO(request);
             attendantService.updateAccount(attendantDTO);
-        } catch (NoSuchElementException | IllegalArgumentException ex ) {
-            return GenericResponse.build(MessageUtil.getMessage(ex.getMessage()),
-                    HttpStatus.BAD_REQUEST);
+            return GenericResponse.build(
+                    MessageUtil.getMessage(MessageConstant.Attendant.UPDATE_PROFILE_SUCCESSFULLY),
+                    HttpStatus.OK);
+        } catch (NoSuchElementException | IllegalArgumentException ex) {
+            return GenericResponse.build(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }
-        return GenericResponse.build(
-                MessageUtil.getMessage(MessageConstant.Attendant.UPDATE_PROFILE_SUCCESSFULLY),
-                HttpStatus.OK);
+
     }
 
     @PostMapping(ApiEndPoint.Attendant.REGISTER_ENDPOINT)
@@ -59,20 +60,22 @@ public class AttendantController {
         try {
             AttendantDTO attendantDTO = attendantMapper.toDTO(req);
             attendantService.createNewAccount(attendantDTO);
-        } catch (NoSuchElementException | IllegalArgumentException ex ) {
-            return GenericResponse.build(MessageUtil.getMessage(ex.getMessage()),
-                    HttpStatus.BAD_REQUEST);
+            return GenericResponse.build(
+                    MessageUtil.getMessage(MessageConstant.Attendant.REGISTER_SUCCESSFULLY),
+                    HttpStatus.CREATED);
+        } catch (NoSuchElementException | IllegalArgumentException ex) {
+            return GenericResponse.build(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }
-
-        return GenericResponse.build(
-                MessageUtil.getMessage(MessageConstant.Attendant.REGISTER_SUCCESSFULLY),
-                HttpStatus.CREATED);
     }
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ATTENDANT) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
     @GetMapping(ApiEndPoint.Attendant.ATTENDANT_ENDPOINT + "/{id}")
     public ResponseEntity<?> getAttendant(@PathVariable("id") String id) {
-        return ResponseEntity.status(HttpStatus.OK).body(attendantService.getAttendantById(id));
+        Optional<AttendantDTO> opt = attendantService.getAttendantById(id);
+        if (opt.isPresent()) {
+            return ResponseEntity.status(HttpStatus.OK).body(opt.get());
+        }
+        return GenericResponse.build(MessageUtil.getMessage(MessageConstant.Account.NOT_FOUND), HttpStatus.NOT_FOUND);
     }
 
 }

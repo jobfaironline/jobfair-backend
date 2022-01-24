@@ -66,22 +66,22 @@ public class AttendantServiceImpl implements AttendantService {
     public void updateAccount(AttendantDTO dto) {
         Optional<AccountEntity> opt = accountService.getActiveAccountById(dto.getAccount().getId());
         if (!opt.isPresent()) {
-            throw new IllegalArgumentException(MessageConstant.Account.NOT_FOUND);
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Account.NOT_FOUND));
         }
 
         if (dto.getAccount() != null //request must have account
                 && dto.getAccount().getEmail() != null //then have email in account
                 && !opt.get().getEmail().equals(dto.getAccount().getEmail())
                 && isEmailExist(dto.getAccount().getEmail())) {
-            throw new IllegalArgumentException(MessageConstant.Account.EMAIL_EXISTED);
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Account.EMAIL_EXISTED));
         }
 
         if (dto.getCountryId() != null && !isCountryExist(dto.getCountryId())) {
-            throw new IllegalArgumentException(MessageConstant.Account.NOT_FOUND_COUNTRY);
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Account.NOT_FOUND_COUNTRY));
         }
 
         if (dto.getResidenceId() != null && !isResidenceExist(dto.getResidenceId())) {
-            throw new IllegalArgumentException(MessageConstant.Account.NOT_FOUND_RESIDENCE);
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Account.NOT_FOUND_RESIDENCE));
         }
 
         if (dto.getAccount() != null && dto.getAccount().getPassword() != null) {
@@ -114,7 +114,7 @@ public class AttendantServiceImpl implements AttendantService {
     @Override
     public AttendantDTO createNewAccount(AttendantDTO dto) {
         if (isEmailExist(dto.getAccount().getEmail())) {
-            throw new IllegalArgumentException(MessageConstant.Account.EMAIL_EXISTED);
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Account.EMAIL_EXISTED));
         }
 
         dto.getAccount().setRole(Role.ATTENDANT);

@@ -4,6 +4,7 @@ import lombok.*;
 import org.capstone.job_fair.models.statuses.CompanyStatus;
 
 import java.util.List;
+import java.util.Set;
 
 
 @Data
@@ -22,8 +23,8 @@ public class CompanyDTO {
     private String websiteUrl;
     private CompanyStatus status;
     private Integer sizeId;
-    private List<SubCategoryDTO> subCategoryDTOs;
-    private List<BenefitDTO> benefitDTOs;
+    private Set<SubCategoryDTO> subCategoryDTOs;
+    private Set<BenefitDTO> benefitDTOs;
     private List<MediaDTO> mediaDTOS;
 
     public CompanyDTO(String id) {

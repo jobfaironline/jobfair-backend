@@ -4,9 +4,9 @@ import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
 import org.capstone.job_fair.models.entities.company.CompanyEmployeeEntity;
 import org.mapstruct.*;
 
-@Mapper(componentModel = "spring", uses = {CompanyEntityMapper.class, AccountMapper
-        .class}, nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-public abstract class CompanyEmployeeEntityMapper {
+@Mapper(componentModel = "spring", uses = {CompanyMapper.class, AccountMapper.class},
+        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+public abstract class CompanyEmployeeMapper {
     @Mapping(source = "company", target = "companyDTO")
     public abstract CompanyEmployeeDTO toDTO(CompanyEmployeeEntity attendant);
 

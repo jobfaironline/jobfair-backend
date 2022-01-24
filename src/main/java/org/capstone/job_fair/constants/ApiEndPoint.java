@@ -67,6 +67,7 @@ public class ApiEndPoint {
         public static final String REFERENCE = "references";
         public static final String RESET_PASSWORD = "reset-password";
         public static final String COMPANY_EMPLOYEE = "company-employee";
+        public static final String SUB_CATEGORY = "sub-category";
 
     }
 

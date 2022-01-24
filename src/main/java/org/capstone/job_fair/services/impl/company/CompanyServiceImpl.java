@@ -1,15 +1,17 @@
 package org.capstone.job_fair.services.impl.company;
 
+import org.capstone.job_fair.constants.DataConstraint;
+import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.models.dtos.company.BenefitDTO;
 import org.capstone.job_fair.models.dtos.company.CompanyDTO;
-import org.capstone.job_fair.models.dtos.company.MediaDTO;
 import org.capstone.job_fair.models.dtos.company.SubCategoryDTO;
 import org.capstone.job_fair.models.entities.company.*;
-import org.capstone.job_fair.repositories.company.CompanyRepository;
-import org.capstone.job_fair.repositories.company.MediaRepository;
+import org.capstone.job_fair.models.statuses.CompanyStatus;
+import org.capstone.job_fair.repositories.company.*;
 import org.capstone.job_fair.services.interfaces.company.CompanyService;
 import org.capstone.job_fair.services.interfaces.company.CompanySizeService;
-import org.capstone.job_fair.services.mappers.CompanyEntityMapper;
+import org.capstone.job_fair.services.mappers.CompanyMapper;
+import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,26 +23,50 @@ import java.util.stream.Collectors;
 @Service
 public class CompanyServiceImpl implements CompanyService {
 
-    private static final String NOT_FOUND_SIZE = "Size not found with given Id";
-    private static final String NOT_FOUND_COMPANY = "Company not found with given Id";
-
     @Autowired
     private CompanyRepository companyRepository;
 
     @Autowired
-    private MediaRepository mediaRepository;
-
+    private CompanyMapper mapper;
 
     @Autowired
-    private CompanyEntityMapper mapper;
+    private CompanySizeRepository companySizeRepository;
+
+    @Autowired
+    private CompanyMapper companyMapper;
+
+    @Autowired
+    private BenefitRepository benefitRepository;
+
+    @Autowired
+    private SubCategoryRepository subCategoryRepository;
+
+    private boolean isEmailExisted(String email) {
+        return companyRepository.countByEmail(email) != 0;
+    }
+
+    private boolean isTaxIDExisted(String taxID) {
+        return companyRepository.countByTaxId(taxID) != 0;
+    }
+
+    private boolean isSizeIdValid(int id) {
+        return companySizeRepository.existsById(id);
+    }
+
+    private boolean isSubCategoryIdValid(int id) {
+        return subCategoryRepository.existsById(id);
+    }
+
+    private boolean isBenefitIdValid(int id) {
+        return benefitRepository.existsById(id);
+    }
 
 
     @Override
     public List<CompanyDTO> getAllCompanies() {
         return companyRepository.findAll()
                 .stream()
-                .map(CompanyEntity -> mapper.toDTO(CompanyEntity)
-                )
+                .map(CompanyEntity -> mapper.toDTO(CompanyEntity))
                 .collect(Collectors.toList());
     }
 
@@ -52,71 +78,74 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     public void createCompany(CompanyDTO dto) {
+        if (isEmailExisted(dto.getEmail())) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Company.EMAIL_EXISTED));
+        }
+        if (isTaxIDExisted(dto.getTaxId())) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Company.TAX_ID_EXISTED));
+        }
+
+        if (isSizeIdValid(dto.getSizeId())) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Company.SIZE_INVALID));
+        }
+
+        dto.getBenefitDTOs().stream().map(BenefitDTO::getId).forEach(id -> {
+            if (!isBenefitIdValid(id))
+                throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Benefit.NOT_FOUND));
+        });
+
+        dto.getSubCategoryDTOs().stream().map(SubCategoryDTO::getId).forEach(id -> {
+            if (!isSubCategoryIdValid(id))
+                throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.SubCategory.NOT_FOUND));
+        });
+        dto.setStatus(CompanyStatus.ACTIVE);
+        dto.setEmployeeMaxNum(DataConstraint.Company.DEFAULT_EMPLOYEE_MAX_NUM);
         CompanyEntity entity = mapper.toEntity(dto);
-
-
-        CompanySizeEntity sizeEntity = new CompanySizeEntity();
-        sizeEntity.setId(dto.getSizeId());
-
-        List<SubCategoryEntity> subCategoryEntities = dto.getSubCategoryDTOs().stream()
-                .map(SubCategoryDTO::getId)
-                .map(SubCategoryEntity::new)
-                .collect(Collectors.toList());
-
-        List<BenefitEntity> benefitEntities = dto.getBenefitDTOs().stream()
-                .map(BenefitDTO::getId)
-                .map(BenefitEntity::new)
-                .collect(Collectors.toList());
-
-        List<MediaEntity> mediaEntities = dto.getMediaDTOS().stream()
-                .map(mediaDTO -> {
-                    MediaEntity media = new MediaEntity();
-                    media.setUrl(mediaDTO.getUrl());
-                    return mediaRepository.save(media);
-                })
-                .collect(Collectors.toList());
-
-
-        entity.setCompanySize(sizeEntity);
-        entity.setCompanyBenefits(benefitEntities);
-        entity.setCompanySubCategory(subCategoryEntities);
-        entity.setMedias(mediaEntities);
         companyRepository.save(entity);
-
     }
 
     @Transactional
     @Override
-    public CompanyEntity updateCompany(CompanyDTO dto) {
+    public void updateCompany(CompanyDTO dto) {
+        Optional<CompanyEntity> opt = companyRepository.findById(dto.getId());
 
-        CompanyEntity entity = mapper.toEntity(dto);
+        if (!opt.isPresent()) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Company.NOT_FOUND));
+        }
 
-        CompanySizeEntity sizeEntity = new CompanySizeEntity();
-        sizeEntity.setId(dto.getSizeId());
+        if (dto.getEmail() != null
+                && !opt.get().getEmail().equals(dto.getEmail())
+                && isEmailExisted(dto.getEmail())) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Company.EMAIL_EXISTED));
+        }
 
-        List<SubCategoryEntity> subCategoryEntities = dto.getSubCategoryDTOs().stream()
-                .map(SubCategoryDTO::getId)
-                .map(SubCategoryEntity::new)
-                .collect(Collectors.toList());
+        if (dto.getTaxId() != null
+                && !opt.get().getTaxId().equals(dto.getTaxId())
+                && isTaxIDExisted(dto.getTaxId())) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Company.TAX_ID_EXISTED));
+        }
 
-        List<BenefitEntity> benefitEntities = dto.getBenefitDTOs().stream()
-                .map(BenefitDTO::getId)
-                .map(BenefitEntity::new)
-                .collect(Collectors.toList());
+        if (dto.getTaxId() != null && isSizeIdValid(dto.getSizeId())) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Company.SIZE_INVALID));
+        }
 
-        List<MediaEntity> mediaEntities = dto.getMediaDTOS().stream()
-                .map(mediaDTO -> {
-                    MediaEntity media = new MediaEntity();
-                    media.setUrl(mediaDTO.getUrl());
-                    return mediaRepository.save(media);
-                })
-                .collect(Collectors.toList());
+        if (dto.getBenefitDTOs() != null) {
+            dto.getBenefitDTOs().stream().map(BenefitDTO::getId).forEach(id -> {
+                if (!isBenefitIdValid(id))
+                    throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Benefit.NOT_FOUND));
+            });
+        }
 
-        entity.setCompanySize(sizeEntity);
-        entity.setCompanyBenefits(benefitEntities);
-        entity.setCompanySubCategory(subCategoryEntities);
-        entity.setMedias(mediaEntities);
-        return companyRepository.save(entity);
+        if (dto.getSubCategoryDTOs() != null) {
+            dto.getSubCategoryDTOs().stream().map(SubCategoryDTO::getId).forEach(id -> {
+                if (!isSubCategoryIdValid(id))
+                    throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.SubCategory.NOT_FOUND));
+            });
+        }
+
+        CompanyEntity entity = companyRepository.getById(dto.getId());
+        companyMapper.updateCompanyEntity(dto, entity);
+        companyRepository.save(entity);
     }
 
     @Transactional
@@ -128,22 +157,6 @@ public class CompanyServiceImpl implements CompanyService {
             return true;
         }
         return false;
-    }
-
-    @Override
-    public CompanyEntity findByTaxId(String taxId) {
-        Optional<CompanyEntity> result = companyRepository.findByTaxId(taxId);
-        return result.isPresent() ? result.get() : null;
-    }
-
-    @Override
-    public Integer getCountByEmail(String email) {
-        return companyRepository.countByEmail(email);
-    }
-
-    @Override
-    public Integer getCountByTaxId(String taxId) {
-        return companyRepository.countByTaxId(taxId);
     }
 
     @Override
