@@ -1,5 +1,6 @@
 package org.capstone.job_fair.services.mappers;
 
+import org.capstone.job_fair.controllers.payload.requests.CompanyEmployeeRegisterRequest;
 import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
 import org.capstone.job_fair.models.entities.company.CompanyEmployeeEntity;
 import org.mapstruct.*;
@@ -14,4 +15,13 @@ public abstract class CompanyEmployeeMapper {
     public abstract CompanyEmployeeEntity toEntity(CompanyEmployeeDTO dto);
 
     public abstract void updateCompanyEmployeeMapperFromDto(CompanyEmployeeDTO dto, @MappingTarget CompanyEmployeeEntity entity);
+
+    @Mapping(source = "companyId", target = "companyDTO.id")
+    @Mapping(source = "email", target = "account.email")
+    @Mapping(source = "firstName", target = "account.firstname")
+    @Mapping(source = "middleName",  target = "account.middlename")
+    @Mapping(source = "lastName", target = "account.lastname")
+    @Mapping(source = "phone", target = "account.phone")
+    @Mapping(source = "gender", target = "account.gender")
+    public abstract CompanyEmployeeDTO toDTO(CompanyEmployeeRegisterRequest request);
 }

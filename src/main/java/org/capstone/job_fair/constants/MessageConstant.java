@@ -86,6 +86,8 @@ public class MessageConstant {
         public static final String DELETE_FAILED = "company-employee.error.delete";
         public static final String EMAIL_SUBJECT = "company-employee.email.subject";
         public static final String EMAIL_CONTENT = "company-employee.email.body";
+        public static final String MAX_QUOTA_FOR_COMPANY_EMPLOYEE = "company-employee.error.max-quota";
+
     }
 
     public static final class Gender {
