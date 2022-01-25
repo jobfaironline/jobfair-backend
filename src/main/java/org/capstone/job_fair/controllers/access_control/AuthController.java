@@ -84,7 +84,8 @@ public class AuthController {
                     role,
                     jwt,
                     refreshToken,
-                    isEmployeeFirstTime, accountService.getIdByEmail(userDetails.getEmail())
+                    isEmployeeFirstTime,
+                    userDetails.getId()
             );
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
