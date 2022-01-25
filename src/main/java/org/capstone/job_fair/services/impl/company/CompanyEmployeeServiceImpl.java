@@ -1,6 +1,8 @@
 package org.capstone.job_fair.services.impl.company;
 
 import org.capstone.job_fair.constants.AccountConstant;
+import org.capstone.job_fair.constants.MessageConstant;
+import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
 import org.capstone.job_fair.models.entities.company.CompanyEntity;
@@ -12,15 +14,20 @@ import org.capstone.job_fair.models.statuses.AccountStatus;
 import org.capstone.job_fair.repositories.company.CompanyEmployeeRepository;
 import org.capstone.job_fair.services.interfaces.company.CompanyEmployeeService;
 import org.capstone.job_fair.models.entities.company.CompanyEmployeeEntity;
+import org.capstone.job_fair.utils.MessageUtil;
+import org.capstone.job_fair.utils.PasswordGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Service
@@ -42,6 +49,10 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
     private AccountRepository accountRepository;
 
 
+    private boolean isEmailExist(String email) {
+        return accountRepository.countByEmail(email) != 0;
+    }
+
     @Override
     public CompanyEmployeeDTO createNewCompanyManagerAccount(CompanyEmployeeDTO dto) {
         dto.getAccount().setRole(Role.COMPANY_MANAGER);
@@ -57,15 +68,31 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
 
     }
 
+
     @Override
     public void createNewCompanyEmployeeAccount(CompanyEmployeeDTO dto) {
-        dto.getAccount().setRole(Role.COMPANY_EMPLOYEE);
-        CompanyEmployeeEntity entity = mapper.toEntity(dto);
+        if (isEmailExist(dto.getAccount().getEmail())) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMAIL_EXISTED));
+        }
+        CompanyEntity companyEntity = null;
+        try {
+            companyEntity = companyRepository.getById(dto.getCompanyDTO().getId());
+        } catch (EntityNotFoundException ex) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Company.NOT_FOUND));
+        }
+        int currentCompanyEmployeeNum = employeeRepository.countByCompanyIdAndAccountStatusIn(companyEntity.getId(),
+                Arrays.asList(AccountStatus.ACTIVE, AccountStatus.REGISTERED));
+        if (currentCompanyEmployeeNum >= companyEntity.getEmployeeMaxNum()) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyEmployee.MAX_QUOTA_FOR_COMPANY_EMPLOYEE));
+        }
 
-        AccountEntity accountEntity = entity.getAccount();
-        accountEntity.setPassword(encoder.encode(accountEntity.getPassword()));
-        accountEntity.setProfileImageUrl(AccountConstant.DEFAULT_PROFILE_IMAGE_URL);
-        accountEntity.setStatus(AccountStatus.REGISTERED);
+        String hashPassword = encoder.encode(PasswordGenerator.generatePassword());
+        dto.getAccount().setRole(Role.COMPANY_EMPLOYEE);
+        dto.getAccount().setPassword(hashPassword);
+        dto.getAccount().setStatus(AccountStatus.REGISTERED);
+        dto.getAccount().setProfileImageUrl(AccountConstant.DEFAULT_PROFILE_IMAGE_URL);
+
+        CompanyEmployeeEntity entity = mapper.toEntity(dto);
         employeeRepository.save(entity);
     }
 
@@ -74,13 +101,13 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
         try {
             employeeRepository.findById(dto.getAccountId()).map((atd) -> {
                 mapper.updateCompanyEmployeeMapperFromDto(dto, atd);
-                if (dto.getCompanyDTO() != null){
+                if (dto.getCompanyDTO() != null) {
                     CompanyEntity companyEntity = companyRepository.getById(dto.getCompanyDTO().getId());
                     atd.setCompany(companyEntity);
                 }
                 return employeeRepository.save(atd);
             }).orElseThrow(NoSuchElementException::new);
-        } catch (EntityNotFoundException e){
+        } catch (EntityNotFoundException e) {
             throw new NoSuchElementException();
         }
     }
@@ -94,15 +121,15 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
 
     @Override
     public Boolean deleteEmployee(String id) {
-       Optional<CompanyEmployeeEntity> companyEmployeeEntity = employeeRepository.findById(id);
-       if(!companyEmployeeEntity.isPresent()) return false;
+        Optional<CompanyEmployeeEntity> companyEmployeeEntity = employeeRepository.findById(id);
+        if (!companyEmployeeEntity.isPresent()) return false;
         companyEmployeeEntity.get().getAccount().setStatus(AccountStatus.INACTIVE);
         employeeRepository.save(companyEmployeeEntity.get());
-       return true;
+        return true;
     }
 
     @Override
-    public void updateEmployeeStatus(String email){
+    public void updateEmployeeStatus(String email) {
         AccountEntity accountEntity = accountRepository.findByEmail(email).get();
         accountEntity.setStatus(AccountStatus.ACTIVE);
         accountRepository.save(accountEntity);
