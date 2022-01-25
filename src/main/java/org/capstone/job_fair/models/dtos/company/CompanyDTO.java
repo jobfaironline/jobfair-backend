@@ -24,7 +24,7 @@ public class CompanyDTO {
     private CompanyStatus status;
     private Integer sizeId;
     private Set<SubCategoryDTO> subCategoryDTOs;
-    private Set<BenefitDTO> benefitDTOs;
+    private Set<CompanyBenefitDTO> companyBenefitDTOS;
     private List<MediaDTO> mediaDTOS;
 
     public CompanyDTO(String id) {
