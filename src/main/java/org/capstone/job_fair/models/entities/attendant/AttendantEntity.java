@@ -60,27 +60,27 @@ public class AttendantEntity {
     private JobLevel currentJobLevel;
 
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE}, orphanRemoval = true)
     @JoinColumn(name = "attendant_id", referencedColumnName = "account_id")
     private List<SkillEntity> skillEntities;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE}, orphanRemoval = true)
     @JoinColumn(name = "attendant_id", referencedColumnName = "account_id")
     private List<WorkHistoryEntity> workHistoryEntities;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE}, orphanRemoval = true)
     @JoinColumn(name = "attendant_id", referencedColumnName = "account_id")
     private List<EducationEntity> educationEntities;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE}, orphanRemoval = true)
     @JoinColumn(name = "attendant_id", referencedColumnName = "account_id")
     private List<CertificationEntity> certificationEntities;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
-    @JoinColumn(name = "attendant_id", referencedColumnName = "account_id")
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE}, orphanRemoval = true)
+    @JoinColumn(name = "attendant_id", referencedColumnName = "account_id" )
     private List<ReferenceEntity> referenceEntities;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE}, orphanRemoval = true)
     @JoinColumn(name = "attendant_id", referencedColumnName = "account_id")
     private List<ActivityEntity> activityEntities;
 
