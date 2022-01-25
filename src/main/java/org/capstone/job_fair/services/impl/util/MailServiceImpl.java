@@ -19,6 +19,7 @@ public class MailServiceImpl  implements MailService {
     public CompletableFuture<Void> sendMail(String to, String subject, String body) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(to);
+        System.out.println("Recipient: " + to);
         message.setSubject(subject);
         message.setText(body);
         System.out.println("Begin send email!");
