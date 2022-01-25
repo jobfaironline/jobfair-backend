@@ -3,6 +3,7 @@ package org.capstone.job_fair.services.impl.company;
 import org.capstone.job_fair.constants.DataConstraint;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.models.dtos.company.BenefitDTO;
+import org.capstone.job_fair.models.dtos.company.CompanyBenefitDTO;
 import org.capstone.job_fair.models.dtos.company.CompanyDTO;
 import org.capstone.job_fair.models.dtos.company.SubCategoryDTO;
 import org.capstone.job_fair.models.entities.company.*;
@@ -78,6 +79,7 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     public void createCompany(CompanyDTO dto) {
+        System.out.println(dto);
         if (isEmailExisted(dto.getEmail())) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Company.EMAIL_EXISTED));
         }
@@ -85,13 +87,15 @@ public class CompanyServiceImpl implements CompanyService {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Company.TAX_ID_EXISTED));
         }
 
-        if (isSizeIdValid(dto.getSizeId())) {
+        if (!isSizeIdValid(dto.getSizeId())) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Company.SIZE_INVALID));
         }
 
-        dto.getBenefitDTOs().stream().map(BenefitDTO::getId).forEach(id -> {
-            if (!isBenefitIdValid(id))
-                throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Benefit.NOT_FOUND));
+        dto.getCompanyBenefitDTOS().stream()
+            .map(companyBenefitDTO -> companyBenefitDTO.getBenefitDTO().getId())
+            .forEach(id -> {
+                if (!isBenefitIdValid(id))
+                    throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Benefit.NOT_FOUND));
         });
 
         dto.getSubCategoryDTOs().stream().map(SubCategoryDTO::getId).forEach(id -> {
@@ -100,7 +104,10 @@ public class CompanyServiceImpl implements CompanyService {
         });
         dto.setStatus(CompanyStatus.ACTIVE);
         dto.setEmployeeMaxNum(DataConstraint.Company.DEFAULT_EMPLOYEE_MAX_NUM);
+        System.out.println(dto);
         CompanyEntity entity = mapper.toEntity(dto);
+        entity.getCompanyBenefits().forEach(companyBenefitEntity -> companyBenefitEntity.setCompany(entity));
+        System.out.println(entity);
         companyRepository.save(entity);
     }
 
@@ -129,8 +136,10 @@ public class CompanyServiceImpl implements CompanyService {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Company.SIZE_INVALID));
         }
 
-        if (dto.getBenefitDTOs() != null) {
-            dto.getBenefitDTOs().stream().map(BenefitDTO::getId).forEach(id -> {
+        if (dto.getCompanyBenefitDTOS() != null) {
+            dto.getCompanyBenefitDTOS().stream()
+            .map(companyBenefitDTO -> companyBenefitDTO.getBenefitDTO().getId())
+            .forEach(id -> {
                 if (!isBenefitIdValid(id))
                     throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Benefit.NOT_FOUND));
             });
