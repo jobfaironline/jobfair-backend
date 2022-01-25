@@ -3,6 +3,7 @@ package org.capstone.job_fair.services.impl.company;
 import org.capstone.job_fair.constants.AccountConstant;
 import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
+import org.capstone.job_fair.models.entities.account.RoleEntity;
 import org.capstone.job_fair.models.entities.company.CompanyEntity;
 import org.capstone.job_fair.models.enums.Role;
 import org.capstone.job_fair.repositories.account.AccountRepository;
@@ -106,6 +107,27 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
         AccountEntity accountEntity = accountRepository.findByEmail(email).get();
         accountEntity.setStatus(AccountStatus.ACTIVE);
         accountRepository.save(accountEntity);
+    }
+
+    @Override
+    public void promoteEmployee(CompanyEmployeeDTO employee, CompanyEmployeeDTO manager) {
+        employee.getAccount().setRole(Role.COMPANY_MANAGER);
+        employeeRepository.save(mapper.toEntity(employee));
+        manager.getAccount().setRole(Role.COMPANY_EMPLOYEE);
+        employeeRepository.save(mapper.toEntity(manager));
+    }
+
+    @Override
+    public boolean isSameCompany(String employeeId, String managerId) {
+        return employeeRepository.getById(employeeId).getCompany().getId()
+                .equals(employeeRepository.getById(managerId).getCompany().getId());
+    }
+
+    @Override
+    public CompanyEmployeeDTO getById(String id) {
+        Optional<CompanyEmployeeEntity> entity = employeeRepository.findById(id);
+        if(!entity.isPresent()) return null;
+        return mapper.toDTO(entity.get());
     }
 
 }

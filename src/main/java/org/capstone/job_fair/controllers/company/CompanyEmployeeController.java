@@ -1,9 +1,11 @@
 package org.capstone.job_fair.controllers.company;
 
 
+import lombok.NoArgsConstructor;
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.controllers.payload.requests.CompanyEmployeeRegisterRequest;
+import org.capstone.job_fair.controllers.payload.requests.PromoteEmployeeToCompanyManagerRequest;
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
 import org.capstone.job_fair.models.dtos.company.CompanyDTO;
 import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
@@ -12,12 +14,14 @@ import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.controllers.payload.requests.UpdateCompanyEmployeeProfileRequest;
 import org.capstone.job_fair.models.entities.company.CompanyEmployeeEntity;
 import org.capstone.job_fair.models.entities.token.AccountVerifyTokenEntity;
+import org.capstone.job_fair.models.enums.Role;
 import org.capstone.job_fair.services.interfaces.account.AccountService;
 import org.capstone.job_fair.services.interfaces.account.GenderService;
 import org.capstone.job_fair.services.interfaces.company.CompanyEmployeeService;
 import org.capstone.job_fair.services.interfaces.company.CompanyService;
 import org.capstone.job_fair.services.interfaces.token.AccountVerifyTokenService;
 import org.capstone.job_fair.services.interfaces.util.MailService;
+import org.capstone.job_fair.services.mappers.CompanyMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.capstone.job_fair.utils.PasswordGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +30,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,6 +39,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @RestController
+@NoArgsConstructor
 public class CompanyEmployeeController {
 
     @Autowired
@@ -57,6 +63,9 @@ public class CompanyEmployeeController {
     @Value("${api.endpoint}")
     String domain;
 
+    @Autowired
+    private CompanyMapper companyMapper;
+
 
 
     private boolean isEmailExist(String email) {
@@ -67,7 +76,7 @@ public class CompanyEmployeeController {
         return companyService.getCountById(companyId) != 0;
     }
 
-
+    @Transactional
     @PostMapping(ApiEndPoint.CompanyEmployee.REGISTER_COMPANY_MANAGER)
     @Async("threadPoolTaskExecutor")
     public ResponseEntity<?> register(@Validated @RequestBody CompanyManagerRegisterRequest request) {
@@ -84,6 +93,8 @@ public class CompanyEmployeeController {
                     HttpStatus.BAD_REQUEST);
         }
 
+        CompanyDTO companyDTO = companyMapper.toDTO(companyService.getCompanyById(request.getCompanyId()).get());
+
         AccountDTO accountDTO = new AccountDTO();
         accountDTO.setEmail(request.getEmail());
         accountDTO.setPassword(request.getPassword());
@@ -95,6 +106,7 @@ public class CompanyEmployeeController {
 
         CompanyEmployeeDTO dto = new CompanyEmployeeDTO();
         dto.setAccount(accountDTO);
+        dto.setCompanyDTO(companyDTO);
 
         CompanyEmployeeDTO companyEmployeeDTO = companyEmployeeService.createNewCompanyManagerAccount(dto);
         String id = accountVerifyTokenService.createToken(companyEmployeeDTO.getAccount().getId()).getAccountId();
@@ -215,6 +227,54 @@ public class CompanyEmployeeController {
         return CompletableFuture.completedFuture(GenericResponse.build(
                 MessageUtil.getMessage(MessageConstant.CompanyEmployee.CREATE_EMPLOYEE_EMPLOYEE_SUCCESSFULLY),
                 HttpStatus.CREATED));
+    }
+
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
+    @PostMapping(ApiEndPoint.CompanyEmployee.PROMOTE_EMPLOYEE_ENPOINT)
+    @Async("threadPoolTaskExecutor")
+    public CompletableFuture<ResponseEntity> promoteEmployee(@Validated @RequestBody PromoteEmployeeToCompanyManagerRequest request){
+        CompanyEmployeeDTO companyEmployeeDTO = companyEmployeeService.getById(request.getEmployeeId());
+        CompanyEmployeeDTO companyManagerDTO = companyEmployeeService.getById(request.getManagerId());
+
+        if(companyManagerDTO == null) {
+            return CompletableFuture.completedFuture(GenericResponse.build(
+               MessageUtil.getMessage(MessageConstant.CompanyEmployee.MANAGER_NOT_FOUND),
+               HttpStatus.BAD_REQUEST
+            ));
+        }
+
+        if(companyEmployeeDTO == null) {
+            return CompletableFuture.completedFuture(GenericResponse.build(
+                    MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMPLOYEE_NOT_FOUND),
+                    HttpStatus.BAD_REQUEST
+            ));
+        }
+        if(!companyEmployeeDTO.getAccount().getRole().getAuthority().equals(Role.COMPANY_EMPLOYEE.toString())){
+            return CompletableFuture.completedFuture(GenericResponse.build(
+                    MessageUtil.getMessage(MessageConstant.CompanyEmployee.INVALID_ROLE),
+                    HttpStatus.BAD_REQUEST
+            ));
+        }
+        if(!companyManagerDTO.getAccount().getRole().getAuthority().equals(Role.COMPANY_MANAGER.toString())){
+            return CompletableFuture.completedFuture(GenericResponse.build(
+                    MessageUtil.getMessage(MessageConstant.CompanyEmployee.INVALID_ROLE),
+                    HttpStatus.BAD_REQUEST
+            ));
+        }
+
+        if(!companyManagerDTO.getCompanyDTO().getId().equals(companyEmployeeDTO.getCompanyDTO().getId())) {
+            return CompletableFuture.completedFuture(GenericResponse.build(
+                    MessageUtil.getMessage(MessageConstant.CompanyEmployee.DIFFERENT_COMPANY_ERROR),
+                    HttpStatus.BAD_REQUEST
+            ));
+        }
+        companyEmployeeService.promoteEmployee(companyEmployeeDTO, companyManagerDTO);
+
+        return CompletableFuture.completedFuture(GenericResponse.build(
+                MessageUtil.getMessage(MessageConstant.CompanyEmployee.PROMOTE_EMPLOYEE_SUCCESSFULLY),
+                HttpStatus.OK
+        ));
+
     }
 
 }

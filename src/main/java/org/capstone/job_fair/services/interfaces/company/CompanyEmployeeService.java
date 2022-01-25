@@ -17,4 +17,10 @@ public interface CompanyEmployeeService {
     Boolean deleteEmployee(String id);
 
     public void updateEmployeeStatus(String email);
+
+    void promoteEmployee(CompanyEmployeeDTO employee, CompanyEmployeeDTO manager);
+
+    boolean isSameCompany(String employeeId, String managerId);
+
+    CompanyEmployeeDTO getById(String id);
 }
