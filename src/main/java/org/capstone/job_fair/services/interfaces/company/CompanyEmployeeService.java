@@ -18,7 +18,7 @@ public interface CompanyEmployeeService {
 
     public void updateEmployeeStatus(String email);
 
-    void promoteEmployee(CompanyEmployeeDTO employee, CompanyEmployeeDTO manager);
+    void promoteEmployee(String employeeId, String managerId);
 
     boolean isSameCompany(String employeeId, String managerId);
 

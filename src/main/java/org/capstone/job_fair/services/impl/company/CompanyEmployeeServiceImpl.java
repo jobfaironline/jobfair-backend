@@ -1,6 +1,7 @@
 package org.capstone.job_fair.services.impl.company;
 
 import org.capstone.job_fair.constants.AccountConstant;
+import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
 import org.capstone.job_fair.models.entities.account.RoleEntity;
@@ -13,6 +14,7 @@ import org.capstone.job_fair.models.statuses.AccountStatus;
 import org.capstone.job_fair.repositories.company.CompanyEmployeeRepository;
 import org.capstone.job_fair.services.interfaces.company.CompanyEmployeeService;
 import org.capstone.job_fair.models.entities.company.CompanyEmployeeEntity;
+import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -41,6 +43,9 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
 
     @Autowired
     private AccountRepository accountRepository;
+
+    @Autowired
+    private CompanyEmployeeService companyEmployeeService;
 
 
     @Override
@@ -110,11 +115,35 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
     }
 
     @Override
-    public void promoteEmployee(CompanyEmployeeDTO employee, CompanyEmployeeDTO manager) {
-        employee.getAccount().setRole(Role.COMPANY_MANAGER);
-        employeeRepository.save(mapper.toEntity(employee));
-        manager.getAccount().setRole(Role.COMPANY_EMPLOYEE);
-        employeeRepository.save(mapper.toEntity(manager));
+    public void promoteEmployee(String employeeId, String managerId) {
+
+        CompanyEmployeeDTO companyEmployeeDTO = companyEmployeeService.getById(employeeId);
+        CompanyEmployeeDTO companyManagerDTO = companyEmployeeService.getById(managerId);
+
+        if(companyManagerDTO == null) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyEmployee.MANAGER_NOT_FOUND));
+        }
+        if(companyEmployeeDTO.getAccount().getStatus().toString().equals(AccountStatus.REGISTERED)||
+                companyEmployeeDTO.getAccount().getStatus().toString().equals(AccountStatus.INACTIVE)) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMPLOYEE_NOT_ACTIVE));
+        }
+        if(companyEmployeeDTO == null) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMPLOYEE_NOT_FOUND));
+        }
+        if(!companyEmployeeDTO.getAccount().getRole().getAuthority().equals(Role.COMPANY_EMPLOYEE.toString())){
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyEmployee.INVALID_ROLE));
+        }
+        if(!companyManagerDTO.getAccount().getRole().getAuthority().equals(Role.COMPANY_MANAGER.toString())){
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyEmployee.INVALID_ROLE));
+        }
+        if(!companyManagerDTO.getCompanyDTO().getId().equals(companyEmployeeDTO.getCompanyDTO().getId())) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyEmployee.DIFFERENT_COMPANY_ERROR));
+        }
+
+        companyEmployeeDTO.getAccount().setRole(Role.COMPANY_MANAGER);
+        employeeRepository.save(mapper.toEntity(companyEmployeeDTO));
+        companyManagerDTO.getAccount().setRole(Role.COMPANY_EMPLOYEE);
+        employeeRepository.save(mapper.toEntity(companyManagerDTO));
     }
 
     @Override

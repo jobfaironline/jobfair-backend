@@ -91,6 +91,7 @@ public class MessageConstant {
         public static final String EMPLOYEE_NOT_FOUND="company-employee.employee-not-found";
         public static final String DIFFERENT_COMPANY_ERROR="company-employee.different-company-error";
         public static final String PROMOTE_EMPLOYEE_SUCCESSFULLY="company-employee.promote-employee-successfully";
+        public static final String EMPLOYEE_NOT_ACTIVE="company-employee.not-active";
      }
 
     public static final class Gender {

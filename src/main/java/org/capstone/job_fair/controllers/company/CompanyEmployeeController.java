@@ -13,6 +13,7 @@ import org.capstone.job_fair.controllers.payload.requests.CompanyManagerRegister
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.controllers.payload.requests.UpdateCompanyEmployeeProfileRequest;
 import org.capstone.job_fair.models.entities.company.CompanyEmployeeEntity;
+import org.capstone.job_fair.models.entities.company.CompanyEntity;
 import org.capstone.job_fair.models.entities.token.AccountVerifyTokenEntity;
 import org.capstone.job_fair.models.enums.Role;
 import org.capstone.job_fair.services.interfaces.account.AccountService;
@@ -92,8 +93,8 @@ public class CompanyEmployeeController {
                     MessageUtil.getMessage(MessageConstant.AccessControlMessage.CONFIRM_PASSWORD_MISMATCH),
                     HttpStatus.BAD_REQUEST);
         }
-
-        CompanyDTO companyDTO = companyMapper.toDTO(companyService.getCompanyById(request.getCompanyId()).get());
+        CompanyEntity companyEntity = companyService.getCompanyById(request.getCompanyId()).get();
+        CompanyDTO companyDTO = companyMapper.toDTO(companyEntity);
 
         AccountDTO accountDTO = new AccountDTO();
         accountDTO.setEmail(request.getEmail());
@@ -233,48 +234,21 @@ public class CompanyEmployeeController {
     @PostMapping(ApiEndPoint.CompanyEmployee.PROMOTE_EMPLOYEE_ENPOINT)
     @Async("threadPoolTaskExecutor")
     public CompletableFuture<ResponseEntity> promoteEmployee(@Validated @RequestBody PromoteEmployeeToCompanyManagerRequest request){
-        CompanyEmployeeDTO companyEmployeeDTO = companyEmployeeService.getById(request.getEmployeeId());
-        CompanyEmployeeDTO companyManagerDTO = companyEmployeeService.getById(request.getManagerId());
-
-        if(companyManagerDTO == null) {
-            return CompletableFuture.completedFuture(GenericResponse.build(
-               MessageUtil.getMessage(MessageConstant.CompanyEmployee.MANAGER_NOT_FOUND),
-               HttpStatus.BAD_REQUEST
+        CompletableFuture<ResponseEntity> response = null;
+        try {
+            companyEmployeeService.promoteEmployee(request.getEmployeeId(), request.getManagerId());
+          response = CompletableFuture.completedFuture(GenericResponse.build(
+                    MessageUtil.getMessage(MessageConstant.CompanyEmployee.PROMOTE_EMPLOYEE_SUCCESSFULLY),
+                    HttpStatus.OK
             ));
-        }
-
-        if(companyEmployeeDTO == null) {
-            return CompletableFuture.completedFuture(GenericResponse.build(
-                    MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMPLOYEE_NOT_FOUND),
+        } catch (IllegalArgumentException ex){
+             response = CompletableFuture.completedFuture(GenericResponse.build(
+                    ex.getMessage(),
                     HttpStatus.BAD_REQUEST
             ));
+        } finally {
+            return response;
         }
-        if(!companyEmployeeDTO.getAccount().getRole().getAuthority().equals(Role.COMPANY_EMPLOYEE.toString())){
-            return CompletableFuture.completedFuture(GenericResponse.build(
-                    MessageUtil.getMessage(MessageConstant.CompanyEmployee.INVALID_ROLE),
-                    HttpStatus.BAD_REQUEST
-            ));
-        }
-        if(!companyManagerDTO.getAccount().getRole().getAuthority().equals(Role.COMPANY_MANAGER.toString())){
-            return CompletableFuture.completedFuture(GenericResponse.build(
-                    MessageUtil.getMessage(MessageConstant.CompanyEmployee.INVALID_ROLE),
-                    HttpStatus.BAD_REQUEST
-            ));
-        }
-
-        if(!companyManagerDTO.getCompanyDTO().getId().equals(companyEmployeeDTO.getCompanyDTO().getId())) {
-            return CompletableFuture.completedFuture(GenericResponse.build(
-                    MessageUtil.getMessage(MessageConstant.CompanyEmployee.DIFFERENT_COMPANY_ERROR),
-                    HttpStatus.BAD_REQUEST
-            ));
-        }
-        companyEmployeeService.promoteEmployee(companyEmployeeDTO, companyManagerDTO);
-
-        return CompletableFuture.completedFuture(GenericResponse.build(
-                MessageUtil.getMessage(MessageConstant.CompanyEmployee.PROMOTE_EMPLOYEE_SUCCESSFULLY),
-                HttpStatus.OK
-        ));
-
     }
 
 }
