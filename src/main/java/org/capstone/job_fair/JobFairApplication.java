@@ -18,7 +18,7 @@ import springfox.documentation.spring.data.rest.configuration.SpringDataRestConf
 public class JobFairApplication {
 
     public static void main(String[] args) {        
-        System.out.print("Environment varriable: ");
+        System.out.print("Leu leu ");
         System.out.print(System.getenv("DATASOURCE_PASSWORD"));
         SpringApplication.run(JobFairApplication.class, args);
     }
