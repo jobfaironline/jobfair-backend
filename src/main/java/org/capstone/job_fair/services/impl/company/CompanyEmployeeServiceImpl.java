@@ -43,7 +43,7 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
 
 
     @Override
-    public CompanyEmployeeEntity createNewCompanyManagerAccount(CompanyEmployeeDTO dto) {
+    public CompanyEmployeeDTO createNewCompanyManagerAccount(CompanyEmployeeDTO dto) {
         dto.getAccount().setRole(Role.COMPANY_MANAGER);
         CompanyEmployeeEntity entity = mapper.toEntity(dto);
 
@@ -53,7 +53,7 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
         accountEntity.setStatus(AccountStatus.REGISTERED);
 
         employeeRepository.save(entity);
-        return entity;
+        return mapper.toDTO(entity);
 
     }
 

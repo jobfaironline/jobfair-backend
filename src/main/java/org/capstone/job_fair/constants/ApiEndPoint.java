@@ -1,5 +1,6 @@
 package org.capstone.job_fair.constants;
 
+import org.hibernate.cfg.Environment;
 import org.springframework.beans.factory.annotation.Value;
 
 public class ApiEndPoint {
@@ -25,10 +26,7 @@ public class ApiEndPoint {
     public static final class Company {
         public static final String COMPANY_ENDPOINT = ROOT_ENDPOINT + VERSION + "/companies";
     }
-    public static final class Domain{
-        public static final String LOCAL = "domain.local";
-        public static final String CLOUD = "domain.cloud";
-    }
+
     public static final class Job {
         public static final String JOB_POSITION_ENDPOINT = ROOT_ENDPOINT + VERSION + "/job";
     }

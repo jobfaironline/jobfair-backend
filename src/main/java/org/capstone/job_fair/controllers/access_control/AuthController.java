@@ -46,7 +46,6 @@ public class AuthController {
 
     private final CompanyEmployeeService companyEmployeeService;
 
-    private final AccountVerifyTokenService accountVerifyTokenService;
 
     private boolean isAccountHasRole(UserDetailsImpl userDetails, Role role){
         return userDetails.getAuthorities().stream().anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals(role.getAuthority()));

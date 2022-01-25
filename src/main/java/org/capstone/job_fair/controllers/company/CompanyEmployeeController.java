@@ -21,6 +21,7 @@ import org.capstone.job_fair.services.interfaces.util.MailService;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.capstone.job_fair.utils.PasswordGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
@@ -53,6 +54,9 @@ public class CompanyEmployeeController {
     @Autowired
     private AccountVerifyTokenService accountVerifyTokenService;
 
+    @Value("${api.endpoint}")
+    String domain;
+
 
 
     private boolean isEmailExist(String email) {
@@ -65,6 +69,7 @@ public class CompanyEmployeeController {
 
 
     @PostMapping(ApiEndPoint.CompanyEmployee.REGISTER_COMPANY_MANAGER)
+    @Async("threadPoolTaskExecutor")
     public ResponseEntity<?> register(@Validated @RequestBody CompanyManagerRegisterRequest request) {
         //check if email existed?
         if (isEmailExist(request.getEmail())) {
@@ -91,11 +96,11 @@ public class CompanyEmployeeController {
         CompanyEmployeeDTO dto = new CompanyEmployeeDTO();
         dto.setAccount(accountDTO);
 
-        CompanyEmployeeEntity entity = companyEmployeeService.createNewCompanyManagerAccount(dto);
-        AccountVerifyTokenEntity token = accountVerifyTokenService.createToken(entity.getAccount().getId());
+        CompanyEmployeeDTO companyEmployeeDTO = companyEmployeeService.createNewCompanyManagerAccount(dto);
+        String id = accountVerifyTokenService.createToken(companyEmployeeDTO.getAccount().getId()).getAccountId();
         this.mailService.sendMail(request.getEmail(),
                 MessageUtil.getMessage(MessageConstant.Attendant.ACCOUNT_VERIFY_MAIL_TITLE),
-                MessageUtil.getMessage(ApiEndPoint.Domain.LOCAL) + ApiEndPoint.Authorization.VERIFY_USER+"/"+entity.getAccount().getId()+"/"+token.getId());
+                domain + ApiEndPoint.Authorization.VERIFY_USER+"/"+companyEmployeeDTO.getAccount().getId()+"/"+id);
         return GenericResponse.build(
                 MessageUtil.getMessage(MessageConstant.CompanyEmployee.CREATE_EMPLOYEE_MANAGER_SUCCESSFULLY),
                 HttpStatus.CREATED);

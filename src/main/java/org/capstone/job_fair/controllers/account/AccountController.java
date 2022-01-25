@@ -4,9 +4,11 @@ import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
+import org.capstone.job_fair.models.dtos.token.AccountVerifyTokenDTO;
 import org.capstone.job_fair.models.entities.token.AccountVerifyTokenEntity;
 import org.capstone.job_fair.services.interfaces.account.AccountService;
 import org.capstone.job_fair.services.interfaces.token.AccountVerifyTokenService;
+import org.capstone.job_fair.services.mappers.AccountVerifyTokenMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,6 +31,9 @@ public class AccountController {
     @Autowired
     private AccountVerifyTokenService accountVerifyTokenService;
 
+    @Autowired
+    private AccountVerifyTokenMapper mapper;
+
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
     @GetMapping(ApiEndPoint.Account.ACCOUNT_ENDPOINT)
@@ -48,26 +53,24 @@ public class AccountController {
 
     @GetMapping(path = ApiEndPoint.Authorization.VERIFY_USER + "/{userId}/{token}")
     public ResponseEntity<?> verifyAccount (@PathVariable("userId") String userId, @PathVariable("token") String tokenId){
-        Optional<AccountVerifyTokenEntity> accountVerifyToken = accountVerifyTokenService.getLastedToken(userId);
-        if(!accountVerifyToken.isPresent()) {
+        AccountVerifyTokenDTO token = accountVerifyTokenService.getLastedToken(userId);
+        if(token == null) {
             return GenericResponse.build(
                     MessageUtil.getMessage(MessageConstant.AccessControlMessage.INVALID_VERIFY_TOKEN), HttpStatus.BAD_REQUEST
             );
         }
-        AccountVerifyTokenEntity token = accountVerifyToken.get();
         if(token.getIsInvalidated()){
             return GenericResponse.build(
                     MessageUtil.getMessage(MessageConstant.AccessControlMessage.INVALIDATED_VERIFY_TOKEN), HttpStatus.BAD_REQUEST
             );
         }
-
+        accountVerifyTokenService.invalidateEntity(mapper.toAccountVerifyTokenEntity(token));
         if (token.getExpiredTime() < new Date().getTime()) {
             return GenericResponse.build(
                     MessageUtil.getMessage(MessageConstant.AccessControlMessage.EXPIRED_TOKEN),
                     HttpStatus.BAD_REQUEST);
         }
-        accountVerifyTokenService.invalidateEntity(accountVerifyToken.get());
-        accountService.changeAccountStatus(userId);
+        accountService.activateAccount(userId);
 
         return GenericResponse.build(
                 MessageUtil.getMessage(MessageConstant.AccessControlMessage.VERIFY_ACCOUNT_SUCCESSFULLY),

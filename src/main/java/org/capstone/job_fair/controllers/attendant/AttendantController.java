@@ -15,8 +15,10 @@ import org.capstone.job_fair.services.interfaces.util.MailService;
 import org.capstone.job_fair.services.mappers.AttendantMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -47,6 +49,9 @@ public class AttendantController {
     @Autowired
     private MailService mailService;
 
+    @Value("${api.endpoint}")
+    String domain;
+
 
 
     @GetMapping(ApiEndPoint.Attendant.ATTENDANT_ENDPOINT)
@@ -71,16 +76,18 @@ public class AttendantController {
     }
 
     @PostMapping(ApiEndPoint.Attendant.REGISTER_ENDPOINT)
+    @Async("threadPoolTaskExecutor")
     public ResponseEntity<?> register(@Validated @RequestBody RegisterAttendantRequest req) {
+
 
         try {
             AttendantDTO attendantDTO = attendantMapper.toDTO(req);
             attendantDTO = attendantService.createNewAccount(attendantDTO);
-            AccountVerifyTokenEntity token = accountVerifyTokenService.createToken(attendantDTO.getAccount().getId());
+            String id = accountVerifyTokenService.createToken(attendantDTO.getAccount().getId()).getAccountId();
 
             this.mailService.sendMail(req.getEmail(),
                     MessageUtil.getMessage(MessageConstant.Attendant.ACCOUNT_VERIFY_MAIL_TITLE),
-                    MessageUtil.getMessage(ApiEndPoint.Domain.LOCAL) + ApiEndPoint.Authorization.VERIFY_USER+"/"+attendantDTO.getAccount().getId()+"/"+token.getId());
+                    domain + ApiEndPoint.Authorization.VERIFY_USER+"/"+attendantDTO.getAccount().getId()+"/"+id);
             return GenericResponse.build(
                     MessageUtil.getMessage(MessageConstant.Attendant.REGISTER_SUCCESSFULLY),
                     HttpStatus.CREATED);

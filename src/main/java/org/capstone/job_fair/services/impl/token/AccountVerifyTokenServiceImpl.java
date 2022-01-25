@@ -1,8 +1,10 @@
 package org.capstone.job_fair.services.impl.token;
 
+import org.capstone.job_fair.models.dtos.token.AccountVerifyTokenDTO;
 import org.capstone.job_fair.models.entities.token.AccountVerifyTokenEntity;
 import org.capstone.job_fair.repositories.token.AccountVerifyTokenEntityRepository;
 import org.capstone.job_fair.services.interfaces.token.AccountVerifyTokenService;
+import org.capstone.job_fair.services.mappers.AccountVerifyTokenMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -20,8 +22,11 @@ public class AccountVerifyTokenServiceImpl implements AccountVerifyTokenService 
     @Autowired
     private AccountVerifyTokenEntityRepository accountVerifyTokenEntityRepository;
 
+    @Autowired
+    private AccountVerifyTokenMapper mapper;
+
     @Override
-    public AccountVerifyTokenEntity createToken(String userId) {
+    public AccountVerifyTokenDTO createToken(String userId) {
         //generate token
         AccountVerifyTokenEntity accountVerifyToken = new AccountVerifyTokenEntity();
         accountVerifyToken.setCreatedTime(new Date().getTime());
@@ -30,12 +35,14 @@ public class AccountVerifyTokenServiceImpl implements AccountVerifyTokenService 
         accountVerifyToken.setIsInvalidated(false);
         accountVerifyTokenEntityRepository.save(accountVerifyToken);
 
-        return accountVerifyToken;
+        return mapper.toAccountVerifyTokenDto(accountVerifyToken);
     }
 
     @Override
-    public Optional<AccountVerifyTokenEntity> getLastedToken(String id) {
-       return accountVerifyTokenEntityRepository.getFirstByAccountIdOrderByExpiredTimeDesc(id);
+    public AccountVerifyTokenDTO getLastedToken(String id) {
+        Optional<AccountVerifyTokenEntity> entity = accountVerifyTokenEntityRepository.getFirstByAccountIdOrderByExpiredTimeDesc(id);
+        if (!entity.isPresent()) return  null;
+       return mapper.toAccountVerifyTokenDto(entity.get());
     }
 
     @Override
