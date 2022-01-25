@@ -99,8 +99,8 @@ public abstract class AttendantMapper {
     }
 
     @Named("fromCountryEntityOfAttendantEntity")
-    public String fromCountryEntityOfAttendantEntity(CountryEntity entity){
-        if (entity==null) return  null;
+    public String fromCountryEntityOfAttendantEntity(CountryEntity entity) {
+        if (entity == null) return null;
         return entity.getId();
     }
 
@@ -113,16 +113,16 @@ public abstract class AttendantMapper {
     }
 
     @Named("fromResidenceEntityOfAttendantEntity")
-    public String fromResidenceEntityOfAttendantEntity(ResidenceEntity entity){
-        if(entity==null) return null;
+    public String fromResidenceEntityOfAttendantEntity(ResidenceEntity entity) {
+        if (entity == null) return null;
         return entity.getId();
     }
 
     public void mapToSkillEntities(List<SkillDTO> dtos, @MappingTarget List<SkillEntity> entities) {
         if (dtos == null) return;
         dtos.forEach(skillDTO -> {
-            if (skillDTO.getId() == null) { // if skill id null: create new skill
-                if (!isValidSkillDTO(skillDTO)){
+            if (skillDTO.getId() == null) { // if id null: create new entity
+                if (!isValidSkillDTO(skillDTO)) {
                     throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Skill.INVALID_SKILL));
                 }
                 SkillEntity entity = skillMapper.toEntity(skillDTO);
@@ -134,13 +134,19 @@ public abstract class AttendantMapper {
                 skillMapper.updateSkillEntityFromSkillDTO(skillDTO, existedEntity);
             }
         });
+        //remove entities that are not inside dtos
+        entities.removeIf(entity -> {
+                    if (entity.getId() == null) return false;
+                    return dtos.stream().noneMatch(dto -> entity.getId().equals(dto.getId()));
+                }
+        );
     }
 
     public void mapToWorkHistoryEntities(List<WorkHistoryDTO> dtos, @MappingTarget List<WorkHistoryEntity> entities) {
         if (dtos == null) return;
         dtos.forEach(workHistoryDTO -> {
-            if (workHistoryDTO.getId() == null) { // if skill id null: create new skill
-                if (!isValidWorkHistoryDTO(workHistoryDTO)){
+            if (workHistoryDTO.getId() == null) { // if id null: create new entity
+                if (!isValidWorkHistoryDTO(workHistoryDTO)) {
                     throw new IllegalArgumentException(MessageUtil.getMessage((MessageConstant.WorkHistory.INVALID_WORK_HISTORY)));
                 }
                 WorkHistoryEntity entity = workHistoryMapper.toEntity(workHistoryDTO);
@@ -153,13 +159,19 @@ public abstract class AttendantMapper {
                 workHistoryMapper.updateWorkHistoryEntityFromWorkHistoryDTO(workHistoryDTO, existedEntity);
             }
         });
+        //remove entities that are not inside dtos
+        entities.removeIf(entity -> {
+                    if (entity.getId() == null) return false;
+                    return dtos.stream().noneMatch(dto -> entity.getId().equals(dto.getId()));
+                }
+        );
     }
 
     public void mapToEducationEntities(List<EducationDTO> dtos, @MappingTarget List<EducationEntity> entities) {
         if (dtos == null) return;
         dtos.forEach(educationDTO -> {
-            if (educationDTO.getId() == null) { // if skill id null: create new skill
-                if (!isValidEducationDTO(educationDTO)){
+            if (educationDTO.getId() == null) {  // if id null: create new entity
+                if (!isValidEducationDTO(educationDTO)) {
                     throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Education.INVALID_EDUCATION));
                 }
                 EducationEntity entity = educationMapper.toEntity(educationDTO);
@@ -172,13 +184,19 @@ public abstract class AttendantMapper {
                 educationMapper.updateEducationEntityFromEducationDTO(educationDTO, existedEntity);
             }
         });
+        //remove entities that are not inside dtos
+        entities.removeIf(entity -> {
+                    if (entity.getId() == null) return false;
+                    return dtos.stream().noneMatch(dto -> entity.getId().equals(dto.getId()));
+                }
+        );
     }
 
     public void mapToCertificationEntities(List<CertificationDTO> dtos, @MappingTarget List<CertificationEntity> entities) {
         if (dtos == null) return;
         dtos.forEach(certificationDTO -> {
-            if (certificationDTO.getId() == null) { // if skill id null: create new skill
-                if (!isValidCertificationDTO(certificationDTO)){
+            if (certificationDTO.getId() == null) { // if id null: create new entity
+                if (!isValidCertificationDTO(certificationDTO)) {
                     throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Certification.INVALID_CERTIFICATION));
                 }
                 CertificationEntity entity = certificationMapper.toEntity(certificationDTO);
@@ -191,13 +209,19 @@ public abstract class AttendantMapper {
                 certificationMapper.updateCertificationEntityFromCertificationDTO(certificationDTO, existedEntity);
             }
         });
+        //remove entities that are not inside dtos
+        entities.removeIf(entity -> {
+                    if (entity.getId() == null) return false;
+                    return dtos.stream().noneMatch(dto -> entity.getId().equals(dto.getId()));
+                }
+        );
     }
 
     public void mapToReferenceEntities(List<ReferenceDTO> dtos, @MappingTarget List<ReferenceEntity> entities) {
         if (dtos == null) return;
         dtos.forEach(referenceDTO -> {
-            if (referenceDTO.getId() == null) { // if skill id null: create new skill
-                if (!isValidReferenceDTO(referenceDTO)){
+            if (referenceDTO.getId() == null) { // if id null: create new entity
+                if (!isValidReferenceDTO(referenceDTO)) {
                     throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Reference.INVALID_REFERENCE));
                 }
                 ReferenceEntity entity = referenceMapper.toEntity(referenceDTO);
@@ -210,13 +234,19 @@ public abstract class AttendantMapper {
                 referenceMapper.updateReferenceEntityFromRefereceDTO(referenceDTO, existedEntity);
             }
         });
+        //remove entities that are not inside dtos
+        entities.removeIf(entity -> {
+                    if (entity.getId() == null) return false;
+                    return dtos.stream().noneMatch(dto -> entity.getId().equals(dto.getId()));
+                }
+        );
     }
 
     public void mapToActivityEntities(List<ActivityDTO> dtos, @MappingTarget List<ActivityEntity> entities) {
         if (dtos == null) return;
         dtos.forEach(activityDTO -> {
-            if (activityDTO.getId() == null) { // if skill id null: create new skill
-                if (!isValidActivityDTO(activityDTO)){
+            if (activityDTO.getId() == null) { // if id null: create new entity
+                if (!isValidActivityDTO(activityDTO)) {
                     throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Activity.INVALID_ACTIVITY));
                 }
                 ActivityEntity entity = activityMapper.toEntity(activityDTO);
@@ -229,6 +259,12 @@ public abstract class AttendantMapper {
                 activityMapper.updateActivityEntityFromActivityDTO(activityDTO, existedEntity);
             }
         });
+        //remove entities that are not inside dtos
+        entities.removeIf(entity -> {
+                    if (entity.getId() == null) return false;
+                    return dtos.stream().noneMatch(dto -> entity.getId().equals(dto.getId()));
+                }
+        );
     }
 
     private boolean isValidSkillDTO(SkillDTO dto) {
