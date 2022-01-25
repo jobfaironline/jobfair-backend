@@ -25,4 +25,6 @@ public interface AccountService {
 
     void activateAccount(String id);
 
+    String getIdByEmail(String email);
+
 }

@@ -75,5 +75,11 @@ public class AccountServiceImpl implements AccountService {
         accountRepository.save(accountEntity);
     }
 
+    @Override
+    public String getIdByEmail(String email) {
+        String id = accountRepository.findByEmail(email).get().getId().toString();
+        return id;
+    }
+
 
 }
