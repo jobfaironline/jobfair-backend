@@ -125,9 +125,9 @@ public class AttendantServiceImpl implements AttendantService {
 
         AttendantEntity attendantEntity = attendantMapper.toEntity(dto);
         attendantEntity.setAccountId(dto.getAccount().getId());
-        attendantRepository.save(attendantEntity);
+        attendantEntity = attendantRepository.save(attendantEntity);
 
-        return dto;
+        return attendantMapper.toDTO(attendantEntity);
 
     }
 

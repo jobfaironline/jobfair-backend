@@ -100,6 +100,7 @@ public abstract class AttendantMapper {
 
     @Named("fromCountryEntityOfAttendantEntity")
     public String fromCountryEntityOfAttendantEntity(CountryEntity entity){
+        if (entity==null) return  null;
         return entity.getId();
     }
 
@@ -113,6 +114,7 @@ public abstract class AttendantMapper {
 
     @Named("fromResidenceEntityOfAttendantEntity")
     public String fromResidenceEntityOfAttendantEntity(ResidenceEntity entity){
+        if(entity==null) return null;
         return entity.getId();
     }
 

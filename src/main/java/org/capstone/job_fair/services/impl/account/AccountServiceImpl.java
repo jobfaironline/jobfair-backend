@@ -68,5 +68,12 @@ public class AccountServiceImpl implements AccountService {
         return accountRepository.countByEmail(email);
     }
 
+    @Override
+    public void activateAccount(String id) {
+        AccountEntity accountEntity = accountRepository.findById(id).get();
+        accountEntity.setStatus(AccountStatus.ACTIVE);
+        accountRepository.save(accountEntity);
+    }
+
 
 }

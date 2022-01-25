@@ -10,14 +10,18 @@ import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
 import org.capstone.job_fair.controllers.payload.requests.CompanyManagerRegisterRequest;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.controllers.payload.requests.UpdateCompanyEmployeeProfileRequest;
+import org.capstone.job_fair.models.entities.company.CompanyEmployeeEntity;
+import org.capstone.job_fair.models.entities.token.AccountVerifyTokenEntity;
 import org.capstone.job_fair.services.interfaces.account.AccountService;
 import org.capstone.job_fair.services.interfaces.account.GenderService;
 import org.capstone.job_fair.services.interfaces.company.CompanyEmployeeService;
 import org.capstone.job_fair.services.interfaces.company.CompanyService;
+import org.capstone.job_fair.services.interfaces.token.AccountVerifyTokenService;
 import org.capstone.job_fair.services.interfaces.util.MailService;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.capstone.job_fair.utils.PasswordGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
@@ -47,6 +51,12 @@ public class CompanyEmployeeController {
     @Autowired
     private MailService mailService;
 
+    @Autowired
+    private AccountVerifyTokenService accountVerifyTokenService;
+
+    @Value("${api.endpoint}")
+    String domain;
+
 
 
     private boolean isEmailExist(String email) {
@@ -59,6 +69,7 @@ public class CompanyEmployeeController {
 
 
     @PostMapping(ApiEndPoint.CompanyEmployee.REGISTER_COMPANY_MANAGER)
+    @Async("threadPoolTaskExecutor")
     public ResponseEntity<?> register(@Validated @RequestBody CompanyManagerRegisterRequest request) {
         //check if email existed?
         if (isEmailExist(request.getEmail())) {
@@ -85,7 +96,11 @@ public class CompanyEmployeeController {
         CompanyEmployeeDTO dto = new CompanyEmployeeDTO();
         dto.setAccount(accountDTO);
 
-        companyEmployeeService.createNewCompanyManagerAccount(dto);
+        CompanyEmployeeDTO companyEmployeeDTO = companyEmployeeService.createNewCompanyManagerAccount(dto);
+        String id = accountVerifyTokenService.createToken(companyEmployeeDTO.getAccount().getId()).getAccountId();
+        this.mailService.sendMail(request.getEmail(),
+                MessageUtil.getMessage(MessageConstant.Attendant.ACCOUNT_VERIFY_MAIL_TITLE),
+                domain + ApiEndPoint.Authorization.VERIFY_USER+"/"+companyEmployeeDTO.getAccount().getId()+"/"+id);
         return GenericResponse.build(
                 MessageUtil.getMessage(MessageConstant.CompanyEmployee.CREATE_EMPLOYEE_MANAGER_SUCCESSFULLY),
                 HttpStatus.CREATED);
