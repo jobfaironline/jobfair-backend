@@ -76,7 +76,7 @@ public class AttendantController {
     }
 
     @PostMapping(ApiEndPoint.Attendant.REGISTER_ENDPOINT)
-    @Async("threadPoolTaskExecutor")
+//    @Async("threadPoolTaskExecutor")
     public ResponseEntity<?> register(@Validated @RequestBody RegisterAttendantRequest req) {
 
 
