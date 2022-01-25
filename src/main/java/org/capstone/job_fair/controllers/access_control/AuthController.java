@@ -47,6 +47,7 @@ public class AuthController {
     private final CompanyEmployeeService companyEmployeeService;
 
 
+
     private boolean isAccountHasRole(UserDetailsImpl userDetails, Role role){
         return userDetails.getAuthorities().stream().anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals(role.getAuthority()));
     }
@@ -83,7 +84,8 @@ public class AuthController {
                     role,
                     jwt,
                     refreshToken,
-                    isEmployeeFirstTime
+                    isEmployeeFirstTime,
+                    userDetails.getId()
             );
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
