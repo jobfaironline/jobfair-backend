@@ -62,6 +62,33 @@ public class CompanyServiceImpl implements CompanyService {
         return benefitRepository.existsById(id);
     }
 
+    private void checkCompanySubCategory(CompanyDTO dto){
+        if (dto.getSubCategoryDTOs() != null){
+            dto.getSubCategoryDTOs().stream().map(SubCategoryDTO::getId).forEach(id -> {
+                if (!isSubCategoryIdValid(id))
+                    throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.SubCategory.NOT_FOUND));
+            });
+        }
+    }
+
+    private void checkCompanyBenefit(CompanyDTO dto){
+        if (dto.getCompanyBenefitDTOS() != null){
+            dto.getCompanyBenefitDTOS().stream()
+                    .map(companyBenefitDTO -> companyBenefitDTO.getBenefitDTO().getId())
+                    .forEach(id -> {
+                        if (!isBenefitIdValid(id))
+                            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Benefit.NOT_FOUND));
+                    });
+        }
+    }
+
+
+
+    private void checkCompanyDTOValid(CompanyDTO companyDTO){
+        checkCompanySubCategory(companyDTO);
+        checkCompanyBenefit(companyDTO);
+    }
+
 
     @Override
     public List<CompanyDTO> getAllCompanies() {
@@ -89,22 +116,16 @@ public class CompanyServiceImpl implements CompanyService {
         if (!isSizeIdValid(dto.getSizeId())) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Company.SIZE_INVALID));
         }
+        checkCompanyDTOValid(dto);
 
-        dto.getCompanyBenefitDTOS().stream()
-            .map(companyBenefitDTO -> companyBenefitDTO.getBenefitDTO().getId())
-            .forEach(id -> {
-                if (!isBenefitIdValid(id))
-                    throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Benefit.NOT_FOUND));
-        });
-
-        dto.getSubCategoryDTOs().stream().map(SubCategoryDTO::getId).forEach(id -> {
-            if (!isSubCategoryIdValid(id))
-                throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.SubCategory.NOT_FOUND));
-        });
         dto.setStatus(CompanyStatus.ACTIVE);
         dto.setEmployeeMaxNum(DataConstraint.Company.DEFAULT_EMPLOYEE_MAX_NUM);
+
         CompanyEntity entity = mapper.toEntity(dto);
-        entity.getCompanyBenefits().forEach(companyBenefitEntity -> companyBenefitEntity.setCompany(entity));
+        if (entity.getCompanyBenefits() != null){
+            entity.getCompanyBenefits().forEach(companyBenefitEntity -> companyBenefitEntity.setCompany(entity));
+        }
+
         companyRepository.save(entity);
     }
 
@@ -116,42 +137,25 @@ public class CompanyServiceImpl implements CompanyService {
         if (!opt.isPresent()) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Company.NOT_FOUND));
         }
-
         if (dto.getEmail() != null
                 && !opt.get().getEmail().equals(dto.getEmail())
                 && isEmailExisted(dto.getEmail())) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Company.EMAIL_EXISTED));
         }
-
         if (dto.getTaxId() != null
                 && !opt.get().getTaxId().equals(dto.getTaxId())
                 && isTaxIDExisted(dto.getTaxId())) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Company.TAX_ID_EXISTED));
         }
-
         if (dto.getTaxId() != null && isSizeIdValid(dto.getSizeId())) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Company.SIZE_INVALID));
         }
-
-        if (dto.getCompanyBenefitDTOS() != null) {
-            dto.getCompanyBenefitDTOS().stream()
-            .map(companyBenefitDTO -> companyBenefitDTO.getBenefitDTO().getId())
-            .forEach(id -> {
-                if (!isBenefitIdValid(id))
-                    throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Benefit.NOT_FOUND));
-            });
-        }
-
-        if (dto.getSubCategoryDTOs() != null) {
-            dto.getSubCategoryDTOs().stream().map(SubCategoryDTO::getId).forEach(id -> {
-                if (!isSubCategoryIdValid(id))
-                    throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.SubCategory.NOT_FOUND));
-            });
-        }
+        checkCompanyDTOValid(dto);
 
         CompanyEntity entity = companyRepository.getById(dto.getId());
         companyMapper.updateCompanyEntity(dto, entity);
         entity.getCompanyBenefits().forEach(companyBenefitEntity -> companyBenefitEntity.setCompany(entity));
+
         companyRepository.save(entity);
     }
 
