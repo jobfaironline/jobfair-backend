@@ -19,6 +19,8 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @ToString
+@NoArgsConstructor
+
 public class UpdateAttendantRequest {
 
     @NotNull

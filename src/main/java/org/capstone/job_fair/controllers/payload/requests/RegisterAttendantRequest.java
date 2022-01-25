@@ -15,6 +15,7 @@ import javax.validation.constraints.Size;
 @Data
 @AllArgsConstructor
 @ToString
+@NoArgsConstructor
 public class RegisterAttendantRequest {
 
     @XSSConstraint
