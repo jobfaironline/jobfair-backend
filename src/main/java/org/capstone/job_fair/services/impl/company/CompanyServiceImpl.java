@@ -79,7 +79,6 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     public void createCompany(CompanyDTO dto) {
-        System.out.println(dto);
         if (isEmailExisted(dto.getEmail())) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Company.EMAIL_EXISTED));
         }
@@ -104,10 +103,8 @@ public class CompanyServiceImpl implements CompanyService {
         });
         dto.setStatus(CompanyStatus.ACTIVE);
         dto.setEmployeeMaxNum(DataConstraint.Company.DEFAULT_EMPLOYEE_MAX_NUM);
-        System.out.println(dto);
         CompanyEntity entity = mapper.toEntity(dto);
         entity.getCompanyBenefits().forEach(companyBenefitEntity -> companyBenefitEntity.setCompany(entity));
-        System.out.println(entity);
         companyRepository.save(entity);
     }
 
@@ -154,6 +151,7 @@ public class CompanyServiceImpl implements CompanyService {
 
         CompanyEntity entity = companyRepository.getById(dto.getId());
         companyMapper.updateCompanyEntity(dto, entity);
+        entity.getCompanyBenefits().forEach(companyBenefitEntity -> companyBenefitEntity.setCompany(entity));
         companyRepository.save(entity);
     }
 
