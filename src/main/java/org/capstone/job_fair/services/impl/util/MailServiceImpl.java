@@ -21,7 +21,9 @@ public class MailServiceImpl  implements MailService {
         message.setTo(to);
         message.setSubject(subject);
         message.setText(body);
+        System.out.println("Begin send email!");
         mailSender.send(message);
+        System.out.println("Email sent!");
         return CompletableFuture.completedFuture(null);
     }
 
