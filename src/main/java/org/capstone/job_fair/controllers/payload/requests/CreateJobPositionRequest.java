@@ -2,6 +2,7 @@ package org.capstone.job_fair.controllers.payload.requests;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.capstone.job_fair.constants.DataConstraint;
 import org.capstone.job_fair.models.enums.JobLevel;
@@ -17,6 +18,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @ToString
+@NoArgsConstructor
 public class CreateJobPositionRequest {
     @NotNull
     @Size(max = DataConstraint.JobPosition.TITLE_LENGTH)
