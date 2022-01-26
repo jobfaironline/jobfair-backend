@@ -54,10 +54,17 @@ public class UpdateCompanyRequest {
     private List<String> mediaUrls;
 
     @Valid
-    @Size(min = DataConstraint.JobPosition.CATEGORY_MIN, max = DataConstraint.JobPosition.CATEGORY_MAX)
-    private List<Integer> benefitIds;
+    private List<BenefitRequest> benefits;
 
     @Valid
     @Size(min = DataConstraint.Company.CATEGORY_MIN, max = DataConstraint.Company.CATEGORY_MAX)
     private List<Integer> subCategoriesIds;
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class BenefitRequest {
+        private Integer id;
+        private String description;
+    }
 }

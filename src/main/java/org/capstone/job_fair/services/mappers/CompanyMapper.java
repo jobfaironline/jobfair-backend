@@ -1,18 +1,15 @@
 package org.capstone.job_fair.services.mappers;
 
 
-import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.controllers.payload.requests.CreateCompanyRequest;
 import org.capstone.job_fair.controllers.payload.requests.UpdateCompanyRequest;
 import org.capstone.job_fair.models.dtos.company.*;
-import org.capstone.job_fair.models.entities.attendant.cv.SkillEntity;
 import org.capstone.job_fair.models.entities.company.*;
-import org.capstone.job_fair.utils.MessageUtil;
 import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -30,36 +27,39 @@ public abstract class CompanyMapper {
     @Autowired
     private MediaEntityMapper mediaMapper;
 
+    @Autowired
+    private CompanyBenefitMapper companyBenefitMapper;
+
 
     @Mapping(target = "subCategories", source = "subCategoryDTOs", qualifiedByName = "fromSubCategoryDTOsOfCompanyDTO")
-    @Mapping(target = "companyBenefits", source = "benefitDTOs", qualifiedByName = "fromBenefitDTOsFromCompanyDTO")
+    @Mapping(target = "companyBenefits", source = "companyBenefitDTOS", qualifiedByName = "fromCompanyBenefitsOfCreateCompanyRequest")
     @Mapping(target = "medias", source = "mediaDTOS", qualifiedByName = "fromMediaDTOsOfCompanyDTO")
     @Mapping(target = "companySize", source = "sizeId", qualifiedByName = "fromSizeIdOfCompanyDTO")
     public abstract CompanyEntity toEntity(CompanyDTO dto);
 
     @Mapping(target = "subCategoryDTOs", source = "subCategories", qualifiedByName = "fromSubCategoriesOfCompanyEntity")
-    @Mapping(target = "benefitDTOs", source = "companyBenefits", qualifiedByName = "fromCompanyBenefitsOfCompanyEntity")
+    @Mapping(target = "companyBenefitDTOS", source = "companyBenefits", qualifiedByName = "fromCompanyBenefitsOfCompanyEntity")
     @Mapping(target = "mediaDTOS", source = "medias", qualifiedByName = "fromMediasOfCompanyEntity")
     @Mapping(target = "sizeId", source = "companySize", qualifiedByName = "fromCompanySizeOfCompanyEntity")
     public abstract CompanyDTO toDTO(CompanyEntity entity);
 
     @Mapping(source = "url", target = "websiteUrl")
     @Mapping(source = "mediaUrls", target = "mediaDTOS", qualifiedByName = "fromMediaUrlsOfCreateCompanyRequest")
-    @Mapping(source = "benefitIds", target = "benefitDTOs", qualifiedByName = "fromBenefitIdsOfCreateCompanyRequest")
+    @Mapping(source = "benefits", target = "companyBenefitDTOS", qualifiedByName = "fromBenefitsOfCreateCompanyRequest")
     @Mapping(source = "subCategoriesIds", target = "subCategoryDTOs", qualifiedByName = "fromSubCategoriesIdsOfCreateCompanyRequest")
     @Mapping(source = "taxId", target = "taxId")
     public abstract CompanyDTO toDTO(CreateCompanyRequest request);
 
     @Mapping(source = "url", target = "websiteUrl")
     @Mapping(source = "mediaUrls", target = "mediaDTOS", qualifiedByName = "fromMediaUrlsOfCreateCompanyRequest")
-    @Mapping(source = "benefitIds", target = "benefitDTOs", qualifiedByName = "fromBenefitIdsOfCreateCompanyRequest")
+    @Mapping(source = "benefits", target = "companyBenefitDTOS", qualifiedByName = "fromBenefitsOfUpdateCompanyRequest")
     @Mapping(source = "subCategoriesIds", target = "subCategoryDTOs", qualifiedByName = "fromSubCategoriesIdsOfCreateCompanyRequest")
     @Mapping(source = "taxId", target = "taxId")
     public abstract CompanyDTO toDTO(UpdateCompanyRequest request);
 
 
     @Mapping(target = "subCategories", source = "subCategoryDTOs", qualifiedByName = "updateSubCategoriesOfCompanyEntity")
-    @Mapping(target = "companyBenefits", source = "benefitDTOs", qualifiedByName = "fromBenefitDTOsFromCompanyDTO")
+    @Mapping(target = "companyBenefits", source = "companyBenefitDTOS", qualifiedByName = "updateCompanyBenefitsOfCompanyEntity")
     @Mapping(target = "medias", source = "mediaDTOS", qualifiedByName = "fromMediaDTOsOfCompanyDTO")
     @Mapping(target = "companySize", source = "sizeId", qualifiedByName = "fromSizeIdOfCompanyDTO")
     public abstract void updateCompanyEntity(CompanyDTO dto, @MappingTarget CompanyEntity entity);
@@ -80,6 +80,34 @@ public abstract class CompanyMapper {
         });
     }
 
+    @Named("updateCompanyBenefitsOfCompanyEntity")
+    public void updateCompanyBenefitsOfCompanyEntity(Set<CompanyBenefitDTO> dtos, @MappingTarget Set<CompanyBenefitEntity> entities ){
+        if (dtos == null) return;
+        dtos.forEach(dto -> {
+
+            Optional<CompanyBenefitEntity> opt = entities.stream().filter(entity -> entity.getBenefit().getId().equals(dto.getBenefitDTO().getId())).findFirst();
+            if (opt.isPresent()){
+                companyBenefitMapper.updateCompanyBenefitEntity(dto, opt.get());
+                return;
+            }
+            CompanyBenefitEntity entity = companyBenefitMapper.toEntity(dto);
+            entities.add(entity);
+        });
+        entities.removeIf(entity -> {
+            return dtos.stream().noneMatch(dto -> entity.getBenefit().getId().equals(dto.getBenefitDTO().getId()));
+        });
+    }
+
+    @Named("fromBenefitsOfUpdateCompanyRequest")
+    public Set<CompanyBenefitDTO> fromBenefitsOfUpdateCompanyRequest(List<UpdateCompanyRequest.BenefitRequest> benefits){
+        if (benefits == null) return null;
+        return benefits.stream().map(benefitRequest -> {
+            BenefitDTO benefitDTO = new BenefitDTO();
+            benefitDTO.setId(benefitRequest.getId());
+            return CompanyBenefitDTO.builder().description(benefitRequest.getDescription()).benefitDTO(benefitDTO).build();
+        }).collect(Collectors.toSet());
+    }
+
 
     @Named("fromMediaUrlsOfCreateCompanyRequest")
     public List<MediaDTO> fromMediaUrlsOfCreateCompanyRequest(List<String> mediaUrls){
@@ -87,10 +115,14 @@ public abstract class CompanyMapper {
         return mediaUrls.stream().map(MediaDTO::new).collect(Collectors.toList());
     }
 
-    @Named("fromBenefitIdsOfCreateCompanyRequest")
-    public Set<BenefitDTO> fromBenefitIdsOfCreateCompanyRequest(List<Integer> benefitIds){
-        if (benefitIds == null) return null;
-        return benefitIds.stream().map(BenefitDTO::new).collect(Collectors.toSet());
+    @Named("fromBenefitsOfCreateCompanyRequest")
+    public Set<CompanyBenefitDTO> fromBenefitsOfCreateCompanyRequest(List<CreateCompanyRequest.BenefitRequest> benefits){
+        if (benefits == null) return null;
+        return benefits.stream().map(benefitRequest -> {
+            BenefitDTO benefitDTO = new BenefitDTO();
+            benefitDTO.setId(benefitRequest.getId());
+            return CompanyBenefitDTO.builder().description(benefitRequest.getDescription()).benefitDTO(benefitDTO).build();
+        }).collect(Collectors.toSet());
     }
 
     @Named("fromSubCategoriesIdsOfCreateCompanyRequest")
@@ -105,9 +137,9 @@ public abstract class CompanyMapper {
     }
 
     @Named("fromCompanyBenefitsOfCompanyEntity")
-    public Set<BenefitDTO> fromCompanyBenefitsOfCompanyEntity(Set<BenefitEntity> entities) {
+    public Set<CompanyBenefitDTO> fromCompanyBenefitsOfCompanyEntity(Set<CompanyBenefitEntity> entities) {
         if (entities == null) return null;
-        return entities.stream().map(entity -> benefitMapper.toDTO(entity)).collect(Collectors.toSet());
+        return entities.stream().map(entity -> companyBenefitMapper.toDTO(entity)).collect(Collectors.toSet());
     }
 
     @Named("fromMediasOfCompanyEntity")
@@ -128,10 +160,10 @@ public abstract class CompanyMapper {
         return dtos.stream().map(dto -> subCategoryMapper.toEntity(dto)).collect(Collectors.toSet());
     }
 
-    @Named("fromBenefitDTOsFromCompanyDTO")
-    public Set<BenefitEntity> fromBenefitDTOsFromCompanyDTO(Set<BenefitDTO> dtos) {
+    @Named("fromCompanyBenefitsOfCreateCompanyRequest")
+    public Set<CompanyBenefitEntity> fromCompanyBenefitsOfCreateCompanyRequest(Set<CompanyBenefitDTO> dtos) {
         if (dtos == null) return null;
-        return dtos.stream().map(dto -> benefitMapper.toEntity(dto)).collect(Collectors.toSet());
+        return dtos.stream().map(dto -> companyBenefitMapper.toEntity(dto)).collect(Collectors.toSet());
     }
 
     @Named("fromMediaDTOsOfCompanyDTO")

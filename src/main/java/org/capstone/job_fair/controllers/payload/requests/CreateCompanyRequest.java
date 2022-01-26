@@ -42,24 +42,27 @@ public class CreateCompanyRequest {
     private String email;
 
     @XSSConstraint
-    @NotNull
     private String url;
 
 
     private Integer sizeId;
 
-    @NotNull
     @Valid
     private List<String> mediaUrls;
 
-    @NotNull
     @Valid
-    @Size(min = DataConstraint.JobPosition.CATEGORY_MIN, max = DataConstraint.JobPosition.CATEGORY_MAX)
-    private List<Integer> benefitIds;
+    private List<BenefitRequest> benefits;
 
-    @NotNull
     @Valid
     @Size(min = DataConstraint.Company.CATEGORY_MIN, max = DataConstraint.Company.CATEGORY_MAX)
     private List<Integer> subCategoriesIds;
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class BenefitRequest {
+        private Integer id;
+        private String description;
+    }
 
 }

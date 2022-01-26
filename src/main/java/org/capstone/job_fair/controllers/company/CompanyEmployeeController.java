@@ -23,6 +23,7 @@ import org.capstone.job_fair.services.interfaces.company.CompanyService;
 import org.capstone.job_fair.services.interfaces.token.AccountVerifyTokenService;
 import org.capstone.job_fair.services.interfaces.util.MailService;
 import org.capstone.job_fair.services.mappers.CompanyMapper;
+import org.capstone.job_fair.services.mappers.CompanyEmployeeMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.capstone.job_fair.utils.PasswordGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,9 +48,6 @@ public class CompanyEmployeeController {
     private AccountService accountService;
 
     @Autowired
-    private GenderService genderService;
-
-    @Autowired
     private CompanyEmployeeService companyEmployeeService;
 
     @Autowired
@@ -60,6 +58,9 @@ public class CompanyEmployeeController {
 
     @Autowired
     private AccountVerifyTokenService accountVerifyTokenService;
+
+    @Autowired
+    private CompanyEmployeeMapper companyEmployeeMapper;
 
     @Value("${api.endpoint}")
     String domain;
@@ -113,7 +114,7 @@ public class CompanyEmployeeController {
         String id = accountVerifyTokenService.createToken(companyEmployeeDTO.getAccount().getId()).getAccountId();
         this.mailService.sendMail(request.getEmail(),
                 MessageUtil.getMessage(MessageConstant.Attendant.ACCOUNT_VERIFY_MAIL_TITLE),
-                domain + ApiEndPoint.Authorization.VERIFY_USER+"/"+companyEmployeeDTO.getAccount().getId()+"/"+id);
+                domain + ApiEndPoint.Authorization.VERIFY_USER + "/" + companyEmployeeDTO.getAccount().getId() + "/" + id);
         return GenericResponse.build(
                 MessageUtil.getMessage(MessageConstant.CompanyEmployee.CREATE_EMPLOYEE_MANAGER_SUCCESSFULLY),
                 HttpStatus.CREATED);
@@ -176,12 +177,14 @@ public class CompanyEmployeeController {
     @GetMapping(ApiEndPoint.CompanyEmployee.COMPANY_EMPLOYEE_ENDPOINT + "/{companyId}")
     public ResponseEntity<?> getCompanyEmployees(@PathVariable String companyId) {
         List<CompanyEmployeeDTO> employees = companyEmployeeService.getAllCompanyEmployees(companyId);
-        if(employees.isEmpty()) return new ResponseEntity<>(MessageUtil.getMessage(MessageConstant.Exception.RESOURCE_NOT_FOUND), HttpStatus.NOT_FOUND);
-        return new ResponseEntity<>(employees ,HttpStatus.OK);
+        if (employees.isEmpty())
+            return new ResponseEntity<>(MessageUtil.getMessage(MessageConstant.Exception.RESOURCE_NOT_FOUND), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(employees, HttpStatus.OK);
     }
+
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
     @DeleteMapping(ApiEndPoint.CompanyEmployee.COMPANY_EMPLOYEE_ENDPOINT + "/{id}")
-    public ResponseEntity<?> deleteCompanyEmp(@PathVariable String id){
+    public ResponseEntity<?> deleteCompanyEmp(@PathVariable String id) {
         Boolean result = companyEmployeeService.deleteEmployee(id);
         return result
                 ? GenericResponse.build(MessageUtil.getMessage(MessageConstant.CompanyEmployee.DELETE_SUCCESSFULLY), HttpStatus.OK)
@@ -191,43 +194,21 @@ public class CompanyEmployeeController {
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
     @PostMapping(ApiEndPoint.CompanyEmployee.COMPANY_EMPLOYEE_ENDPOINT)
     @Async("threadPoolTaskExecutor")
-    public CompletableFuture<ResponseEntity<?>> createEmployee(@Validated @RequestBody CompanyEmployeeRegisterRequest request){
-        //check if email existed?
-        if (isEmailExist(request.getEmail())) {
+    public CompletableFuture<ResponseEntity<?>> createEmployee(@Validated @RequestBody CompanyEmployeeRegisterRequest request) {
+        try {
+            CompanyEmployeeDTO dto = companyEmployeeMapper.toDTO(request);
+            companyEmployeeService.createNewCompanyEmployeeAccount(dto);
+            this.mailService.sendMail(request.getEmail(),
+                    MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMAIL_SUBJECT),
+                    MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMAIL_CONTENT) + dto.getAccount().getPassword());
             return CompletableFuture.completedFuture(GenericResponse.build(
-                    MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMAIL_EXISTED),
+                    MessageUtil.getMessage(MessageConstant.CompanyEmployee.CREATE_EMPLOYEE_EMPLOYEE_SUCCESSFULLY),
+                    HttpStatus.CREATED));
+        } catch (IllegalArgumentException ex) {
+            return CompletableFuture.completedFuture(GenericResponse.build(
+                    ex.getMessage(),
                     HttpStatus.BAD_REQUEST));
         }
-        //check if company existed?
-        if (!isCompanyExist(request.getCompanyId())) {
-            return CompletableFuture.completedFuture(GenericResponse.build(
-                    MessageUtil.getMessage(MessageConstant.Company.NOT_FOUND),
-                    HttpStatus.BAD_REQUEST));
-        }
-
-        AccountDTO accountDTO = new AccountDTO();
-        accountDTO.setEmail(request.getEmail());
-        accountDTO.setPassword(PasswordGenerator.generatePassword());
-        accountDTO.setPhone(request.getPhone());
-        accountDTO.setFirstname(request.getFirstName());
-        accountDTO.setLastname(request.getLastName());
-        accountDTO.setMiddlename(request.getMiddleName());
-        accountDTO.setGender(request.getGender());
-
-        CompanyEmployeeDTO dto = new CompanyEmployeeDTO();
-        dto.setAccount(accountDTO);
-
-        CompanyDTO companyDTO = new CompanyDTO();
-        companyDTO.setId(request.getCompanyId());
-        dto.setCompanyDTO(companyDTO);
-
-        companyEmployeeService.createNewCompanyEmployeeAccount(dto);
-        this.mailService.sendMail(request.getEmail(),
-                MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMAIL_SUBJECT),
-                MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMAIL_CONTENT) + dto.getAccount().getPassword());
-        return CompletableFuture.completedFuture(GenericResponse.build(
-                MessageUtil.getMessage(MessageConstant.CompanyEmployee.CREATE_EMPLOYEE_EMPLOYEE_SUCCESSFULLY),
-                HttpStatus.CREATED));
     }
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
