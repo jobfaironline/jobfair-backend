@@ -114,7 +114,7 @@ public class CompanyEmployeeController {
         String id = accountVerifyTokenService.createToken(companyEmployeeDTO.getAccount().getId()).getAccountId();
         this.mailService.sendMail(request.getEmail(),
                 MessageUtil.getMessage(MessageConstant.Attendant.ACCOUNT_VERIFY_MAIL_TITLE),
-                domain + ApiEndPoint.Authorization.VERIFY_USER + "/" + companyEmployeeDTO.getAccount().getId() + "/" + id);
+                domain + ApiEndPoint.Authorization.VERIFY_USER+"/"+companyEmployeeDTO.getAccount().getId()+"/"+id);
         return GenericResponse.build(
                 MessageUtil.getMessage(MessageConstant.CompanyEmployee.CREATE_EMPLOYEE_MANAGER_SUCCESSFULLY),
                 HttpStatus.CREATED);
@@ -177,14 +177,13 @@ public class CompanyEmployeeController {
     @GetMapping(ApiEndPoint.CompanyEmployee.COMPANY_EMPLOYEE_ENDPOINT + "/{companyId}")
     public ResponseEntity<?> getCompanyEmployees(@PathVariable String companyId) {
         List<CompanyEmployeeDTO> employees = companyEmployeeService.getAllCompanyEmployees(companyId);
-        if (employees.isEmpty())
-            return new ResponseEntity<>(MessageUtil.getMessage(MessageConstant.Exception.RESOURCE_NOT_FOUND), HttpStatus.NOT_FOUND);
-        return new ResponseEntity<>(employees, HttpStatus.OK);
+        if(employees.isEmpty()) return new ResponseEntity<>(MessageUtil.getMessage(MessageConstant.Exception.RESOURCE_NOT_FOUND), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(employees ,HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
     @DeleteMapping(ApiEndPoint.CompanyEmployee.COMPANY_EMPLOYEE_ENDPOINT + "/{id}")
-    public ResponseEntity<?> deleteCompanyEmp(@PathVariable String id) {
+    public ResponseEntity<?> deleteCompanyEmp(@PathVariable String id){
         Boolean result = companyEmployeeService.deleteEmployee(id);
         return result
                 ? GenericResponse.build(MessageUtil.getMessage(MessageConstant.CompanyEmployee.DELETE_SUCCESSFULLY), HttpStatus.OK)
@@ -208,8 +207,7 @@ public class CompanyEmployeeController {
             return CompletableFuture.completedFuture(GenericResponse.build(
                     ex.getMessage(),
                     HttpStatus.BAD_REQUEST));
-        }
-    }
+        }}
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
     @PostMapping(ApiEndPoint.CompanyEmployee.PROMOTE_EMPLOYEE_ENPOINT)
@@ -220,16 +218,11 @@ public class CompanyEmployeeController {
             companyEmployeeService.promoteEmployee(request.getEmployeeId(), request.getManagerId());
           response = CompletableFuture.completedFuture(GenericResponse.build(
                     MessageUtil.getMessage(MessageConstant.CompanyEmployee.PROMOTE_EMPLOYEE_SUCCESSFULLY),
-                    HttpStatus.OK
-            ));
-        } catch (IllegalArgumentException ex){
-             response = CompletableFuture.completedFuture(GenericResponse.build(
-                    ex.getMessage(),
-                    HttpStatus.BAD_REQUEST
-            ));
-        } finally {
-            return response;
+                    HttpStatus.OK));
+        } catch (IllegalArgumentException ex) {
+            return CompletableFuture.completedFuture(GenericResponse.build(ex.getMessage(), HttpStatus.BAD_REQUEST));
         }
-    }
+            return response;
 
-}
+    }}
+
