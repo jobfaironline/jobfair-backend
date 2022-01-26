@@ -27,44 +27,23 @@ public class JobPositionEntity {
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "org.hibernate.id.UUIDGenerator")
     private String id;
-    @Basic
     @Column(name = "title")
     private String title;
-    @Basic
-    @Column(name = "description")
-    private String description;
-    @Basic
-    @Column(name = "requirements")
-    private String requirements;
-    @Basic
-    @Column(name = "min_salary")
-    private Double minSalary;
-    @Basic
-    @Column(name = "max_salary")
-    private Double maxSalary;
-    @Basic
     @Column(name = "contact_person_name")
     private String contactPersonName;
-    @Basic
     @Column(name = "contact_email")
     private String contactEmail;
-    @Column(name = "num_of_emp")
-    private Integer numOfEmp;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "preferred_language_id")
-    @ToString.Exclude
     private LanguageEntity language;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "level_id")
-    @ToString.Exclude
     private JobLevelEntity jobLevel;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "job_type_id")
-    @ToString.Exclude
     private JobTypeEntity jobTypeEntity;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id")
-    @ToString.Exclude
     private CompanyEntity company;
 
     @ManyToMany(fetch = FetchType.LAZY)
@@ -73,7 +52,7 @@ public class JobPositionEntity {
             joinColumns = @JoinColumn(name = "job_id"),
             inverseJoinColumns = @JoinColumn(name = "sub_category_id"))
     @ToString.Exclude
-    List<SubCategoryEntity> categories;
+    Set<SubCategoryEntity> categories;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
@@ -81,7 +60,7 @@ public class JobPositionEntity {
             joinColumns = @JoinColumn(name = "position_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id"))
     @ToString.Exclude
-    List<SkillTagEntity> skillTagEntities;
+    Set<SkillTagEntity> skillTagEntities;
 
     @Override
     public boolean equals(Object o) {

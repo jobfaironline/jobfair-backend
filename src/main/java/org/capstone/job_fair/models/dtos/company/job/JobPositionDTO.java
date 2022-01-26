@@ -22,13 +22,8 @@ import java.util.List;
 public class JobPositionDTO implements Serializable {
     private String id;
     private String title;
-    private String description;
-    private String requirements;
-    private Double minSalary;
-    private Double maxSalary;
     private String contactPersonName;
     private String contactEmail;
-    private Integer numOfEmp;
     private Language language;
     private JobLevel level;
     private JobType jobType;
