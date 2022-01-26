@@ -49,18 +49,14 @@ public class CompanyEntity {
     private List<MediaEntity> medias;
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-            name = "company_benefit",
-            joinColumns = @JoinColumn(name = "company_id"),
-            inverseJoinColumns = @JoinColumn(name = "benefit_id")
-    )
-    private Set<BenefitEntity> companyBenefits;
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
             name = "company_category",
             joinColumns = @JoinColumn(name = "company_id"),
             inverseJoinColumns = @JoinColumn(name = "sub_category_id")
     )
     private Set<SubCategoryEntity> subCategories;
+
+    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)
+    private Set<CompanyBenefitEntity> companyBenefits;
 
     @Override
     public boolean equals(Object o) {
