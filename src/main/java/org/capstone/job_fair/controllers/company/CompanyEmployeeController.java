@@ -1,9 +1,11 @@
 package org.capstone.job_fair.controllers.company;
 
 
+import lombok.NoArgsConstructor;
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.controllers.payload.requests.CompanyEmployeeRegisterRequest;
+import org.capstone.job_fair.controllers.payload.requests.PromoteEmployeeToCompanyManagerRequest;
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
 import org.capstone.job_fair.models.dtos.company.CompanyDTO;
 import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
@@ -11,13 +13,17 @@ import org.capstone.job_fair.controllers.payload.requests.CompanyManagerRegister
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.controllers.payload.requests.UpdateCompanyEmployeeProfileRequest;
 import org.capstone.job_fair.models.entities.company.CompanyEmployeeEntity;
+import org.capstone.job_fair.models.entities.company.CompanyEntity;
 import org.capstone.job_fair.models.entities.token.AccountVerifyTokenEntity;
+import org.capstone.job_fair.models.enums.Role;
 import org.capstone.job_fair.services.interfaces.account.AccountService;
 import org.capstone.job_fair.services.interfaces.account.GenderService;
 import org.capstone.job_fair.services.interfaces.company.CompanyEmployeeService;
 import org.capstone.job_fair.services.interfaces.company.CompanyService;
 import org.capstone.job_fair.services.interfaces.token.AccountVerifyTokenService;
 import org.capstone.job_fair.services.interfaces.util.MailService;
+import org.capstone.job_fair.services.mappers.CompanyEmployeeMapper;
+import org.capstone.job_fair.services.mappers.CompanyMapper;
 import org.capstone.job_fair.services.mappers.CompanyEmployeeMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.capstone.job_fair.utils.PasswordGenerator;
@@ -27,6 +33,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,6 +42,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @RestController
+@NoArgsConstructor
 public class CompanyEmployeeController {
 
     @Autowired
@@ -58,12 +66,18 @@ public class CompanyEmployeeController {
     @Value("${api.endpoint}")
     String domain;
 
+    @Autowired
+    private CompanyMapper companyMapper;
 
     private boolean isEmailExist(String email) {
         return accountService.getCountAccountByEmail(email) != 0;
     }
 
+    private boolean isCompanyExist(String companyId) {
+        return companyService.getCountById(companyId) != 0;
+    }
 
+    @Transactional
     @PostMapping(ApiEndPoint.CompanyEmployee.REGISTER_COMPANY_MANAGER)
     @Async("threadPoolTaskExecutor")
     public ResponseEntity<?> register(@Validated @RequestBody CompanyManagerRegisterRequest request) {
@@ -79,6 +93,8 @@ public class CompanyEmployeeController {
                     MessageUtil.getMessage(MessageConstant.AccessControlMessage.CONFIRM_PASSWORD_MISMATCH),
                     HttpStatus.BAD_REQUEST);
         }
+        CompanyEntity companyEntity = companyService.getCompanyById(request.getCompanyId()).get();
+        CompanyDTO companyDTO = companyMapper.toDTO(companyEntity);
 
         AccountDTO accountDTO = new AccountDTO();
         accountDTO.setEmail(request.getEmail());
@@ -91,6 +107,7 @@ public class CompanyEmployeeController {
 
         CompanyEmployeeDTO dto = new CompanyEmployeeDTO();
         dto.setAccount(accountDTO);
+        dto.setCompanyDTO(companyDTO);
 
         CompanyEmployeeDTO companyEmployeeDTO = companyEmployeeService.createNewCompanyManagerAccount(dto);
         String id = accountVerifyTokenService.createToken(companyEmployeeDTO.getAccount().getId()).getAccountId();
@@ -190,6 +207,19 @@ public class CompanyEmployeeController {
             return CompletableFuture.completedFuture(GenericResponse.build(
                     ex.getMessage(),
                     HttpStatus.BAD_REQUEST));
+        }
+    }
+
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
+    @PostMapping(ApiEndPoint.CompanyEmployee.PROMOTE_EMPLOYEE_ENPOINT)
+    public ResponseEntity<?> promoteEmployee(@Validated @RequestBody PromoteEmployeeToCompanyManagerRequest request) {
+        try {
+            companyEmployeeService.promoteEmployee(request.getEmployeeId(), request.getManagerId());
+            return GenericResponse.build(
+                    MessageUtil.getMessage(MessageConstant.CompanyEmployee.PROMOTE_EMPLOYEE_SUCCESSFULLY),
+                    HttpStatus.OK);
+        } catch (IllegalArgumentException ex) {
+            return GenericResponse.build(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 

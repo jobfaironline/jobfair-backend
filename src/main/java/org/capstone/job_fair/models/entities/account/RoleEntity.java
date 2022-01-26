@@ -21,6 +21,10 @@ public class RoleEntity {
     @Column(name = "name")
     private String name;
 
+    public RoleEntity(Integer id){
+        this.id = id;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -86,6 +86,12 @@ public class MessageConstant {
         public static final String DELETE_FAILED = "company-employee.error.delete";
         public static final String EMAIL_SUBJECT = "company-employee.email.subject";
         public static final String EMAIL_CONTENT = "company-employee.email.body";
+        public static final String MANAGER_NOT_FOUND="company-employee.manager-not-found";
+        public static final String INVALID_ROLE="company-employee.invalid-role";
+        public static final String EMPLOYEE_NOT_FOUND="company-employee.employee-not-found";
+        public static final String DIFFERENT_COMPANY_ERROR="company-employee.different-company-error";
+        public static final String PROMOTE_EMPLOYEE_SUCCESSFULLY="company-employee.promote-employee-successfully";
+        public static final String EMPLOYEE_NOT_ACTIVE="company-employee.not-active";
         public static final String MAX_QUOTA_FOR_COMPANY_EMPLOYEE = "company-employee.error.max-quota";
 
     }

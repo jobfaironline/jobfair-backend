@@ -44,7 +44,7 @@ public class ApiEndPoint {
         public static final String COMPANY_EMPLOYEE_ENDPOINT = ROOT_ENDPOINT + VERSION + "/company-employees";
         public static final String REGISTER_COMPANY_MANAGER = COMPANY_EMPLOYEE_ENDPOINT+ "/manager/register";
         public static final String UPDATE_PROFILE_ENDPOINT = COMPANY_EMPLOYEE_ENDPOINT + "/update";
-
+        public static final String PROMOTE_EMPLOYEE_ENPOINT =  COMPANY_EMPLOYEE_ENDPOINT + "/promote";
     }
 
 

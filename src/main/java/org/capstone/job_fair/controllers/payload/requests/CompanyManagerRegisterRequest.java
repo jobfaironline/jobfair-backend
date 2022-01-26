@@ -40,4 +40,6 @@ public class CompanyManagerRegisterRequest {
     private String middleName;
     @NotNull
     private Gender gender;
+    @NotNull
+    private String companyId;
 }

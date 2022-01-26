@@ -16,5 +16,8 @@ public interface CompanyEmployeeService {
 
     Boolean deleteEmployee(String id);
 
-    public void updateEmployeeStatus(String email);
+    void updateEmployeeStatus(String email);
+
+    void promoteEmployee(String employeeId, String managerId);
+
 }
