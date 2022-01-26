@@ -74,6 +74,7 @@ public class ApiEndPoint {
         public static final String COMPANY_EMPLOYEE = "company-employee";
         public static final String SUB_CATEGORY = "sub-category";
         public static final String VERIFY = "verifies";
+        public static final String SKILL_TAG = "skill-tag";
 
 
     }
