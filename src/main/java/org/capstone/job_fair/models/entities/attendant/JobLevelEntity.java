@@ -28,7 +28,7 @@ public class JobLevelEntity {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
         JobLevelEntity that = (JobLevelEntity) o;
-        return id != null && Objects.equals(id, that.id);
+        return id != null && Objects.equals(id, that.getId());
     }
 
     @Override

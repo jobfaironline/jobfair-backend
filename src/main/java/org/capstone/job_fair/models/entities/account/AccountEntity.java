@@ -32,7 +32,7 @@ public class AccountEntity {
     @Enumerated(EnumType.ORDINAL)
     private AccountStatus status;
 
-    @Column(name = "phone", nullable = true, length = 11)
+    @Column(name = "phone", length = 11)
     private String phone;
 
     @Column(name = "profile_image_url", nullable = false, length = 2048)
@@ -44,7 +44,7 @@ public class AccountEntity {
     @Column(name = "lastname", nullable = false, length = 100)
     private String lastname;
 
-    @Column(name = "middlename", nullable = true, length = 100)
+    @Column(name = "middlename", length = 100)
     private String middlename;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -64,7 +64,7 @@ public class AccountEntity {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
         AccountEntity account = (AccountEntity) o;
-        return id != null && Objects.equals(id, account.id);
+        return id != null && Objects.equals(id, account.getId());
     }
 
     @Override

@@ -37,16 +37,12 @@ public class ApplicationEntity {
     @JoinColumn(name = "attendant_id")
     private AttendantEntity attendant;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "job_position_id", nullable = false)
-    private JobLevelEntity jobLevel;
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
         ApplicationEntity that = (ApplicationEntity) o;
-        return id != null && Objects.equals(id, that.id);
+        return id != null && Objects.equals(id, that.getId());
     }
 
     @Override

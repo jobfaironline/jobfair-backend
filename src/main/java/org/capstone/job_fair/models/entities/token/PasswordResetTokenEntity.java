@@ -2,6 +2,7 @@ package org.capstone.job_fair.models.entities.token;
 
 import lombok.*;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
+import org.hibernate.Hibernate;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.domain.Persistable;
 
@@ -38,4 +39,16 @@ public class PasswordResetTokenEntity {
     @JoinColumn(nullable = false, name = "account_id")
     private AccountEntity account;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        PasswordResetTokenEntity that = (PasswordResetTokenEntity) o;
+        return getId().equals(that.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getId().hashCode();
+    }
 }

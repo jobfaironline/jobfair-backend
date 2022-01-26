@@ -37,7 +37,7 @@ public class MediaEntity {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
         MediaEntity that = (MediaEntity) o;
-        return id != null && Objects.equals(id, that.id);
+        return id != null && Objects.equals(id, that.getId());
     }
 
     @Override
