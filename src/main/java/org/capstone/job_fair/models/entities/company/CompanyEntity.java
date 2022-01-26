@@ -61,8 +61,6 @@ public class CompanyEntity {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        System.out.println(Hibernate.getClass(this));
-        System.out.println(Hibernate.getClass(o));
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
         CompanyEntity that = (CompanyEntity) o;
         return id != null && Objects.equals(id, that.getId());
