@@ -137,5 +137,9 @@ public class MessageConstant {
         public static final String NOT_FOUND = "sub-category.error.not-found";
     }
 
+    public static final class SkillTag{
+        public static final String NOT_FOUND = "skill-tag.error.not-found";
+    }
+
 }
 
