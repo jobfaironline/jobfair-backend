@@ -84,13 +84,9 @@ public class AttendantController {
             AttendantDTO attendantDTO = attendantMapper.toDTO(req);
             attendantDTO = attendantService.createNewAccount(attendantDTO);
             String id = accountVerifyTokenService.createToken(attendantDTO.getAccount().getId()).getAccountId();
-            System.out.println("Token created!");
             this.mailService.sendMail(req.getEmail(),
                     MessageUtil.getMessage(MessageConstant.Attendant.ACCOUNT_VERIFY_MAIL_TITLE),
                     domain + ApiEndPoint.Authorization.VERIFY_USER+"/"+attendantDTO.getAccount().getId()+"/"+id);
-            System.out.println("Mail subject: " + MessageConstant.Attendant.ACCOUNT_VERIFY_MAIL_TITLE);
-            System.out.println("Mail content: " + domain + ApiEndPoint.Authorization.VERIFY_USER+"/"+attendantDTO.getAccount().getId()+"/"+id);
-            System.out.println("Mail sent!");
             return GenericResponse.build(
                     MessageUtil.getMessage(MessageConstant.Attendant.REGISTER_SUCCESSFULLY),
                     HttpStatus.CREATED);

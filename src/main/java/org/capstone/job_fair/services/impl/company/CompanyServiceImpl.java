@@ -118,7 +118,7 @@ public class CompanyServiceImpl implements CompanyService {
         }
         checkCompanyDTOValid(dto);
 
-        dto.setStatus(CompanyStatus.ACTIVE);
+        dto.setStatus(CompanyStatus.REGISTERED);
         dto.setEmployeeMaxNum(DataConstraint.Company.DEFAULT_EMPLOYEE_MAX_NUM);
 
         CompanyEntity entity = mapper.toEntity(dto);
