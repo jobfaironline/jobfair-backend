@@ -44,8 +44,6 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
     @Autowired
     private AccountRepository accountRepository;
 
-    @Autowired
-    private CompanyEmployeeService companyEmployeeService;
 
 
     @Override
@@ -80,13 +78,13 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
         try {
             employeeRepository.findById(dto.getAccountId()).map((atd) -> {
                 mapper.updateCompanyEmployeeMapperFromDto(dto, atd);
-                if (dto.getCompanyDTO() != null){
+                if (dto.getCompanyDTO() != null) {
                     CompanyEntity companyEntity = companyRepository.getById(dto.getCompanyDTO().getId());
                     atd.setCompany(companyEntity);
                 }
                 return employeeRepository.save(atd);
             }).orElseThrow(NoSuchElementException::new);
-        } catch (EntityNotFoundException e){
+        } catch (EntityNotFoundException e) {
             throw new NoSuchElementException();
         }
     }
@@ -100,63 +98,50 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
 
     @Override
     public Boolean deleteEmployee(String id) {
-       Optional<CompanyEmployeeEntity> companyEmployeeEntity = employeeRepository.findById(id);
-       if(!companyEmployeeEntity.isPresent()) return false;
+        Optional<CompanyEmployeeEntity> companyEmployeeEntity = employeeRepository.findById(id);
+        if (!companyEmployeeEntity.isPresent()) return false;
         companyEmployeeEntity.get().getAccount().setStatus(AccountStatus.INACTIVE);
         employeeRepository.save(companyEmployeeEntity.get());
-       return true;
+        return true;
     }
 
     @Override
-    public void updateEmployeeStatus(String email){
+    public void updateEmployeeStatus(String email) {
         AccountEntity accountEntity = accountRepository.findByEmail(email).get();
         accountEntity.setStatus(AccountStatus.ACTIVE);
         accountRepository.save(accountEntity);
     }
 
     @Override
+    @Transactional
     public void promoteEmployee(String employeeId, String managerId) {
 
-        CompanyEmployeeDTO companyEmployeeDTO = companyEmployeeService.getById(employeeId);
-        CompanyEmployeeDTO companyManagerDTO = companyEmployeeService.getById(managerId);
+        CompanyEmployeeEntity employee = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMPLOYEE_NOT_FOUND)));
+        CompanyEmployeeEntity manager = employeeRepository.findById(managerId)
+                .orElseThrow(() -> new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyEmployee.MANAGER_NOT_FOUND)));
 
-        if(companyManagerDTO == null) {
-            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyEmployee.MANAGER_NOT_FOUND));
-        }
-        if(companyEmployeeDTO.getAccount().getStatus().toString().equals(AccountStatus.REGISTERED)||
-                companyEmployeeDTO.getAccount().getStatus().toString().equals(AccountStatus.INACTIVE)) {
+
+        if (employee.getAccount().getStatus() == AccountStatus.REGISTERED ||
+                employee.getAccount().getStatus() == AccountStatus.INACTIVE) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMPLOYEE_NOT_ACTIVE));
         }
-        if(companyEmployeeDTO == null) {
-            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMPLOYEE_NOT_FOUND));
-        }
-        if(!companyEmployeeDTO.getAccount().getRole().getAuthority().equals(Role.COMPANY_EMPLOYEE.toString())){
+        if (employee.getAccount().getRole().getId() != Role.COMPANY_EMPLOYEE.ordinal()) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyEmployee.INVALID_ROLE));
         }
-        if(!companyManagerDTO.getAccount().getRole().getAuthority().equals(Role.COMPANY_MANAGER.toString())){
+        if (manager.getAccount().getRole().getId() != Role.COMPANY_MANAGER.ordinal()) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyEmployee.INVALID_ROLE));
         }
-        if(!companyManagerDTO.getCompanyDTO().getId().equals(companyEmployeeDTO.getCompanyDTO().getId())) {
+        System.out.println(employee.getCompany().equals(manager.getCompany()));
+        if (!manager.getCompany().equals(employee.getCompany())) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyEmployee.DIFFERENT_COMPANY_ERROR));
         }
 
-        companyEmployeeDTO.getAccount().setRole(Role.COMPANY_MANAGER);
-        employeeRepository.save(mapper.toEntity(companyEmployeeDTO));
-        companyManagerDTO.getAccount().setRole(Role.COMPANY_EMPLOYEE);
-        employeeRepository.save(mapper.toEntity(companyManagerDTO));
+        employee.getAccount().setRole(new RoleEntity(Role.COMPANY_MANAGER.ordinal()));
+        manager.getAccount().setRole(new RoleEntity(Role.COMPANY_EMPLOYEE.ordinal()));
+        employeeRepository.save(employee);
+        employeeRepository.save(manager);
     }
 
-    @Override
-    public boolean isSameCompany(String employeeId, String managerId) {
-        return employeeRepository.getById(employeeId).getCompany().getId()
-                .equals(employeeRepository.getById(managerId).getCompany().getId());
-    }
-
-    @Override
-    public CompanyEmployeeDTO getById(String id) {
-        Optional<CompanyEmployeeEntity> entity = employeeRepository.findById(id);
-        if(!entity.isPresent()) return null;
-        return mapper.toDTO(entity.get());
-    }
 
 }
