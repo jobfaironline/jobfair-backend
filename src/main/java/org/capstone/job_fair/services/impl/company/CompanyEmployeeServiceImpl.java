@@ -2,25 +2,21 @@ package org.capstone.job_fair.services.impl.company;
 
 import org.capstone.job_fair.constants.AccountConstant;
 import org.capstone.job_fair.constants.MessageConstant;
-import org.capstone.job_fair.constants.MessageConstant;
-import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
 import org.capstone.job_fair.models.entities.account.RoleEntity;
+import org.capstone.job_fair.models.entities.company.CompanyEmployeeEntity;
 import org.capstone.job_fair.models.entities.company.CompanyEntity;
 import org.capstone.job_fair.models.enums.Role;
-import org.capstone.job_fair.repositories.account.AccountRepository;
-import org.capstone.job_fair.repositories.company.CompanyRepository;
-import org.capstone.job_fair.services.mappers.CompanyEmployeeMapper;
 import org.capstone.job_fair.models.statuses.AccountStatus;
+import org.capstone.job_fair.repositories.account.AccountRepository;
 import org.capstone.job_fair.repositories.company.CompanyEmployeeRepository;
+import org.capstone.job_fair.repositories.company.CompanyRepository;
 import org.capstone.job_fair.services.interfaces.company.CompanyEmployeeService;
-import org.capstone.job_fair.models.entities.company.CompanyEmployeeEntity;
-import org.capstone.job_fair.utils.MessageUtil;
+import org.capstone.job_fair.services.mappers.CompanyEmployeeMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.capstone.job_fair.utils.PasswordGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,7 +26,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Service

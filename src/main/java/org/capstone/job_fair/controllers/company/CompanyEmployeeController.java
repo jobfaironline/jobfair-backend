@@ -71,10 +71,6 @@ public class CompanyEmployeeController {
         return accountService.getCountAccountByEmail(email) != 0;
     }
 
-    private boolean isCompanyExist(String companyId) {
-        return companyService.getCountById(companyId) != 0;
-    }
-
     @Transactional
     @PostMapping(ApiEndPoint.CompanyEmployee.REGISTER_COMPANY_MANAGER)
     @Async("threadPoolTaskExecutor")
