@@ -66,6 +66,8 @@ public class MessageConstant {
         public static final String ACTIVITY_INVALID = "account.error.activity_invalid";
         public static final String DOB_INVALID = "account.error.dob_invalid";
         public static final String YEAR_OF_EXP_INVALID = "account.error.year_of_exp_invalid";
+        public static final String OLD_PASSWORD_MISMATCH = "account.error.old-password-mismatch";
+        public static final String CHANGE_PASSWORD_SUCCESSFULLY = "account.success.change-password-successfully";
     }
 
     public static final class Attendant {

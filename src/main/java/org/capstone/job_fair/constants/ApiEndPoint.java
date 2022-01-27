@@ -42,6 +42,7 @@ public class ApiEndPoint {
 
     public static final class Account {
         public static final String ACCOUNT_ENDPOINT = ROOT_ENDPOINT + VERSION + "/accounts";
+        public static final String CHANGE_PASSWORD_ENDPOINT = ACCOUNT_ENDPOINT + "/change-password";
     }
 
     public static final class CompanyEmployee {
