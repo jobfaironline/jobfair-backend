@@ -12,6 +12,17 @@ public class MessageConstant {
         public static final String HTTP_MESSAGE_NOT_VALID = "error.exception.http-message-not-valid";
     }
 
+    public static final class JobFair{
+        public static final String CREATE_JOB_FAIR_PLAN_SUCCESSFULLY = "job-fair-plan.success.create";
+        public static final String DELETE_JOB_FAIR_PLAN_SUCCESSFULLY = "job-fair-plan.success.delete";
+        public static final String SUBMIT_JOB_FAIR_PLAN_SUCCESSFULLY = "job-fair-plan.success.submit";
+        public static final String CANCEL_JOB_FAIR_PLAN_SUCCESSFULLY = "job-fair-plan.success.cancel";
+        public static final String JOB_FAIR_NOT_FOUND = "job-fair-plan.not-found";
+        public static final String INVALID_CREATOR_ID = "job-fair-plan.error.invalid-creator-id";
+        public static final String INVALID_JOB_FAIR_STATUS = "job-fair-plan.error.invalid-job-fair-status";
+        public static final String END_TIME_LESS_THAN_START_TIME_ERROR ="job-fair-plan.error.end-time-less-than-start-time";
+
+    }
 
     public static final class InvalidFormatValidationMessage {
         //the value in this class belongs to Validator annotation

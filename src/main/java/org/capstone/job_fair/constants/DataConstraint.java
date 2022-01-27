@@ -11,6 +11,11 @@ public class DataConstraint {
 
     }
 
+    public static class JobFair{
+        public static final int MIN_TIME = 0;
+        public static final int MAX_DESCRIPTION_LENGTH = 500000;
+    }
+
     public static final class WorkHistory {
         public static final int POSITION_MIN_LENGTH = 1;
         public static final int POSITION_MAX_LENGTH = 100;

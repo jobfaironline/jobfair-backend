@@ -1,8 +1,5 @@
 package org.capstone.job_fair.constants;
 
-import org.hibernate.cfg.Environment;
-import org.springframework.beans.factory.annotation.Value;
-
 public class ApiEndPoint {
 
 
@@ -18,6 +15,13 @@ public class ApiEndPoint {
         public static final String GENERATE_OTP_ENDPOINT = AUTHENTICATION_ENDPOINT + "/generate-otp";
         public static final String RESET_PASSWORD_ENDPOINT = AUTHENTICATION_ENDPOINT + "/reset-password";
 
+    }
+    public static final class JobFair{
+        public static final String JOB_FAIR_PLAN = ROOT_ENDPOINT + VERSION + "/job-fair";
+        public static final String DELETE_JOB_FAIR_PLAN_DRAFT = JOB_FAIR_PLAN +"/delete";
+        public static final String SUBMIT_JOB_FAIR_PLAN_DRAFT = JOB_FAIR_PLAN +"/submit";
+        public static final String CANCEL_PENDING_JOB_FAIR_PLAN = JOB_FAIR_PLAN + "/cancel";
+        public static final String RESTORE_DELETED_JOB_FAIR_PLAN = JOB_FAIR_PLAN + "/restore";
     }
     public static final class Authorization {
         public static final String VERIFY_USER = ROOT_ENDPOINT + VERSION + "/verify";
@@ -75,6 +79,7 @@ public class ApiEndPoint {
         public static final String SUB_CATEGORY = "sub-category";
         public static final String VERIFY = "verifies";
         public static final String SKILL_TAG = "skill-tag";
+        public static final String JOB_FAIR = "job-fair";
 
 
     }
