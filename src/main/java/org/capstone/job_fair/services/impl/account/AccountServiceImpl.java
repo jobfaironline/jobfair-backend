@@ -1,12 +1,17 @@
 package org.capstone.job_fair.services.impl.account;
 
+import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
+import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
-import org.capstone.job_fair.models.statuses.AccountStatus;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
+import org.capstone.job_fair.models.statuses.AccountStatus;
 import org.capstone.job_fair.repositories.account.AccountRepository;
 import org.capstone.job_fair.services.interfaces.account.AccountService;
 import org.capstone.job_fair.services.mappers.AccountMapper;
+import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +28,9 @@ public class AccountServiceImpl implements AccountService {
 
     @Autowired
     private AccountMapper accountMapper;
+
+    @Autowired
+    private BCryptPasswordEncoder encoder;
 
 
     @Override
@@ -81,5 +89,17 @@ public class AccountServiceImpl implements AccountService {
         return id;
     }
 
+    @Override
+    @Transactional
+    public void changePassword(String newPassword, String oldPassword){
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (!encoder.matches(oldPassword, userDetails.getPassword())){
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Account.OLD_PASSWORD_MISMATCH));
+        }
+        AccountEntity entity = accountRepository.findById(userDetails.getId()).get();
+        String hashedPassword = encoder.encode(newPassword);
+        entity.setPassword(hashedPassword);
+        accountRepository.save(entity);
+    }
 
 }
