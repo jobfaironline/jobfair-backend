@@ -1,5 +1,5 @@
 package org.capstone.job_fair.models.statuses;
 
 public enum AccountStatus {
-    ACTIVE, INACTIVE, REGISTERED, SUSPENDED
+    VERIFIED, INACTIVE, REGISTERED, SUSPENDED
 }

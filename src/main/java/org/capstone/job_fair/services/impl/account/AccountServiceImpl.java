@@ -34,7 +34,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Optional<AccountEntity> getActiveAccountByEmail(String email) {
-        return accountRepository.findByEmailAndStatus(email, AccountStatus.ACTIVE);
+        return accountRepository.findByEmailAndStatus(email, AccountStatus.VERIFIED);
     }
 
     @Override
@@ -44,7 +44,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Optional<AccountEntity> getActiveAccountById(String id) {
-        return accountRepository.findByIdAndStatus(id, AccountStatus.ACTIVE);
+        return accountRepository.findByIdAndStatus(id, AccountStatus.VERIFIED);
     }
 
     @Override
@@ -59,7 +59,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Integer getCountActiveAccountById(String id) {
-        return accountRepository.countByIdAndStatus(id, AccountStatus.ACTIVE);
+        return accountRepository.countByIdAndStatus(id, AccountStatus.VERIFIED);
     }
 
 
@@ -71,7 +71,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public void activateAccount(String id) {
         AccountEntity accountEntity = accountRepository.findById(id).get();
-        accountEntity.setStatus(AccountStatus.ACTIVE);
+        accountEntity.setStatus(AccountStatus.VERIFIED);
         accountRepository.save(accountEntity);
     }
 
