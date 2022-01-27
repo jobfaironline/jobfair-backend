@@ -21,6 +21,7 @@ public class MessageConstant {
         public static final String INVALID_CREATOR_ID = "job-fair-plan.error.invalid-creator-id";
         public static final String INVALID_JOB_FAIR_STATUS = "job-fair-plan.error.invalid-job-fair-status";
         public static final String END_TIME_LESS_THAN_START_TIME_ERROR ="job-fair-plan.error.end-time-less-than-start-time";
+        public static final String INVALID_END_TIME = "job-fair-plan.invalid-end-time";
 
     }
 

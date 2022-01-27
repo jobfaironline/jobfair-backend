@@ -1,6 +1,7 @@
 package org.capstone.job_fair.services.impl.job_fair;
 
 import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
+import org.capstone.job_fair.constants.DataConstraint;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.models.dtos.job_fair.JobFairDTO;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
@@ -41,6 +42,12 @@ public class JobFairServiceImpl implements JobFairService {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.END_TIME_LESS_THAN_START_TIME_ERROR));
         if(dto.getEndTime() < dto.getStartTime())
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.END_TIME_LESS_THAN_START_TIME_ERROR));
+        if(dto.getEndTime() - dto.getStartTime() > DataConstraint.JobFair.VALID_TIME)
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.INVALID_END_TIME));
+        if(dto.getCompanyBuyBoothEndTime() - dto.getCompanyBuyBoothStartTime() > DataConstraint.JobFair.VALID_TIME)
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.INVALID_END_TIME));
+        if(dto.getCompanyRegisterEndTime() - dto.getCompanyRegisterStartTime() > DataConstraint.JobFair.VALID_TIME)
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.INVALID_END_TIME));
         JobFairEntity entity = jobFairMapper.toJobFairEntity(dto);
         jobFairRepository.save(entity);
     }

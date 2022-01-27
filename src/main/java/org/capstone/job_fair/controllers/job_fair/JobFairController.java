@@ -34,7 +34,6 @@ public class JobFairController {
                   .startTime(request.getStartTime())
                   .layoutId(request.getLayoutId())
                   .build();
-          System.out.println("DTO: " + dto.toString());
           jobFairService.createJobFair(dto);
 
           return GenericResponse.build(MessageUtil.getMessage(MessageConstant.JobFair.CREATE_JOB_FAIR_PLAN_SUCCESSFULLY)

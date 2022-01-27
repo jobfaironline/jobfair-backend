@@ -14,6 +14,7 @@ public class DataConstraint {
     public static class JobFair{
         public static final int MIN_TIME = 0;
         public static final int MAX_DESCRIPTION_LENGTH = 500000;
+        public  static final long VALID_TIME = 31556952000L;
     }
 
     public static final class WorkHistory {

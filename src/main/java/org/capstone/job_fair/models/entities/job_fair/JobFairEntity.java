@@ -2,9 +2,11 @@ package org.capstone.job_fair.models.entities.job_fair;
 
 import lombok.*;
 import org.capstone.job_fair.models.statuses.JobFairStatus;
+import org.hibernate.Hibernate;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -63,22 +65,9 @@ public class JobFairEntity {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
         JobFairEntity that = (JobFairEntity) o;
-
-        if (companyRegisterStartTime != that.companyRegisterStartTime) return false;
-        if (companyRegisterEndTime != that.companyRegisterEndTime) return false;
-        if (companyBuyBoothStartTime != that.companyBuyBoothStartTime) return false;
-        if (companyBuyBoothEndTime != that.companyBuyBoothEndTime) return false;
-        if (attendantRegisterStartTime != that.attendantRegisterStartTime) return false;
-        if (endTime != that.endTime) return false;
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        if (startTime != null ? !startTime.equals(that.startTime) : that.startTime != null) return false;
-        if (description != null ? !description.equals(that.description) : that.description != null) return false;
-        if (layoutId != null ? !layoutId.equals(that.layoutId) : that.layoutId != null) return false;
-
-        return true;
+        return id != null && Objects.equals(id, that.getId());
     }
 
     @Override
