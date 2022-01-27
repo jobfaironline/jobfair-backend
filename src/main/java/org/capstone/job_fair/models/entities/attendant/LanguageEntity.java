@@ -26,7 +26,7 @@ public class LanguageEntity {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
         LanguageEntity entity = (LanguageEntity) o;
-        return id != null && Objects.equals(id, entity.id);
+        return id != null && Objects.equals(id, entity.getId());
     }
 
     @Override

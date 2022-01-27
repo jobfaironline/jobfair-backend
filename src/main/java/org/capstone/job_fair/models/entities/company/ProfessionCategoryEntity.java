@@ -1,6 +1,7 @@
 package org.capstone.job_fair.models.entities.company;
 
 import lombok.*;
+import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -25,17 +26,13 @@ public class ProfessionCategoryEntity implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
         ProfessionCategoryEntity that = (ProfessionCategoryEntity) o;
-
-        return !Objects.equals(id, that.id);
+        return !Objects.equals(id, that.getId());
     }
 
     @Override
     public int hashCode() {
-        int result = id;
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        return result;
+        return getClass().hashCode();
     }
 }

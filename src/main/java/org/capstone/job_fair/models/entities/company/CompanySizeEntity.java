@@ -30,7 +30,7 @@ public class CompanySizeEntity {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
         CompanySizeEntity that = (CompanySizeEntity) o;
-        return id != null && Objects.equals(id, that.id);
+        return id != null && Objects.equals(id, that.getId());
     }
 
     @Override

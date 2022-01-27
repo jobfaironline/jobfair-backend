@@ -38,7 +38,7 @@ public class CompanyEmployeeEntity {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
         CompanyEmployeeEntity entity = (CompanyEmployeeEntity) o;
-        return accountId != null && Objects.equals(accountId, entity.accountId);
+        return accountId != null && Objects.equals(accountId, entity.getAccountId());
     }
 
     @Override

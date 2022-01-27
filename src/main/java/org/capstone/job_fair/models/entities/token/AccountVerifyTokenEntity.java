@@ -1,6 +1,7 @@
 package org.capstone.job_fair.models.entities.token;
 
 import lombok.*;
+import org.hibernate.Hibernate;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -35,13 +36,15 @@ public class AccountVerifyTokenEntity {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof AccountVerifyTokenEntity)) return false;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+
         AccountVerifyTokenEntity that = (AccountVerifyTokenEntity) o;
-        return Objects.equals(id, that.id) && Objects.equals(accountId, that.accountId) && Objects.equals(isInvalidated, that.isInvalidated) && Objects.equals(createdTime, that.createdTime) && Objects.equals(expiredTime, that.expiredTime);
+
+        return getId().equals(that.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, accountId, isInvalidated, createdTime, expiredTime);
+        return getClass().hashCode();
     }
 }

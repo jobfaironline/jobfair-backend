@@ -30,13 +30,11 @@ public class SkillTagEntity implements Serializable {
 
         SkillTagEntity that = (SkillTagEntity) o;
 
-        return Objects.equals(id, that.id);
+        return Objects.equals(id, that.getId());
     }
 
     @Override
     public int hashCode() {
-        int result = id == null ? 0 : id.hashCode();
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        return result;
+        return getClass().hashCode();
     }
 }
