@@ -27,4 +27,6 @@ public interface AccountService {
 
     String getIdByEmail(String email);
 
+    void changePassword(String newPassword, String oldPassword);
+
 }
