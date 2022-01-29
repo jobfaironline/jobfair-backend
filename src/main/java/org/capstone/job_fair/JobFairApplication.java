@@ -26,6 +26,7 @@ public class JobFairApplication {
             ex.printStackTrace();
         }
         System.out.print(System.getenv("DATASOURCE_PASSWORD"));
+        System.out.print(System.getenv("DATASOURCE_URL"));
         SpringApplication.run(JobFairApplication.class, args);
     }
 
