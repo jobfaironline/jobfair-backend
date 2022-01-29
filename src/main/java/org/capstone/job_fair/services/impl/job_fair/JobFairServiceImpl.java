@@ -36,20 +36,23 @@ public class JobFairServiceImpl implements JobFairService {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext()
                 .getAuthentication().getPrincipal();
         dto.setCreatorId(userDetails.getId());
-        if(dto.getCompanyBuyBoothEndTime() < dto.getCompanyBuyBoothStartTime())
+
+
+        if(dto.getCompanyRegisterEndTime() - dto.getCompanyRegisterStartTime() > DataConstraint.JobFair.VALID_TIME)
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.INVALID_END_TIME));
+        if(dto.getCompanyRegisterEndTime() > dto.getCompanyBuyBoothStartTime())
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.END_TIME_LESS_THAN_START_TIME_ERROR));
-        if(dto.getCompanyRegisterEndTime() < dto.getCompanyRegisterStartTime())
+        if(dto.getCompanyBuyBoothEndTime() - dto.getCompanyBuyBoothEndTime() > DataConstraint.JobFair.VALID_TIME)
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.INVALID_END_TIME));
+        if(dto.getCompanyBuyBoothEndTime() > dto.getAttendantRegisterStartTime())
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.END_TIME_LESS_THAN_START_TIME_ERROR));
-        if(dto.getEndTime() < dto.getStartTime())
+        if(dto.getAttendantRegisterStartTime() > dto.getStartTime())
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.END_TIME_LESS_THAN_START_TIME_ERROR));
         if(dto.getEndTime() - dto.getStartTime() > DataConstraint.JobFair.VALID_TIME)
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.INVALID_END_TIME));
-        if(dto.getCompanyBuyBoothEndTime() - dto.getCompanyBuyBoothStartTime() > DataConstraint.JobFair.VALID_TIME)
-            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.INVALID_END_TIME));
-        if(dto.getCompanyRegisterEndTime() - dto.getCompanyRegisterStartTime() > DataConstraint.JobFair.VALID_TIME)
-            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.INVALID_END_TIME));
-        if(dto.getCompanyBuyBoothStartTime() < dto.getCompanyRegisterStartTime())
-            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.INVALID_BUY_BOOTH_TIME));
+
+
+
         JobFairEntity entity = jobFairMapper.toJobFairEntity(dto);
         jobFairRepository.save(entity);
     }
