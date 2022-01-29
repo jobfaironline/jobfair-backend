@@ -48,6 +48,8 @@ public class JobFairServiceImpl implements JobFairService {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.INVALID_END_TIME));
         if(dto.getCompanyRegisterEndTime() - dto.getCompanyRegisterStartTime() > DataConstraint.JobFair.VALID_TIME)
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.INVALID_END_TIME));
+        if(dto.getCompanyBuyBoothStartTime() < dto.getCompanyRegisterStartTime())
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.INVALID_BUY_BOOTH_TIME));
         JobFairEntity entity = jobFairMapper.toJobFairEntity(dto);
         jobFairRepository.save(entity);
     }
