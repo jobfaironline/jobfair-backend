@@ -44,7 +44,7 @@ public class JobFairServiceImpl implements JobFairService {
         if(dto.getCompanyRegisterEndTime() - dto.getCompanyBuyBoothStartTime() > DataConstraint.JobFair.VALID_REGISTER_TO_BUY_BOOTH_TIME)
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.END_TIME_LESS_THAN_START_TIME_ERROR));
 
-        if(dto.getCompanyBuyBoothEndTime() - dto.getCompanyBuyBoothEndTime() > DataConstraint.JobFair.VALID_BUY_BOOTH_TIME)
+        if(dto.getCompanyBuyBoothEndTime() - dto.getCompanyBuyBoothStartTime() > DataConstraint.JobFair.VALID_BUY_BOOTH_TIME)
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.INVALID_END_TIME));
 
         if(dto.getCompanyBuyBoothEndTime() - dto.getAttendantRegisterStartTime() > DataConstraint.JobFair.VALID_BUY_BOOTH_TO_PUBLIC_TIME)
