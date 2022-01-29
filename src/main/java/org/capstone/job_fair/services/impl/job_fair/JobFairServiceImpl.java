@@ -53,16 +53,10 @@ public class JobFairServiceImpl implements JobFairService {
     }
 
     @Override
-    public List<JobFairDTO> getAllJobFairPlanOfEmployee() {
+    public List<JobFairDTO> getAllJobFairPlanOfCurrentAccount() {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext()
                 .getAuthentication().getPrincipal();
         String id = userDetails.getId();
-       Optional<AccountEntity> account = accountRepository.findById(id);
-        if(!account.isPresent()) throw new IllegalArgumentException(
-                MessageUtil.getMessage(MessageConstant.Account.NOT_FOUND));
-        System.out.println(account.get().getRole().toString());
-        if(!account.get().getRole().getName().equals(Role.STAFF.toString())) throw new
-                IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyEmployee.INVALID_ROLE));
         List<JobFairEntity> entities = jobFairRepository.findAllByCreatorId(id);
         if (entities.isEmpty()) return null;
         return  entities.stream().map(jobFairEntity -> {

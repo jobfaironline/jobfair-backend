@@ -46,7 +46,7 @@ public class JobFairController {
     @GetMapping(ApiEndPoint.JobFair.JOB_FAIR_PLAN)
     public ResponseEntity<?> getAllJobFairPlanOfEmployee(){
       try{
-          return new ResponseEntity<>(jobFairService.getAllJobFairPlanOfEmployee(),HttpStatus.OK);
+          return new ResponseEntity<>(jobFairService.getAllJobFairPlanOfCurrentAccount(),HttpStatus.OK);
       } catch (IllegalArgumentException ex){
           return GenericResponse.build(ex.getMessage(), HttpStatus.BAD_REQUEST);
       }
