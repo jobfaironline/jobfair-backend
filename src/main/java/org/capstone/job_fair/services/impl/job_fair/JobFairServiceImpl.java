@@ -38,18 +38,24 @@ public class JobFairServiceImpl implements JobFairService {
         dto.setCreatorId(userDetails.getId());
 
 
-        if(dto.getCompanyRegisterEndTime() - dto.getCompanyRegisterStartTime() > DataConstraint.JobFair.VALID_TIME)
+        if(dto.getCompanyRegisterEndTime() - dto.getCompanyRegisterStartTime() > DataConstraint.JobFair.VALID_REGISTER_TIME)
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.INVALID_END_TIME));
-        if(dto.getCompanyRegisterEndTime() > dto.getCompanyBuyBoothStartTime())
+
+        if(dto.getCompanyRegisterEndTime() - dto.getCompanyBuyBoothStartTime() > DataConstraint.JobFair.VALID_REGISTER_TO_BUY_BOOTH_TIME)
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.END_TIME_LESS_THAN_START_TIME_ERROR));
-        if(dto.getCompanyBuyBoothEndTime() - dto.getCompanyBuyBoothEndTime() > DataConstraint.JobFair.VALID_TIME)
+
+        if(dto.getCompanyBuyBoothEndTime() - dto.getCompanyBuyBoothEndTime() > DataConstraint.JobFair.VALID_BUY_BOOTH_TIME)
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.INVALID_END_TIME));
-        if(dto.getCompanyBuyBoothEndTime() > dto.getAttendantRegisterStartTime())
+
+        if(dto.getCompanyBuyBoothEndTime() - dto.getAttendantRegisterStartTime() > DataConstraint.JobFair.VALID_BUY_BOOTH_TO_PUBLIC_TIME)
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.END_TIME_LESS_THAN_START_TIME_ERROR));
-        if(dto.getAttendantRegisterStartTime() > dto.getStartTime())
+
+        if(dto.getAttendantRegisterStartTime() - dto.getStartTime() > DataConstraint.JobFair.VALID_PUBLIC_TO_EVENT_TIME)
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.END_TIME_LESS_THAN_START_TIME_ERROR));
-        if(dto.getEndTime() - dto.getStartTime() > DataConstraint.JobFair.VALID_TIME)
+
+        if(dto.getEndTime() - dto.getStartTime() > DataConstraint.JobFair.VALID_EVENT_TIME)
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.INVALID_END_TIME));
+
 
 
 
