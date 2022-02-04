@@ -50,8 +50,11 @@ public class AttendantController {
     @Autowired
     private MailService mailService;
 
-    @Value("${api.endpoint}")
+    @Value("${api.endpoint.domain}")
     String domain;
+
+    @Value("${api.endpoint.port}")
+    String apiport;
 
     @Autowired
     private static AWSMailService emailService;
@@ -88,10 +91,12 @@ public class AttendantController {
             AttendantDTO attendantDTO = attendantMapper.toDTO(req);
             attendantDTO = attendantService.createNewAccount(attendantDTO);
             String id = accountVerifyTokenService.createToken(attendantDTO.getAccount().getId()).getAccountId();
+            String port = "";
+            if(!apiport.isEmpty()) port = ":" + apiport;
             try {
                 this.mailService.sendMail(req.getEmail(),
                         MessageUtil.getMessage(MessageConstant.Attendant.ACCOUNT_VERIFY_MAIL_TITLE),
-                        domain + ApiEndPoint.Authorization.VERIFY_USER+"/"+attendantDTO.getAccount().getId()+"/"+id);
+                        domain + port + ApiEndPoint.Authorization.VERIFY_USER+"/"+attendantDTO.getAccount().getId()+"/"+id);
                 return GenericResponse.build(
                         MessageUtil.getMessage(MessageConstant.Attendant.REGISTER_SUCCESSFULLY),
                         HttpStatus.CREATED);

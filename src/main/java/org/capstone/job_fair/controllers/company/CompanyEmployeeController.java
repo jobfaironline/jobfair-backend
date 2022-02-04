@@ -66,8 +66,11 @@ public class CompanyEmployeeController {
     @Autowired
     private CompanyEmployeeMapper companyEmployeeMapper;
 
-    @Value("${api.endpoint}")
+    @Value("${api.endpoint.domain}")
     String domain;
+
+    @Value("${api.endpoint.port}")
+    String apiport;
 
     @Autowired
     private CompanyMapper companyMapper;
@@ -115,11 +118,12 @@ public class CompanyEmployeeController {
         CompanyEmployeeDTO companyEmployeeDTO = companyEmployeeService.createNewCompanyManagerAccount(dto);
         String id = accountVerifyTokenService.createToken(companyEmployeeDTO.getAccount().getId()).getAccountId();
 
-
+        String port = "";
+        if(!apiport.isEmpty()) port = ":" + apiport;
         try {
             this.mailService.sendMail(request.getEmail(),
                     MessageUtil.getMessage(MessageConstant.Attendant.ACCOUNT_VERIFY_MAIL_TITLE),
-                    domain + ApiEndPoint.Authorization.VERIFY_USER + "/" + companyEmployeeDTO.getAccount().getId() + "/" + id);
+                    domain +port+ ApiEndPoint.Authorization.VERIFY_USER + "/" + companyEmployeeDTO.getAccount().getId() + "/" + id);
             return GenericResponse.build(
                     MessageUtil.getMessage(MessageConstant.CompanyEmployee.CREATE_EMPLOYEE_MANAGER_SUCCESSFULLY),
                     HttpStatus.CREATED);
