@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.mail.MessagingException;
+import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.Optional;
 
@@ -114,12 +116,19 @@ public class ResetPasswordController {
         if (!tokenOpt.isPresent()) {
             PasswordResetTokenEntity tokenEntity = this.resetService.createResetToken(account);
             //send mail
-            this.mailService.sendMail(account.getEmail(),
-                    ResetPasswordTokenConstants.MAIL_SUBJECT,
-                    ResetPasswordTokenConstants.MAIL_BODY + tokenEntity.getOtp());
-            return GenericResponse.build(
-                    MessageUtil.getMessage(MessageConstant.AccessControlMessage.REQUEST_RESET_PASSWORD_SUCCESSFULLY),
-                    HttpStatus.OK);
+            try {
+                this.mailService.sendMail(account.getEmail(),
+                        ResetPasswordTokenConstants.MAIL_SUBJECT,
+                        ResetPasswordTokenConstants.MAIL_BODY + tokenEntity.getOtp());
+                return GenericResponse.build(
+                        MessageUtil.getMessage(MessageConstant.AccessControlMessage.REQUEST_RESET_PASSWORD_SUCCESSFULLY),
+                        HttpStatus.OK);
+            } catch (UnsupportedEncodingException | MessagingException ex2){
+                return GenericResponse.build(MessageUtil.getMessage(MessageConstant.Mail.SEND_FAILED),HttpStatus.BAD_REQUEST);
+            }
+
+
+
         }
         PasswordResetTokenEntity token = tokenOpt.get();
         //check expired token
@@ -132,12 +141,16 @@ public class ResetPasswordController {
             resetService.invalidateEntity(token);
             PasswordResetTokenEntity newToken = this.resetService.createResetToken(account);
             //send mail
-            this.mailService.sendMail(account.getEmail(),
-                    ResetPasswordTokenConstants.MAIL_SUBJECT,
-                    String.format(ResetPasswordTokenConstants.MAIL_BODY, account.getEmail(), newToken.getOtp()));
-            return GenericResponse.build(
-                    MessageUtil.getMessage(MessageConstant.AccessControlMessage.REQUEST_RESET_PASSWORD_SUCCESSFULLY),
-                    HttpStatus.OK);
+            try {
+                this.mailService.sendMail(account.getEmail(),
+                        ResetPasswordTokenConstants.MAIL_SUBJECT,
+                        String.format(ResetPasswordTokenConstants.MAIL_BODY, account.getEmail(), newToken.getOtp()));
+                return GenericResponse.build(
+                        MessageUtil.getMessage(MessageConstant.AccessControlMessage.REQUEST_RESET_PASSWORD_SUCCESSFULLY),
+                        HttpStatus.OK);
+            } catch (UnsupportedEncodingException | MessagingException ex2){
+                return GenericResponse.build(MessageUtil.getMessage(MessageConstant.Mail.SEND_FAILED),HttpStatus.BAD_REQUEST);
+            }
         }
     }
 

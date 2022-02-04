@@ -2,15 +2,16 @@ package org.capstone.job_fair.controllers.attendant;
 
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
+import org.capstone.job_fair.constants.ResetPasswordTokenConstants;
 import org.capstone.job_fair.controllers.payload.requests.RegisterAttendantRequest;
 import org.capstone.job_fair.controllers.payload.requests.UpdateAttendantRequest;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.dtos.attendant.AttendantDTO;
-import org.capstone.job_fair.models.entities.token.AccountVerifyTokenEntity;
 import org.capstone.job_fair.services.interfaces.attendant.AttendantService;
 import org.capstone.job_fair.services.interfaces.attendant.CountryService;
 import org.capstone.job_fair.services.interfaces.attendant.ResidenceService;
 import org.capstone.job_fair.services.interfaces.token.AccountVerifyTokenService;
+import org.capstone.job_fair.services.interfaces.util.AWSMailService;
 import org.capstone.job_fair.services.interfaces.util.MailService;
 import org.capstone.job_fair.services.mappers.AttendantMapper;
 import org.capstone.job_fair.utils.MessageUtil;
@@ -18,15 +19,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.MessagingException;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 
 @RestController
 public class AttendantController {
@@ -51,6 +52,9 @@ public class AttendantController {
 
     @Value("${api.endpoint}")
     String domain;
+
+    @Autowired
+    private static AWSMailService emailService;
 
 
 
@@ -84,12 +88,17 @@ public class AttendantController {
             AttendantDTO attendantDTO = attendantMapper.toDTO(req);
             attendantDTO = attendantService.createNewAccount(attendantDTO);
             String id = accountVerifyTokenService.createToken(attendantDTO.getAccount().getId()).getAccountId();
-            this.mailService.sendMail(req.getEmail(),
-                    MessageUtil.getMessage(MessageConstant.Attendant.ACCOUNT_VERIFY_MAIL_TITLE),
-                    domain + ApiEndPoint.Authorization.VERIFY_USER+"/"+attendantDTO.getAccount().getId()+"/"+id);
-            return GenericResponse.build(
-                    MessageUtil.getMessage(MessageConstant.Attendant.REGISTER_SUCCESSFULLY),
-                    HttpStatus.CREATED);
+            try {
+                this.mailService.sendMail(req.getEmail(),
+                        MessageUtil.getMessage(MessageConstant.Attendant.ACCOUNT_VERIFY_MAIL_TITLE),
+                        domain + ApiEndPoint.Authorization.VERIFY_USER+"/"+attendantDTO.getAccount().getId()+"/"+id);
+                return GenericResponse.build(
+                        MessageUtil.getMessage(MessageConstant.Attendant.REGISTER_SUCCESSFULLY),
+                        HttpStatus.CREATED);
+            } catch (UnsupportedEncodingException | MessagingException ex2){
+                return GenericResponse.build(MessageUtil.getMessage(MessageConstant.Mail.SEND_FAILED),HttpStatus.BAD_REQUEST);
+            }
+
         } catch (NoSuchElementException | IllegalArgumentException ex) {
             return GenericResponse.build(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }
