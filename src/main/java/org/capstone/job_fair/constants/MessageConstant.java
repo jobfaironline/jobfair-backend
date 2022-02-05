@@ -162,5 +162,10 @@ public class MessageConstant {
         public static final String NOT_FOUND = "skill-tag.error.not-found";
     }
 
+    public static final class Mail{
+        public static final String NAME = "mail.sender.name";
+        public static final String SEND_FAILED = "mail.send-failed";
+    }
+
 }
 
