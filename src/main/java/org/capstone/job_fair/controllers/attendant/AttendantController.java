@@ -2,7 +2,6 @@ package org.capstone.job_fair.controllers.attendant;
 
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
-import org.capstone.job_fair.constants.ResetPasswordTokenConstants;
 import org.capstone.job_fair.controllers.payload.requests.RegisterAttendantRequest;
 import org.capstone.job_fair.controllers.payload.requests.UpdateAttendantRequest;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
@@ -11,7 +10,6 @@ import org.capstone.job_fair.services.interfaces.attendant.AttendantService;
 import org.capstone.job_fair.services.interfaces.attendant.CountryService;
 import org.capstone.job_fair.services.interfaces.attendant.ResidenceService;
 import org.capstone.job_fair.services.interfaces.token.AccountVerifyTokenService;
-import org.capstone.job_fair.services.interfaces.util.AWSMailService;
 import org.capstone.job_fair.services.interfaces.util.MailService;
 import org.capstone.job_fair.services.mappers.AttendantMapper;
 import org.capstone.job_fair.utils.MessageUtil;
@@ -56,8 +54,6 @@ public class AttendantController {
     @Value("${api.endpoint.port}")
     String apiport;
 
-    @Autowired
-    private static AWSMailService emailService;
 
 
 
@@ -86,26 +82,22 @@ public class AttendantController {
 //    @Async("threadPoolTaskExecutor")
     public ResponseEntity<?> register(@Validated @RequestBody RegisterAttendantRequest req) {
 
-
         try {
             AttendantDTO attendantDTO = attendantMapper.toDTO(req);
             attendantDTO = attendantService.createNewAccount(attendantDTO);
             String id = accountVerifyTokenService.createToken(attendantDTO.getAccount().getId()).getAccountId();
             String port = "";
             if(!apiport.isEmpty()) port = ":" + apiport;
-            try {
                 this.mailService.sendMail(req.getEmail(),
                         MessageUtil.getMessage(MessageConstant.Attendant.ACCOUNT_VERIFY_MAIL_TITLE),
                         domain + port + ApiEndPoint.Authorization.VERIFY_USER+"/"+attendantDTO.getAccount().getId()+"/"+id);
                 return GenericResponse.build(
                         MessageUtil.getMessage(MessageConstant.Attendant.REGISTER_SUCCESSFULLY),
                         HttpStatus.CREATED);
-            } catch (UnsupportedEncodingException | MessagingException ex2){
-                return GenericResponse.build(MessageUtil.getMessage(MessageConstant.Mail.SEND_FAILED),HttpStatus.BAD_REQUEST);
-            }
-
         } catch (NoSuchElementException | IllegalArgumentException ex) {
             return GenericResponse.build(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (UnsupportedEncodingException | MessagingException ex2){
+            return GenericResponse.build(MessageUtil.getMessage(MessageConstant.Mail.SEND_FAILED),HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

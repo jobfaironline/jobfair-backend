@@ -149,7 +149,7 @@ public class ResetPasswordController {
                         MessageUtil.getMessage(MessageConstant.AccessControlMessage.REQUEST_RESET_PASSWORD_SUCCESSFULLY),
                         HttpStatus.OK);
             } catch (UnsupportedEncodingException | MessagingException ex2){
-                return GenericResponse.build(MessageUtil.getMessage(MessageConstant.Mail.SEND_FAILED),HttpStatus.BAD_REQUEST);
+                return GenericResponse.build(MessageUtil.getMessage(MessageConstant.Mail.SEND_FAILED),HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
     }

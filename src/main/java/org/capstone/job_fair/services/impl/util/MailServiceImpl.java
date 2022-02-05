@@ -23,17 +23,6 @@ public class MailServiceImpl  implements MailService {
     @Value("${from.email.address}")
     private String fromEmailAddress;
 
-//    @Override
-//    @Async
-//    public CompletableFuture<Void> sendMail(String to, String subject, String body) {
-//        SimpleMailMessage message = new SimpleMailMessage();
-//        message.setTo(to);
-//        message.setSubject(subject);
-//        message.setText(body);
-//        mailSender.send(message);
-//        return CompletableFuture.completedFuture(null);
-//    }
-
     @Override
     @Async
     public CompletableFuture<Void> sendMail(String recipient, String subject, String content) throws UnsupportedEncodingException, MessagingException {

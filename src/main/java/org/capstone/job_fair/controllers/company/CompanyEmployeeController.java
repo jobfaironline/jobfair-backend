@@ -128,7 +128,7 @@ public class CompanyEmployeeController {
                     MessageUtil.getMessage(MessageConstant.CompanyEmployee.CREATE_EMPLOYEE_MANAGER_SUCCESSFULLY),
                     HttpStatus.CREATED);
         } catch (UnsupportedEncodingException | MessagingException ex2){
-            return GenericResponse.build(MessageUtil.getMessage(MessageConstant.Mail.SEND_FAILED),HttpStatus.BAD_REQUEST);
+            return GenericResponse.build(MessageUtil.getMessage(MessageConstant.Mail.SEND_FAILED),HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -210,20 +210,19 @@ public class CompanyEmployeeController {
         try {
             CompanyEmployeeDTO dto = companyEmployeeMapper.toDTO(request);
             companyEmployeeService.createNewCompanyEmployeeAccount(dto);
-            try {
+
                 this.mailService.sendMail(request.getEmail(),
                         MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMAIL_SUBJECT),
                         MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMAIL_CONTENT) + dto.getAccount().getPassword());
                 return CompletableFuture.completedFuture(GenericResponse.build(
                         MessageUtil.getMessage(MessageConstant.CompanyEmployee.CREATE_EMPLOYEE_EMPLOYEE_SUCCESSFULLY),
                         HttpStatus.CREATED));
-            } catch (UnsupportedEncodingException | MessagingException ex2){
-                return CompletableFuture.completedFuture(GenericResponse.build(MessageUtil.getMessage(MessageConstant.Mail.SEND_FAILED),HttpStatus.BAD_REQUEST));
-            }
         } catch (IllegalArgumentException ex) {
             return CompletableFuture.completedFuture(GenericResponse.build(
                     ex.getMessage(),
                     HttpStatus.BAD_REQUEST));
+        } catch (UnsupportedEncodingException | MessagingException ex2){
+            return CompletableFuture.completedFuture(GenericResponse.build(MessageUtil.getMessage(MessageConstant.Mail.SEND_FAILED),HttpStatus.INTERNAL_SERVER_ERROR));
         }
     }
 
