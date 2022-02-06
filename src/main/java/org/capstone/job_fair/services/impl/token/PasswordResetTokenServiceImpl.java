@@ -31,7 +31,7 @@ public class PasswordResetTokenServiceImpl implements PasswordResetTokenService 
 
     @Override
     public Optional<PasswordResetTokenEntity> findLastValidateTokenByAccountID(String accountID) {
-        return resetRepository.findTopByAccount_IdOrderByExpiredTimeDesc(accountID);
+        return resetRepository.findFirstByAccount_IdOrderByExpiredTimeDesc(accountID);
     }
 
     @Override
