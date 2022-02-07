@@ -167,5 +167,10 @@ public class MessageConstant {
         public static final String SEND_FAILED = "mail.send-failed";
     }
 
+    public static final class DecoratedItem{
+        public static final String NOT_FOUND = "decorated-item.error.not-found";
+        public static final String UPDATE_SUCCESSFULLY = "decorated-item.success.update-item";
+    }
+
 }
 

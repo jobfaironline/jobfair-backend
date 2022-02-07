@@ -2,7 +2,6 @@ package org.capstone.job_fair.models.dtos.job_fair;
 
 import lombok.Data;
 
-import javax.persistence.Column;
 
 @Data
 public class DecoratedItemDTO {
@@ -10,4 +9,5 @@ public class DecoratedItemDTO {
     private Integer size;
     private String url;
     private String name;
+    private String description;
 }

@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.Hibernate;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 
@@ -24,6 +25,8 @@ public class DecoratedItemEntity {
     private String url;
     @Column(name = "name", nullable = false, length = 100)
     private String name;
+    @Column(name = "description", nullable = false, length = 500)
+    private String description;
 
     @Override
     public boolean equals(Object o) {
