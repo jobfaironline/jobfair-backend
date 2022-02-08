@@ -167,5 +167,11 @@ public class MessageConstant {
         public static final String SEND_FAILED = "mail.send-failed";
     }
 
+    public static final class Staff{
+        public static final String CREATE_SUCCESSFULLY = "staff.success.create-successfully";
+        public static final String ACCOUNT_INFORMATION_EMAIL_TITLE = "staff.account-information-email-title";
+        public static final String ACCOUNT_INFORMATION_EMAIL_BODY = "staff.account-information-email-body";
+    }
+
 }
 

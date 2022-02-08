@@ -52,6 +52,10 @@ public class ApiEndPoint {
         public static final String PROMOTE_EMPLOYEE_ENPOINT =  COMPANY_EMPLOYEE_ENDPOINT + "/promote";
     }
 
+    public static final class Staff{
+        public static final String STAFF_ENDPOINT = ROOT_ENDPOINT + VERSION + "/staffs";
+    }
+
 
 
     public static final class RestDataEndpoint {
@@ -81,8 +85,6 @@ public class ApiEndPoint {
         public static final String VERIFY = "verifies";
         public static final String SKILL_TAG = "skill-tag";
         public static final String JOB_FAIR = "job-fair";
-
-
     }
 
 

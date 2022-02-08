@@ -58,7 +58,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Optional<AccountDTO> getAccountById(String id) {
         Optional<AccountEntity> opt = accountRepository.findById(id);
-        if (!opt.isPresent()){
+        if (!opt.isPresent()) {
             return Optional.empty();
         }
         AccountDTO accountDTO = accountMapper.toDTO(opt.get());
@@ -91,15 +91,25 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     @Transactional
-    public void changePassword(String newPassword, String oldPassword){
+    public void changePassword(String newPassword, String oldPassword) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (!encoder.matches(oldPassword, userDetails.getPassword())){
+        if (!encoder.matches(oldPassword, userDetails.getPassword())) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Account.OLD_PASSWORD_MISMATCH));
         }
         AccountEntity entity = accountRepository.findById(userDetails.getId()).get();
         String hashedPassword = encoder.encode(newPassword);
         entity.setPassword(hashedPassword);
         accountRepository.save(entity);
+    }
+
+    @Override
+    public AccountDTO createNew(AccountDTO dto) {
+        AccountEntity accountEntity = accountMapper.toEntity(dto);
+        if (accountRepository.countByEmail(dto.getEmail()) != 0) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Account.EMAIL_EXISTED));
+        }
+        accountEntity = accountRepository.save(accountEntity);
+        return accountMapper.toDTO(accountEntity);
     }
 
 }
