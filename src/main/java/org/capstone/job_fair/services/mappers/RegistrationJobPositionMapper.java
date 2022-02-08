@@ -24,11 +24,6 @@ import java.util.stream.Collectors;
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE, uses = {SubCategoryMapper.class})
 public abstract class RegistrationJobPositionMapper {
 
-//    @Mapping(target = "language", qualifiedByName = "toJobPositionEntityLanguage")
-//    @Mapping(target = "jobLevel", source = "jobLevel", qualifiedByName = "toJobPositionEntityJobLevel")
-//    @Mapping(target = "jobTypeEntity", source = "jobType", qualifiedByName = "toJobPositionEntityJobType")
-//    @Mapping(target = "categories", source = "subCategoryDTOs", qualifiedByName = "toJobPositionEntitySubCategory")
-//    @Mapping(target = "skillTagEntities", source = "skillTagDTOS", qualifiedByName = "toJobPositionEntitySkillTag")
     public abstract RegistrationJobPositionEntity toEntity(RegistrationJobPositionDTO jobPositionDTO);
 
     @Named("toJobPositionEntityLanguage")
