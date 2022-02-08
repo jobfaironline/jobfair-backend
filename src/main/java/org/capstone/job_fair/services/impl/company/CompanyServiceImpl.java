@@ -249,12 +249,12 @@ public class CompanyServiceImpl implements CompanyService {
 
         for (RegistrationJobPositionDTO registrationJobPositionDTO : jobPositions) {
             //Get job position entity by job position id in request
-            Optional<JobPositionEntity> jobPositioniOpt =
+            Optional<JobPositionEntity> jobPositionOpt =
                     jobPositionRepository.findById(registrationJobPositionDTO.getId());
             //Check job position existence
-            if (!jobPositioniOpt.isPresent()) throw new IllegalArgumentException(
+            if (!jobPositionOpt.isPresent()) throw new IllegalArgumentException(
                     MessageUtil.getMessage(MessageConstant.Job.JOB_POSITION_NOT_FOUND));
-            JobPositionEntity jobPositionEntity = jobPositioniOpt.get();
+            JobPositionEntity jobPositionEntity = jobPositionOpt.get();
             //Check if job position entity is belonged to company
             if (!jobPositionEntity.getCompany().getId().equals(companyRegistrationDTO.getCompanyId()))
                 throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Job.COMPANY_MISMATCH));
