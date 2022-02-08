@@ -38,6 +38,7 @@ public abstract class CompanyMapper {
     @Mapping(target = "companySize", source = "sizeId", qualifiedByName = "fromSizeIdOfCompanyDTO")
     public abstract CompanyEntity toEntity(CompanyDTO dto);
 
+    @Mapping(target = "companyId", source = "companyId")
     public abstract CompanyRegistrationEntity toEntity(CompanyRegistrationDTO dto);
 
     @Mapping(target = "subCategoryDTOs", source = "subCategories", qualifiedByName = "fromSubCategoriesOfCompanyEntity")

@@ -3,18 +3,22 @@ package org.capstone.job_fair.services.impl.company;
 import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import org.capstone.job_fair.constants.DataConstraint;
 import org.capstone.job_fair.constants.MessageConstant;
+import org.capstone.job_fair.controllers.payload.requests.CompanyJobFairRegistrationRequest;
 import org.capstone.job_fair.models.dtos.company.CompanyDTO;
 import org.capstone.job_fair.models.dtos.company.CompanyRegistrationDTO;
 import org.capstone.job_fair.models.dtos.company.SubCategoryDTO;
+import org.capstone.job_fair.models.dtos.company.job.JobPositionDTO;
 import org.capstone.job_fair.models.dtos.company.job.RegistrationJobPositionDTO;
 import org.capstone.job_fair.models.entities.company.CompanyEmployeeEntity;
 import org.capstone.job_fair.models.entities.company.CompanyEntity;
 import org.capstone.job_fair.models.entities.company.CompanyRegistrationEntity;
+import org.capstone.job_fair.models.entities.company.job.JobPositionEntity;
 import org.capstone.job_fair.models.entities.company.job.RegistrationJobPositionEntity;
 import org.capstone.job_fair.models.entities.job_fair.JobFairEntity;
 import org.capstone.job_fair.models.statuses.CompanyRegistrationStatus;
 import org.capstone.job_fair.models.statuses.CompanyStatus;
 import org.capstone.job_fair.repositories.company.*;
+import org.capstone.job_fair.repositories.company.job.JobPositionRepository;
 import org.capstone.job_fair.repositories.company.job.RegistrationJobPositionRepository;
 import org.capstone.job_fair.repositories.job_fair.JobFairRepository;
 import org.capstone.job_fair.services.interfaces.company.CompanyEmployeeService;
@@ -68,6 +72,11 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Autowired
     private CompanyEmployeeRepository companyEmployeeRepository;
+
+    @Autowired
+    private JobPositionRepository jobPositionRepository;
+
+
 
     private boolean isEmailExisted(String email) {
         return companyRepository.countByEmail(email) != 0;
@@ -208,35 +217,72 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     @Transactional
-    public void registerAJobFair(CompanyRegistrationDTO company, List<RegistrationJobPositionDTO> jobPositions) {
+    public void registerAJobFair(CompanyRegistrationDTO companyRegistrationDTO, List<CompanyJobFairRegistrationRequest.JobPosition> jobPositions) {
+
+        //Create registration job position entity
+
         //Check job fair existence
-       Optional<JobFairEntity> jobFairEntity = jobFairRepository.findById(company.getJobFairId());
+        Optional<JobFairEntity> jobFairEntity = jobFairRepository.findById(companyRegistrationDTO.getJobFairId());
         if (!jobFairEntity.isPresent()) throw new IllegalArgumentException(
                 MessageUtil.getMessage(MessageConstant.JobFair.JOB_FAIR_NOT_FOUND));
+
         //Validate job fair registration time of company
         long time = new Date().getTime();
-//        if(jobFairEntity.getCompanyRegisterStartTime() > time || jobFairEntity.getCompanyRegisterEndTime() < time)
+//        if(jobFairEntity.get().getCompanyRegisterStartTime() > time || jobFairEntity.get().getCompanyRegisterEndTime() < time)
 //            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Company.JOB_FAIR_REGISTRATION_OUT_OF_REGISTER_TIME));
-        //Check company existence
+        //Get company from user information in security context
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext()
                 .getAuthentication().getPrincipal();
         CompanyEmployeeEntity companyEmployee = companyEmployeeRepository.findById(userDetails.getId()).get();
-        Optional<CompanyEntity> companyEntity = companyRepository.findById(company.getCompanyId());
-        if (!companyEntity.isPresent()) throw new IllegalArgumentException(
-                MessageUtil.getMessage(MessageConstant.Company.NOT_FOUND));
-        company.setStatus(CompanyRegistrationStatus.DRAFT);
-        CompanyRegistrationEntity companyRegistrationEntity = companyMapper.toEntity(company);
+
+        //Set company id to company registration dto
+        companyRegistrationDTO.setCompanyId(companyEmployee.getCompany().getId());
+        companyRegistrationDTO.setStatus(CompanyRegistrationStatus.DRAFT);
+        //Create company registration entity
+        CompanyRegistrationEntity companyRegistrationEntity = companyMapper.toEntity(companyRegistrationDTO);
         companyRegistrationEntity.setCreateDate(time);
-        companyRegistrationEntity.setCompanyId(company.getCompanyId());
+        companyRegistrationEntity.setCompanyId(companyEmployee.getCompany().getId());
         companyRegistrationRepository.save(companyRegistrationEntity);
-        for (RegistrationJobPositionDTO job : jobPositions) {
-            if(job.getMaxSalary() < job.getMinSalary())
-                throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Job.SALARY_ERROR));
-            if(!job.getCompanyRegistration().getCompanyId().equals(companyRegistrationEntity.getCompanyId()))
+
+        for (CompanyJobFairRegistrationRequest.JobPosition jobPositionRequest:jobPositions) {
+            //Get job position entity by job position id in request
+            Optional<JobPositionEntity> jobPosition =
+                    jobPositionRepository.findById(jobPositionRequest.getJobPositionId());
+            //Check job position existence
+            if(!jobPosition.isPresent()) throw new IllegalArgumentException(
+                    MessageUtil.getMessage(MessageConstant.Job.JOB_POSITION_NOT_FOUND));
+            //Check if job position entity is belonged to company
+            if(!jobPosition.get().getCompany().getId().equals(companyRegistrationDTO.getCompanyId()))
                 throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Job.COMPANY_MISMATCH));
-            RegistrationJobPositionEntity entity = jobPositionMapper.toEntity(job);
-            entity.setCompanyRegistration(companyRegistrationEntity);
-            registrationJobPositionRepository.save(entity);
+
+
+            RegistrationJobPositionDTO registrationJobPositionDTO = new RegistrationJobPositionDTO();
+            JobPositionDTO jobPositionDTO = jobPositionMapper.toDTO(jobPosition.get());
+            //Job position information
+            registrationJobPositionDTO.setTitle(jobPositionDTO.getTitle());
+            registrationJobPositionDTO.setContactPersonName(jobPositionDTO.getContactPersonName());
+            registrationJobPositionDTO.setContactEmail(jobPositionDTO.getContactEmail());
+            registrationJobPositionDTO.setLanguage(jobPositionDTO.getLanguage());
+            registrationJobPositionDTO.setJobLevel(jobPositionDTO.getLevel());
+            registrationJobPositionDTO.setJobType(jobPositionDTO.getJobType());
+            //Map company registration to registration job position entity
+            registrationJobPositionDTO.setCompanyRegistration(companyRegistrationDTO);
+            registrationJobPositionDTO.setSubCategoryDTOs(jobPositionDTO.getSubCategoryDTOs());
+            registrationJobPositionDTO.setSkillTagDTOS(jobPositionDTO.getSkillTagDTOS());
+
+            //Additional information of job position
+            //Map additional information from job position entity to registration job postiion entity
+            registrationJobPositionDTO.setDescription(jobPositionRequest.getDescription());
+            registrationJobPositionDTO.setRequirements(jobPositionRequest.getRequirements());
+            registrationJobPositionDTO.setMinSalary(jobPositionRequest.getMinSalary());
+            registrationJobPositionDTO.setMaxSalary(jobPositionRequest.getMaxSalary());
+            registrationJobPositionDTO.setNumOfPosition(jobPositionRequest.getNumOfPosition());
+
+            RegistrationJobPositionEntity registrationJobPositionEntity = jobPositionMapper.toEntity(registrationJobPositionDTO);
+            registrationJobPositionEntity.setCompanyRegistration(companyRegistrationEntity);
+
+            registrationJobPositionRepository.save(registrationJobPositionEntity);
+
         }
     }
 }

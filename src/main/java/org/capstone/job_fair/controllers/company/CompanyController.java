@@ -99,35 +99,28 @@ public class CompanyController {
     @PostMapping(ApiEndPoint.JobFair.COMPANY_DRAFT_A_JOB_FAIR_REGISTRATION)
     public ResponseEntity<?> draftAJobFairRegistration(@Valid @RequestBody CompanyJobFairRegistrationRequest request){
         try{
-            List<RegistrationJobPositionDTO> registrationJobPositionDTOS = new ArrayList<>();
 
-            CompanyRegistrationDTO company = companyMapper.toDTO(request);
 
-            for (CompanyJobFairRegistrationRequest.JobPosition job: request.getJobPositions()) {
+            //Map request to company registration dto and registration job position dto
+             CompanyRegistrationDTO companyRegistrationDTO = new CompanyRegistrationDTO();
+             companyRegistrationDTO.setJobFairId(request.getJobFairId());
+             companyRegistrationDTO.setLocationId(request.getLocationId());
+             companyRegistrationDTO.setDescription(request.getDescription());
 
-            JobPositionEntity jobPosition = jobPositionService.getJobByID(job.getJobPositionId());
-            JobPositionDTO jobPositionDTO = jobPositionMapper.toDTO(jobPosition);
+             //Get job position entity list
+             List<RegistrationJobPositionDTO> jobPositionDTOS = new ArrayList<>();
+                for (CompanyJobFairRegistrationRequest.JobPosition jobPosition : request.getJobPositions()) {
+                    RegistrationJobPositionDTO registrationJobPositionDTO = new RegistrationJobPositionDTO();
+                    registrationJobPositionDTO.setId(jobPosition.getJobPositionId());
+                    registrationJobPositionDTO.setDescription(jobPosition.getDescription());
+                    registrationJobPositionDTO.setRequirements(jobPosition.getRequirements());
+                    registrationJobPositionDTO.setMinSalary(jobPosition.getMinSalary());
+                    registrationJobPositionDTO.setMaxSalary(jobPosition.getMaxSalary());
+                    registrationJobPositionDTO.setNumOfPosition(jobPosition.getNumOfPosition());
 
-            RegistrationJobPositionDTO dto = new RegistrationJobPositionDTO();
-            dto.setDescription(request.getDescription());
-            dto.setRequirements(job.getRequirements());
-            dto.setMinSalary(job.getMinSalary());
-            dto.setMaxSalary(job.getMaxSalary());
-            dto.setNumOfPosition(job.getNumOfPosition());
-
-            dto.setTitle(jobPositionDTO.getTitle());
-            dto.setContactPersonName(jobPositionDTO.getContactPersonName());
-            dto.setContactEmail(jobPositionDTO.getContactEmail());
-            dto.setLanguage(jobPositionDTO.getLanguage());
-            dto.setJobLevel(jobPositionDTO.getLevel());
-            dto.setJobType(jobPositionDTO.getJobType());
-            dto.setCompanyRegistration(company);
-            dto.setSubCategoryDTOs(jobPositionDTO.getSubCategoryDTOs());
-            dto.setSkillTagDTOS(jobPositionDTO.getSkillTagDTOS());
-
-            registrationJobPositionDTOS.add(dto);
-            }
-            companyService.registerAJobFair(company, registrationJobPositionDTOS);
+                    jobPositionDTOS.add(registrationJobPositionDTO);
+                }
+            companyService.registerAJobFair(companyRegistrationDTO, request.getJobPositions());
             return  GenericResponse.build(MessageUtil.getMessage(MessageConstant.JobFair.COMPANY_REGISTER_SUCCESSFULLY), HttpStatus.OK);
         }catch (IllegalArgumentException ex){
             return GenericResponse.build(ex.getMessage(), HttpStatus.BAD_REQUEST);

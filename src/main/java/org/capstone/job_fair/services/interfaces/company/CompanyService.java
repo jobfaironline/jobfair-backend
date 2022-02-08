@@ -19,5 +19,5 @@ public interface CompanyService {
     Boolean deleteCompany(String id);
     Integer getCountById(String id);
     Optional<CompanyEntity> findCompanyById(String id);
-    void registerAJobFair(CompanyRegistrationDTO company, List<RegistrationJobPositionDTO> jobPositions);
+    void registerAJobFair(CompanyRegistrationDTO company, List<CompanyJobFairRegistrationRequest.JobPosition> jobPositions);
 }
