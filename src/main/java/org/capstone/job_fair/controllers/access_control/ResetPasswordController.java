@@ -117,9 +117,10 @@ public class ResetPasswordController {
             PasswordResetTokenEntity tokenEntity = this.resetService.createResetToken(account);
             //send mail
             try {
+
                 this.mailService.sendMail(account.getEmail(),
                         ResetPasswordTokenConstants.MAIL_SUBJECT,
-                        ResetPasswordTokenConstants.MAIL_BODY + tokenEntity.getOtp());
+                        String.format(ResetPasswordTokenConstants.MAIL_BODY, account.getEmail(), tokenEntity.getOtp()));
                 return GenericResponse.build(
                         MessageUtil.getMessage(MessageConstant.AccessControlMessage.REQUEST_RESET_PASSWORD_SUCCESSFULLY),
                         HttpStatus.OK);
