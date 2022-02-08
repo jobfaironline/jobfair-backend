@@ -1,7 +1,6 @@
 package org.capstone.job_fair.controllers.company;
 
 import org.capstone.job_fair.constants.ApiEndPoint;
-import org.capstone.job_fair.constants.DataConstraint;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.controllers.payload.requests.CompanyJobFairRegistrationRequest;
 import org.capstone.job_fair.controllers.payload.requests.CreateCompanyRequest;
@@ -12,10 +11,8 @@ import org.capstone.job_fair.models.dtos.company.job.JobPositionDTO;
 import org.capstone.job_fair.models.dtos.company.job.RegistrationJobPositionDTO;
 import org.capstone.job_fair.models.entities.company.CompanyEntity;
 import org.capstone.job_fair.models.entities.company.job.JobPositionEntity;
-import org.capstone.job_fair.models.statuses.CompanyStatus;
 import org.capstone.job_fair.repositories.company.job.JobPositionRepository;
 import org.capstone.job_fair.services.interfaces.company.CompanyService;
-import org.capstone.job_fair.services.interfaces.company.CompanySizeService;
 import org.capstone.job_fair.services.interfaces.company.JobPositionService;
 import org.capstone.job_fair.services.mappers.CompanyMapper;
 import org.capstone.job_fair.services.mappers.JobPositionMapper;
@@ -31,7 +28,6 @@ import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 public class CompanyController {
@@ -100,8 +96,8 @@ public class CompanyController {
         }
     }
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
-    @PostMapping(ApiEndPoint.JobFair.COMPANY_REGISTER_TO_JOB_FAIR)
-    public ResponseEntity<?> registerAJobFair(@Valid @RequestBody CompanyJobFairRegistrationRequest request){
+    @PostMapping(ApiEndPoint.JobFair.COMPANY_DRAFT_A_JOB_FAIR_REGISTRATION)
+    public ResponseEntity<?> draftAJobFairRegistration(@Valid @RequestBody CompanyJobFairRegistrationRequest request){
         try{
             List<RegistrationJobPositionDTO> registrationJobPositionDTOS = new ArrayList<>();
 

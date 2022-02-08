@@ -1,6 +1,7 @@
 package org.capstone.job_fair.models.entities.company;
 
 import lombok.*;
+import org.capstone.job_fair.models.statuses.CompanyRegistrationStatus;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.annotation.CreatedDate;
@@ -23,7 +24,6 @@ public class CompanyRegistrationEntity {
     private String id;
 
     @Column(name = "create_date")
-    @CreatedDate
     private Long createDate;
 
     @Column(name = "description")
@@ -32,6 +32,10 @@ public class CompanyRegistrationEntity {
     private String jobFairId;
     @Column(name = "company_id")
     private String companyId;
+
+    @Column(name = "status", nullable = false)
+    @Enumerated(EnumType.ORDINAL)
+    private CompanyRegistrationStatus status;
 
     @Override
     public boolean equals(Object o) {

@@ -22,7 +22,7 @@ public class ApiEndPoint {
         public static final String SUBMIT_JOB_FAIR_PLAN_DRAFT = JOB_FAIR_PLAN +"/submit";
         public static final String CANCEL_PENDING_JOB_FAIR_PLAN = JOB_FAIR_PLAN + "/cancel";
         public static final String RESTORE_DELETED_JOB_FAIR_PLAN = JOB_FAIR_PLAN + "/restore";
-        public static final String COMPANY_REGISTER_TO_JOB_FAIR = JOB_FAIR_PLAN + "/company-registration";
+        public static final String COMPANY_DRAFT_A_JOB_FAIR_REGISTRATION = JOB_FAIR_PLAN + "/company-registration-draft";
     }
     public static final class Authorization {
         public static final String VERIFY_USER = ROOT_ENDPOINT + VERSION + "/verify";

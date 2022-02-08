@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.capstone.job_fair.models.statuses.CompanyRegistrationStatus;
 
 import java.io.Serializable;
 
@@ -17,4 +18,5 @@ public class CompanyRegistrationDTO implements Serializable {
     private String description;
     private String jobFairId;
     private String companyId;
+    private CompanyRegistrationStatus status;
 }

@@ -90,6 +90,7 @@ public class MessageConstant {
         public static final String DELETE_SUCCESSFULLY = "company.success.delete";
         public static final String DELETE_FAILED = "company.error.delete";
         public static final String SIZE_INVALID = "company.error.size-invalid";
+        public static final String JOB_FAIR_REGISTRATION_OUT_OF_REGISTER_TIME = "job-fair-registration.out-of-register-time";
     }
 
     public static final class CompanyEmployee {
