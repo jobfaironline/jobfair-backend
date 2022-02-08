@@ -1,22 +1,18 @@
 package org.capstone.job_fair.services.mappers;
 
-import org.capstone.job_fair.controllers.payload.requests.CompanyJobFairRegistrationRequest;
 import org.capstone.job_fair.controllers.payload.requests.CreateJobPositionRequest;
 import org.capstone.job_fair.models.dtos.company.SkillTagDTO;
 import org.capstone.job_fair.models.dtos.company.SubCategoryDTO;
 import org.capstone.job_fair.models.dtos.company.job.JobPositionDTO;
-import org.capstone.job_fair.models.dtos.company.job.RegistrationJobPositionDTO;
 import org.capstone.job_fair.models.entities.attendant.JobLevelEntity;
 import org.capstone.job_fair.models.entities.attendant.LanguageEntity;
 import org.capstone.job_fair.models.entities.company.SkillTagEntity;
 import org.capstone.job_fair.models.entities.company.SubCategoryEntity;
 import org.capstone.job_fair.models.entities.company.job.JobPositionEntity;
 import org.capstone.job_fair.models.entities.company.job.JobTypeEntity;
-import org.capstone.job_fair.models.entities.company.job.RegistrationJobPositionEntity;
 import org.capstone.job_fair.models.enums.JobLevel;
 import org.capstone.job_fair.models.enums.JobType;
 import org.capstone.job_fair.models.enums.Language;
-import org.capstone.job_fair.repositories.company.job.RegistrationJobPositionRepository;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -51,13 +47,6 @@ public abstract class JobPositionMapper {
     public abstract JobPositionEntity toEntity(JobPositionDTO jobPositionDTO);
 
 
-    @Mapping(target = "language", qualifiedByName = "toJobPositionEntityLanguage")
-    @Mapping(target = "jobLevel", source = "jobLevel", qualifiedByName = "toJobPositionEntityJobLevel")
-    @Mapping(target = "jobTypeEntity", source = "jobType", qualifiedByName = "toJobPositionEntityJobType")
-    @Mapping(target = "categories", source = "subCategoryDTOs", qualifiedByName = "toJobPositionEntitySubCategory")
-    @Mapping(target = "skillTagEntities", source = "skillTagDTOS", qualifiedByName = "toJobPositionEntitySkillTag")
-    public abstract RegistrationJobPositionEntity toEntity(RegistrationJobPositionDTO jobPositionDTO);
-
     @Mapping(source = "preferredLanguage", target = "language")
     @Mapping(source = "companyId", target = "companyDTO.id")
     @Mapping(source = "subCategoryIds", target = "subCategoryDTOs", qualifiedByName = "fromSubCategoryIdsOfCreateJobPositionRequest")
@@ -65,12 +54,12 @@ public abstract class JobPositionMapper {
     public abstract JobPositionDTO toDTO(CreateJobPositionRequest request);
 
     @Named("fromSubCategoryIdsOfCreateJobPositionRequest")
-    public List<SubCategoryDTO> fromSubCategoryIdsOfCreateJobPositionRequest(List<Integer> subCategoryIds){
+    public List<SubCategoryDTO> fromSubCategoryIdsOfCreateJobPositionRequest(List<Integer> subCategoryIds) {
         return subCategoryIds.stream().map(SubCategoryDTO::new).collect(Collectors.toList());
     }
 
     @Named("fromSkillTagIdsOfCreateJobPositionRequest")
-    public List<SkillTagDTO> fromSkillTagIdsOfCreateJobPositionRequest(List<Integer> skillTagIds){
+    public List<SkillTagDTO> fromSkillTagIdsOfCreateJobPositionRequest(List<Integer> skillTagIds) {
         return skillTagIds.stream().map(SkillTagDTO::new).collect(Collectors.toList());
     }
 

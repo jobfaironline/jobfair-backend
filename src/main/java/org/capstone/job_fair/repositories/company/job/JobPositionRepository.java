@@ -10,5 +10,4 @@ import java.util.Optional;
 @Transactional
 @RepositoryRestResource(path = "job-positions")
 public interface JobPositionRepository extends JpaRepository<JobPositionEntity, String> {
-    Optional<JobPositionEntity> findById(String id);
 }

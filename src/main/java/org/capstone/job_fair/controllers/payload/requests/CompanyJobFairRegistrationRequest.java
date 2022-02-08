@@ -8,10 +8,7 @@ import org.springframework.format.annotation.NumberFormat;
 
 
 import javax.validation.Valid;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.util.List;
 
 
@@ -62,12 +59,14 @@ public class CompanyJobFairRegistrationRequest {
 
         @NotNull
         @NumberFormat
-        @Min(DataConstraint.JobPosition.SALARY_MAX)
+        @Min(DataConstraint.JobPosition.SALARY_MIN)
+        @Max(DataConstraint.JobPosition.SALARY_MAX)
         private double maxSalary;
 
         @NotNull
         @NumberFormat
         @Min(DataConstraint.JobPosition.EMPLOYEE_MIN)
+        @Max(DataConstraint.JobPosition.EMPLOYEE_MAX)
         private int numOfPosition;
 
     }

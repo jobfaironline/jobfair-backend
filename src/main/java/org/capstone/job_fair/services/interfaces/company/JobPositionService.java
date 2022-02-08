@@ -6,5 +6,4 @@ import org.capstone.job_fair.models.entities.company.job.JobPositionEntity;
 public interface JobPositionService {
     void createNewJobPosition(JobPositionDTO dto);
 
-    JobPositionEntity getJobByID(String jobPositionId);
 }

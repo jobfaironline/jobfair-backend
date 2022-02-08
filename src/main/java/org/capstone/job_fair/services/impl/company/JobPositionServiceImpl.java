@@ -68,12 +68,5 @@ public class JobPositionServiceImpl implements JobPositionService {
         jobPositionRepository.save(entity);
     }
 
-    @Override
-    public JobPositionEntity getJobByID(String jobPositionId) {
-        System.out.println("Job ID: " + jobPositionId);
-        Optional<JobPositionEntity> jobPosition =  jobPositionRepository.findById(jobPositionId);
-        if(!jobPosition.isPresent()) throw new IllegalArgumentException(
-                MessageUtil.getMessage(MessageConstant.Job.JOB_POSITION_NOT_FOUND));
-        return jobPosition.get();
-    }
+
 }

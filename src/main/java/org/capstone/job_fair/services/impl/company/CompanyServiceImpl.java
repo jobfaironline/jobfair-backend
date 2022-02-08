@@ -21,17 +21,17 @@ import org.capstone.job_fair.repositories.company.*;
 import org.capstone.job_fair.repositories.company.job.JobPositionRepository;
 import org.capstone.job_fair.repositories.company.job.RegistrationJobPositionRepository;
 import org.capstone.job_fair.repositories.job_fair.JobFairRepository;
-import org.capstone.job_fair.services.interfaces.company.CompanyEmployeeService;
 import org.capstone.job_fair.services.interfaces.company.CompanyService;
 import org.capstone.job_fair.services.mappers.CompanyMapper;
+import org.capstone.job_fair.services.mappers.CompanyRegistrationMapper;
 import org.capstone.job_fair.services.mappers.JobPositionMapper;
+import org.capstone.job_fair.services.mappers.RegistrationJobPositionMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -75,6 +75,12 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Autowired
     private JobPositionRepository jobPositionRepository;
+
+    @Autowired
+    private RegistrationJobPositionMapper registrationJobPositionMapper;
+
+    @Autowired
+    private CompanyRegistrationMapper companyRegistrationMapper;
 
 
 
@@ -217,13 +223,14 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     @Transactional
-    public void registerAJobFair(CompanyRegistrationDTO companyRegistrationDTO, List<CompanyJobFairRegistrationRequest.JobPosition> jobPositions) {
+    public void createCompanyRegistration(CompanyRegistrationDTO companyRegistrationDTO, List<RegistrationJobPositionDTO> jobPositions) {
 
         //Create registration job position entity
 
         //Check job fair existence
-        Optional<JobFairEntity> jobFairEntity = jobFairRepository.findById(companyRegistrationDTO.getJobFairId());
-        if (!jobFairEntity.isPresent()) throw new IllegalArgumentException(
+        Optional<JobFairEntity> jobFairOpt = jobFairRepository.findById(companyRegistrationDTO.getJobFairId());
+        JobFairEntity jobFairEntity = jobFairOpt.get();
+        if (!jobFairOpt.isPresent()) throw new IllegalArgumentException(
                 MessageUtil.getMessage(MessageConstant.JobFair.JOB_FAIR_NOT_FOUND));
 
         //Validate job fair registration time of company
@@ -239,15 +246,14 @@ public class CompanyServiceImpl implements CompanyService {
         companyRegistrationDTO.setCompanyId(companyEmployee.getCompany().getId());
         companyRegistrationDTO.setStatus(CompanyRegistrationStatus.DRAFT);
         //Create company registration entity
-        CompanyRegistrationEntity companyRegistrationEntity = companyMapper.toEntity(companyRegistrationDTO);
+        CompanyRegistrationEntity companyRegistrationEntity = companyRegistrationMapper.toEntity(companyRegistrationDTO);
         companyRegistrationEntity.setCreateDate(time);
-        companyRegistrationEntity.setCompanyId(companyEmployee.getCompany().getId());
         companyRegistrationRepository.save(companyRegistrationEntity);
 
-        for (CompanyJobFairRegistrationRequest.JobPosition jobPositionRequest:jobPositions) {
+        for (RegistrationJobPositionDTO registrationJobPositionDTO:jobPositions) {
             //Get job position entity by job position id in request
             Optional<JobPositionEntity> jobPosition =
-                    jobPositionRepository.findById(jobPositionRequest.getJobPositionId());
+                    jobPositionRepository.findById(registrationJobPositionDTO.getId());
             //Check job position existence
             if(!jobPosition.isPresent()) throw new IllegalArgumentException(
                     MessageUtil.getMessage(MessageConstant.Job.JOB_POSITION_NOT_FOUND));
@@ -256,32 +262,22 @@ public class CompanyServiceImpl implements CompanyService {
                 throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Job.COMPANY_MISMATCH));
 
 
-            RegistrationJobPositionDTO registrationJobPositionDTO = new RegistrationJobPositionDTO();
-            JobPositionDTO jobPositionDTO = jobPositionMapper.toDTO(jobPosition.get());
+//            RegistrationJobPositionDTO registrationJobPositionDTO = new RegistrationJobPositionDTO();
+            RegistrationJobPositionEntity entity = registrationJobPositionMapper.toEntity(registrationJobPositionDTO);
+            JobPositionEntity jobPositionEntity = jobPosition.get();
             //Job position information
-            registrationJobPositionDTO.setTitle(jobPositionDTO.getTitle());
-            registrationJobPositionDTO.setContactPersonName(jobPositionDTO.getContactPersonName());
-            registrationJobPositionDTO.setContactEmail(jobPositionDTO.getContactEmail());
-            registrationJobPositionDTO.setLanguage(jobPositionDTO.getLanguage());
-            registrationJobPositionDTO.setJobLevel(jobPositionDTO.getLevel());
-            registrationJobPositionDTO.setJobType(jobPositionDTO.getJobType());
+            entity.setTitle(jobPositionEntity.getTitle());
+            entity.setContactPersonName(jobPositionEntity.getContactPersonName());
+            entity.setContactEmail(jobPositionEntity.getContactEmail());
+            entity.setLanguage(jobPositionEntity.getLanguage());
+            entity.setJobLevel(jobPositionEntity.getJobLevel());
+            entity.setJobTypeEntity(jobPositionEntity.getJobTypeEntity());
             //Map company registration to registration job position entity
-            registrationJobPositionDTO.setCompanyRegistration(companyRegistrationDTO);
-            registrationJobPositionDTO.setSubCategoryDTOs(jobPositionDTO.getSubCategoryDTOs());
-            registrationJobPositionDTO.setSkillTagDTOS(jobPositionDTO.getSkillTagDTOS());
+            entity.setCompanyRegistration(companyRegistrationEntity);
+            entity.setCategories(jobPositionEntity.getCategories());
+            entity.setSkillTagEntities(jobPositionEntity.getSkillTagEntities());
 
-            //Additional information of job position
-            //Map additional information from job position entity to registration job postiion entity
-            registrationJobPositionDTO.setDescription(jobPositionRequest.getDescription());
-            registrationJobPositionDTO.setRequirements(jobPositionRequest.getRequirements());
-            registrationJobPositionDTO.setMinSalary(jobPositionRequest.getMinSalary());
-            registrationJobPositionDTO.setMaxSalary(jobPositionRequest.getMaxSalary());
-            registrationJobPositionDTO.setNumOfPosition(jobPositionRequest.getNumOfPosition());
-
-            RegistrationJobPositionEntity registrationJobPositionEntity = jobPositionMapper.toEntity(registrationJobPositionDTO);
-            registrationJobPositionEntity.setCompanyRegistration(companyRegistrationEntity);
-
-            registrationJobPositionRepository.save(registrationJobPositionEntity);
+            registrationJobPositionRepository.save(entity);
 
         }
     }

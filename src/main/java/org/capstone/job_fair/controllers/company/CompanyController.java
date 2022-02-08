@@ -6,16 +6,12 @@ import org.capstone.job_fair.controllers.payload.requests.CompanyJobFairRegistra
 import org.capstone.job_fair.controllers.payload.requests.CreateCompanyRequest;
 import org.capstone.job_fair.controllers.payload.requests.UpdateCompanyRequest;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
-import org.capstone.job_fair.models.dtos.company.*;
-import org.capstone.job_fair.models.dtos.company.job.JobPositionDTO;
+import org.capstone.job_fair.models.dtos.company.CompanyDTO;
+import org.capstone.job_fair.models.dtos.company.CompanyRegistrationDTO;
 import org.capstone.job_fair.models.dtos.company.job.RegistrationJobPositionDTO;
 import org.capstone.job_fair.models.entities.company.CompanyEntity;
-import org.capstone.job_fair.models.entities.company.job.JobPositionEntity;
-import org.capstone.job_fair.repositories.company.job.JobPositionRepository;
 import org.capstone.job_fair.services.interfaces.company.CompanyService;
-import org.capstone.job_fair.services.interfaces.company.JobPositionService;
 import org.capstone.job_fair.services.mappers.CompanyMapper;
-import org.capstone.job_fair.services.mappers.JobPositionMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -38,14 +34,6 @@ public class CompanyController {
     @Autowired
     private CompanyMapper companyMapper;
 
-    @Autowired
-    private JobPositionService jobPositionService;
-
-    @Autowired
-    private JobPositionRepository jobPositionRepository;
-
-    @Autowired
-    private JobPositionMapper jobPositionMapper;
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
     @GetMapping(ApiEndPoint.Company.COMPANY_ENDPOINT)
@@ -87,7 +75,7 @@ public class CompanyController {
     @PutMapping(ApiEndPoint.Company.COMPANY_ENDPOINT)
     public ResponseEntity<?> update(@Valid @RequestBody UpdateCompanyRequest request) {
 
-        try{
+        try {
             CompanyDTO dto = companyMapper.toDTO(request);
             companyService.updateCompany(dto);
             return GenericResponse.build(MessageUtil.getMessage(MessageConstant.Company.UPDATE_SUCCESSFULLY), HttpStatus.OK);
@@ -95,34 +83,35 @@ public class CompanyController {
             return GenericResponse.build(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
+
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
     @PostMapping(ApiEndPoint.JobFair.COMPANY_DRAFT_A_JOB_FAIR_REGISTRATION)
-    public ResponseEntity<?> draftAJobFairRegistration(@Valid @RequestBody CompanyJobFairRegistrationRequest request){
-        try{
+    public ResponseEntity<?> draftAJobFairRegistration(@Valid @RequestBody CompanyJobFairRegistrationRequest request) {
+        try {
 
 
             //Map request to company registration dto and registration job position dto
-             CompanyRegistrationDTO companyRegistrationDTO = new CompanyRegistrationDTO();
-             companyRegistrationDTO.setJobFairId(request.getJobFairId());
-             companyRegistrationDTO.setLocationId(request.getLocationId());
-             companyRegistrationDTO.setDescription(request.getDescription());
+            CompanyRegistrationDTO companyRegistrationDTO = new CompanyRegistrationDTO();
+            companyRegistrationDTO.setJobFairId(request.getJobFairId());
+            companyRegistrationDTO.setLocationId(request.getLocationId());
+            companyRegistrationDTO.setDescription(request.getDescription());
 
-             //Get job position entity list
-             List<RegistrationJobPositionDTO> jobPositionDTOS = new ArrayList<>();
-                for (CompanyJobFairRegistrationRequest.JobPosition jobPosition : request.getJobPositions()) {
-                    RegistrationJobPositionDTO registrationJobPositionDTO = new RegistrationJobPositionDTO();
-                    registrationJobPositionDTO.setId(jobPosition.getJobPositionId());
-                    registrationJobPositionDTO.setDescription(jobPosition.getDescription());
-                    registrationJobPositionDTO.setRequirements(jobPosition.getRequirements());
-                    registrationJobPositionDTO.setMinSalary(jobPosition.getMinSalary());
-                    registrationJobPositionDTO.setMaxSalary(jobPosition.getMaxSalary());
-                    registrationJobPositionDTO.setNumOfPosition(jobPosition.getNumOfPosition());
+            //Get job position entity list
+            List<RegistrationJobPositionDTO> jobPositionDTOS = new ArrayList<>();
+            for (CompanyJobFairRegistrationRequest.JobPosition jobPosition : request.getJobPositions()) {
+                RegistrationJobPositionDTO registrationJobPositionDTO = new RegistrationJobPositionDTO();
+                registrationJobPositionDTO.setId(jobPosition.getJobPositionId());
+                registrationJobPositionDTO.setDescription(jobPosition.getDescription());
+                registrationJobPositionDTO.setRequirements(jobPosition.getRequirements());
+                registrationJobPositionDTO.setMinSalary(jobPosition.getMinSalary());
+                registrationJobPositionDTO.setMaxSalary(jobPosition.getMaxSalary());
+                registrationJobPositionDTO.setNumOfPosition(jobPosition.getNumOfPosition());
 
-                    jobPositionDTOS.add(registrationJobPositionDTO);
-                }
-            companyService.registerAJobFair(companyRegistrationDTO, request.getJobPositions());
-            return  GenericResponse.build(MessageUtil.getMessage(MessageConstant.JobFair.COMPANY_REGISTER_SUCCESSFULLY), HttpStatus.OK);
-        }catch (IllegalArgumentException ex){
+                jobPositionDTOS.add(registrationJobPositionDTO);
+            }
+            companyService.createCompanyRegistration(companyRegistrationDTO, jobPositionDTOS);
+            return GenericResponse.build(MessageUtil.getMessage(MessageConstant.JobFair.COMPANY_REGISTER_SUCCESSFULLY), HttpStatus.OK);
+        } catch (IllegalArgumentException ex) {
             return GenericResponse.build(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
