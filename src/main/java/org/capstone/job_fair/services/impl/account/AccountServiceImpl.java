@@ -1,15 +1,22 @@
 package org.capstone.job_fair.services.impl.account;
 
+import lombok.SneakyThrows;
 import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
+import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
+import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
 import org.capstone.job_fair.models.statuses.AccountStatus;
 import org.capstone.job_fair.repositories.account.AccountRepository;
 import org.capstone.job_fair.services.interfaces.account.AccountService;
+import org.capstone.job_fair.services.interfaces.token.AccountVerifyTokenService;
+import org.capstone.job_fair.services.interfaces.util.MailService;
 import org.capstone.job_fair.services.mappers.AccountMapper;
+import org.capstone.job_fair.utils.DomainUtil;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -17,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,6 +40,14 @@ public class AccountServiceImpl implements AccountService {
     @Autowired
     private BCryptPasswordEncoder encoder;
 
+    @Autowired
+    private AccountVerifyTokenService accountVerifyTokenService;
+
+    @Autowired
+    private DomainUtil domainUtil;
+
+    @Autowired
+    private MailService mailService;
 
     @Override
     public List<AccountDTO> getAllAccounts() {
@@ -58,7 +74,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Optional<AccountDTO> getAccountById(String id) {
         Optional<AccountEntity> opt = accountRepository.findById(id);
-        if (!opt.isPresent()){
+        if (!opt.isPresent()) {
             return Optional.empty();
         }
         AccountDTO accountDTO = accountMapper.toDTO(opt.get());
@@ -91,15 +107,25 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     @Transactional
-    public void changePassword(String newPassword, String oldPassword){
+    public void changePassword(String newPassword, String oldPassword) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (!encoder.matches(oldPassword, userDetails.getPassword())){
+        if (!encoder.matches(oldPassword, userDetails.getPassword())) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Account.OLD_PASSWORD_MISMATCH));
         }
         AccountEntity entity = accountRepository.findById(userDetails.getId()).get();
         String hashedPassword = encoder.encode(newPassword);
         entity.setPassword(hashedPassword);
         accountRepository.save(entity);
+    }
+
+    @SneakyThrows
+    @Override
+    public CompletableFuture<Void> sendVerifyAccountEmail(String id, String email) {
+        String token = accountVerifyTokenService.createToken(id).getId();
+        return this.mailService.sendMail(email,
+                MessageUtil.getMessage(MessageConstant.Attendant.ACCOUNT_VERIFY_MAIL_TITLE),
+                domainUtil.generateCurrentDomain() + ApiEndPoint.Authorization.VERIFY_USER + "/" + id + "/" + token);
+
     }
 
 }

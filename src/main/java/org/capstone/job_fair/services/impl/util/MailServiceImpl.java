@@ -1,5 +1,6 @@
 package org.capstone.job_fair.services.impl.util;
 
+import lombok.SneakyThrows;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.services.interfaces.util.MailService;
 import org.capstone.job_fair.utils.MessageUtil;
@@ -17,7 +18,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.concurrent.CompletableFuture;
 
 @Service
-public class MailServiceImpl  implements MailService {
+public class MailServiceImpl implements MailService {
     @Autowired
     private JavaMailSender mailSender;
     @Value("${from.email.address}")
@@ -25,7 +26,7 @@ public class MailServiceImpl  implements MailService {
 
     @Override
     @Async
-    public CompletableFuture<Void> sendMail(String recipient, String subject, String content) throws UnsupportedEncodingException, MessagingException {
+    public CompletableFuture<Void> sendMail(String recipient, String subject, String content) throws MessagingException, UnsupportedEncodingException {
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message);
         helper.setFrom(fromEmailAddress, MessageUtil.getMessage(MessageConstant.Mail.NAME));
