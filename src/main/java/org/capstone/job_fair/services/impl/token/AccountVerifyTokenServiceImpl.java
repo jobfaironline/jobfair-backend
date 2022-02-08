@@ -16,7 +16,7 @@ import java.util.UUID;
 @Service
 public class AccountVerifyTokenServiceImpl implements AccountVerifyTokenService {
 
-    @Value("${reset-password-expiration}")
+    @Value("${verify-account-expiration}")
     private String TOKEN_EXPIRED_TIME;
 
     @Autowired
@@ -30,7 +30,7 @@ public class AccountVerifyTokenServiceImpl implements AccountVerifyTokenService 
         //generate token
         AccountVerifyTokenEntity accountVerifyToken = new AccountVerifyTokenEntity();
         accountVerifyToken.setCreatedTime(new Date().getTime());
-        accountVerifyToken.setExpiredTime(accountVerifyToken.getCreatedTime() +  Integer.parseInt(TOKEN_EXPIRED_TIME)* 1000L);
+        accountVerifyToken.setExpiredTime(accountVerifyToken.getCreatedTime() + (long) Integer.parseInt(TOKEN_EXPIRED_TIME) * 1000 * 1000);
         accountVerifyToken.setAccountId(userId);
         accountVerifyToken.setIsInvalidated(false);
         accountVerifyTokenEntityRepository.save(accountVerifyToken);
