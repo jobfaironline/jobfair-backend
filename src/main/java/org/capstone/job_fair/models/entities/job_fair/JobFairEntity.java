@@ -58,6 +58,10 @@ public class JobFairEntity {
     @Basic
     @Column(name = "authorizer_id", nullable = true)
     private String authorizerId;
+    @Column(name = "reject_reason")
+    private String rejectReason;
+    @Column(name = "cancel_reason")
+    private String cancelReason;
 
 
 
@@ -72,17 +76,7 @@ public class JobFairEntity {
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (int) (companyRegisterStartTime ^ (companyRegisterStartTime >>> 32));
-        result = 31 * result + (int) (companyRegisterEndTime ^ (companyRegisterEndTime >>> 32));
-        result = 31 * result + (int) (companyBuyBoothStartTime ^ (companyBuyBoothStartTime >>> 32));
-        result = 31 * result + (int) (companyBuyBoothEndTime ^ (companyBuyBoothEndTime >>> 32));
-        result = 31 * result + (int) (attendantRegisterStartTime ^ (attendantRegisterStartTime >>> 32));
-        result = 31 * result + (startTime != null ? startTime.hashCode() : 0);
-        result = 31 * result + (int) (endTime ^ (endTime >>> 32));
-        result = 31 * result + (description != null ? description.hashCode() : 0);
-        result = 31 * result + (layoutId != null ? layoutId.hashCode() : 0);
-        return result;
+        return id != null ? id.hashCode() : 0;
     }
 
 }

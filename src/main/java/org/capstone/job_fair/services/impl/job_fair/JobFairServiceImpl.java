@@ -4,9 +4,7 @@ import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import org.capstone.job_fair.constants.DataConstraint;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.models.dtos.job_fair.JobFairDTO;
-import org.capstone.job_fair.models.entities.account.AccountEntity;
 import org.capstone.job_fair.models.entities.job_fair.JobFairEntity;
-import org.capstone.job_fair.models.enums.Role;
 import org.capstone.job_fair.models.statuses.JobFairStatus;
 import org.capstone.job_fair.repositories.account.AccountRepository;
 import org.capstone.job_fair.repositories.job_fair.JobFairRepository;
@@ -38,25 +36,23 @@ public class JobFairServiceImpl implements JobFairService {
         dto.setCreatorId(userDetails.getId());
 
 
-        if(dto.getCompanyRegisterEndTime() - dto.getCompanyRegisterStartTime() > DataConstraint.JobFair.VALID_REGISTER_TIME)
+        if (dto.getCompanyRegisterEndTime() - dto.getCompanyRegisterStartTime() > DataConstraint.JobFair.VALID_REGISTER_TIME)
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.INVALID_END_TIME));
 
-        if(dto.getCompanyRegisterEndTime() - dto.getCompanyBuyBoothStartTime() > DataConstraint.JobFair.VALID_REGISTER_TO_BUY_BOOTH_TIME)
+        if (dto.getCompanyRegisterEndTime() - dto.getCompanyBuyBoothStartTime() > DataConstraint.JobFair.VALID_REGISTER_TO_BUY_BOOTH_TIME)
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.END_TIME_LESS_THAN_START_TIME_ERROR));
 
-        if(dto.getCompanyBuyBoothEndTime() - dto.getCompanyBuyBoothStartTime() > DataConstraint.JobFair.VALID_BUY_BOOTH_TIME)
+        if (dto.getCompanyBuyBoothEndTime() - dto.getCompanyBuyBoothStartTime() > DataConstraint.JobFair.VALID_BUY_BOOTH_TIME)
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.INVALID_END_TIME));
 
-        if(dto.getCompanyBuyBoothEndTime() - dto.getAttendantRegisterStartTime() > DataConstraint.JobFair.VALID_BUY_BOOTH_TO_PUBLIC_TIME)
+        if (dto.getCompanyBuyBoothEndTime() - dto.getAttendantRegisterStartTime() > DataConstraint.JobFair.VALID_BUY_BOOTH_TO_PUBLIC_TIME)
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.END_TIME_LESS_THAN_START_TIME_ERROR));
 
-        if(dto.getAttendantRegisterStartTime() - dto.getStartTime() > DataConstraint.JobFair.VALID_PUBLIC_TO_EVENT_TIME)
+        if (dto.getAttendantRegisterStartTime() - dto.getStartTime() > DataConstraint.JobFair.VALID_PUBLIC_TO_EVENT_TIME)
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.END_TIME_LESS_THAN_START_TIME_ERROR));
 
-        if(dto.getEndTime() - dto.getStartTime() > DataConstraint.JobFair.VALID_EVENT_TIME)
+        if (dto.getEndTime() - dto.getStartTime() > DataConstraint.JobFair.VALID_EVENT_TIME)
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.INVALID_END_TIME));
-
-
 
 
         JobFairEntity entity = jobFairMapper.toJobFairEntity(dto);
@@ -70,22 +66,23 @@ public class JobFairServiceImpl implements JobFairService {
         String id = userDetails.getId();
         List<JobFairEntity> entities = jobFairRepository.findAllByCreatorId(id);
         if (entities.isEmpty()) return null;
-        return  entities.stream().map(jobFairEntity -> {
-            return  jobFairMapper.toJobFairDTO(jobFairEntity);
+        return entities.stream().map(jobFairEntity -> {
+            return jobFairMapper.toJobFairDTO(jobFairEntity);
         }).collect(Collectors.toList());
     }
-    private JobFairEntity getValidatedJobFair(String jobFairId, JobFairStatus status){
+
+    private JobFairEntity getValidatedJobFair(String jobFairId, JobFairStatus status) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext()
                 .getAuthentication().getPrincipal();
         String creatorId = userDetails.getId();
         Optional<JobFairEntity> entity = jobFairRepository.findById(jobFairId);
-        if(!entity.isPresent()) throw new IllegalArgumentException(
+        if (!entity.isPresent()) throw new IllegalArgumentException(
                 MessageUtil.getMessage(MessageConstant.JobFair.JOB_FAIR_NOT_FOUND)
         );
-        if(!entity.get().getCreatorId().equals(creatorId)) throw new IllegalArgumentException(
+        if (!entity.get().getCreatorId().equals(creatorId)) throw new IllegalArgumentException(
                 MessageUtil.getMessage(MessageConstant.JobFair.INVALID_CREATOR_ID)
         );
-        if(!entity.get().getStatus().toString().equals(status.toString())) throw new IllegalArgumentException(
+        if (!entity.get().getStatus().toString().equals(status.toString())) throw new IllegalArgumentException(
                 MessageUtil.getMessage(MessageConstant.JobFair.INVALID_JOB_FAIR_STATUS)
         );
         return entity.get();
@@ -117,6 +114,34 @@ public class JobFairServiceImpl implements JobFairService {
         JobFairEntity entity = getValidatedJobFair(jobFairId, JobFairStatus.DELETED);
         entity.setStatus(JobFairStatus.CANCEL);
         jobFairRepository.save(entity);
+    }
+
+    @Override
+    public void adminEvaluateJobFair(String jobFairId, JobFairStatus status, String message) {
+        Optional<JobFairEntity> jobFairEntityOpt = jobFairRepository.findById(jobFairId);
+        if (!jobFairEntityOpt.isPresent()) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.JOB_FAIR_NOT_FOUND));
+        }
+        if (status != JobFairStatus.REJECT && status != JobFairStatus.APPROVE) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.INVALID_STATUS_WHEN_EVALUATE));
+        }
+        if (status == JobFairStatus.REJECT && message == null){
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.REJECT_MISSING_REASON));
+        }
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext()
+                .getAuthentication().getPrincipal();
+
+
+        JobFairEntity entity = jobFairEntityOpt.get();
+        entity.setStatus(status);
+        entity.setRejectReason(message);
+        entity.setAuthorizerId(userDetails.getId());
+        jobFairRepository.save(entity);
+    }
+
+    @Override
+    public List<JobFairDTO> getAll() {
+        return jobFairRepository.findAll().stream().map(jobFairMapper::toJobFairDTO).collect(Collectors.toList());
     }
 
 }
