@@ -65,4 +65,12 @@ public class JobPositionServiceImpl implements JobPositionService {
         JobPositionEntity entity = mapper.toEntity(dto);
         jobPositionRepository.save(entity);
     }
+
+    @Override
+    public JobPositionEntity getJobByID(String jobPositionId) {
+        JobPositionEntity jobPosition =  jobPositionRepository.getById(jobPositionId);
+        if(jobPosition == null) throw new IllegalArgumentException(
+                MessageUtil.getMessage(MessageConstant.Job.JOB_POSITION_NOT_FOUND));
+        return jobPosition;
+    }
 }

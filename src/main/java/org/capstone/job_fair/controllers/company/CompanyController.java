@@ -3,18 +3,22 @@ package org.capstone.job_fair.controllers.company;
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.DataConstraint;
 import org.capstone.job_fair.constants.MessageConstant;
+import org.capstone.job_fair.controllers.payload.requests.CompanyJobFairRegistrationRequest;
 import org.capstone.job_fair.controllers.payload.requests.CreateCompanyRequest;
 import org.capstone.job_fair.controllers.payload.requests.UpdateCompanyRequest;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
-import org.capstone.job_fair.models.dtos.company.BenefitDTO;
-import org.capstone.job_fair.models.dtos.company.CompanyDTO;
-import org.capstone.job_fair.models.dtos.company.MediaDTO;
-import org.capstone.job_fair.models.dtos.company.SubCategoryDTO;
+import org.capstone.job_fair.models.dtos.company.*;
+import org.capstone.job_fair.models.dtos.company.job.JobPositionDTO;
+import org.capstone.job_fair.models.dtos.company.job.RegistrationJobPositionDTO;
 import org.capstone.job_fair.models.entities.company.CompanyEntity;
+import org.capstone.job_fair.models.entities.company.job.JobPositionEntity;
 import org.capstone.job_fair.models.statuses.CompanyStatus;
+import org.capstone.job_fair.repositories.company.job.JobPositionRepository;
 import org.capstone.job_fair.services.interfaces.company.CompanyService;
 import org.capstone.job_fair.services.interfaces.company.CompanySizeService;
+import org.capstone.job_fair.services.interfaces.company.JobPositionService;
 import org.capstone.job_fair.services.mappers.CompanyMapper;
+import org.capstone.job_fair.services.mappers.JobPositionMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,6 +28,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -35,6 +41,15 @@ public class CompanyController {
 
     @Autowired
     private CompanyMapper companyMapper;
+
+    @Autowired
+    private JobPositionService jobPositionService;
+
+    @Autowired
+    private JobPositionRepository jobPositionRepository;
+
+    @Autowired
+    private JobPositionMapper jobPositionMapper;
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
     @GetMapping(ApiEndPoint.Company.COMPANY_ENDPOINT)
@@ -81,6 +96,44 @@ public class CompanyController {
             companyService.updateCompany(dto);
             return GenericResponse.build(MessageUtil.getMessage(MessageConstant.Company.UPDATE_SUCCESSFULLY), HttpStatus.OK);
         } catch (IllegalArgumentException ex) {
+            return GenericResponse.build(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
+    @PostMapping(ApiEndPoint.JobFair.COMPANY_REGISTER_TO_JOB_FAIR)
+    public ResponseEntity<?> registerAJobFair(@Valid @RequestBody CompanyJobFairRegistrationRequest request){
+        try{
+            List<RegistrationJobPositionDTO> registrationJobPositionDTOS = new ArrayList<>();
+
+            CompanyRegistrationDTO company = companyMapper.toDTO(request);
+
+            for (CompanyJobFairRegistrationRequest.JobPosition job: request.getJobPositions()) {
+
+            JobPositionEntity jobPosition = jobPositionService.getJobByID(job.getJobPositionId());
+            JobPositionDTO jobPositionDTO = jobPositionMapper.toDTO(jobPosition);
+
+            RegistrationJobPositionDTO dto = new RegistrationJobPositionDTO();
+            dto.setDescription(request.getDescription());
+            dto.setRequirements(job.getRequirements());
+            dto.setMinSalary(job.getMinSalary());
+            dto.setMaxSalary(job.getMaxSalary());
+            dto.setNumOfPosition(job.getNumOfPosition());
+
+            dto.setTitle(jobPositionDTO.getTitle());
+            dto.setContactPersonName(jobPositionDTO.getContactPersonName());
+            dto.setContactEmail(jobPositionDTO.getContactEmail());
+            dto.setLanguage(jobPositionDTO.getLanguage());
+            dto.setJobLevel(jobPositionDTO.getLevel());
+            dto.setJobType(jobPositionDTO.getJobType());
+            dto.setCompanyRegistration(company);
+            dto.setSubCategoryDTOs(jobPositionDTO.getSubCategoryDTOs());
+            dto.setSkillTagDTOS(jobPositionDTO.getSkillTagDTOS());
+
+            registrationJobPositionDTOS.add(dto);
+            }
+            companyService.registerAJobFair(company, registrationJobPositionDTOS);
+            return  GenericResponse.build(MessageUtil.getMessage(MessageConstant.JobFair.COMPANY_REGISTER_SUCCESSFULLY), HttpStatus.OK);
+        }catch (IllegalArgumentException ex){
             return GenericResponse.build(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }

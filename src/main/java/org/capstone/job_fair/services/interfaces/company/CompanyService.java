@@ -1,7 +1,10 @@
 package org.capstone.job_fair.services.interfaces.company;
 
+import org.capstone.job_fair.controllers.payload.requests.CompanyJobFairRegistrationRequest;
 import org.capstone.job_fair.models.dtos.company.CompanyDTO;
+import org.capstone.job_fair.models.dtos.company.CompanyRegistrationDTO;
 import org.capstone.job_fair.models.dtos.company.MediaDTO;
+import org.capstone.job_fair.models.dtos.company.job.RegistrationJobPositionDTO;
 import org.capstone.job_fair.models.entities.company.CompanyEntity;
 
 import java.util.List;
@@ -16,4 +19,5 @@ public interface CompanyService {
     Boolean deleteCompany(String id);
     Integer getCountById(String id);
     Optional<CompanyEntity> findCompanyById(String id);
+    void registerAJobFair(CompanyRegistrationDTO company, List<RegistrationJobPositionDTO> jobPositions);
 }

@@ -2,13 +2,14 @@ package org.capstone.job_fair.services.impl.company;
 
 import org.capstone.job_fair.constants.DataConstraint;
 import org.capstone.job_fair.constants.MessageConstant;
-import org.capstone.job_fair.models.dtos.company.BenefitDTO;
-import org.capstone.job_fair.models.dtos.company.CompanyBenefitDTO;
-import org.capstone.job_fair.models.dtos.company.CompanyDTO;
-import org.capstone.job_fair.models.dtos.company.SubCategoryDTO;
+import org.capstone.job_fair.controllers.payload.requests.CompanyJobFairRegistrationRequest;
+import org.capstone.job_fair.models.dtos.company.*;
+import org.capstone.job_fair.models.dtos.company.job.RegistrationJobPositionDTO;
 import org.capstone.job_fair.models.entities.company.*;
+import org.capstone.job_fair.models.entities.job_fair.JobFairEntity;
 import org.capstone.job_fair.models.statuses.CompanyStatus;
 import org.capstone.job_fair.repositories.company.*;
+import org.capstone.job_fair.repositories.job_fair.JobFairRepository;
 import org.capstone.job_fair.services.interfaces.company.CompanyService;
 import org.capstone.job_fair.services.interfaces.company.CompanySizeService;
 import org.capstone.job_fair.services.mappers.CompanyMapper;
@@ -38,6 +39,13 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Autowired
     private BenefitRepository benefitRepository;
+
+    @Autowired
+    private JobFairRepository jobFairRepository;
+
+    @Autowired
+    private CompanyRegistrationRepository companyRegistrationRepository;
+
 
     @Autowired
     private SubCategoryRepository subCategoryRepository;
@@ -180,5 +188,20 @@ public class CompanyServiceImpl implements CompanyService {
         return companyRepository.findById(id);
     }
 
+    @Override
+    public void registerAJobFair(CompanyRegistrationDTO company, List<RegistrationJobPositionDTO> jobPositions) {
+        //Check job fair existence
+        JobFairEntity jobFairEntity = jobFairRepository.getById(company.getJobFairId());
+        if(jobFairEntity == null) throw new IllegalArgumentException(
+                MessageUtil.getMessage(MessageConstant.JobFair.JOB_FAIR_NOT_FOUND));
+        //Check company existence
+        Optional<CompanyEntity> companyEntity = companyRepository.findById(company.getCompanyId());
+        if(!companyEntity.isPresent()) throw new IllegalArgumentException(
+                MessageUtil.getMessage(MessageConstant.Company.NOT_FOUND));
+        CompanyRegistrationEntity companyRegistrationEntity = companyMapper.toEntity(company);
+        companyRegistrationRepository.save(companyRegistrationEntity);
+        for (RegistrationJobPositionDTO job:jobPositions) {
 
+        }
+    }
 }

@@ -1,6 +1,7 @@
 package org.capstone.job_fair.services.mappers;
 
 
+import org.capstone.job_fair.controllers.payload.requests.CompanyJobFairRegistrationRequest;
 import org.capstone.job_fair.controllers.payload.requests.CreateCompanyRequest;
 import org.capstone.job_fair.controllers.payload.requests.UpdateCompanyRequest;
 import org.capstone.job_fair.models.dtos.company.*;
@@ -37,6 +38,8 @@ public abstract class CompanyMapper {
     @Mapping(target = "companySize", source = "sizeId", qualifiedByName = "fromSizeIdOfCompanyDTO")
     public abstract CompanyEntity toEntity(CompanyDTO dto);
 
+    public abstract CompanyRegistrationEntity toEntity(CompanyRegistrationDTO dto);
+
     @Mapping(target = "subCategoryDTOs", source = "subCategories", qualifiedByName = "fromSubCategoriesOfCompanyEntity")
     @Mapping(target = "companyBenefitDTOS", source = "companyBenefits", qualifiedByName = "fromCompanyBenefitsOfCompanyEntity")
     @Mapping(target = "mediaDTOS", source = "medias", qualifiedByName = "fromMediasOfCompanyEntity")
@@ -56,6 +59,9 @@ public abstract class CompanyMapper {
     @Mapping(source = "subCategoriesIds", target = "subCategoryDTOs", qualifiedByName = "fromSubCategoriesIdsOfCreateCompanyRequest")
     @Mapping(source = "taxId", target = "taxId")
     public abstract CompanyDTO toDTO(UpdateCompanyRequest request);
+
+
+    public abstract CompanyRegistrationDTO toDTO (CompanyJobFairRegistrationRequest request);
 
 
     @Mapping(target = "subCategories", source = "subCategoryDTOs", qualifiedByName = "updateSubCategoriesOfCompanyEntity")
