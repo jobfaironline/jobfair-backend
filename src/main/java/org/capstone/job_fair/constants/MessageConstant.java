@@ -118,6 +118,7 @@ public class MessageConstant {
     public static final class Job {
         public static final String CREATE_JOB_SUCCESSFULLY = "job.success.create";
         public static final String SALARY_ERROR = "job.error.salary-error";
+        public static final String JOB_POSITION_NOT_FOUND = "job-position.not-found";
     }
 
     public static final class Skill {
