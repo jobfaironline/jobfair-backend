@@ -4,7 +4,6 @@ import lombok.SneakyThrows;
 import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
-import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
 import org.capstone.job_fair.models.statuses.AccountStatus;
@@ -16,7 +15,6 @@ import org.capstone.job_fair.services.mappers.AccountMapper;
 import org.capstone.job_fair.utils.DomainUtil;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -118,13 +116,15 @@ public class AccountServiceImpl implements AccountService {
         accountRepository.save(entity);
     }
 
-    @SneakyThrows
     @Override
-    public CompletableFuture<Void> sendVerifyAccountEmail(String id, String email) {
-        String token = accountVerifyTokenService.createToken(id).getId();
-        return this.mailService.sendMail(email,
+    @SneakyThrows
+    public CompletableFuture<Void> sendVerifyAccountEmail(String accountId){
+        AccountEntity entity = accountRepository.getById(accountId);
+        String token = accountVerifyTokenService.createToken(accountId).getId();
+        accountVerifyTokenService.invalidateAllTokenByAccountId(accountId);
+        return this.mailService.sendMail(entity.getEmail(),
                 MessageUtil.getMessage(MessageConstant.Attendant.ACCOUNT_VERIFY_MAIL_TITLE),
-                domainUtil.generateCurrentDomain() + ApiEndPoint.Authorization.VERIFY_USER + "/" + id + "/" + token);
+                domainUtil.generateCurrentDomain() + ApiEndPoint.Authorization.VERIFY_USER + "/" + accountId + "/" + token);
 
     }
 

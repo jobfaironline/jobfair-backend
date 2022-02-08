@@ -4,32 +4,23 @@ package org.capstone.job_fair.controllers.company;
 import lombok.NoArgsConstructor;
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
-import org.capstone.job_fair.constants.ResetPasswordTokenConstants;
 import org.capstone.job_fair.controllers.payload.requests.CompanyEmployeeRegisterRequest;
+import org.capstone.job_fair.controllers.payload.requests.CompanyManagerRegisterRequest;
 import org.capstone.job_fair.controllers.payload.requests.PromoteEmployeeToCompanyManagerRequest;
+import org.capstone.job_fair.controllers.payload.requests.UpdateCompanyEmployeeProfileRequest;
+import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
 import org.capstone.job_fair.models.dtos.company.CompanyDTO;
 import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
-import org.capstone.job_fair.controllers.payload.requests.CompanyManagerRegisterRequest;
-import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
-import org.capstone.job_fair.controllers.payload.requests.UpdateCompanyEmployeeProfileRequest;
-import org.capstone.job_fair.models.entities.company.CompanyEmployeeEntity;
 import org.capstone.job_fair.models.entities.company.CompanyEntity;
-import org.capstone.job_fair.models.entities.token.AccountVerifyTokenEntity;
-import org.capstone.job_fair.models.enums.Role;
 import org.capstone.job_fair.services.interfaces.account.AccountService;
-import org.capstone.job_fair.services.interfaces.account.GenderService;
 import org.capstone.job_fair.services.interfaces.company.CompanyEmployeeService;
 import org.capstone.job_fair.services.interfaces.company.CompanyService;
-import org.capstone.job_fair.services.interfaces.token.AccountVerifyTokenService;
 import org.capstone.job_fair.services.interfaces.util.MailService;
 import org.capstone.job_fair.services.mappers.CompanyEmployeeMapper;
 import org.capstone.job_fair.services.mappers.CompanyMapper;
-import org.capstone.job_fair.services.mappers.CompanyEmployeeMapper;
 import org.capstone.job_fair.utils.MessageUtil;
-import org.capstone.job_fair.utils.PasswordGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
@@ -104,11 +95,11 @@ public class CompanyEmployeeController {
         dto.setCompanyDTO(companyDTO);
 
         companyEmployeeService.createNewCompanyManagerAccount(dto);
-        accountService.sendVerifyAccountEmail(accountDTO.getId(), accountDTO.getEmail())
-                    .exceptionally(throwable -> {
-                        throwable.printStackTrace();
-                        return null;
-                    });
+        accountService.sendVerifyAccountEmail(accountDTO.getId())
+                .exceptionally(throwable -> {
+                    throwable.printStackTrace();
+                    return null;
+                });
 
         return GenericResponse.build(
                 MessageUtil.getMessage(MessageConstant.CompanyEmployee.CREATE_EMPLOYEE_MANAGER_SUCCESSFULLY),

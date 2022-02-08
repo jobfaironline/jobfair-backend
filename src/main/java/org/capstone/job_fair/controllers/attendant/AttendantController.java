@@ -8,22 +8,15 @@ import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.dtos.attendant.AttendantDTO;
 import org.capstone.job_fair.services.interfaces.account.AccountService;
 import org.capstone.job_fair.services.interfaces.attendant.AttendantService;
-import org.capstone.job_fair.services.interfaces.attendant.CountryService;
-import org.capstone.job_fair.services.interfaces.attendant.ResidenceService;
-import org.capstone.job_fair.services.interfaces.token.AccountVerifyTokenService;
-import org.capstone.job_fair.services.interfaces.util.MailService;
 import org.capstone.job_fair.services.mappers.AttendantMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.mail.MessagingException;
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -68,7 +61,7 @@ public class AttendantController {
         try {
             AttendantDTO attendantDTO = attendantMapper.toDTO(req);
             attendantDTO = attendantService.createNewAccount(attendantDTO);
-            accountService.sendVerifyAccountEmail(attendantDTO.getAccount().getId(), attendantDTO.getAccount().getEmail())
+            accountService.sendVerifyAccountEmail(attendantDTO.getAccount().getId())
                     .exceptionally(throwable -> {
                         throwable.printStackTrace();
                         return null;

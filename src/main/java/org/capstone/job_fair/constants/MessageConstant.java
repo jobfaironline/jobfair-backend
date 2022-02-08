@@ -12,7 +12,7 @@ public class MessageConstant {
         public static final String HTTP_MESSAGE_NOT_VALID = "error.exception.http-message-not-valid";
     }
 
-    public static final class JobFair{
+    public static final class JobFair {
         public static final String CREATE_JOB_FAIR_PLAN_SUCCESSFULLY = "job-fair-plan.success.create";
         public static final String DELETE_JOB_FAIR_PLAN_SUCCESSFULLY = "job-fair-plan.success.delete";
         public static final String SUBMIT_JOB_FAIR_PLAN_SUCCESSFULLY = "job-fair-plan.success.submit";
@@ -20,9 +20,9 @@ public class MessageConstant {
         public static final String JOB_FAIR_NOT_FOUND = "job-fair-plan.not-found";
         public static final String INVALID_CREATOR_ID = "job-fair-plan.error.invalid-creator-id";
         public static final String INVALID_JOB_FAIR_STATUS = "job-fair-plan.error.invalid-job-fair-status";
-        public static final String END_TIME_LESS_THAN_START_TIME_ERROR ="job-fair-plan.error.end-time-less-than-start-time";
+        public static final String END_TIME_LESS_THAN_START_TIME_ERROR = "job-fair-plan.error.end-time-less-than-start-time";
         public static final String INVALID_END_TIME = "job-fair-plan.invalid-end-time";
-        public static final String INVALID_BUY_BOOTH_TIME ="job-fair.invalid-buy-booth-time";
+        public static final String INVALID_BUY_BOOTH_TIME = "job-fair.invalid-buy-booth-time";
 
     }
 
@@ -49,7 +49,7 @@ public class MessageConstant {
         public static final String INVALID_VERIFY_TOKEN = "access-control.error.invalid-account-verify-token";
         public static final String INVALIDATED_VERIFY_TOKEN = "access-control.error.invalidated-account-verify-token";
         public static final String EXPIRED_TOKEN = "access-control.error.expired-account-verify-token";
-        public static final String VERIFY_ACCOUNT_SUCCESSFULLY="access-control.success.verify-account";
+        public static final String VERIFY_ACCOUNT_SUCCESSFULLY = "access-control.success.verify-account";
     }
 
     public static final class Account {
@@ -69,6 +69,7 @@ public class MessageConstant {
         public static final String YEAR_OF_EXP_INVALID = "account.error.year_of_exp_invalid";
         public static final String OLD_PASSWORD_MISMATCH = "account.error.old-password-mismatch";
         public static final String CHANGE_PASSWORD_SUCCESSFULLY = "account.success.change-password-successfully";
+        public static final String SEND_NEW_VERIFICATION_LINK_SUCCESSFULLY = "account.success.send-new-verification-link";
     }
 
     public static final class Attendant {
@@ -101,12 +102,12 @@ public class MessageConstant {
         public static final String DELETE_FAILED = "company-employee.error.delete";
         public static final String EMAIL_SUBJECT = "company-employee.email.subject";
         public static final String EMAIL_CONTENT = "company-employee.email.body";
-        public static final String MANAGER_NOT_FOUND="company-employee.manager-not-found";
-        public static final String INVALID_ROLE="company-employee.invalid-role";
-        public static final String EMPLOYEE_NOT_FOUND="company-employee.employee-not-found";
-        public static final String DIFFERENT_COMPANY_ERROR="company-employee.different-company-error";
-        public static final String PROMOTE_EMPLOYEE_SUCCESSFULLY="company-employee.promote-employee-successfully";
-        public static final String EMPLOYEE_NOT_ACTIVE="company-employee.not-active";
+        public static final String MANAGER_NOT_FOUND = "company-employee.manager-not-found";
+        public static final String INVALID_ROLE = "company-employee.invalid-role";
+        public static final String EMPLOYEE_NOT_FOUND = "company-employee.employee-not-found";
+        public static final String DIFFERENT_COMPANY_ERROR = "company-employee.different-company-error";
+        public static final String PROMOTE_EMPLOYEE_SUCCESSFULLY = "company-employee.promote-employee-successfully";
+        public static final String EMPLOYEE_NOT_ACTIVE = "company-employee.not-active";
         public static final String MAX_QUOTA_FOR_COMPANY_EMPLOYEE = "company-employee.error.max-quota";
 
     }
@@ -150,19 +151,19 @@ public class MessageConstant {
         public static final String ACTIVITY_NOT_FOUND = "activity.notfound";
     }
 
-    public static final class Benefit{
+    public static final class Benefit {
         public static final String NOT_FOUND = "benefit.error.not-found";
     }
 
-    public static final class SubCategory{
+    public static final class SubCategory {
         public static final String NOT_FOUND = "sub-category.error.not-found";
     }
 
-    public static final class SkillTag{
+    public static final class SkillTag {
         public static final String NOT_FOUND = "skill-tag.error.not-found";
     }
 
-    public static final class Mail{
+    public static final class Mail {
         public static final String NAME = "mail.sender.name";
         public static final String SEND_FAILED = "mail.send-failed";
     }

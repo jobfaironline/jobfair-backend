@@ -30,6 +30,6 @@ public interface AccountService {
 
     void changePassword(String newPassword, String oldPassword);
 
-    CompletableFuture<Void> sendVerifyAccountEmail(String id, String email);
+    CompletableFuture<Void> sendVerifyAccountEmail(String accountId);
 
 }

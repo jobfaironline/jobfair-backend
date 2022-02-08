@@ -10,8 +10,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 public class AccountVerifyTokenServiceImpl implements AccountVerifyTokenService {
@@ -41,13 +41,22 @@ public class AccountVerifyTokenServiceImpl implements AccountVerifyTokenService 
     @Override
     public AccountVerifyTokenDTO getLastedToken(String id) {
         Optional<AccountVerifyTokenEntity> entity = accountVerifyTokenEntityRepository.getFirstByAccountIdOrderByExpiredTimeDesc(id);
-        if (!entity.isPresent()) return  null;
-       return mapper.toAccountVerifyTokenDto(entity.get());
+        if (!entity.isPresent()) return null;
+        return mapper.toAccountVerifyTokenDto(entity.get());
     }
 
     @Override
     public void invalidateEntity(AccountVerifyTokenEntity entity) {
         entity.setIsInvalidated(true);
         accountVerifyTokenEntityRepository.save(entity);
+    }
+
+    @Override
+    public void invalidateAllTokenByAccountId(String accountId) {
+        List<AccountVerifyTokenEntity> entities = accountVerifyTokenEntityRepository.findByAccountId(accountId);
+        entities.forEach(entity -> {
+            entity.setIsInvalidated(true);
+        });
+        accountVerifyTokenEntityRepository.saveAll(entities);
     }
 }
