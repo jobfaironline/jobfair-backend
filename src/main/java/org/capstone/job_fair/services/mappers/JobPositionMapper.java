@@ -12,9 +12,11 @@ import org.capstone.job_fair.models.entities.company.SkillTagEntity;
 import org.capstone.job_fair.models.entities.company.SubCategoryEntity;
 import org.capstone.job_fair.models.entities.company.job.JobPositionEntity;
 import org.capstone.job_fair.models.entities.company.job.JobTypeEntity;
+import org.capstone.job_fair.models.entities.company.job.RegistrationJobPositionEntity;
 import org.capstone.job_fair.models.enums.JobLevel;
 import org.capstone.job_fair.models.enums.JobType;
 import org.capstone.job_fair.models.enums.Language;
+import org.capstone.job_fair.repositories.company.job.RegistrationJobPositionRepository;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -46,9 +48,15 @@ public abstract class JobPositionMapper {
     @Mapping(target = "jobTypeEntity", source = "jobType", qualifiedByName = "toJobPositionEntityJobType")
     @Mapping(target = "categories", source = "subCategoryDTOs", qualifiedByName = "toJobPositionEntitySubCategory")
     @Mapping(target = "skillTagEntities", source = "skillTagDTOS", qualifiedByName = "toJobPositionEntitySkillTag")
-    @Mapping(target = "company", source = "companyDTO")
     public abstract JobPositionEntity toEntity(JobPositionDTO jobPositionDTO);
 
+
+    @Mapping(target = "language", qualifiedByName = "toJobPositionEntityLanguage")
+    @Mapping(target = "jobLevel", source = "jobLevel", qualifiedByName = "toJobPositionEntityJobLevel")
+    @Mapping(target = "jobTypeEntity", source = "jobType", qualifiedByName = "toJobPositionEntityJobType")
+    @Mapping(target = "categories", source = "subCategoryDTOs", qualifiedByName = "toJobPositionEntitySubCategory")
+    @Mapping(target = "skillTagEntities", source = "skillTagDTOS", qualifiedByName = "toJobPositionEntitySkillTag")
+    public abstract RegistrationJobPositionEntity toEntity(RegistrationJobPositionDTO jobPositionDTO);
 
     @Mapping(source = "preferredLanguage", target = "language")
     @Mapping(source = "companyId", target = "companyDTO.id")

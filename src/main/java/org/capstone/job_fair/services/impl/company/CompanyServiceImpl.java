@@ -9,10 +9,12 @@ import org.capstone.job_fair.models.entities.company.*;
 import org.capstone.job_fair.models.entities.job_fair.JobFairEntity;
 import org.capstone.job_fair.models.statuses.CompanyStatus;
 import org.capstone.job_fair.repositories.company.*;
+import org.capstone.job_fair.repositories.company.job.RegistrationJobPositionRepository;
 import org.capstone.job_fair.repositories.job_fair.JobFairRepository;
 import org.capstone.job_fair.services.interfaces.company.CompanyService;
 import org.capstone.job_fair.services.interfaces.company.CompanySizeService;
 import org.capstone.job_fair.services.mappers.CompanyMapper;
+import org.capstone.job_fair.services.mappers.JobPositionMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -46,9 +48,14 @@ public class CompanyServiceImpl implements CompanyService {
     @Autowired
     private CompanyRegistrationRepository companyRegistrationRepository;
 
-
     @Autowired
     private SubCategoryRepository subCategoryRepository;
+
+    @Autowired
+    private RegistrationJobPositionRepository registrationJobPositionRepository;
+
+    @Autowired
+    private JobPositionMapper jobPositionMapper;
 
     private boolean isEmailExisted(String email) {
         return companyRepository.countByEmail(email) != 0;
@@ -201,7 +208,7 @@ public class CompanyServiceImpl implements CompanyService {
         CompanyRegistrationEntity companyRegistrationEntity = companyMapper.toEntity(company);
         companyRegistrationRepository.save(companyRegistrationEntity);
         for (RegistrationJobPositionDTO job:jobPositions) {
-
+            registrationJobPositionRepository.save(jobPositionMapper.toEntity(job));
         }
     }
 }
