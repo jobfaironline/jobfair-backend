@@ -93,10 +93,8 @@ public class CompanyController {
             //Map request to company registration dto and registration job position dto
             CompanyRegistrationDTO companyRegistrationDTO = new CompanyRegistrationDTO();
             companyRegistrationDTO.setJobFairId(request.getJobFairId());
-            companyRegistrationDTO.setLocationId(request.getLocationId());
             companyRegistrationDTO.setDescription(request.getDescription());
 
-            //Get job position entity list
             List<RegistrationJobPositionDTO> jobPositionDTOS = new ArrayList<>();
             for (CompanyJobFairRegistrationRequest.JobPosition jobPosition : request.getJobPositions()) {
                 RegistrationJobPositionDTO registrationJobPositionDTO = new RegistrationJobPositionDTO();

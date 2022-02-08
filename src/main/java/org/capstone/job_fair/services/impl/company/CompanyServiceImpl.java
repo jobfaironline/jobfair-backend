@@ -3,11 +3,9 @@ package org.capstone.job_fair.services.impl.company;
 import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import org.capstone.job_fair.constants.DataConstraint;
 import org.capstone.job_fair.constants.MessageConstant;
-import org.capstone.job_fair.controllers.payload.requests.CompanyJobFairRegistrationRequest;
 import org.capstone.job_fair.models.dtos.company.CompanyDTO;
 import org.capstone.job_fair.models.dtos.company.CompanyRegistrationDTO;
 import org.capstone.job_fair.models.dtos.company.SubCategoryDTO;
-import org.capstone.job_fair.models.dtos.company.job.JobPositionDTO;
 import org.capstone.job_fair.models.dtos.company.job.RegistrationJobPositionDTO;
 import org.capstone.job_fair.models.entities.company.CompanyEmployeeEntity;
 import org.capstone.job_fair.models.entities.company.CompanyEntity;
@@ -81,7 +79,6 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Autowired
     private CompanyRegistrationMapper companyRegistrationMapper;
-
 
 
     private boolean isEmailExisted(String email) {
@@ -229,14 +226,14 @@ public class CompanyServiceImpl implements CompanyService {
 
         //Check job fair existence
         Optional<JobFairEntity> jobFairOpt = jobFairRepository.findById(companyRegistrationDTO.getJobFairId());
-        JobFairEntity jobFairEntity = jobFairOpt.get();
+
         if (!jobFairOpt.isPresent()) throw new IllegalArgumentException(
                 MessageUtil.getMessage(MessageConstant.JobFair.JOB_FAIR_NOT_FOUND));
-
+        JobFairEntity jobFairEntity = jobFairOpt.get();
         //Validate job fair registration time of company
         long time = new Date().getTime();
-//        if(jobFairEntity.get().getCompanyRegisterStartTime() > time || jobFairEntity.get().getCompanyRegisterEndTime() < time)
-//            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Company.JOB_FAIR_REGISTRATION_OUT_OF_REGISTER_TIME));
+        if (jobFairEntity.getCompanyRegisterStartTime() > time || jobFairEntity.getCompanyRegisterEndTime() < time)
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Company.JOB_FAIR_REGISTRATION_OUT_OF_REGISTER_TIME));
         //Get company from user information in security context
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext()
                 .getAuthentication().getPrincipal();
@@ -250,21 +247,21 @@ public class CompanyServiceImpl implements CompanyService {
         companyRegistrationEntity.setCreateDate(time);
         companyRegistrationRepository.save(companyRegistrationEntity);
 
-        for (RegistrationJobPositionDTO registrationJobPositionDTO:jobPositions) {
+        for (RegistrationJobPositionDTO registrationJobPositionDTO : jobPositions) {
             //Get job position entity by job position id in request
-            Optional<JobPositionEntity> jobPosition =
+            Optional<JobPositionEntity> jobPositioniOpt =
                     jobPositionRepository.findById(registrationJobPositionDTO.getId());
             //Check job position existence
-            if(!jobPosition.isPresent()) throw new IllegalArgumentException(
+            if (!jobPositioniOpt.isPresent()) throw new IllegalArgumentException(
                     MessageUtil.getMessage(MessageConstant.Job.JOB_POSITION_NOT_FOUND));
+            JobPositionEntity jobPositionEntity = jobPositioniOpt.get();
             //Check if job position entity is belonged to company
-            if(!jobPosition.get().getCompany().getId().equals(companyRegistrationDTO.getCompanyId()))
+            if (!jobPositionEntity.getCompany().getId().equals(companyRegistrationDTO.getCompanyId()))
                 throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Job.COMPANY_MISMATCH));
 
 
-//            RegistrationJobPositionDTO registrationJobPositionDTO = new RegistrationJobPositionDTO();
             RegistrationJobPositionEntity entity = registrationJobPositionMapper.toEntity(registrationJobPositionDTO);
-            JobPositionEntity jobPositionEntity = jobPosition.get();
+
             //Job position information
             entity.setTitle(jobPositionEntity.getTitle());
             entity.setContactPersonName(jobPositionEntity.getContactPersonName());
