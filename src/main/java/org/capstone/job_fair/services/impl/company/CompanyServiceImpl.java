@@ -1,11 +1,13 @@
 package org.capstone.job_fair.services.impl.company;
 
+import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import org.capstone.job_fair.constants.DataConstraint;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.models.dtos.company.CompanyDTO;
 import org.capstone.job_fair.models.dtos.company.CompanyRegistrationDTO;
 import org.capstone.job_fair.models.dtos.company.SubCategoryDTO;
 import org.capstone.job_fair.models.dtos.company.job.RegistrationJobPositionDTO;
+import org.capstone.job_fair.models.entities.company.CompanyEmployeeEntity;
 import org.capstone.job_fair.models.entities.company.CompanyEntity;
 import org.capstone.job_fair.models.entities.company.CompanyRegistrationEntity;
 import org.capstone.job_fair.models.entities.company.job.RegistrationJobPositionEntity;
@@ -15,11 +17,13 @@ import org.capstone.job_fair.models.statuses.CompanyStatus;
 import org.capstone.job_fair.repositories.company.*;
 import org.capstone.job_fair.repositories.company.job.RegistrationJobPositionRepository;
 import org.capstone.job_fair.repositories.job_fair.JobFairRepository;
+import org.capstone.job_fair.services.interfaces.company.CompanyEmployeeService;
 import org.capstone.job_fair.services.interfaces.company.CompanyService;
 import org.capstone.job_fair.services.mappers.CompanyMapper;
 import org.capstone.job_fair.services.mappers.JobPositionMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -61,6 +65,9 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Autowired
     private JobPositionMapper jobPositionMapper;
+
+    @Autowired
+    private CompanyEmployeeRepository companyEmployeeRepository;
 
     private boolean isEmailExisted(String email) {
         return companyRepository.countByEmail(email) != 0;
@@ -203,24 +210,30 @@ public class CompanyServiceImpl implements CompanyService {
     @Transactional
     public void registerAJobFair(CompanyRegistrationDTO company, List<RegistrationJobPositionDTO> jobPositions) {
         //Check job fair existence
-        JobFairEntity jobFairEntity = jobFairRepository.getById(company.getJobFairId());
-        if (jobFairEntity == null) throw new IllegalArgumentException(
+       Optional<JobFairEntity> jobFairEntity = jobFairRepository.findById(company.getJobFairId());
+        if (!jobFairEntity.isPresent()) throw new IllegalArgumentException(
                 MessageUtil.getMessage(MessageConstant.JobFair.JOB_FAIR_NOT_FOUND));
         //Validate job fair registration time of company
         long time = new Date().getTime();
-        if(jobFairEntity.getCompanyRegisterStartTime() > time || jobFairEntity.getCompanyRegisterEndTime() < time)
-            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Company.JOB_FAIR_REGISTRATION_OUT_OF_REGISTER_TIME));
+//        if(jobFairEntity.getCompanyRegisterStartTime() > time || jobFairEntity.getCompanyRegisterEndTime() < time)
+//            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Company.JOB_FAIR_REGISTRATION_OUT_OF_REGISTER_TIME));
         //Check company existence
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext()
+                .getAuthentication().getPrincipal();
+        CompanyEmployeeEntity companyEmployee = companyEmployeeRepository.findById(userDetails.getId()).get();
         Optional<CompanyEntity> companyEntity = companyRepository.findById(company.getCompanyId());
         if (!companyEntity.isPresent()) throw new IllegalArgumentException(
                 MessageUtil.getMessage(MessageConstant.Company.NOT_FOUND));
         company.setStatus(CompanyRegistrationStatus.DRAFT);
         CompanyRegistrationEntity companyRegistrationEntity = companyMapper.toEntity(company);
         companyRegistrationEntity.setCreateDate(time);
+        companyRegistrationEntity.setCompanyId(company.getCompanyId());
         companyRegistrationRepository.save(companyRegistrationEntity);
         for (RegistrationJobPositionDTO job : jobPositions) {
             if(job.getMaxSalary() < job.getMinSalary())
                 throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Job.SALARY_ERROR));
+            if(!job.getCompanyRegistration().getCompanyId().equals(companyRegistrationEntity.getCompanyId()))
+                throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Job.COMPANY_MISMATCH));
             RegistrationJobPositionEntity entity = jobPositionMapper.toEntity(job);
             entity.setCompanyRegistration(companyRegistrationEntity);
             registrationJobPositionRepository.save(entity);

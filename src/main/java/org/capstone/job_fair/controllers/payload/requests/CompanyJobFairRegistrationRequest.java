@@ -26,7 +26,7 @@ public class CompanyJobFairRegistrationRequest {
     private String jobFairId;
 
     @NotNull
-    private String companyId;
+    private String locationId;
 
     @XSSConstraint
     @NotBlank

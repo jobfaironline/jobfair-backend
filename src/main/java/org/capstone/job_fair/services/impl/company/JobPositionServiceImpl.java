@@ -19,6 +19,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 @AllArgsConstructor
 @Transactional
@@ -68,9 +70,10 @@ public class JobPositionServiceImpl implements JobPositionService {
 
     @Override
     public JobPositionEntity getJobByID(String jobPositionId) {
-        JobPositionEntity jobPosition =  jobPositionRepository.getById(jobPositionId);
-        if(jobPosition == null) throw new IllegalArgumentException(
+        System.out.println("Job ID: " + jobPositionId);
+        Optional<JobPositionEntity> jobPosition =  jobPositionRepository.findById(jobPositionId);
+        if(!jobPosition.isPresent()) throw new IllegalArgumentException(
                 MessageUtil.getMessage(MessageConstant.Job.JOB_POSITION_NOT_FOUND));
-        return jobPosition;
+        return jobPosition.get();
     }
 }
