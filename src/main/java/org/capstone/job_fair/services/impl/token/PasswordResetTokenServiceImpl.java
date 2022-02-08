@@ -42,7 +42,7 @@ public class PasswordResetTokenServiceImpl implements PasswordResetTokenService 
         PasswordResetTokenEntity resetToken = new PasswordResetTokenEntity();
         resetToken.setOtp(otp);
         resetToken.setCreateTime(new Date().getTime());
-        resetToken.setExpiredTime(resetToken.getCreateTime() + Integer.parseInt(RESET_PASSWORD_TOKEN_EXPIRED_TIME)* 1000L);
+        resetToken.setExpiredTime(resetToken.getCreateTime() + (long) Integer.parseInt(RESET_PASSWORD_TOKEN_EXPIRED_TIME) * 1000 * 1000);
         resetToken.setAccount(account);
         resetToken.setInvalidated(false);
         resetRepository.save(resetToken);
