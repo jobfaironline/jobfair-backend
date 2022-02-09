@@ -5,9 +5,11 @@ import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
+import org.capstone.job_fair.models.dtos.token.AccountVerifyTokenDTO;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
 import org.capstone.job_fair.models.statuses.AccountStatus;
 import org.capstone.job_fair.repositories.account.AccountRepository;
+import org.capstone.job_fair.repositories.token.AccountVerifyTokenEntityRepository;
 import org.capstone.job_fair.services.interfaces.account.AccountService;
 import org.capstone.job_fair.services.interfaces.token.AccountVerifyTokenService;
 import org.capstone.job_fair.services.interfaces.util.MailService;
@@ -20,6 +22,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -118,13 +121,31 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     @SneakyThrows
-    public CompletableFuture<Void> sendVerifyAccountEmail(String accountId){
+    public void sendVerifyAccountEmail(String accountId){
         AccountEntity entity = accountRepository.getById(accountId);
+        AccountVerifyTokenDTO lastTokenDTO = accountVerifyTokenService.getLastedToken(accountId);
+        //if there is a token for this account
+        //check for its validation
+        if (lastTokenDTO != null){
+            //if not validate check on expired time
+            if (!lastTokenDTO.getIsInvalidated()){
+                long currentTime = new Date().getTime();
+                if (lastTokenDTO.getExpiredTime() < currentTime){
+                    //token is expired
+                    accountVerifyTokenService.invalidateTokenById(lastTokenDTO.getId());
+                } else {
+                    throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Account.VERIFY_ACCOUNT_TOKEN_INTERVAL_ERROR));
+                }
+            }
+        }
         String token = accountVerifyTokenService.createToken(accountId).getId();
-        accountVerifyTokenService.invalidateAllTokenByAccountId(accountId);
-        return this.mailService.sendMail(entity.getEmail(),
-                MessageUtil.getMessage(MessageConstant.Attendant.ACCOUNT_VERIFY_MAIL_TITLE),
-                domainUtil.generateCurrentDomain() + ApiEndPoint.Authorization.VERIFY_USER + "/" + accountId + "/" + token);
+        this.mailService.sendMail(entity.getEmail(),
+                MessageUtil.getMessage(MessageConstant.Account.ACCOUNT_VERIFY_MAIL_TITLE),
+                domainUtil.generateCurrentDomain() + ApiEndPoint.Authorization.VERIFY_USER + "/" + accountId + "/" + token)
+                .exceptionally(throwable -> {
+                    throwable.printStackTrace();
+                    return null;
+                });;
 
     }
 

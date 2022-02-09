@@ -95,11 +95,7 @@ public class CompanyEmployeeController {
         dto.setCompanyDTO(companyDTO);
 
         companyEmployeeService.createNewCompanyManagerAccount(dto);
-        accountService.sendVerifyAccountEmail(accountDTO.getId())
-                .exceptionally(throwable -> {
-                    throwable.printStackTrace();
-                    return null;
-                });
+        accountService.sendVerifyAccountEmail(accountDTO.getId());
 
         return GenericResponse.build(
                 MessageUtil.getMessage(MessageConstant.CompanyEmployee.CREATE_EMPLOYEE_MANAGER_SUCCESSFULLY),

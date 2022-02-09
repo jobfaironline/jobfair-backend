@@ -69,13 +69,15 @@ public class MessageConstant {
         public static final String OLD_PASSWORD_MISMATCH = "account.error.old-password-mismatch";
         public static final String CHANGE_PASSWORD_SUCCESSFULLY = "account.success.change-password-successfully";
         public static final String SEND_NEW_VERIFICATION_LINK_SUCCESSFULLY = "account.success.send-new-verification-link";
+        public static final String ACCOUNT_VERIFY_MAIL_TITLE = "account.verify.email-title";
+        public static final String VERIFY_ACCOUNT_TOKEN_INTERVAL_ERROR = "account.verify.token-interval-error";
+
     }
 
     public static final class Attendant {
         public static final String UPDATE_PROFILE_SUCCESSFULLY = "attendant.success.update-profile";
         public static final String UPDATE_PROFILE_FAILED = "attendant.fail.update-profile";
         public static final String REGISTER_SUCCESSFULLY = "attendant.success.create";
-        public static final String ACCOUNT_VERIFY_MAIL_TITLE = "attendant.verify.email-title";
         public static final String ACCOUNT_VERIFY_MAIL_CONTENT = "attendant.verify.email-title";
     }
 

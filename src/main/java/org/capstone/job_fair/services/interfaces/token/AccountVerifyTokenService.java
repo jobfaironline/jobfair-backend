@@ -12,5 +12,6 @@ public interface AccountVerifyTokenService {
 
     void invalidateAllTokenByAccountId(String accountId);
 
+    void invalidateTokenById(String tokenId);
 
 }

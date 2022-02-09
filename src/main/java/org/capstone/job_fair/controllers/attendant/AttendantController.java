@@ -61,11 +61,7 @@ public class AttendantController {
         try {
             AttendantDTO attendantDTO = attendantMapper.toDTO(req);
             attendantDTO = attendantService.createNewAccount(attendantDTO);
-            accountService.sendVerifyAccountEmail(attendantDTO.getAccount().getId())
-                    .exceptionally(throwable -> {
-                        throwable.printStackTrace();
-                        return null;
-                    });
+            accountService.sendVerifyAccountEmail(attendantDTO.getAccount().getId());
             return GenericResponse.build(
                     MessageUtil.getMessage(MessageConstant.Attendant.REGISTER_SUCCESSFULLY),
                     HttpStatus.CREATED);

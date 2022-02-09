@@ -59,4 +59,12 @@ public class AccountVerifyTokenServiceImpl implements AccountVerifyTokenService 
         });
         accountVerifyTokenEntityRepository.saveAll(entities);
     }
+
+    @Override
+    public void invalidateTokenById(String tokenId) {
+        accountVerifyTokenEntityRepository.findById(tokenId).ifPresent(entity -> {
+            entity.setIsInvalidated(true);
+            accountVerifyTokenEntityRepository.save(entity);
+        });
+    }
 }

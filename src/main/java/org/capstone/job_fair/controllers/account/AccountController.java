@@ -91,8 +91,12 @@ public class AccountController {
 
     @GetMapping(path = ApiEndPoint.Authorization.NEW_VERIFY_LINK + "/{id}")
     public ResponseEntity<?> getNewVerifyLink(@PathVariable String id) {
-        accountService.sendVerifyAccountEmail(id);
-        return GenericResponse.build(MessageUtil.getMessage(MessageConstant.Account.SEND_NEW_VERIFICATION_LINK_SUCCESSFULLY), HttpStatus.OK);
+        try {
+            accountService.sendVerifyAccountEmail(id);
+            return GenericResponse.build(MessageUtil.getMessage(MessageConstant.Account.SEND_NEW_VERIFICATION_LINK_SUCCESSFULLY), HttpStatus.OK);
+        } catch (IllegalArgumentException e){
+            return GenericResponse.build(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
 }
