@@ -1,19 +1,13 @@
 package org.capstone.job_fair.controllers.company;
 
 import org.capstone.job_fair.constants.ApiEndPoint;
-import org.capstone.job_fair.constants.DataConstraint;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.controllers.payload.requests.CreateCompanyRequest;
 import org.capstone.job_fair.controllers.payload.requests.UpdateCompanyRequest;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
-import org.capstone.job_fair.models.dtos.company.BenefitDTO;
 import org.capstone.job_fair.models.dtos.company.CompanyDTO;
-import org.capstone.job_fair.models.dtos.company.MediaDTO;
-import org.capstone.job_fair.models.dtos.company.SubCategoryDTO;
 import org.capstone.job_fair.models.entities.company.CompanyEntity;
-import org.capstone.job_fair.models.statuses.CompanyStatus;
 import org.capstone.job_fair.services.interfaces.company.CompanyService;
-import org.capstone.job_fair.services.interfaces.company.CompanySizeService;
 import org.capstone.job_fair.services.mappers.CompanyMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 public class CompanyController {
@@ -35,6 +28,7 @@ public class CompanyController {
 
     @Autowired
     private CompanyMapper companyMapper;
+
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
     @GetMapping(ApiEndPoint.Company.COMPANY_ENDPOINT)
@@ -76,7 +70,7 @@ public class CompanyController {
     @PutMapping(ApiEndPoint.Company.COMPANY_ENDPOINT)
     public ResponseEntity<?> update(@Valid @RequestBody UpdateCompanyRequest request) {
 
-        try{
+        try {
             CompanyDTO dto = companyMapper.toDTO(request);
             companyService.updateCompany(dto);
             return GenericResponse.build(MessageUtil.getMessage(MessageConstant.Company.UPDATE_SUCCESSFULLY), HttpStatus.OK);
