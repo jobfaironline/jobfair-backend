@@ -1,5 +1,6 @@
 package org.capstone.job_fair.services.mappers;
 
+import org.capstone.job_fair.controllers.payload.requests.StaffRegisterRequest;
 import org.capstone.job_fair.controllers.payload.requests.UpdateAttendantRequest;
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
@@ -20,6 +21,8 @@ public abstract class AccountMapper {
     public abstract AccountEntity toEntity(AccountDTO account);
 
     public abstract AccountDTO toDTO(UpdateAttendantRequest.AccountRequest request);
+
+    public abstract AccountDTO toDTO(StaffRegisterRequest request);
 
     @Named("toAccountDTOGender")
     public static Gender toAccountDTOGender(GenderEntity gender) {

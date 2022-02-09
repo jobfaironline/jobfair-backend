@@ -1,11 +1,11 @@
 package org.capstone.job_fair.config;
 
-import org.capstone.job_fair.constants.ApiEndPoint;
+import lombok.AllArgsConstructor;
 import org.capstone.job_fair.config.jwt.JwtAuthEntryPoint;
 import org.capstone.job_fair.config.jwt.JwtAuthenticationFilter;
 import org.capstone.job_fair.config.jwt.JwtTokenProvider;
 import org.capstone.job_fair.config.jwt.details.UserDetailsServiceImpl;
-import lombok.AllArgsConstructor;
+import org.capstone.job_fair.constants.ApiEndPoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,7 +16,6 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-//import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -65,7 +64,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 "/csrf",
                 "/error",
                 "/swagger-ui/**"
-                );
+        );
     }
 
     @Override
@@ -86,7 +85,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests().antMatchers(ApiEndPoint.Company.COMPANY_ENDPOINT).permitAll().and()
                 //Attendant API Security: specific end point will be configured inside controller
                 .authorizeRequests().antMatchers(ApiEndPoint.Attendant.ATTENDANT_ENDPOINT).permitAll().and()
-                .authorizeRequests().antMatchers(ApiEndPoint.Authorization.VERIFY_USER+"/**").permitAll().and()
+                .authorizeRequests().antMatchers(ApiEndPoint.Authorization.VERIFY_USER + "/**").permitAll().and()
+                .authorizeRequests().antMatchers(ApiEndPoint.Authorization.NEW_VERIFY_LINK + "/**").permitAll().and()
                 //Attendant API Security: specific end point will be configured inside controller
                 .authorizeRequests().antMatchers(ApiEndPoint.CompanyEmployee.REGISTER_COMPANY_MANAGER).permitAll().and()
                 .authorizeRequests().antMatchers(ApiEndPoint.DecoratedItem.DECORATED_ITEM_ENDPOINT).permitAll()

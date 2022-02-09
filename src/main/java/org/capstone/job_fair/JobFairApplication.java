@@ -16,8 +16,11 @@ import springfox.documentation.spring.data.rest.configuration.SpringDataRestConf
 @Import(SpringDataRestConfiguration.class)
 @EnableAsync
 public class JobFairApplication {
-    @Value("spring.mail.username")
-    private static String mailUser;
+
+    @Bean
+    public DomainUtil domainUtil(){
+        return new DomainUtil();
+    }
 
     @Bean
     public DomainUtil getDomainUtil() {

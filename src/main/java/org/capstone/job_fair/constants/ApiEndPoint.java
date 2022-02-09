@@ -17,14 +17,25 @@ public class ApiEndPoint {
 
     }
     public static final class JobFair{
-        public static final String JOB_FAIR_PLAN = ROOT_ENDPOINT + VERSION + "/job-fair";
+        public static final String JOB_FAIR_PLAN = ROOT_ENDPOINT + VERSION + "/job-fairs";
+        public static final String GET_OWN_PLAN = JOB_FAIR_PLAN + "/own-plan";
         public static final String DELETE_JOB_FAIR_PLAN_DRAFT = JOB_FAIR_PLAN +"/delete";
         public static final String SUBMIT_JOB_FAIR_PLAN_DRAFT = JOB_FAIR_PLAN +"/submit";
         public static final String CANCEL_PENDING_JOB_FAIR_PLAN = JOB_FAIR_PLAN + "/cancel";
         public static final String RESTORE_DELETED_JOB_FAIR_PLAN = JOB_FAIR_PLAN + "/restore";
+        public static final String EVALUATE_JOB_FAIL_PLAN = JOB_FAIR_PLAN + "/evaluate";
     }
+
+    public static final class CompanyRegistration {
+        public static final String COMPANY_REGISTRATION_ENDPOINT = ROOT_ENDPOINT + VERSION + "/job-fair/company-registration";
+        public static final String DRAFT = COMPANY_REGISTRATION_ENDPOINT + "/draft";
+        public static final String SUBMIT = COMPANY_REGISTRATION_ENDPOINT + "/submit";
+        public static final String CANCEL = COMPANY_REGISTRATION_ENDPOINT + "/cancel";
+    }
+
     public static final class Authorization {
         public static final String VERIFY_USER = ROOT_ENDPOINT + VERSION + "/verify";
+        public static final String NEW_VERIFY_LINK = ROOT_ENDPOINT + VERSION + "/new-verify-link";
     }
 
     public static final class Company {
@@ -34,6 +45,7 @@ public class ApiEndPoint {
     public static final class Job {
         public static final String JOB_POSITION_ENDPOINT = ROOT_ENDPOINT + VERSION + "/job";
     }
+
     public static final class Attendant {
         public static final String ATTENDANT_ENDPOINT = ROOT_ENDPOINT + VERSION + "/attendants";
         public static final String REGISTER_ENDPOINT = ATTENDANT_ENDPOINT + "/register";
@@ -47,8 +59,9 @@ public class ApiEndPoint {
 
     public static final class CompanyEmployee {
         public static final String COMPANY_EMPLOYEE_ENDPOINT = ROOT_ENDPOINT + VERSION + "/company-employees";
-        public static final String REGISTER_COMPANY_MANAGER = COMPANY_EMPLOYEE_ENDPOINT+ "/manager/register";
+        public static final String REGISTER_COMPANY_MANAGER = COMPANY_EMPLOYEE_ENDPOINT + "/manager/register";
         public static final String UPDATE_PROFILE_ENDPOINT = COMPANY_EMPLOYEE_ENDPOINT + "/update";
+        public static final String PROMOTE_EMPLOYEE_ENPOINT = COMPANY_EMPLOYEE_ENDPOINT + "/promote";
         public static final String PROMOTE_EMPLOYEE_ENDPOINT =  COMPANY_EMPLOYEE_ENDPOINT + "/promote";
     }
 
@@ -57,6 +70,9 @@ public class ApiEndPoint {
         public static final String UPDATE = DECORATED_ITEM_ENDPOINT;
     }
 
+    public static final class Staff{
+        public static final String STAFF_ENDPOINT = ROOT_ENDPOINT + VERSION + "/staffs";
+    }
 
 
     public static final class RestDataEndpoint {
@@ -86,6 +102,7 @@ public class ApiEndPoint {
         public static final String VERIFY = "verifies";
         public static final String SKILL_TAG = "skill-tag";
         public static final String JOB_FAIR = "job-fair";
+        public static final String COMPANY_REGISTRATION = "company-registration";
 
 
     }

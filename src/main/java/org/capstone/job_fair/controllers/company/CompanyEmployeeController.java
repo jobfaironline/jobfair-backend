@@ -5,24 +5,22 @@ import lombok.NoArgsConstructor;
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.controllers.payload.requests.CompanyEmployeeRegisterRequest;
+import org.capstone.job_fair.controllers.payload.requests.CompanyManagerRegisterRequest;
 import org.capstone.job_fair.controllers.payload.requests.PromoteEmployeeToCompanyManagerRequest;
+import org.capstone.job_fair.controllers.payload.requests.UpdateCompanyEmployeeProfileRequest;
+import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
 import org.capstone.job_fair.models.dtos.company.CompanyDTO;
 import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
-import org.capstone.job_fair.controllers.payload.requests.CompanyManagerRegisterRequest;
-import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
-import org.capstone.job_fair.controllers.payload.requests.UpdateCompanyEmployeeProfileRequest;
 import org.capstone.job_fair.models.entities.company.CompanyEntity;
 import org.capstone.job_fair.services.interfaces.account.AccountService;
 import org.capstone.job_fair.services.interfaces.company.CompanyEmployeeService;
 import org.capstone.job_fair.services.interfaces.company.CompanyService;
-import org.capstone.job_fair.services.interfaces.token.AccountVerifyTokenService;
 import org.capstone.job_fair.services.interfaces.util.MailService;
 import org.capstone.job_fair.services.mappers.CompanyEmployeeMapper;
 import org.capstone.job_fair.services.mappers.CompanyMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
@@ -54,16 +52,7 @@ public class CompanyEmployeeController {
     private MailService mailService;
 
     @Autowired
-    private AccountVerifyTokenService accountVerifyTokenService;
-
-    @Autowired
     private CompanyEmployeeMapper companyEmployeeMapper;
-
-    @Value("${api.endpoint.domain}")
-    String domain;
-
-    @Value("${api.endpoint.port}")
-    String apiport;
 
     @Autowired
     private CompanyMapper companyMapper;
@@ -72,9 +61,6 @@ public class CompanyEmployeeController {
         return accountService.getCountAccountByEmail(email) != 0;
     }
 
-    private boolean isCompanyExist(String companyId) {
-        return companyService.getCountById(companyId) != 0;
-    }
 
     @Transactional
     @PostMapping(ApiEndPoint.CompanyEmployee.REGISTER_COMPANY_MANAGER)
@@ -108,21 +94,13 @@ public class CompanyEmployeeController {
         dto.setAccount(accountDTO);
         dto.setCompanyDTO(companyDTO);
 
-        CompanyEmployeeDTO companyEmployeeDTO = companyEmployeeService.createNewCompanyManagerAccount(dto);
-        String id = accountVerifyTokenService.createToken(companyEmployeeDTO.getAccount().getId()).getAccountId();
+        companyEmployeeService.createNewCompanyManagerAccount(dto);
+        accountService.sendVerifyAccountEmail(accountDTO.getId());
 
-        String port = "";
-        if(!apiport.isEmpty()) port = ":" + apiport;
-        try {
-            this.mailService.sendMail(request.getEmail(),
-                    MessageUtil.getMessage(MessageConstant.Attendant.ACCOUNT_VERIFY_MAIL_TITLE),
-                    domain +port+ ApiEndPoint.Authorization.VERIFY_USER + "/" + companyEmployeeDTO.getAccount().getId() + "/" + id);
-            return GenericResponse.build(
-                    MessageUtil.getMessage(MessageConstant.CompanyEmployee.CREATE_EMPLOYEE_MANAGER_SUCCESSFULLY),
-                    HttpStatus.CREATED);
-        } catch (UnsupportedEncodingException | MessagingException ex2){
-            return GenericResponse.build(MessageUtil.getMessage(MessageConstant.Mail.SEND_FAILED),HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        return GenericResponse.build(
+                MessageUtil.getMessage(MessageConstant.CompanyEmployee.CREATE_EMPLOYEE_MANAGER_SUCCESSFULLY),
+                HttpStatus.CREATED);
+
     }
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
@@ -204,18 +182,18 @@ public class CompanyEmployeeController {
             CompanyEmployeeDTO dto = companyEmployeeMapper.toDTO(request);
             companyEmployeeService.createNewCompanyEmployeeAccount(dto);
 
-                this.mailService.sendMail(request.getEmail(),
-                        MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMAIL_SUBJECT),
-                        MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMAIL_CONTENT) + dto.getAccount().getPassword());
-                return CompletableFuture.completedFuture(GenericResponse.build(
-                        MessageUtil.getMessage(MessageConstant.CompanyEmployee.CREATE_EMPLOYEE_EMPLOYEE_SUCCESSFULLY),
-                        HttpStatus.CREATED));
+            this.mailService.sendMail(request.getEmail(),
+                    MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMAIL_SUBJECT),
+                    MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMAIL_CONTENT) + dto.getAccount().getPassword());
+            return CompletableFuture.completedFuture(GenericResponse.build(
+                    MessageUtil.getMessage(MessageConstant.CompanyEmployee.CREATE_EMPLOYEE_EMPLOYEE_SUCCESSFULLY),
+                    HttpStatus.CREATED));
         } catch (IllegalArgumentException ex) {
             return CompletableFuture.completedFuture(GenericResponse.build(
                     ex.getMessage(),
                     HttpStatus.BAD_REQUEST));
-        } catch (UnsupportedEncodingException | MessagingException ex2){
-            return CompletableFuture.completedFuture(GenericResponse.build(MessageUtil.getMessage(MessageConstant.Mail.SEND_FAILED),HttpStatus.INTERNAL_SERVER_ERROR));
+        } catch (UnsupportedEncodingException | MessagingException ex2) {
+            return CompletableFuture.completedFuture(GenericResponse.build(MessageUtil.getMessage(MessageConstant.Mail.SEND_FAILED), HttpStatus.INTERNAL_SERVER_ERROR));
         }
     }
 

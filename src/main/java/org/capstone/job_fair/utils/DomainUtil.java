@@ -1,7 +1,6 @@
 package org.capstone.job_fair.utils;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 
 public class DomainUtil {
     @Value("${api.endpoint.domain}")
