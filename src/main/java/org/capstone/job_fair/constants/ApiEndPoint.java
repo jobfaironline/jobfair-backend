@@ -25,6 +25,13 @@ public class ApiEndPoint {
         public static final String RESTORE_DELETED_JOB_FAIR_PLAN = JOB_FAIR_PLAN + "/restore";
     }
 
+    public static final class CompanyRegistration {
+        public static final String COMPANY_REGISTRATION_ENDPOINT = ROOT_ENDPOINT + VERSION + "/job-fair/company-registration";
+        public static final String DRAFT = COMPANY_REGISTRATION_ENDPOINT + "/draft";
+        public static final String SUBMIT = COMPANY_REGISTRATION_ENDPOINT + "/submit";
+        public static final String CANCEL = COMPANY_REGISTRATION_ENDPOINT + "/cancel";
+    }
+
     public static final class Authorization {
         public static final String VERIFY_USER = ROOT_ENDPOINT + VERSION + "/verify";
         public static final String NEW_VERIFY_LINK = ROOT_ENDPOINT + VERSION + "/new-verify-link";
@@ -84,6 +91,7 @@ public class ApiEndPoint {
         public static final String VERIFY = "verifies";
         public static final String SKILL_TAG = "skill-tag";
         public static final String JOB_FAIR = "job-fair";
+        public static final String COMPANY_REGISTRATION = "company-registration";
 
 
     }

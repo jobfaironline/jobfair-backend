@@ -44,7 +44,6 @@ public abstract class JobPositionMapper {
     @Mapping(target = "jobTypeEntity", source = "jobType", qualifiedByName = "toJobPositionEntityJobType")
     @Mapping(target = "categories", source = "subCategoryDTOs", qualifiedByName = "toJobPositionEntitySubCategory")
     @Mapping(target = "skillTagEntities", source = "skillTagDTOS", qualifiedByName = "toJobPositionEntitySkillTag")
-    @Mapping(target = "company", source = "companyDTO")
     public abstract JobPositionEntity toEntity(JobPositionDTO jobPositionDTO);
 
 
@@ -55,12 +54,12 @@ public abstract class JobPositionMapper {
     public abstract JobPositionDTO toDTO(CreateJobPositionRequest request);
 
     @Named("fromSubCategoryIdsOfCreateJobPositionRequest")
-    public List<SubCategoryDTO> fromSubCategoryIdsOfCreateJobPositionRequest(List<Integer> subCategoryIds){
+    public List<SubCategoryDTO> fromSubCategoryIdsOfCreateJobPositionRequest(List<Integer> subCategoryIds) {
         return subCategoryIds.stream().map(SubCategoryDTO::new).collect(Collectors.toList());
     }
 
     @Named("fromSkillTagIdsOfCreateJobPositionRequest")
-    public List<SkillTagDTO> fromSkillTagIdsOfCreateJobPositionRequest(List<Integer> skillTagIds){
+    public List<SkillTagDTO> fromSkillTagIdsOfCreateJobPositionRequest(List<Integer> skillTagIds) {
         return skillTagIds.stream().map(SkillTagDTO::new).collect(Collectors.toList());
     }
 

@@ -37,6 +37,7 @@ public abstract class CompanyMapper {
     @Mapping(target = "companySize", source = "sizeId", qualifiedByName = "fromSizeIdOfCompanyDTO")
     public abstract CompanyEntity toEntity(CompanyDTO dto);
 
+
     @Mapping(target = "subCategoryDTOs", source = "subCategories", qualifiedByName = "fromSubCategoriesOfCompanyEntity")
     @Mapping(target = "companyBenefitDTOS", source = "companyBenefits", qualifiedByName = "fromCompanyBenefitsOfCompanyEntity")
     @Mapping(target = "mediaDTOS", source = "medias", qualifiedByName = "fromMediasOfCompanyEntity")
@@ -65,10 +66,10 @@ public abstract class CompanyMapper {
     public abstract void updateCompanyEntity(CompanyDTO dto, @MappingTarget CompanyEntity entity);
 
     @Named("updateSubCategoriesOfCompanyEntity")
-    public void updateSubCategoriesOfCompanyEntity(Set<SubCategoryDTO> dtos, @MappingTarget Set<SubCategoryEntity> entities){
+    public void updateSubCategoriesOfCompanyEntity(Set<SubCategoryDTO> dtos, @MappingTarget Set<SubCategoryEntity> entities) {
         if (dtos == null) return;
         dtos.forEach(subCategoryDTO -> {
-            if (entities.stream().anyMatch(entity -> entity.getId().equals(subCategoryDTO.getId()))){
+            if (entities.stream().anyMatch(entity -> entity.getId().equals(subCategoryDTO.getId()))) {
                 return;
             }
             SubCategoryEntity entity = new SubCategoryEntity();
@@ -81,12 +82,12 @@ public abstract class CompanyMapper {
     }
 
     @Named("updateCompanyBenefitsOfCompanyEntity")
-    public void updateCompanyBenefitsOfCompanyEntity(Set<CompanyBenefitDTO> dtos, @MappingTarget Set<CompanyBenefitEntity> entities ){
+    public void updateCompanyBenefitsOfCompanyEntity(Set<CompanyBenefitDTO> dtos, @MappingTarget Set<CompanyBenefitEntity> entities) {
         if (dtos == null) return;
         dtos.forEach(dto -> {
 
             Optional<CompanyBenefitEntity> opt = entities.stream().filter(entity -> entity.getBenefit().getId().equals(dto.getBenefitDTO().getId())).findFirst();
-            if (opt.isPresent()){
+            if (opt.isPresent()) {
                 companyBenefitMapper.updateCompanyBenefitEntity(dto, opt.get());
                 return;
             }
@@ -99,7 +100,7 @@ public abstract class CompanyMapper {
     }
 
     @Named("fromBenefitsOfUpdateCompanyRequest")
-    public Set<CompanyBenefitDTO> fromBenefitsOfUpdateCompanyRequest(List<UpdateCompanyRequest.BenefitRequest> benefits){
+    public Set<CompanyBenefitDTO> fromBenefitsOfUpdateCompanyRequest(List<UpdateCompanyRequest.BenefitRequest> benefits) {
         if (benefits == null) return null;
         return benefits.stream().map(benefitRequest -> {
             BenefitDTO benefitDTO = new BenefitDTO();
@@ -110,13 +111,13 @@ public abstract class CompanyMapper {
 
 
     @Named("fromMediaUrlsOfCreateCompanyRequest")
-    public List<MediaDTO> fromMediaUrlsOfCreateCompanyRequest(List<String> mediaUrls){
+    public List<MediaDTO> fromMediaUrlsOfCreateCompanyRequest(List<String> mediaUrls) {
         if (mediaUrls == null) return null;
         return mediaUrls.stream().map(MediaDTO::new).collect(Collectors.toList());
     }
 
     @Named("fromBenefitsOfCreateCompanyRequest")
-    public Set<CompanyBenefitDTO> fromBenefitsOfCreateCompanyRequest(List<CreateCompanyRequest.BenefitRequest> benefits){
+    public Set<CompanyBenefitDTO> fromBenefitsOfCreateCompanyRequest(List<CreateCompanyRequest.BenefitRequest> benefits) {
         if (benefits == null) return null;
         return benefits.stream().map(benefitRequest -> {
             BenefitDTO benefitDTO = new BenefitDTO();
@@ -126,9 +127,10 @@ public abstract class CompanyMapper {
     }
 
     @Named("fromSubCategoriesIdsOfCreateCompanyRequest")
-    public Set<SubCategoryDTO> fromSubCategoriesIdsOfCreateCompanyRequest(List<Integer> subCategoriesIds){
+    public Set<SubCategoryDTO> fromSubCategoriesIdsOfCreateCompanyRequest(List<Integer> subCategoriesIds) {
         if (subCategoriesIds == null) return null;
-        return subCategoriesIds.stream().map(SubCategoryDTO::new).collect(Collectors.toSet());    }
+        return subCategoriesIds.stream().map(SubCategoryDTO::new).collect(Collectors.toSet());
+    }
 
     @Named("fromSubCategoriesOfCompanyEntity")
     public Set<SubCategoryDTO> fromSubCategoriesOfCompanyEntity(Set<SubCategoryEntity> entities) {
@@ -143,7 +145,7 @@ public abstract class CompanyMapper {
     }
 
     @Named("fromMediasOfCompanyEntity")
-    public List<MediaDTO> fromMediasOfCompanyEntity(List<MediaEntity> entities){
+    public List<MediaDTO> fromMediasOfCompanyEntity(List<MediaEntity> entities) {
         if (entities == null) return null;
         return entities.stream().map(entity -> mediaMapper.toDTO(entity)).collect(Collectors.toList());
     }
@@ -173,7 +175,7 @@ public abstract class CompanyMapper {
     }
 
     @Named("fromSizeIdOfCompanyDTO")
-    public CompanySizeEntity fromSizeIdOfCompanyDTO(Integer sizeId){
+    public CompanySizeEntity fromSizeIdOfCompanyDTO(Integer sizeId) {
         if (sizeId == null) return null;
         CompanySizeEntity companySize = new CompanySizeEntity();
         companySize.setId(sizeId);

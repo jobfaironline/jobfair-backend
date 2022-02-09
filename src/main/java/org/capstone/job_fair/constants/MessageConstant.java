@@ -22,8 +22,7 @@ public class MessageConstant {
         public static final String INVALID_JOB_FAIR_STATUS = "job-fair-plan.error.invalid-job-fair-status";
         public static final String END_TIME_LESS_THAN_START_TIME_ERROR = "job-fair-plan.error.end-time-less-than-start-time";
         public static final String INVALID_END_TIME = "job-fair-plan.invalid-end-time";
-        public static final String INVALID_BUY_BOOTH_TIME = "job-fair.invalid-buy-booth-time";
-
+        public static final String COMPANY_REGISTER_SUCCESSFULLY = "job-fair.company.register.successfully";
     }
 
     public static final class InvalidFormatValidationMessage {
@@ -119,6 +118,8 @@ public class MessageConstant {
     public static final class Job {
         public static final String CREATE_JOB_SUCCESSFULLY = "job.success.create";
         public static final String SALARY_ERROR = "job.error.salary-error";
+        public static final String JOB_POSITION_NOT_FOUND = "job-position.not-found";
+        public static final String COMPANY_MISMATCH = "job-position.company-mismatch";
     }
 
     public static final class Skill {
@@ -166,6 +167,18 @@ public class MessageConstant {
     public static final class Mail {
         public static final String NAME = "mail.sender.name";
         public static final String SEND_FAILED = "mail.send-failed";
+    }
+
+    public static final class CompanyRegistration {
+        public static final String JOB_FAIR_REGISTRATION_OUT_OF_REGISTER_TIME = "company-registration.error.out-of-register-time";
+        public static final String UNIQUE_JOB_POSITION_ERROR = "company-registration.error.unique-job-position";
+        public static final String MIN_MAX_SALARY_ERROR = "company-registration.error.min-max-salary";
+        public static final String SUBMIT_SUCESSFULLY = "company-registration.success.submit";
+        public static final String NOT_FOUND = "company-registration.error.not-found";
+        public static final String COMPANY_MISMATCH = "company-registration.error.mismatch";
+        public static final String EXISTED_PENDING_REGISTRATION = "company-registration.error.existed-pending-registration";
+        public static final String NOT_ALLOW_CANCEL = "company-registration.error.not-allow-cancel";
+        public static final String CANCEL_SUCCESSFULLY = "company-registration.success.cancel";
     }
 
 }
