@@ -32,4 +32,6 @@ public interface AccountService {
 
     CompletableFuture<Void> sendVerifyAccountEmail(String accountId);
 
+    AccountDTO createNew(AccountDTO dto);
+
 }

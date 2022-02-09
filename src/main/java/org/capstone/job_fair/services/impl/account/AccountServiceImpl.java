@@ -128,4 +128,14 @@ public class AccountServiceImpl implements AccountService {
 
     }
 
+    @Override
+    public AccountDTO createNew(AccountDTO dto) {
+        AccountEntity accountEntity = accountMapper.toEntity(dto);
+        if (accountRepository.countByEmail(dto.getEmail()) != 0) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Account.EMAIL_EXISTED));
+        }
+        accountEntity = accountRepository.save(accountEntity);
+        return accountMapper.toDTO(accountEntity);
+    }
+
 }
