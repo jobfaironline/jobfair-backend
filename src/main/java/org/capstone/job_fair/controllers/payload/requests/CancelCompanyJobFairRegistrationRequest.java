@@ -20,7 +20,7 @@ public class CancelCompanyJobFairRegistrationRequest {
     private String companyRegistrationId;
 
     @NotBlank
-    @Size(max = DataConstraint.JobFair.COMPANY_REASON_CANCEL_JOB_FAIR_REGISTRATION_MAX_LENGTH)
+    @Size(min = DataConstraint.JobFair.COMPANY_REASON_CANCEL_JOB_FAIR_REGISTRATION_MIN_LENGTH, max = DataConstraint.JobFair.COMPANY_REASON_CANCEL_JOB_FAIR_REGISTRATION_MAX_LENGTH)
     @XSSConstraint
     private String cancelReason;
 

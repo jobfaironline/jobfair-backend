@@ -24,6 +24,7 @@ public class DataConstraint {
         public static final int MESSAGE_MIN_LENGTH = 1;
         public static final int MESSAGE_MAX_LENGTH = 500;
         public static final int COMPANY_REASON_CANCEL_JOB_FAIR_REGISTRATION_MAX_LENGTH = 1000;
+        public static final int COMPANY_REASON_CANCEL_JOB_FAIR_REGISTRATION_MIN_LENGTH = 1;
 
     }
 
