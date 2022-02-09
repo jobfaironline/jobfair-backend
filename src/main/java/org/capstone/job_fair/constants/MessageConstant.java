@@ -24,6 +24,9 @@ public class MessageConstant {
         public static final String INVALID_END_TIME = "job-fair-plan.invalid-end-time";
         public static final String INVALID_BUY_BOOTH_TIME ="job-fair.invalid-buy-booth-time";
         public static final String COMPANY_REGISTER_SUCCESSFULLY = "job-fair.company.register.successfully";
+        public static final String UNIQUE_JOB_POSITION_ERROR = "job-fair.error.unique-job-position";
+        public static final String MIN_MAX_SALARY_ERROR = "job-fair.error.min-max-salary";
+        public static final String EXISTED_PENDING_REGISTRATION = "job-fair.error.existed-pending-registration";
     }
 
     public static final class InvalidFormatValidationMessage {

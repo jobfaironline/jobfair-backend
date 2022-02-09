@@ -24,5 +24,5 @@ public interface CompanyService {
 
     Optional<CompanyEntity> findCompanyById(String id);
 
-    void createCompanyRegistration(CompanyRegistrationDTO companyRegistrationDTO, List<RegistrationJobPositionDTO> jobPositions);
+    void createDraftCompanyRegistration(CompanyRegistrationDTO companyRegistrationDTO, List<RegistrationJobPositionDTO> jobPositions);
 }

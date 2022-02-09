@@ -107,7 +107,7 @@ public class CompanyController {
 
                 jobPositionDTOS.add(registrationJobPositionDTO);
             }
-            companyService.createCompanyRegistration(companyRegistrationDTO, jobPositionDTOS);
+            companyService.createDraftCompanyRegistration(companyRegistrationDTO, jobPositionDTOS);
             return GenericResponse.build(MessageUtil.getMessage(MessageConstant.JobFair.COMPANY_REGISTER_SUCCESSFULLY), HttpStatus.OK);
         } catch (IllegalArgumentException ex) {
             return GenericResponse.build(ex.getMessage(), HttpStatus.BAD_REQUEST);

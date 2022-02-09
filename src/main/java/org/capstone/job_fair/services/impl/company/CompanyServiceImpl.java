@@ -30,9 +30,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -218,9 +216,33 @@ public class CompanyServiceImpl implements CompanyService {
         return companyRepository.findById(id);
     }
 
+
+    private void validateJobFair(JobFairEntity entity, Long currentTime){
+        if (entity.getCompanyRegisterStartTime() > currentTime || entity.getCompanyRegisterEndTime() < currentTime){
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Company.JOB_FAIR_REGISTRATION_OUT_OF_REGISTER_TIME));
+        }
+    }
+
+    private void validateUniqueJobPosition(List<RegistrationJobPositionDTO> jobPositions){
+        Collections.sort(jobPositions, Comparator.comparing(RegistrationJobPositionDTO::getId));
+        for (int i = 0; i <= jobPositions.size() - 2; i++) {
+            RegistrationJobPositionDTO currentDTO = jobPositions.get(i);
+            RegistrationJobPositionDTO nextDTO = jobPositions.get(i+1);
+            if (currentDTO.getId().equals(nextDTO.getId())){
+                throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.UNIQUE_JOB_POSITION_ERROR));
+            }
+        }
+    }
+
+    private void validateRegistrationJobPosition(RegistrationJobPositionDTO dto){
+        if (dto.getMinSalary() > dto.getMaxSalary()){
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.MIN_MAX_SALARY_ERROR));
+        }
+    }
+
     @Override
     @Transactional
-    public void createCompanyRegistration(CompanyRegistrationDTO companyRegistrationDTO, List<RegistrationJobPositionDTO> jobPositions) {
+    public void createDraftCompanyRegistration(CompanyRegistrationDTO companyRegistrationDTO, List<RegistrationJobPositionDTO> jobPositions) {
 
         //Create registration job position entity
 
@@ -231,9 +253,12 @@ public class CompanyServiceImpl implements CompanyService {
                 MessageUtil.getMessage(MessageConstant.JobFair.JOB_FAIR_NOT_FOUND));
         JobFairEntity jobFairEntity = jobFairOpt.get();
         //Validate job fair registration time of company
-        long time = new Date().getTime();
-        if (jobFairEntity.getCompanyRegisterStartTime() > time || jobFairEntity.getCompanyRegisterEndTime() < time)
-            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Company.JOB_FAIR_REGISTRATION_OUT_OF_REGISTER_TIME));
+        long currentTime = new Date().getTime();
+        validateJobFair(jobFairEntity, currentTime);
+        //make sure the registration job position is unique
+        validateUniqueJobPosition(jobPositions);
+
+
         //Get company from user information in security context
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext()
                 .getAuthentication().getPrincipal();
@@ -244,7 +269,7 @@ public class CompanyServiceImpl implements CompanyService {
         companyRegistrationDTO.setStatus(CompanyRegistrationStatus.DRAFT);
         //Create company registration entity
         CompanyRegistrationEntity companyRegistrationEntity = companyRegistrationMapper.toEntity(companyRegistrationDTO);
-        companyRegistrationEntity.setCreateDate(time);
+        companyRegistrationEntity.setCreateDate(currentTime);
         companyRegistrationRepository.save(companyRegistrationEntity);
 
         for (RegistrationJobPositionDTO registrationJobPositionDTO : jobPositions) {
@@ -258,6 +283,7 @@ public class CompanyServiceImpl implements CompanyService {
             //Check if job position entity is belonged to company
             if (!jobPositionEntity.getCompany().getId().equals(companyRegistrationDTO.getCompanyId()))
                 throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Job.COMPANY_MISMATCH));
+            validateRegistrationJobPosition(registrationJobPositionDTO);
 
 
             RegistrationJobPositionEntity entity = registrationJobPositionMapper.toEntity(registrationJobPositionDTO);
