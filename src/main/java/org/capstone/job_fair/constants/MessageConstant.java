@@ -176,6 +176,8 @@ public class MessageConstant {
         public static final String NOT_FOUND = "company-registration.error.not-found";
         public static final String COMPANY_MISMATCH = "company-registration.error.mismatch";
         public static final String EXISTED_PENDING_REGISTRATION = "company-registration.error.existed-pending-registration";
+        public static final String NOT_ALLOW_CANCEL = "company-registration.error.not-allow-cancel";
+        public static final String CANCEL_SUCCESSFULLY = "company-registration.success.cancel";
     }
 
 }

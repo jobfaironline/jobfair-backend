@@ -24,7 +24,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CompanyRegistrationServiceImpl implements CompanyRegistrationService {
@@ -159,9 +162,34 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
         //check for pending registration
         companyRegistrationRepository.findByCompanyIdAndStatus(companyId, CompanyRegistrationStatus.PENDING)
                 .ifPresent((entity) -> {
-                    throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyRegistration.COMPANY_MISMATCH));
+                    throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyRegistration.EXISTED_PENDING_REGISTRATION));
                 });
         registrationEntity.setStatus(CompanyRegistrationStatus.PENDING);
+        companyRegistrationRepository.save(registrationEntity);
+
+    }
+
+    @Override
+    public void cancelCompanyRegistration(String registrationId) {
+        //check existed registration
+        Optional<CompanyRegistrationEntity> registrationEntityOpt = companyRegistrationRepository.findById(registrationId);
+        if (!registrationEntityOpt.isPresent()) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyRegistration.NOT_FOUND));
+        }
+        CompanyRegistrationEntity registrationEntity = registrationEntityOpt.get();
+        //Get company from user information in security context
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext()
+                .getAuthentication().getPrincipal();
+        CompanyEmployeeEntity companyEmployee = companyEmployeeRepository.findById(userDetails.getId()).get();
+        String companyId = companyEmployee.getCompany().getId();
+        //check if registration belong to company
+        if (!registrationEntity.getCompanyId().equals(companyId)) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyRegistration.COMPANY_MISMATCH));
+        }
+        if (registrationEntity.getStatus() != CompanyRegistrationStatus.PENDING) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyRegistration.NOT_ALLOW_CANCEL));
+        }
+        registrationEntity.setStatus(CompanyRegistrationStatus.CANCEL);
         companyRegistrationRepository.save(registrationEntity);
 
     }
