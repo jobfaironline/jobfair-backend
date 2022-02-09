@@ -172,6 +172,12 @@ public class MessageConstant {
         public static final String JOB_FAIR_REGISTRATION_OUT_OF_REGISTER_TIME = "company-registration.error.out-of-register-time";
         public static final String UNIQUE_JOB_POSITION_ERROR = "company-registration.error.unique-job-position";
         public static final String MIN_MAX_SALARY_ERROR = "company-registration.error.min-max-salary";
+        public static final String SUBMIT_SUCESSFULLY = "company-registration.success.submit";
+        public static final String NOT_FOUND = "company-registration.error.not-found";
+        public static final String COMPANY_MISMATCH = "company-registration.error.mismatch";
+        public static final String EXISTED_PENDING_REGISTRATION = "company-registration.error.existed-pending-registration";
+        public static final String NOT_ALLOW_CANCEL = "company-registration.error.not-allow-cancel";
+        public static final String CANCEL_SUCCESSFULLY = "company-registration.success.cancel";
     }
 
 }

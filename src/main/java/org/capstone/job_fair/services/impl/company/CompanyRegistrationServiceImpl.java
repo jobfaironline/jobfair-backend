@@ -17,7 +17,6 @@ import org.capstone.job_fair.repositories.company.job.RegistrationJobPositionRep
 import org.capstone.job_fair.repositories.job_fair.JobFairRepository;
 import org.capstone.job_fair.services.interfaces.company.CompanyRegistrationService;
 import org.capstone.job_fair.services.mappers.CompanyRegistrationMapper;
-import org.capstone.job_fair.services.mappers.JobPositionMapper;
 import org.capstone.job_fair.services.mappers.RegistrationJobPositionMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +24,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CompanyRegistrationServiceImpl implements CompanyRegistrationService {
@@ -38,9 +40,6 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
 
     @Autowired
     private RegistrationJobPositionRepository registrationJobPositionRepository;
-
-    @Autowired
-    private JobPositionMapper jobPositionMapper;
 
     @Autowired
     private CompanyEmployeeRepository companyEmployeeRepository;
@@ -61,7 +60,7 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
     }
 
     private void validateUniqueJobPosition(List<RegistrationJobPositionDTO> jobPositions) {
-        Collections.sort(jobPositions, Comparator.comparing(RegistrationJobPositionDTO::getId));
+        jobPositions.sort(Comparator.comparing(RegistrationJobPositionDTO::getId));
         for (int i = 0; i <= jobPositions.size() - 2; i++) {
             RegistrationJobPositionDTO currentDTO = jobPositions.get(i);
             RegistrationJobPositionDTO nextDTO = jobPositions.get(i + 1);
@@ -140,5 +139,58 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
             registrationJobPositionRepository.save(entity);
 
         }
+    }
+
+    @Override
+    @Transactional
+    public void submitCompanyRegistration(String registrationId) {
+        //check existed registration
+        Optional<CompanyRegistrationEntity> registrationEntityOpt = companyRegistrationRepository.findById(registrationId);
+        if (!registrationEntityOpt.isPresent()) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyRegistration.NOT_FOUND));
+        }
+        CompanyRegistrationEntity registrationEntity = registrationEntityOpt.get();
+        //Get company from user information in security context
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext()
+                .getAuthentication().getPrincipal();
+        CompanyEmployeeEntity companyEmployee = companyEmployeeRepository.findById(userDetails.getId()).get();
+        String companyId = companyEmployee.getCompany().getId();
+        //check if registration belong to company
+        if (!registrationEntity.getCompanyId().equals(companyId)) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyRegistration.COMPANY_MISMATCH));
+        }
+        //check for pending registration
+        companyRegistrationRepository.findByCompanyIdAndStatus(companyId, CompanyRegistrationStatus.PENDING)
+                .ifPresent((entity) -> {
+                    throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyRegistration.EXISTED_PENDING_REGISTRATION));
+                });
+        registrationEntity.setStatus(CompanyRegistrationStatus.PENDING);
+        companyRegistrationRepository.save(registrationEntity);
+
+    }
+
+    @Override
+    public void cancelCompanyRegistration(String registrationId) {
+        //check existed registration
+        Optional<CompanyRegistrationEntity> registrationEntityOpt = companyRegistrationRepository.findById(registrationId);
+        if (!registrationEntityOpt.isPresent()) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyRegistration.NOT_FOUND));
+        }
+        CompanyRegistrationEntity registrationEntity = registrationEntityOpt.get();
+        //Get company from user information in security context
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext()
+                .getAuthentication().getPrincipal();
+        CompanyEmployeeEntity companyEmployee = companyEmployeeRepository.findById(userDetails.getId()).get();
+        String companyId = companyEmployee.getCompany().getId();
+        //check if registration belong to company
+        if (!registrationEntity.getCompanyId().equals(companyId)) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyRegistration.COMPANY_MISMATCH));
+        }
+        if (registrationEntity.getStatus() != CompanyRegistrationStatus.PENDING) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyRegistration.NOT_ALLOW_CANCEL));
+        }
+        registrationEntity.setStatus(CompanyRegistrationStatus.CANCEL);
+        companyRegistrationRepository.save(registrationEntity);
+
     }
 }

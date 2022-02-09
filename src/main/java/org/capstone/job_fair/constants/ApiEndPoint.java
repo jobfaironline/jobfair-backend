@@ -28,6 +28,8 @@ public class ApiEndPoint {
     public static final class CompanyRegistration {
         public static final String COMPANY_REGISTRATION_ENDPOINT = ROOT_ENDPOINT + VERSION + "/job-fair/company-registration";
         public static final String DRAFT = COMPANY_REGISTRATION_ENDPOINT + "/draft";
+        public static final String SUBMIT = COMPANY_REGISTRATION_ENDPOINT + "/submit";
+        public static final String CANCEL = COMPANY_REGISTRATION_ENDPOINT + "/cancel";
     }
 
     public static final class Authorization {
