@@ -109,7 +109,7 @@ public class JobFairController {
     public ResponseEntity<?> getAll() {
         List<JobFairDTO> result = jobFairService.getAll();
         if (result.isEmpty()) {
-            return GenericResponse.build("No content", HttpStatus.NO_CONTENT);
+            return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok(result);
     }
