@@ -2,13 +2,10 @@ package org.capstone.job_fair.controllers.company;
 
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
-import org.capstone.job_fair.controllers.payload.requests.CompanyJobFairRegistrationRequest;
 import org.capstone.job_fair.controllers.payload.requests.CreateCompanyRequest;
 import org.capstone.job_fair.controllers.payload.requests.UpdateCompanyRequest;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.dtos.company.CompanyDTO;
-import org.capstone.job_fair.models.dtos.company.CompanyRegistrationDTO;
-import org.capstone.job_fair.models.dtos.company.job.RegistrationJobPositionDTO;
 import org.capstone.job_fair.models.entities.company.CompanyEntity;
 import org.capstone.job_fair.services.interfaces.company.CompanyService;
 import org.capstone.job_fair.services.mappers.CompanyMapper;
@@ -21,8 +18,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -79,36 +74,6 @@ public class CompanyController {
             CompanyDTO dto = companyMapper.toDTO(request);
             companyService.updateCompany(dto);
             return GenericResponse.build(MessageUtil.getMessage(MessageConstant.Company.UPDATE_SUCCESSFULLY), HttpStatus.OK);
-        } catch (IllegalArgumentException ex) {
-            return GenericResponse.build(ex.getMessage(), HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
-    @PostMapping(ApiEndPoint.JobFair.COMPANY_DRAFT_A_JOB_FAIR_REGISTRATION)
-    public ResponseEntity<?> draftAJobFairRegistration(@Valid @RequestBody CompanyJobFairRegistrationRequest request) {
-        try {
-
-
-            //Map request to company registration dto and registration job position dto
-            CompanyRegistrationDTO companyRegistrationDTO = new CompanyRegistrationDTO();
-            companyRegistrationDTO.setJobFairId(request.getJobFairId());
-            companyRegistrationDTO.setDescription(request.getDescription());
-
-            List<RegistrationJobPositionDTO> jobPositionDTOS = new ArrayList<>();
-            for (CompanyJobFairRegistrationRequest.JobPosition jobPosition : request.getJobPositions()) {
-                RegistrationJobPositionDTO registrationJobPositionDTO = new RegistrationJobPositionDTO();
-                registrationJobPositionDTO.setId(jobPosition.getJobPositionId());
-                registrationJobPositionDTO.setDescription(jobPosition.getDescription());
-                registrationJobPositionDTO.setRequirements(jobPosition.getRequirements());
-                registrationJobPositionDTO.setMinSalary(jobPosition.getMinSalary());
-                registrationJobPositionDTO.setMaxSalary(jobPosition.getMaxSalary());
-                registrationJobPositionDTO.setNumOfPosition(jobPosition.getNumOfPosition());
-
-                jobPositionDTOS.add(registrationJobPositionDTO);
-            }
-            companyService.createDraftCompanyRegistration(companyRegistrationDTO, jobPositionDTOS);
-            return GenericResponse.build(MessageUtil.getMessage(MessageConstant.JobFair.COMPANY_REGISTER_SUCCESSFULLY), HttpStatus.OK);
         } catch (IllegalArgumentException ex) {
             return GenericResponse.build(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }

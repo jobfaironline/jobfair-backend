@@ -51,32 +51,9 @@ public class CompanyServiceImpl implements CompanyService {
     @Autowired
     private BenefitRepository benefitRepository;
 
-    @Autowired
-    private JobFairRepository jobFairRepository;
-
-    @Autowired
-    private CompanyRegistrationRepository companyRegistrationRepository;
 
     @Autowired
     private SubCategoryRepository subCategoryRepository;
-
-    @Autowired
-    private RegistrationJobPositionRepository registrationJobPositionRepository;
-
-    @Autowired
-    private JobPositionMapper jobPositionMapper;
-
-    @Autowired
-    private CompanyEmployeeRepository companyEmployeeRepository;
-
-    @Autowired
-    private JobPositionRepository jobPositionRepository;
-
-    @Autowired
-    private RegistrationJobPositionMapper registrationJobPositionMapper;
-
-    @Autowired
-    private CompanyRegistrationMapper companyRegistrationMapper;
 
 
     private boolean isEmailExisted(String email) {
@@ -217,91 +194,4 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
 
-    private void validateJobFair(JobFairEntity entity, Long currentTime){
-        if (entity.getCompanyRegisterStartTime() > currentTime || entity.getCompanyRegisterEndTime() < currentTime){
-            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Company.JOB_FAIR_REGISTRATION_OUT_OF_REGISTER_TIME));
-        }
-    }
-
-    private void validateUniqueJobPosition(List<RegistrationJobPositionDTO> jobPositions){
-        Collections.sort(jobPositions, Comparator.comparing(RegistrationJobPositionDTO::getId));
-        for (int i = 0; i <= jobPositions.size() - 2; i++) {
-            RegistrationJobPositionDTO currentDTO = jobPositions.get(i);
-            RegistrationJobPositionDTO nextDTO = jobPositions.get(i+1);
-            if (currentDTO.getId().equals(nextDTO.getId())){
-                throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.UNIQUE_JOB_POSITION_ERROR));
-            }
-        }
-    }
-
-    private void validateRegistrationJobPosition(RegistrationJobPositionDTO dto){
-        if (dto.getMinSalary() > dto.getMaxSalary()){
-            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.MIN_MAX_SALARY_ERROR));
-        }
-    }
-
-    @Override
-    @Transactional
-    public void createDraftCompanyRegistration(CompanyRegistrationDTO companyRegistrationDTO, List<RegistrationJobPositionDTO> jobPositions) {
-
-        //Create registration job position entity
-
-        //Check job fair existence
-        Optional<JobFairEntity> jobFairOpt = jobFairRepository.findById(companyRegistrationDTO.getJobFairId());
-
-        if (!jobFairOpt.isPresent()) throw new IllegalArgumentException(
-                MessageUtil.getMessage(MessageConstant.JobFair.JOB_FAIR_NOT_FOUND));
-        JobFairEntity jobFairEntity = jobFairOpt.get();
-        //Validate job fair registration time of company
-        long currentTime = new Date().getTime();
-        validateJobFair(jobFairEntity, currentTime);
-        //make sure the registration job position is unique
-        validateUniqueJobPosition(jobPositions);
-
-
-        //Get company from user information in security context
-        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext()
-                .getAuthentication().getPrincipal();
-        CompanyEmployeeEntity companyEmployee = companyEmployeeRepository.findById(userDetails.getId()).get();
-
-        //Set company id to company registration dto
-        companyRegistrationDTO.setCompanyId(companyEmployee.getCompany().getId());
-        companyRegistrationDTO.setStatus(CompanyRegistrationStatus.DRAFT);
-        //Create company registration entity
-        CompanyRegistrationEntity companyRegistrationEntity = companyRegistrationMapper.toEntity(companyRegistrationDTO);
-        companyRegistrationEntity.setCreateDate(currentTime);
-        companyRegistrationRepository.save(companyRegistrationEntity);
-
-        for (RegistrationJobPositionDTO registrationJobPositionDTO : jobPositions) {
-            //Get job position entity by job position id in request
-            Optional<JobPositionEntity> jobPositionOpt =
-                    jobPositionRepository.findById(registrationJobPositionDTO.getId());
-            //Check job position existence
-            if (!jobPositionOpt.isPresent()) throw new IllegalArgumentException(
-                    MessageUtil.getMessage(MessageConstant.Job.JOB_POSITION_NOT_FOUND));
-            JobPositionEntity jobPositionEntity = jobPositionOpt.get();
-            //Check if job position entity is belonged to company
-            if (!jobPositionEntity.getCompany().getId().equals(companyRegistrationDTO.getCompanyId()))
-                throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Job.COMPANY_MISMATCH));
-            validateRegistrationJobPosition(registrationJobPositionDTO);
-
-
-            RegistrationJobPositionEntity entity = registrationJobPositionMapper.toEntity(registrationJobPositionDTO);
-
-            //Job position information
-            entity.setTitle(jobPositionEntity.getTitle());
-            entity.setContactPersonName(jobPositionEntity.getContactPersonName());
-            entity.setContactEmail(jobPositionEntity.getContactEmail());
-            entity.setLanguage(jobPositionEntity.getLanguage());
-            entity.setJobLevel(jobPositionEntity.getJobLevel());
-            entity.setJobTypeEntity(jobPositionEntity.getJobTypeEntity());
-            //Map company registration to registration job position entity
-            entity.setCompanyRegistration(companyRegistrationEntity);
-            entity.setCategories(jobPositionEntity.getCategories());
-            entity.setSkillTagEntities(jobPositionEntity.getSkillTagEntities());
-
-            registrationJobPositionRepository.save(entity);
-
-        }
-    }
 }
