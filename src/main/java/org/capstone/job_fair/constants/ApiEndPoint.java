@@ -35,6 +35,7 @@ public class ApiEndPoint {
 
     public static final class Authorization {
         public static final String VERIFY_USER = ROOT_ENDPOINT + VERSION + "/verify";
+        public static final String NEW_VERIFY_LINK = ROOT_ENDPOINT + VERSION + "/new-verify-link";
     }
 
     public static final class Company {
