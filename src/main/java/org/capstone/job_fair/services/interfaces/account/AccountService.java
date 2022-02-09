@@ -29,4 +29,6 @@ public interface AccountService {
 
     void changePassword(String newPassword, String oldPassword);
 
+    AccountDTO createNew(AccountDTO dto);
+
 }

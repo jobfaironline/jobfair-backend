@@ -6,6 +6,7 @@ import org.capstone.job_fair.models.dtos.company.CompanyRegistrationDTO;
 import org.capstone.job_fair.models.dtos.company.job.RegistrationJobPositionDTO;
 import org.capstone.job_fair.models.entities.company.CompanyEmployeeEntity;
 import org.capstone.job_fair.models.entities.company.CompanyRegistrationEntity;
+import org.capstone.job_fair.models.entities.company.SubCategoryEntity;
 import org.capstone.job_fair.models.entities.company.job.JobPositionEntity;
 import org.capstone.job_fair.models.entities.company.job.RegistrationJobPositionEntity;
 import org.capstone.job_fair.models.entities.job_fair.JobFairEntity;
@@ -24,10 +25,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class CompanyRegistrationServiceImpl implements CompanyRegistrationService {
@@ -133,8 +132,10 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
             entity.setJobTypeEntity(jobPositionEntity.getJobTypeEntity());
             //Map company registration to registration job position entity
             entity.setCompanyRegistration(companyRegistrationEntity);
-            entity.setCategories(jobPositionEntity.getCategories());
-            entity.setSkillTagEntities(jobPositionEntity.getSkillTagEntities());
+            //need new HashSet here to force load lazy-loading entities
+            entity.setCategories(new HashSet<>(jobPositionEntity.getCategories()));
+            entity.setSkillTagEntities(new HashSet<>(jobPositionEntity.getSkillTagEntities()));
+
 
             registrationJobPositionRepository.save(entity);
 
