@@ -171,7 +171,7 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
     }
 
     @Override
-    public void cancelCompanyRegistration(String registrationId) {
+    public void cancelCompanyRegistration(String registrationId, String cancelReason) {
         //check existed registration
         Optional<CompanyRegistrationEntity> registrationEntityOpt = companyRegistrationRepository.findById(registrationId);
         if (!registrationEntityOpt.isPresent()) {
@@ -191,6 +191,7 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyRegistration.NOT_ALLOW_CANCEL));
         }
         registrationEntity.setStatus(CompanyRegistrationStatus.CANCEL);
+        registrationEntity.setCancelReason(cancelReason);
         companyRegistrationRepository.save(registrationEntity);
 
     }

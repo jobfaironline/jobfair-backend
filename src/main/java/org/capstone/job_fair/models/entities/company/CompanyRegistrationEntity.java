@@ -37,6 +37,9 @@ public class CompanyRegistrationEntity {
     @Enumerated(EnumType.ORDINAL)
     private CompanyRegistrationStatus status;
 
+    @Column(name = "cancel_reason")
+    private String cancelReason;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

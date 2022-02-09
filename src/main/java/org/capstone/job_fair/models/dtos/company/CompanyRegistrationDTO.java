@@ -19,4 +19,5 @@ public class CompanyRegistrationDTO implements Serializable {
     private String jobFairId;
     private String companyId;
     private CompanyRegistrationStatus status;
+    private String cancelReason;
 }

@@ -10,5 +10,5 @@ public interface CompanyRegistrationService {
 
     void submitCompanyRegistration(String registrationId);
 
-    void cancelCompanyRegistration(String registrationId);
+    void cancelCompanyRegistration(String registrationId, String cancelReason);
 }
