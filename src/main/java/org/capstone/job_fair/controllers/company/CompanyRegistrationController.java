@@ -2,6 +2,7 @@ package org.capstone.job_fair.controllers.company;
 
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
+import org.capstone.job_fair.controllers.payload.requests.CancelCompanyJobFairRegistrationRequest;
 import org.capstone.job_fair.controllers.payload.requests.CompanyJobFairRegistrationRequest;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.dtos.company.CompanyRegistrationDTO;
@@ -64,10 +65,11 @@ public class CompanyRegistrationController {
         }
     }
 
-    @GetMapping(ApiEndPoint.CompanyRegistration.CANCEL + "/{id}")
-    public ResponseEntity<?> cancleJobFairRegistration(@PathVariable("id") String registrationId) {
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
+    @PostMapping(ApiEndPoint.CompanyRegistration.CANCEL)
+    public ResponseEntity<?> cancleJobFairRegistration(@Valid @RequestBody CancelCompanyJobFairRegistrationRequest request) {
         try {
-            companyRegistrationService.cancelCompanyRegistration(registrationId);
+            companyRegistrationService.cancelCompanyRegistration(request.getCompanyRegistrationId(),request.getCancelReason());
             return GenericResponse.build(MessageUtil.getMessage(MessageConstant.CompanyRegistration.CANCEL_SUCCESSFULLY)
                     , HttpStatus.OK);
         } catch (IllegalArgumentException e) {
