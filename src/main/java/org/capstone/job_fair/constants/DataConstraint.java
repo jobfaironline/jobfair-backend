@@ -11,16 +11,18 @@ public class DataConstraint {
 
     }
 
-    public static class JobFair{
+    public static class JobFair {
         public static final int MIN_TIME = 0;
         public static final int MAX_DESCRIPTION_LENGTH = 500000;
-        public  static final long VALID_TIME = 60*60*24*365*1000L;
-        public  static final long VALID_REGISTER_TIME = 60*60*24*365*1000L;
-        public  static final long VALID_BUY_BOOTH_TIME = +0*60*24*365*1000L;
-        public  static final long VALID_EVENT_TIME = 60*60*24*365*1000L;
-        public  static final long VALID_REGISTER_TO_BUY_BOOTH_TIME = 0;
-        public  static final long VALID_BUY_BOOTH_TO_PUBLIC_TIME = 0;
-        public  static final long VALID_PUBLIC_TO_EVENT_TIME = 0;
+        public static final long VALID_TIME = 60 * 60 * 24 * 365 * 1000L;
+        public static final long VALID_REGISTER_TIME = 60 * 60 * 24 * 365 * 1000L;
+        public static final long VALID_BUY_BOOTH_TIME = +0 * 60 * 24 * 365 * 1000L;
+        public static final long VALID_EVENT_TIME = 60 * 60 * 24 * 365 * 1000L;
+        public static final long VALID_REGISTER_TO_BUY_BOOTH_TIME = 0;
+        public static final long VALID_BUY_BOOTH_TO_PUBLIC_TIME = 0;
+        public static final long VALID_PUBLIC_TO_EVENT_TIME = 0;
+        public static final int MESSAGE_MIN_LENGTH = 1;
+        public static final int MESSAGE_MAX_LENGTH = 500;
 
 
     }
@@ -120,14 +122,15 @@ public class DataConstraint {
     public static final class Residence {
 
     }
+
     public static final class Company {
         public static final int NAME_MIN_LENGTH = 1;
         public static final int NAME_MAX_LENGTH = 1000;
         public static final int ADDRESS_MIN_LENGTH = 1;
         public static final int ADDRESS_MAX_LENGTH = 1000;
         public static final int COMPANY_MIN_NUM = 1;
-        public static final int CATEGORY_MIN= 1;
-        public static final int CATEGORY_MAX= 4;
+        public static final int CATEGORY_MIN = 1;
+        public static final int CATEGORY_MAX = 4;
         public static final int DEFAULT_EMPLOYEE_MAX_NUM = 5;
         public static final int MIN_JOB_POSITION = 1;
         public static final int MAX_DESCRIPTION_LENGTH = 10000;

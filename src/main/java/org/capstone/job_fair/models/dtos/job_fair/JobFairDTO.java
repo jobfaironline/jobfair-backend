@@ -39,4 +39,8 @@ public class JobFairDTO implements Serializable {
     private String creatorId;
 
     private String authorizerId;
+
+    private String cancelReason;
+
+    private String rejectReason;
 }
