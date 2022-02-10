@@ -6,7 +6,6 @@ import org.capstone.job_fair.models.dtos.company.CompanyRegistrationDTO;
 import org.capstone.job_fair.models.dtos.company.job.RegistrationJobPositionDTO;
 import org.capstone.job_fair.models.entities.company.CompanyEmployeeEntity;
 import org.capstone.job_fair.models.entities.company.CompanyRegistrationEntity;
-import org.capstone.job_fair.models.entities.company.SubCategoryEntity;
 import org.capstone.job_fair.models.entities.company.job.JobPositionEntity;
 import org.capstone.job_fair.models.entities.company.job.RegistrationJobPositionEntity;
 import org.capstone.job_fair.models.entities.job_fair.JobFairEntity;
@@ -26,7 +25,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class CompanyRegistrationServiceImpl implements CompanyRegistrationService {
@@ -194,5 +192,30 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
         registrationEntity.setCancelReason(cancelReason);
         companyRegistrationRepository.save(registrationEntity);
 
+    }
+
+    @Override
+    public void staffEvaluateCompanyRegistration(String staffEvaluateCompanyRegistration, CompanyRegistrationStatus status, String message) {
+        Optional<CompanyRegistrationEntity> companyRegistrationOpt = companyRegistrationRepository.findById(staffEvaluateCompanyRegistration);
+        if (!companyRegistrationOpt.isPresent()) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyRegistration.COMPANY_REGISTRATION_NOT_FOUND));
+        }
+        if (status != CompanyRegistrationStatus.REJECT && status != CompanyRegistrationStatus.APPROVE) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyRegistration.INVALID_STATUS_WHEN_EVALUATE));
+        }
+        if (status == CompanyRegistrationStatus.REJECT && message == null) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyRegistration.REJECT_MISSING_REASON));
+        }
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext()
+                .getAuthentication().getPrincipal();
+        CompanyRegistrationEntity entity = companyRegistrationOpt.get();
+        if (entity.getStatus() != CompanyRegistrationStatus.PENDING && entity.getStatus() != CompanyRegistrationStatus.REJECT && entity.getStatus() != CompanyRegistrationStatus.APPROVE) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyRegistration.INVALID_COMPANY_REISTRATION_STATUS_WHEN_EVALUATE));
+        }
+
+        entity.setStatus(status);
+        if (status == CompanyRegistrationStatus.REJECT) entity.setRejectReason(message);
+        entity.setAuthorizerId(userDetails.getId());
+        companyRegistrationRepository.save(entity);
     }
 }

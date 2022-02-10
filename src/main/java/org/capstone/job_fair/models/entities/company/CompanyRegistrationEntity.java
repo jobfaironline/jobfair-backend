@@ -40,6 +40,12 @@ public class CompanyRegistrationEntity {
     @Column(name = "cancel_reason")
     private String cancelReason;
 
+    @Column(name = "reject_reason")
+    private String rejectReason;
+
+    @Column(name = "authorizer_id")
+    private String authorizerId;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
