@@ -1,5 +1,6 @@
 package org.capstone.job_fair;
 
+import org.capstone.job_fair.utils.AwsUtil;
 import org.capstone.job_fair.utils.DomainUtil;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -19,6 +20,11 @@ public class JobFairApplication {
     @Bean
     public DomainUtil domainUtil() {
         return new DomainUtil();
+    }
+
+    @Bean
+    public AwsUtil awsUtil() {
+        return new AwsUtil();
     }
 
     public static void main(String[] args) {

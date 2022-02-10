@@ -1,7 +1,5 @@
 package org.capstone.job_fair.constants;
 
-import java.util.Calendar;
-
 public class DataConstraint {
     public static final class Skill {
         public static final int MIN_PROFICIENCY = 1;
@@ -138,13 +136,20 @@ public class DataConstraint {
     }
 
 
-    public static final class DecoratedItem{
+    public static final class DecoratedItem {
         public static final int NAME_MAX_LENGTH = 100;
         public static final int NAME_MIN_LENGTH = 1;
         public static final int DESCRIPTION_MAX_LENGTH = 5000;
         public static final int DESCRIPTION_MIN_LENGTH = 1;
         public static final int SIZE_MIN = 0;
         public static final int SIZE_MAX = 100;
+    }
+
+    public static final class Layout {
+        public static final int NAME_MAX_LENGTH = 100;
+        public static final int NAME_MIN_LENGTH = 1;
+        public static final int DESCRIPTION_MAX_LENGTH = 500;
+        public static final int DESCRIPTION_MIN_LENGTH = 1;
     }
 
 }

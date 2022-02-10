@@ -1,5 +1,6 @@
 package org.capstone.job_fair.controllers.job_fair;
 
+import org.capstone.job_fair.constants.AWSConstant;
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.controllers.payload.requests.CreateDecoratedItemMetaDataRequest;
@@ -67,7 +68,7 @@ public class DecoratedItemController {
     @PostMapping(ApiEndPoint.DecoratedItem.DECORATED_ITEM_ENDPOINT + "/{id}/content")
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN or T(org.capstone.job_fair.models.enums.Role).STAFF)")
     public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file, @PathVariable("id") String id) {
-        fileStorageService.store(file, id);
+        fileStorageService.store(file, AWSConstant.DECORATED_ITEMS_FOLDER + "/" + id);
         return ResponseEntity.accepted().build();
     }
 
@@ -79,11 +80,12 @@ public class DecoratedItemController {
                 "attachment; filename=\"" + file.getFilename() + "\"").body(file);
     }
 
-    @PutMapping(ApiEndPoint.DecoratedItem.UPDATE)
+    @PutMapping(ApiEndPoint.DecoratedItem.DECORATED_ITEM_ENDPOINT + "/{id}")
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN or T(org.capstone.job_fair.models.enums.Role).STAFF)")
-    public ResponseEntity<?> update(@RequestBody UpdateDecoratedItemMetaDataRequest request) {
+    public ResponseEntity<?> update(@Valid @RequestBody UpdateDecoratedItemMetaDataRequest request, @PathVariable String id) {
         try {
             DecoratedItemDTO dto = decoratedItemMapper.toDTO(request);
+            dto.setId(id);
             decoratedItemService.update(dto);
             return GenericResponse.build(
                     MessageUtil.getMessage(MessageConstant.DecoratedItem.UPDATE_SUCCESSFULLY),
@@ -92,8 +94,6 @@ public class DecoratedItemController {
             return GenericResponse.build(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
-
-
 
 
 }

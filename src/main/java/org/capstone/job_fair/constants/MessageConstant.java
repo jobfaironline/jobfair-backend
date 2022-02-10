@@ -23,7 +23,7 @@ public class MessageConstant {
         public static final String END_TIME_LESS_THAN_START_TIME_ERROR = "job-fair-plan.error.end-time-less-than-start-time";
         public static final String INVALID_END_TIME = "job-fair-plan.invalid-end-time";
         public static final String COMPANY_REGISTER_SUCCESSFULLY = "job-fair.company.register.successfully";
-        public static final String INVALID_BUY_BOOTH_TIME ="job-fair.invalid-buy-booth-time";
+        public static final String INVALID_BUY_BOOTH_TIME = "job-fair.invalid-buy-booth-time";
         public static final String INVALID_STATUS_WHEN_EVALUATE = "job-fair-plan.error.invalid-status-when-evaluate";
         public static final String REJECT_MISSING_REASON = "job-fair-plan.error.reject-missing-reason";
         public static final String EVALUATE_SUCCESSFULLY = "job-fair-plan.success.evaluate-successfully";
@@ -188,15 +188,20 @@ public class MessageConstant {
         public static final String CANCEL_SUCCESSFULLY = "company-registration.success.cancel";
     }
 
-    public static final class Staff{
+    public static final class Staff {
         public static final String CREATE_SUCCESSFULLY = "staff.success.create-successfully";
         public static final String ACCOUNT_INFORMATION_EMAIL_TITLE = "staff.account-information-email-title";
         public static final String ACCOUNT_INFORMATION_EMAIL_BODY = "staff.account-information-email-body";
     }
 
-    public static final class DecoratedItem{
+    public static final class DecoratedItem {
         public static final String NOT_FOUND = "decorated-item.error.not-found";
         public static final String UPDATE_SUCCESSFULLY = "decorated-item.success.update-item";
+    }
+
+    public static final class Layout {
+        public static final String NOT_FOUND = "layout.error.not-found";
+        public static final String UPDATE_SUCCESSFULLY = "layout.success.update-item";
     }
 
 }

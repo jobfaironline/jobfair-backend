@@ -88,7 +88,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests().antMatchers(ApiEndPoint.Authorization.VERIFY_USER + "/**").permitAll().and()
                 .authorizeRequests().antMatchers(ApiEndPoint.Authorization.NEW_VERIFY_LINK + "/**").permitAll().and()
                 //Attendant API Security: specific end point will be configured inside controller
-                .authorizeRequests().antMatchers(ApiEndPoint.CompanyEmployee.REGISTER_COMPANY_MANAGER).permitAll()
+                .authorizeRequests().antMatchers(ApiEndPoint.CompanyEmployee.REGISTER_COMPANY_MANAGER).permitAll().and()
+                .authorizeRequests().antMatchers(ApiEndPoint.Layout.LAYOUT_ENDPOINT + "/**").permitAll()
                 .anyRequest().authenticated().and()
                 .headers().contentSecurityPolicy("script-src 'self'");
 

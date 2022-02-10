@@ -1,7 +1,6 @@
 package org.capstone.job_fair.services.impl.util;
 
 import lombok.SneakyThrows;
-import org.capstone.job_fair.constants.AWSConstant;
 import org.capstone.job_fair.services.interfaces.util.FileStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,7 +36,7 @@ public class AWSFileStorageService implements FileStorageService {
 
         PutObjectRequest putOb = PutObjectRequest.builder()
                 .bucket(bucketName)
-                .key(AWSConstant.IMAGE_FOLDER + "/" + name)
+                .key(name)
                 .metadata(metadata)
                 .build();
 
@@ -53,7 +52,7 @@ public class AWSFileStorageService implements FileStorageService {
     public Resource loadAsResource(String filename) {
         GetObjectRequest objectRequest = GetObjectRequest.builder()
                 .bucket(bucketName)
-                .key(AWSConstant.IMAGE_FOLDER + "/" + filename)
+                .key(filename)
                 .build();
 
         ResponseBytes<GetObjectResponse> objectBytes = amazonS3Client.getObjectAsBytes(objectRequest);

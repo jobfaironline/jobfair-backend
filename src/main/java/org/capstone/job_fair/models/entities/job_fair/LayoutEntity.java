@@ -1,17 +1,23 @@
 package org.capstone.job_fair.models.entities.job_fair;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.Hibernate;
-import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.Objects;
 
 @Entity
 @Table(name = "layout", schema = "dbo")
 @NoArgsConstructor
 @AllArgsConstructor
+@Setter
+@Getter
 public class LayoutEntity {
 
     @Id
@@ -22,6 +28,8 @@ public class LayoutEntity {
     private String name;
     @Column(name = "url", length = 2048)
     private String url;
+    @Column(name = "description", length = 500)
+    private String description;
 
 
     @Override
