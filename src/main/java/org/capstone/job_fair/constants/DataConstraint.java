@@ -28,6 +28,11 @@ public class DataConstraint {
 
     }
 
+    public static final class CompanyRegistration{
+        public static final int MESSAGE_MIN_LENGTH = 1;
+        public static final int MESSAGE_MAX_LENGTH = 500;
+    }
+
     public static final class WorkHistory {
         public static final int POSITION_MIN_LENGTH = 1;
         public static final int POSITION_MAX_LENGTH = 100;

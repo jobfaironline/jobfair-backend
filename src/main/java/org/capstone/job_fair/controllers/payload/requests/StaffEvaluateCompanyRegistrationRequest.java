@@ -17,6 +17,6 @@ public class StaffEvaluateCompanyRegistrationRequest {
     private String companyRegistrationId;
     @NotNull
     private CompanyRegistrationStatus status;
-    @Size(min = DataConstraint.JobFair.MESSAGE_MIN_LENGTH, max = DataConstraint.JobFair.MESSAGE_MAX_LENGTH)
+    @Size(min = DataConstraint.CompanyRegistration.MESSAGE_MIN_LENGTH, max = DataConstraint.CompanyRegistration.MESSAGE_MAX_LENGTH)
     private String message;
 }
