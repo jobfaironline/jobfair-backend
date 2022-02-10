@@ -209,7 +209,7 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext()
                 .getAuthentication().getPrincipal();
         CompanyRegistrationEntity entity = companyRegistrationOpt.get();
-        if (entity.getStatus() != CompanyRegistrationStatus.PENDING && entity.getStatus() != CompanyRegistrationStatus.REJECT && entity.getStatus() != CompanyRegistrationStatus.APPROVE) {
+        if (entity.getStatus() != CompanyRegistrationStatus.PENDING) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyRegistration.INVALID_COMPANY_REISTRATION_STATUS_WHEN_EVALUATE));
         }
 
