@@ -18,6 +18,17 @@
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
     </properties>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>software.amazon.awssdk</groupId>
+                <artifactId>bom</artifactId>
+                <version>2.17.103</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
     <dependencies>
         <!--Mail service dependencies-->
         <dependency>
@@ -121,6 +132,12 @@
             <version>1.4.2.Final</version>
         </dependency>
         <!-- End util dependencies -->
+        <!-- AWS dependencies -->
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>s3control</artifactId>
+        </dependency>
+        <!-- End AWS dependencies -->
     </dependencies>
 
     <packaging>jar</packaging>

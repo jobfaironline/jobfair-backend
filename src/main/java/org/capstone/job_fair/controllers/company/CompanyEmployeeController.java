@@ -198,7 +198,7 @@ public class CompanyEmployeeController {
     }
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
-    @PostMapping(ApiEndPoint.CompanyEmployee.PROMOTE_EMPLOYEE_ENPOINT)
+    @PostMapping(ApiEndPoint.CompanyEmployee.PROMOTE_EMPLOYEE_ENDPOINT)
     public ResponseEntity<?> promoteEmployee(@Validated @RequestBody PromoteEmployeeToCompanyManagerRequest request) {
         try {
             companyEmployeeService.promoteEmployee(request.getEmployeeId(), request.getManagerId());
