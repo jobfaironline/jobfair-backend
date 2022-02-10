@@ -6,6 +6,7 @@ import org.capstone.job_fair.models.dtos.company.CompanyRegistrationDTO;
 import org.capstone.job_fair.models.dtos.company.job.RegistrationJobPositionDTO;
 import org.capstone.job_fair.models.entities.company.CompanyEmployeeEntity;
 import org.capstone.job_fair.models.entities.company.CompanyRegistrationEntity;
+import org.capstone.job_fair.models.entities.company.SubCategoryEntity;
 import org.capstone.job_fair.models.entities.company.job.JobPositionEntity;
 import org.capstone.job_fair.models.entities.company.job.RegistrationJobPositionEntity;
 import org.capstone.job_fair.models.entities.job_fair.JobFairEntity;
@@ -25,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class CompanyRegistrationServiceImpl implements CompanyRegistrationService {
