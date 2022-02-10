@@ -201,5 +201,10 @@ public class MessageConstant {
         public static final String ACCOUNT_INFORMATION_EMAIL_BODY = "staff.account-information-email-body";
     }
 
+    public static final class DecoratedItem{
+        public static final String NOT_FOUND = "decorated-item.error.not-found";
+        public static final String UPDATE_SUCCESSFULLY = "decorated-item.success.update-item";
+    }
+
 }
 

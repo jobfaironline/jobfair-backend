@@ -1,7 +1,6 @@
 package org.capstone.job_fair;
 
 import org.capstone.job_fair.utils.DomainUtil;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -18,10 +17,9 @@ import springfox.documentation.spring.data.rest.configuration.SpringDataRestConf
 public class JobFairApplication {
 
     @Bean
-    public DomainUtil domainUtil(){
+    public DomainUtil domainUtil() {
         return new DomainUtil();
     }
-
 
     public static void main(String[] args) {
         SpringApplication.run(JobFairApplication.class, args);
