@@ -16,6 +16,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -38,6 +39,7 @@ public class LayoutController {
     @Autowired
     private FileStorageService fileStorageService;
 
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).STAFF)")
     @GetMapping(ApiEndPoint.Layout.LAYOUT_ENDPOINT)
     public ResponseEntity<List<LayoutDTO>> getAll() {
         List<LayoutDTO> result = layoutService.getAll();
@@ -47,12 +49,14 @@ public class LayoutController {
         return ResponseEntity.ok().body(result);
     }
 
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).STAFF)")
     @GetMapping(ApiEndPoint.Layout.LAYOUT_ENDPOINT + "/{id}")
     public ResponseEntity<LayoutDTO> getById(@PathVariable("id") String id) {
         Optional<LayoutDTO> layoutDTOOpt = layoutService.findById(id);
         return layoutDTOOpt.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).STAFF)")
     @PostMapping(ApiEndPoint.Layout.LAYOUT_ENDPOINT)
     public ResponseEntity<LayoutDTO> uploadMetaData(@Valid @RequestBody CreateLayoutMetaDataRequest request) {
         LayoutDTO dto = layoutMapper.toDTO(request);
@@ -60,6 +64,7 @@ public class LayoutController {
         return ResponseEntity.created(URI.create(dto.getUrl())).body(dto);
     }
 
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).STAFF)")
     @PostMapping(ApiEndPoint.Layout.LAYOUT_ENDPOINT + "/{id}/content")
     public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file, @PathVariable("id") String id) {
         try {
@@ -76,9 +81,10 @@ public class LayoutController {
         return ResponseEntity.accepted().build();
     }
 
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).STAFF)")
     @GetMapping(ApiEndPoint.Layout.LAYOUT_ENDPOINT + "/{id}/content")
     public ResponseEntity<?> getFile(@PathVariable String id) {
-        Resource file = null;
+        Resource file;
         try {
             file = fileStorageService.loadAsResource(id).get();
         } catch (InterruptedException | ExecutionException e) {
@@ -88,6 +94,7 @@ public class LayoutController {
                 "attachment; filename=\"" + file.getFilename() + "\"").body(file);
     }
 
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).STAFF)")
     @PutMapping(ApiEndPoint.Layout.LAYOUT_ENDPOINT + "/{id}")
     public ResponseEntity<?> update(@PathVariable("id") String id, @Valid @RequestBody UpdateLayoutMetaDataRequest request) {
         try {
