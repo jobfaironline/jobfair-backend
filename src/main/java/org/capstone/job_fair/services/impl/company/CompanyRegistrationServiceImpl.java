@@ -10,6 +10,7 @@ import org.capstone.job_fair.models.entities.company.job.JobPositionEntity;
 import org.capstone.job_fair.models.entities.company.job.RegistrationJobPositionEntity;
 import org.capstone.job_fair.models.entities.job_fair.JobFairEntity;
 import org.capstone.job_fair.models.statuses.CompanyRegistrationStatus;
+import org.capstone.job_fair.models.statuses.JobFairStatus;
 import org.capstone.job_fair.repositories.company.CompanyEmployeeRepository;
 import org.capstone.job_fair.repositories.company.CompanyRegistrationRepository;
 import org.capstone.job_fair.repositories.company.job.JobPositionRepository;
@@ -81,10 +82,12 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
 
         //Check job fair existence
         Optional<JobFairEntity> jobFairOpt = jobFairRepository.findById(companyRegistrationDTO.getJobFairId());
-
         if (!jobFairOpt.isPresent()) throw new IllegalArgumentException(
                 MessageUtil.getMessage(MessageConstant.JobFair.JOB_FAIR_NOT_FOUND));
         JobFairEntity jobFairEntity = jobFairOpt.get();
+        //Check if job fair has been approved
+        if(jobFairEntity.getStatus() != JobFairStatus.APPROVE) throw new
+                IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.JOB_FAIR_IS_NOT_APPROVED));
         //Validate job fair registration time of company
         long currentTime = new Date().getTime();
         validateJobFair(jobFairEntity, currentTime);
@@ -217,5 +220,15 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
         if (status == CompanyRegistrationStatus.REJECT) entity.setRejectReason(message);
         entity.setAuthorizerId(userDetails.getId());
         companyRegistrationRepository.save(entity);
+    }
+
+    @Override
+    public List<CompanyRegistrationEntity> getAllOwnCompanyRegistrationOfAJobFair(String jobFairId) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext()
+                .getAuthentication().getPrincipal();
+        CompanyEmployeeEntity companyEmployee = companyEmployeeRepository.findById(userDetails.getId()).get();
+        String companyId = companyEmployee.getCompany().getId();
+        Optional<List<CompanyRegistrationEntity>> companyRegistrationEntityOptional = companyRegistrationRepository.findAllByJobFairIdAndCompanyId(companyId,jobFairId);
+        return companyRegistrationEntityOptional.get();
     }
 }

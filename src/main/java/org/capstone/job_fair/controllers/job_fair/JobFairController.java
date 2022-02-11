@@ -26,6 +26,7 @@ public class JobFairController {
     @Autowired
     private JobFairService jobFairService;
 
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).STAFF)")
     @PostMapping(ApiEndPoint.JobFair.JOB_FAIR_PLAN)
     public ResponseEntity<?> draftJobFairPlan(@Validated @RequestBody CreateJobFairPlanRequest request) {
         try {
@@ -123,6 +124,7 @@ public class JobFairController {
         } catch (IllegalArgumentException ex) {
             return GenericResponse.build(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }
-
     }
+
+
 }

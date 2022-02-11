@@ -63,7 +63,6 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
 
         employeeRepository.save(entity);
         return mapper.toDTO(entity);
-
     }
 
 
@@ -84,13 +83,14 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyEmployee.MAX_QUOTA_FOR_COMPANY_EMPLOYEE));
         }
 
-
+        String password = PasswordGenerator.generatePassword();
+        dto.getAccount().setPassword(password);
         dto.getAccount().setRole(Role.COMPANY_EMPLOYEE);
         dto.getAccount().setStatus(AccountStatus.REGISTERED);
         dto.getAccount().setProfileImageUrl(AccountConstant.DEFAULT_PROFILE_IMAGE_URL);
 
         CompanyEmployeeEntity entity = mapper.toEntity(dto);
-        String hashPassword = encoder.encode(PasswordGenerator.generatePassword());
+        String hashPassword = encoder.encode(password);
         entity.getAccount().setPassword(hashPassword);
         employeeRepository.save(entity);
     }

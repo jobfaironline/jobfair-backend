@@ -4,10 +4,12 @@ import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.models.entities.company.CompanyRegistrationEntity;
 import org.capstone.job_fair.models.statuses.CompanyRegistrationStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.transaction.annotation.Transactional;
 import springfox.documentation.annotations.ApiIgnore;
 
+import java.util.List;
 import java.util.Optional;
 
 @Transactional
@@ -15,4 +17,6 @@ import java.util.Optional;
 @RepositoryRestResource(path = ApiEndPoint.RestDataEndpoint.COMPANY_REGISTRATION, exported = false)
 public interface CompanyRegistrationRepository extends JpaRepository<CompanyRegistrationEntity, String> {
     Optional<CompanyRegistrationEntity> findByCompanyIdAndStatus(String companyId, CompanyRegistrationStatus status);
+    @Query("SELECT t FROM CompanyRegistrationEntity t WHERE t.companyId = ?1 and t.jobFairId = ?2")
+    Optional<List<CompanyRegistrationEntity>> findAllByJobFairIdAndCompanyId(String comanyId, String jobFairId);
 }

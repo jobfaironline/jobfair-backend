@@ -27,6 +27,7 @@ public class MessageConstant {
         public static final String INVALID_STATUS_WHEN_EVALUATE = "job-fair-plan.error.invalid-status-when-evaluate";
         public static final String REJECT_MISSING_REASON = "job-fair-plan.error.reject-missing-reason";
         public static final String EVALUATE_SUCCESSFULLY = "job-fair-plan.success.evaluate-successfully";
+        public static final String JOB_FAIR_IS_NOT_APPROVED = "job-fair-plan.error.not-approved";
 
     }
 
