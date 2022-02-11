@@ -20,9 +20,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 
 @RestController
 public class LayoutController {
@@ -60,13 +62,28 @@ public class LayoutController {
 
     @PostMapping(ApiEndPoint.Layout.LAYOUT_ENDPOINT + "/{id}/content")
     public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file, @PathVariable("id") String id) {
-        fileStorageService.store(file, AWSConstant.LAYOUT_FOLDER + "/" + id);
+        try {
+            layoutService.validateAndGenerateBoothSlot(file, id);
+            fileStorageService.store(file.getBytes(), AWSConstant.LAYOUT_FOLDER + "/" + id).exceptionally(throwable -> {
+                throwable.printStackTrace();
+                return null;
+            });
+        } catch (IllegalArgumentException e) {
+            return GenericResponse.build(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (IOException e) {
+            return GenericResponse.build(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
         return ResponseEntity.accepted().build();
     }
 
     @GetMapping(ApiEndPoint.Layout.LAYOUT_ENDPOINT + "/{id}/content")
-    public ResponseEntity<Resource> getFile(@PathVariable String id) {
-        Resource file = fileStorageService.loadAsResource(id);
+    public ResponseEntity<?> getFile(@PathVariable String id) {
+        Resource file = null;
+        try {
+            file = fileStorageService.loadAsResource(id).get();
+        } catch (InterruptedException | ExecutionException e) {
+            return GenericResponse.build(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
         return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
                 "attachment; filename=\"" + file.getFilename() + "\"").body(file);
     }

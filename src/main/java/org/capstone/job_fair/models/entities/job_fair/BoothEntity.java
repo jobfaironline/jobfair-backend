@@ -4,40 +4,42 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.capstone.job_fair.models.statuses.BoothStatus;
 import org.hibernate.Hibernate;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.Objects;
-import java.util.Set;
 
 @Entity
-@Table(name = "layout", schema = "dbo")
+@Table(name = "booth", schema = "dbo")
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter
 @Getter
-public class LayoutEntity {
-
+public class BoothEntity {
     @Id
     @Column(name = "id", nullable = false, length = 36)
-    //do not use auto generated id here as we need pre generate id
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "org.hibernate.id.UUIDGenerator")
     private String id;
-    @Column(name = "name", length = 100)
+    @Column(name = "price", precision = 0)
+    private Double price;
+    @Column(name = "status", nullable = true)
+    @Enumerated(EnumType.ORDINAL)
+    private BoothStatus status;
+    @Column(name = "name", nullable = false, length = 100)
     private String name;
-    @Column(name = "url", length = 2048)
-    private String url;
-    @Column(name = "description", length = 500)
-    private String description;
-    @OneToMany(mappedBy = "layout", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
-    private Set<BoothEntity> booths;
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "layout_id")
+    private LayoutEntity layout;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
 
-        LayoutEntity that = (LayoutEntity) o;
+        BoothEntity that = (BoothEntity) o;
 
         return Objects.equals(id, that.id);
     }

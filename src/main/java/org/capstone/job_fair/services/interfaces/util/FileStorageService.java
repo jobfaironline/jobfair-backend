@@ -1,10 +1,11 @@
 package org.capstone.job_fair.services.interfaces.util;
 
 import org.springframework.core.io.Resource;
-import org.springframework.web.multipart.MultipartFile;
+
+import java.util.concurrent.CompletableFuture;
 
 public interface FileStorageService {
-    void store(MultipartFile file, String name);
+    CompletableFuture<Void> store(byte[] bytes, String name);
 
-    Resource loadAsResource(String filename);
+    CompletableFuture<Resource> loadAsResource(String filename);
 }

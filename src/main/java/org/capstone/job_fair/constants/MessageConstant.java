@@ -209,6 +209,7 @@ public class MessageConstant {
     public static final class Layout {
         public static final String NOT_FOUND = "layout.error.not-found";
         public static final String UPDATE_SUCCESSFULLY = "layout.success.update-item";
+        public static final String INVALID_GLB_FILE = "layout.error.invalid-glb-file";
     }
 
 }

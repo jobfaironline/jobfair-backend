@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.ResponseBytes;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -18,6 +18,7 @@ import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 public class AWSFileStorageService implements FileStorageService {
@@ -30,7 +31,8 @@ public class AWSFileStorageService implements FileStorageService {
 
     @Override
     @SneakyThrows
-    public void store(MultipartFile file, String name) {
+    @Async("threadPoolTaskExecutor")
+    public CompletableFuture<Void> store(byte[] bytes, String name) {
         Map<String, String> metadata = new HashMap<>();
         metadata.put("x-amz-meta-myVal", "test");
 
@@ -41,21 +43,21 @@ public class AWSFileStorageService implements FileStorageService {
                 .build();
 
 
-        PutObjectResponse response = amazonS3Client.putObject(putOb,
-                RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
-
+        PutObjectResponse response = amazonS3Client.putObject(putOb, RequestBody.fromBytes(bytes));
+        return CompletableFuture.completedFuture(null);
     }
 
 
     @Override
     @SneakyThrows
-    public Resource loadAsResource(String filename) {
+    @Async("threadPoolTaskExecutor")
+    public CompletableFuture<Resource> loadAsResource(String filename) {
         GetObjectRequest objectRequest = GetObjectRequest.builder()
                 .bucket(bucketName)
                 .key(filename)
                 .build();
 
         ResponseBytes<GetObjectResponse> objectBytes = amazonS3Client.getObjectAsBytes(objectRequest);
-        return new ByteArrayResource(objectBytes.asByteArray());
+        return CompletableFuture.completedFuture(new ByteArrayResource(objectBytes.asByteArray()));
     }
 }
