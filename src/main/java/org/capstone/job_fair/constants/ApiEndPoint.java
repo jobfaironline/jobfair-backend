@@ -32,6 +32,8 @@ public class ApiEndPoint {
         public static final String DRAFT = COMPANY_REGISTRATION_ENDPOINT + "/draft";
         public static final String SUBMIT = COMPANY_REGISTRATION_ENDPOINT + "/submit";
         public static final String CANCEL = COMPANY_REGISTRATION_ENDPOINT + "/cancel";
+        public static final String EVALUATE = COMPANY_REGISTRATION_ENDPOINT + "/evaluate";
+
     }
 
     public static final class Authorization {

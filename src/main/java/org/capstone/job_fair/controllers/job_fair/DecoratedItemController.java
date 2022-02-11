@@ -37,7 +37,7 @@ public class DecoratedItemController {
     @Autowired
     private FileStorageService fileStorageService;
 
-    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN or T(org.capstone.job_fair.models.enums.Role).STAFF)")
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).STAFF)")
     @GetMapping(ApiEndPoint.DecoratedItem.DECORATED_ITEM_ENDPOINT)
     public ResponseEntity<List<DecoratedItemDTO>> getAll() {
         List<DecoratedItemDTO> result = decoratedItemService.getAll();
@@ -48,7 +48,7 @@ public class DecoratedItemController {
     }
 
     @GetMapping(ApiEndPoint.DecoratedItem.DECORATED_ITEM_ENDPOINT + "/{id}")
-    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN or T(org.capstone.job_fair.models.enums.Role).STAFF)")
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).STAFF)")
     public ResponseEntity<DecoratedItemDTO> getById(@PathVariable("id") String id) {
         Optional<DecoratedItemDTO> decoratedItemDTOOpt = decoratedItemService.findById(id);
         if (!decoratedItemDTOOpt.isPresent()) {
@@ -58,7 +58,7 @@ public class DecoratedItemController {
     }
 
     @PostMapping(ApiEndPoint.DecoratedItem.DECORATED_ITEM_ENDPOINT)
-    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN or T(org.capstone.job_fair.models.enums.Role).STAFF)")
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).STAFF)")
     public ResponseEntity<DecoratedItemDTO> uploadMetaData(@RequestBody @Valid CreateDecoratedItemMetaDataRequest request) {
         DecoratedItemDTO dto = decoratedItemMapper.toDTO(request);
         dto = decoratedItemService.createNew(dto);
@@ -66,14 +66,14 @@ public class DecoratedItemController {
     }
 
     @PostMapping(ApiEndPoint.DecoratedItem.DECORATED_ITEM_ENDPOINT + "/{id}/content")
-    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN or T(org.capstone.job_fair.models.enums.Role).STAFF)")
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).STAFF)")
     public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file, @PathVariable("id") String id) {
         fileStorageService.store(file, AWSConstant.DECORATED_ITEMS_FOLDER + "/" + id);
         return ResponseEntity.accepted().build();
     }
 
     @GetMapping(ApiEndPoint.DecoratedItem.DECORATED_ITEM_ENDPOINT + "/{id}/content")
-    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN or T(org.capstone.job_fair.models.enums.Role).STAFF)")
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).STAFF)")
     public ResponseEntity<Resource> getFile(@PathVariable String id) {
         Resource file = fileStorageService.loadAsResource(id);
         return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
@@ -81,7 +81,7 @@ public class DecoratedItemController {
     }
 
     @PutMapping(ApiEndPoint.DecoratedItem.DECORATED_ITEM_ENDPOINT + "/{id}")
-    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN or T(org.capstone.job_fair.models.enums.Role).STAFF)")
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).STAFF)")
     public ResponseEntity<?> update(@Valid @RequestBody UpdateDecoratedItemMetaDataRequest request, @PathVariable String id) {
         try {
             DecoratedItemDTO dto = decoratedItemMapper.toDTO(request);
@@ -94,6 +94,8 @@ public class DecoratedItemController {
             return GenericResponse.build(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
+
+
 
 
 }

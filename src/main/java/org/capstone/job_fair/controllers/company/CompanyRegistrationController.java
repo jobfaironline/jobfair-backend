@@ -4,6 +4,7 @@ import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.controllers.payload.requests.CancelCompanyJobFairRegistrationRequest;
 import org.capstone.job_fair.controllers.payload.requests.CompanyJobFairRegistrationRequest;
+import org.capstone.job_fair.controllers.payload.requests.StaffEvaluateCompanyRegistrationRequest;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.dtos.company.CompanyRegistrationDTO;
 import org.capstone.job_fair.models.dtos.company.job.RegistrationJobPositionDTO;
@@ -69,8 +70,20 @@ public class CompanyRegistrationController {
     @PostMapping(ApiEndPoint.CompanyRegistration.CANCEL)
     public ResponseEntity<?> cancleJobFairRegistration(@Valid @RequestBody CancelCompanyJobFairRegistrationRequest request) {
         try {
-            companyRegistrationService.cancelCompanyRegistration(request.getCompanyRegistrationId(),request.getCancelReason());
+            companyRegistrationService.cancelCompanyRegistration(request.getCompanyRegistrationId(), request.getCancelReason());
             return GenericResponse.build(MessageUtil.getMessage(MessageConstant.CompanyRegistration.CANCEL_SUCCESSFULLY)
+                    , HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return GenericResponse.build(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).STAFF) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
+    @PostMapping(ApiEndPoint.CompanyRegistration.EVALUATE)
+    public ResponseEntity<?> evaluateCompanyRegistration(@Valid @RequestBody StaffEvaluateCompanyRegistrationRequest request) {
+        try {
+            companyRegistrationService.staffEvaluateCompanyRegistration(request.getCompanyRegistrationId(), request.getStatus(), request.getMessage());
+            return GenericResponse.build(MessageUtil.getMessage(MessageConstant.CompanyRegistration.EVALUATE_SUCCESSFULLY)
                     , HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return GenericResponse.build(e.getMessage(), HttpStatus.BAD_REQUEST);

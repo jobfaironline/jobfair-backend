@@ -186,6 +186,13 @@ public class MessageConstant {
         public static final String EXISTED_PENDING_REGISTRATION = "company-registration.error.existed-pending-registration";
         public static final String NOT_ALLOW_CANCEL = "company-registration.error.not-allow-cancel";
         public static final String CANCEL_SUCCESSFULLY = "company-registration.success.cancel";
+        public static final String REJECT_MISSING_REASON = "company-registration.error.reject-missing-reason";
+        public static final String EVALUATE_SUCCESSFULLY = "company-registration.evaluate-successfully";
+        public static final String COMPANY_REGISTRATION_NOT_FOUND = "company-registration.not-found";
+        public static final String INVALID_STATUS_WHEN_EVALUATE = "company-registration.invalid-status-when-evaluate";
+        public static final String INVALID_COMPANY_REISTRATION_STATUS_WHEN_EVALUATE = "company-registration.invalid-company-registration-status-when-evaluate";
+
+
     }
 
     public static final class Staff {
