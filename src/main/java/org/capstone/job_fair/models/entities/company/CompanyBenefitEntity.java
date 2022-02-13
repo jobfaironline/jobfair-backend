@@ -38,6 +38,7 @@ public class CompanyBenefitEntity {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
         CompanyBenefitEntity that = (CompanyBenefitEntity) o;
+        if(id == null || that.getId() == null) return false;
         return getId().equals(that.getId());
     }
 

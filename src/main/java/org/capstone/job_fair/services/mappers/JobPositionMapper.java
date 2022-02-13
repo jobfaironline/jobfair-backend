@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE, uses = {SubCategoryMapper.class})
+@Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE, uses = {SubCategoryMapper.class, CompanyMapper.class})
 public abstract class JobPositionMapper {
     @Autowired
     private SubCategoryMapper subCategoryMapper;
@@ -44,6 +44,7 @@ public abstract class JobPositionMapper {
     @Mapping(target = "jobTypeEntity", source = "jobType", qualifiedByName = "toJobPositionEntityJobType")
     @Mapping(target = "categories", source = "subCategoryDTOs", qualifiedByName = "toJobPositionEntitySubCategory")
     @Mapping(target = "skillTagEntities", source = "skillTagDTOS", qualifiedByName = "toJobPositionEntitySkillTag")
+    @Mapping(target = "company", source = "companyDTO")
     public abstract JobPositionEntity toEntity(JobPositionDTO jobPositionDTO);
 
 

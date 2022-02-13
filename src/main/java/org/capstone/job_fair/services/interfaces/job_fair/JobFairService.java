@@ -20,4 +20,6 @@ public interface JobFairService {
     void adminEvaluateJobFair(String jobFairId, JobFairStatus status, String message);
 
     List<JobFairDTO> getAll();
+
+    List<JobFairDTO> getAllJobFairByStatus(JobFairStatus jobFairStatus);
 }

@@ -125,7 +125,7 @@ public class JobFairServiceImpl implements JobFairService {
         if (status != JobFairStatus.REJECT && status != JobFairStatus.APPROVE) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.INVALID_STATUS_WHEN_EVALUATE));
         }
-        if (status == JobFairStatus.REJECT && message == null){
+        if (status == JobFairStatus.REJECT && message == null) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.REJECT_MISSING_REASON));
         }
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext()
@@ -142,6 +142,12 @@ public class JobFairServiceImpl implements JobFairService {
     @Override
     public List<JobFairDTO> getAll() {
         return jobFairRepository.findAll().stream().map(jobFairMapper::toJobFairDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<JobFairDTO> getAllJobFairByStatus(JobFairStatus jobFairStatus) {
+        List<JobFairEntity> jobFairEntities = jobFairRepository.findAllByStatus(jobFairStatus);
+            return jobFairEntities.stream().map(jobFairMapper::toJobFairDTO).collect(Collectors.toList());
     }
 
 }

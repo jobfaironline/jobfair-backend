@@ -8,6 +8,7 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.transaction.annotation.Transactional;
 import springfox.documentation.annotations.ApiIgnore;
 
+import java.util.List;
 import java.util.Optional;
 
 @Transactional
@@ -15,4 +16,6 @@ import java.util.Optional;
 @RepositoryRestResource(path = ApiEndPoint.RestDataEndpoint.COMPANY_REGISTRATION, exported = false)
 public interface CompanyRegistrationRepository extends JpaRepository<CompanyRegistrationEntity, String> {
     Optional<CompanyRegistrationEntity> findByCompanyIdAndStatus(String companyId, CompanyRegistrationStatus status);
+
+    List<CompanyRegistrationEntity> findAllByJobFairIdAndCompanyId(String jobFairId, String companyId);
 }
