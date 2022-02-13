@@ -16,5 +16,7 @@ public interface CompanyRegistrationService {
 
     void staffEvaluateCompanyRegistration(String companyRegistrationId, CompanyRegistrationStatus status, String message);
 
-    List<CompanyRegistrationEntity> getAllOwnCompanyRegistrationOfAJobFair(String jobFairId);
+    String getCompanyIdInSecurityContext();
+
+    List<CompanyRegistrationEntity> getAllOwnCompanyRegistrationOfAJobFair(String jobFairId, String companyId);
 }

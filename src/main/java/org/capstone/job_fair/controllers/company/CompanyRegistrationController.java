@@ -93,10 +93,11 @@ public class CompanyRegistrationController {
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
     @GetMapping(ApiEndPoint.CompanyRegistration.GET_ALL_OWN_COMPANY_REGISTRATION + "/{jobFairId}")
-    public ResponseEntity<?> getAllOwnCompanyRegistration(@PathVariable String jobFairId){
+    public ResponseEntity<?> getAllOwnCompanyRegistration(@PathVariable String jobFairId) {
         try {
-            List<CompanyRegistrationEntity> companyRegistrationEntities =  companyRegistrationService.getAllOwnCompanyRegistrationOfAJobFair(jobFairId);
-            if(companyRegistrationEntities.isEmpty()) return ResponseEntity.notFound().build();
+            String companyId = companyRegistrationService.getCompanyIdInSecurityContext();
+            List<CompanyRegistrationEntity> companyRegistrationEntities = companyRegistrationService.getAllOwnCompanyRegistrationOfAJobFair(jobFairId, companyId);
+            if (companyRegistrationEntities.isEmpty()) return ResponseEntity.notFound().build();
             return new ResponseEntity<>(companyRegistrationEntities, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return GenericResponse.build(e.getMessage(), HttpStatus.BAD_REQUEST);
