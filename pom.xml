@@ -138,6 +138,13 @@
             <artifactId>s3control</artifactId>
         </dependency>
         <!-- End AWS dependencies -->
+        <!-- GLTF dependencies -->
+        <dependency>
+            <groupId>de.javagl</groupId>
+            <artifactId>jgltf-model</artifactId>
+            <version>2.0.1</version>
+        </dependency>
+        <!-- End GLTF dependencies -->
     </dependencies>
 
     <packaging>jar</packaging>

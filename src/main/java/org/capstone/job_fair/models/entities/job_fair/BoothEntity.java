@@ -4,43 +4,48 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.capstone.job_fair.models.statuses.BoothStatus;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
-@AllArgsConstructor
+@Table(name = "booth", schema = "dbo")
 @NoArgsConstructor
+@AllArgsConstructor
 @Setter
 @Getter
-@Table(name = "decorated_item", schema = "dbo")
-public class DecoratedItemEntity {
+public class BoothEntity {
     @Id
     @Column(name = "id", nullable = false, length = 36)
-    //do not use auto generated id here as we need pre generate id
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "org.hibernate.id.UUIDGenerator")
     private String id;
-    @Column(name = "size", nullable = false)
-    private Integer size;
-    @Column(name = "url", nullable = false, length = 2048)
-    private String url;
+    @Column(name = "price", precision = 0)
+    private Double price;
+    @Column(name = "status", nullable = true)
+    @Enumerated(EnumType.ORDINAL)
+    private BoothStatus status;
     @Column(name = "name", nullable = false, length = 100)
     private String name;
-    @Column(name = "description", nullable = false, length = 500)
-    private String description;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "layout_id")
+    private LayoutEntity layout;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
 
-        DecoratedItemEntity that = (DecoratedItemEntity) o;
+        BoothEntity that = (BoothEntity) o;
 
-        return getId() != null ? getId().equals(that.getId()) : that.getId() == null;
+        return Objects.equals(id, that.id);
     }
 
     @Override
     public int hashCode() {
-        return getId() != null ? getId().hashCode() : 0;
+        return id != null ? id.hashCode() : 0;
     }
 }
