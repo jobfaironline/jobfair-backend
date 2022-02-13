@@ -10,6 +10,6 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public abstract class CompanyRegistrationMapper {
     public abstract CompanyRegistrationDTO toDTO(CompanyJobFairRegistrationRequest request);
-
+    public abstract CompanyRegistrationDTO companyRegistrationDTO(CompanyRegistrationEntity entity);
     public abstract CompanyRegistrationEntity toEntity(CompanyRegistrationDTO dto);
 }

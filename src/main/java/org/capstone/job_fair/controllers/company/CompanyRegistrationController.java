@@ -96,9 +96,9 @@ public class CompanyRegistrationController {
     public ResponseEntity<?> getAllOwnCompanyRegistration(@PathVariable String jobFairId) {
         try {
             String companyId = companyRegistrationService.getCompanyIdInSecurityContext();
-            List<CompanyRegistrationEntity> companyRegistrationEntities = companyRegistrationService.getAllOwnCompanyRegistrationOfAJobFair(jobFairId, companyId);
-            if (companyRegistrationEntities.isEmpty()) return ResponseEntity.notFound().build();
-            return new ResponseEntity<>(companyRegistrationEntities, HttpStatus.OK);
+            List<CompanyRegistrationDTO> companyRegistrationDTOS = companyRegistrationService.getAllOwnCompanyRegistrationOfAJobFair(jobFairId, companyId);
+            if (companyRegistrationDTOS.isEmpty()) return ResponseEntity.notFound().build();
+            return new ResponseEntity<>(companyRegistrationDTOS, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return GenericResponse.build(e.getMessage(), HttpStatus.BAD_REQUEST);
         }

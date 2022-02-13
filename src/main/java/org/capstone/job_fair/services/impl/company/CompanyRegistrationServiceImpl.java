@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class CompanyRegistrationServiceImpl implements CompanyRegistrationService {
@@ -231,9 +232,8 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
     }
 
     @Override
-    public List<CompanyRegistrationEntity> getAllOwnCompanyRegistrationOfAJobFair(String jobFairId, String companyId) {
-
-        Optional<List<CompanyRegistrationEntity>> companyRegistrationEntityOptional = companyRegistrationRepository.findAllByJobFairIdAndCompanyId(jobFairId,companyId);
-        return companyRegistrationEntityOptional.get();
+    public List<CompanyRegistrationDTO> getAllOwnCompanyRegistrationOfAJobFair(String jobFairId, String companyId) {
+        List<CompanyRegistrationEntity> companyRegistrationEntities = companyRegistrationRepository.findAllByJobFairIdAndCompanyId(jobFairId,companyId);
+        return companyRegistrationEntities.stream().map(companyRegistrationMapper::companyRegistrationDTO).collect(Collectors.toList());
     }
 }

@@ -17,5 +17,5 @@ import java.util.Optional;
 public interface CompanyRegistrationRepository extends JpaRepository<CompanyRegistrationEntity, String> {
     Optional<CompanyRegistrationEntity> findByCompanyIdAndStatus(String companyId, CompanyRegistrationStatus status);
 
-    Optional<List<CompanyRegistrationEntity>> findAllByJobFairIdAndCompanyId(String jobFairId, String companyId);
+    List<CompanyRegistrationEntity> findAllByJobFairIdAndCompanyId(String jobFairId, String companyId);
 }

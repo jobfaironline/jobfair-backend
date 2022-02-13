@@ -18,5 +18,5 @@ public interface CompanyRegistrationService {
 
     String getCompanyIdInSecurityContext();
 
-    List<CompanyRegistrationEntity> getAllOwnCompanyRegistrationOfAJobFair(String jobFairId, String companyId);
+    List<CompanyRegistrationDTO> getAllOwnCompanyRegistrationOfAJobFair(String jobFairId, String companyId);
 }
