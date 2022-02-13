@@ -3,20 +3,19 @@ package org.capstone.job_fair.controllers.job_fair;
 import org.capstone.job_fair.constants.AWSConstant;
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
-import org.capstone.job_fair.controllers.payload.requests.CreateDecoratedItemMetaDataRequest;
-import org.capstone.job_fair.controllers.payload.requests.UpdateDecoratedItemMetaDataRequest;
+import org.capstone.job_fair.controllers.payload.requests.CreateLayoutMetaDataRequest;
+import org.capstone.job_fair.controllers.payload.requests.UpdateLayoutMetaDataRequest;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
-import org.capstone.job_fair.models.dtos.job_fair.DecoratedItemDTO;
-import org.capstone.job_fair.services.interfaces.job_fair.DecoratedItemService;
+import org.capstone.job_fair.models.dtos.job_fair.LayoutDTO;
+import org.capstone.job_fair.services.interfaces.job_fair.LayoutService;
 import org.capstone.job_fair.services.interfaces.util.FileStorageService;
-import org.capstone.job_fair.services.mappers.DecoratedItemMapper;
+import org.capstone.job_fair.services.mappers.LayoutMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,64 +28,63 @@ import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 @RestController
-public class DecoratedItemController {
+public class LayoutController {
 
     @Autowired
-    private DecoratedItemService decoratedItemService;
+    private LayoutService layoutService;
 
     @Autowired
-    private DecoratedItemMapper decoratedItemMapper;
+    private LayoutMapper layoutMapper;
 
     @Autowired
     private FileStorageService fileStorageService;
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).STAFF)")
-    @GetMapping(ApiEndPoint.DecoratedItem.DECORATED_ITEM_ENDPOINT)
-    public ResponseEntity<List<DecoratedItemDTO>> getAll() {
-        List<DecoratedItemDTO> result = decoratedItemService.getAll();
+    @GetMapping(ApiEndPoint.Layout.LAYOUT_ENDPOINT)
+    public ResponseEntity<List<LayoutDTO>> getAll() {
+        List<LayoutDTO> result = layoutService.getAll();
         if (result.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok().body(result);
     }
 
-    @GetMapping(ApiEndPoint.DecoratedItem.DECORATED_ITEM_ENDPOINT + "/{id}")
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).STAFF)")
-    public ResponseEntity<DecoratedItemDTO> getById(@PathVariable("id") String id) {
-        Optional<DecoratedItemDTO> decoratedItemDTOOpt = decoratedItemService.findById(id);
-        if (!decoratedItemDTOOpt.isPresent()) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(decoratedItemDTOOpt.get());
+    @GetMapping(ApiEndPoint.Layout.LAYOUT_ENDPOINT + "/{id}")
+    public ResponseEntity<LayoutDTO> getById(@PathVariable("id") String id) {
+        Optional<LayoutDTO> layoutDTOOpt = layoutService.findById(id);
+        return layoutDTOOpt.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @PostMapping(ApiEndPoint.DecoratedItem.DECORATED_ITEM_ENDPOINT)
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).STAFF)")
-    public ResponseEntity<DecoratedItemDTO> uploadMetaData(@RequestBody @Valid CreateDecoratedItemMetaDataRequest request) {
-        DecoratedItemDTO dto = decoratedItemMapper.toDTO(request);
-        dto = decoratedItemService.createNew(dto);
+    @PostMapping(ApiEndPoint.Layout.LAYOUT_ENDPOINT)
+    public ResponseEntity<LayoutDTO> uploadMetaData(@Valid @RequestBody CreateLayoutMetaDataRequest request) {
+        LayoutDTO dto = layoutMapper.toDTO(request);
+        dto = layoutService.createNew(dto);
         return ResponseEntity.created(URI.create(dto.getUrl())).body(dto);
     }
 
-    @PostMapping(ApiEndPoint.DecoratedItem.DECORATED_ITEM_ENDPOINT + "/{id}/content")
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).STAFF)")
-    @Async("threadPoolTaskExecutor")
+    @PostMapping(ApiEndPoint.Layout.LAYOUT_ENDPOINT + "/{id}/content")
     public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file, @PathVariable("id") String id) {
         try {
-            fileStorageService.store(file.getBytes(), AWSConstant.DECORATED_ITEMS_FOLDER + "/" + id).exceptionally(throwable -> {
+            layoutService.validateAndGenerateBoothSlot(file, id);
+            fileStorageService.store(file.getBytes(), AWSConstant.LAYOUT_FOLDER + "/" + id).exceptionally(throwable -> {
                 throwable.printStackTrace();
                 return null;
             });
+        } catch (IllegalArgumentException e) {
+            return GenericResponse.build(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (IOException e) {
             return GenericResponse.build(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return ResponseEntity.accepted().build();
     }
 
-    @GetMapping(ApiEndPoint.DecoratedItem.DECORATED_ITEM_ENDPOINT + "/{id}/content")
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).STAFF)")
+    @GetMapping(ApiEndPoint.Layout.LAYOUT_ENDPOINT + "/{id}/content")
     public ResponseEntity<?> getFile(@PathVariable String id) {
-        Resource file = null;
+        Resource file;
         try {
             file = fileStorageService.loadAsResource(id).get();
         } catch (InterruptedException | ExecutionException e) {
@@ -96,15 +94,15 @@ public class DecoratedItemController {
                 "attachment; filename=\"" + file.getFilename() + "\"").body(file);
     }
 
-    @PutMapping(ApiEndPoint.DecoratedItem.DECORATED_ITEM_ENDPOINT + "/{id}")
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).STAFF)")
-    public ResponseEntity<?> update(@Valid @RequestBody UpdateDecoratedItemMetaDataRequest request, @PathVariable String id) {
+    @PutMapping(ApiEndPoint.Layout.LAYOUT_ENDPOINT + "/{id}")
+    public ResponseEntity<?> update(@PathVariable("id") String id, @Valid @RequestBody UpdateLayoutMetaDataRequest request) {
         try {
-            DecoratedItemDTO dto = decoratedItemMapper.toDTO(request);
+            LayoutDTO dto = layoutMapper.toDTO(request);
             dto.setId(id);
-            decoratedItemService.update(dto);
+            layoutService.update(dto);
             return GenericResponse.build(
-                    MessageUtil.getMessage(MessageConstant.DecoratedItem.UPDATE_SUCCESSFULLY),
+                    MessageUtil.getMessage(MessageConstant.Layout.UPDATE_SUCCESSFULLY),
                     HttpStatus.OK);
         } catch (IllegalArgumentException ex) {
             return GenericResponse.build(ex.getMessage(), HttpStatus.BAD_REQUEST);

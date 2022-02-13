@@ -7,10 +7,9 @@ import org.capstone.job_fair.models.entities.job_fair.DecoratedItemEntity;
 import org.capstone.job_fair.repositories.job_fair.DecoratedItemRepository;
 import org.capstone.job_fair.services.interfaces.job_fair.DecoratedItemService;
 import org.capstone.job_fair.services.mappers.DecoratedItemMapper;
-import org.capstone.job_fair.utils.DomainUtil;
+import org.capstone.job_fair.utils.AwsUtil;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,9 +20,6 @@ import java.util.stream.Collectors;
 @Service
 public class DecoratedItemServiceImpl implements DecoratedItemService {
 
-    @Value("${amazonProperties.cdn-link}")
-    private String cdnLink;
-
     @Autowired
     private DecoratedItemRepository decoratedItemRepository;
 
@@ -31,7 +27,8 @@ public class DecoratedItemServiceImpl implements DecoratedItemService {
     private DecoratedItemMapper decoratedItemMapper;
 
     @Autowired
-    private DomainUtil domainUtil;
+    private AwsUtil awsUtil;
+
 
     @Override
     public List<DecoratedItemDTO> getAll() {
@@ -47,13 +44,9 @@ public class DecoratedItemServiceImpl implements DecoratedItemService {
     public DecoratedItemDTO createNew(DecoratedItemDTO dto) {
         DecoratedItemEntity entity = decoratedItemMapper.toEntity(dto);
         String id = UUID.randomUUID().toString();
+        String url = awsUtil.generateAwsS3AccessString(AWSConstant.DECORATED_ITEMS_FOLDER, id);
         entity.setId(id);
-        StringBuffer url = new StringBuffer(cdnLink);
-        url.append("/");
-        url.append(AWSConstant.IMAGE_FOLDER);
-        url.append("/");
-        url.append(entity.getId());
-        entity.setUrl(url.toString());
+        entity.setUrl(url);
         entity = decoratedItemRepository.save(entity);
         return decoratedItemMapper.toDTO(entity);
     }
@@ -62,9 +55,10 @@ public class DecoratedItemServiceImpl implements DecoratedItemService {
     public void update(DecoratedItemDTO dto) {
         Optional<DecoratedItemEntity> decoratedItemEntityOpt = decoratedItemRepository.findById(dto.getId());
         if (!decoratedItemEntityOpt.isPresent()) {
-            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Account.NOT_FOUND));
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.DecoratedItem.NOT_FOUND));
         }
         DecoratedItemEntity decoratedItemEntity = decoratedItemEntityOpt.get();
         decoratedItemMapper.updateEntityFromDTO(dto, decoratedItemEntity);
+        decoratedItemRepository.save(decoratedItemEntity);
     }
 }
