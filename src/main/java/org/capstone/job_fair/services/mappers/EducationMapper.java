@@ -10,6 +10,7 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public abstract class EducationMapper {
     public abstract EducationEntity toEntity(EducationDTO dto);
+
     public abstract EducationDTO toDTO(EducationEntity entity);
 
     public abstract EducationDTO toDTO(UpdateAttendantRequest.Educations request);

@@ -45,8 +45,7 @@ public class AuthController {
     private final CompanyEmployeeService companyEmployeeService;
 
 
-
-    private boolean isAccountHasRole(UserDetailsImpl userDetails, Role role){
+    private boolean isAccountHasRole(UserDetailsImpl userDetails, Role role) {
         return userDetails.getAuthorities().stream().anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals(role.getAuthority()));
     }
 
@@ -67,7 +66,7 @@ public class AuthController {
             UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
             //check if the Company Employee first time login with provided password
             boolean isEmployeeFirstTime = false;
-            if(isAccountHasRole(userDetails, Role.COMPANY_EMPLOYEE) && userDetails.getStatus().equals(AccountStatus.REGISTERED)) {
+            if (isAccountHasRole(userDetails, Role.COMPANY_EMPLOYEE) && userDetails.getStatus().equals(AccountStatus.REGISTERED)) {
                 companyEmployeeService.updateEmployeeStatus(userDetails.getEmail());
                 isEmployeeFirstTime = true;
             }

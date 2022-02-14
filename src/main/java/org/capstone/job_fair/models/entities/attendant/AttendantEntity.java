@@ -77,7 +77,7 @@ public class AttendantEntity {
     private List<CertificationEntity> certificationEntities;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE}, orphanRemoval = true)
-    @JoinColumn(name = "attendant_id", referencedColumnName = "account_id" )
+    @JoinColumn(name = "attendant_id", referencedColumnName = "account_id")
     private List<ReferenceEntity> referenceEntities;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE}, orphanRemoval = true)

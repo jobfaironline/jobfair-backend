@@ -27,7 +27,7 @@ public class CompanyEmployeeEntity {
     @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
     @JoinColumn(name = "account_id")
     @MapsId
-    private  AccountEntity account;
+    private AccountEntity account;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id")

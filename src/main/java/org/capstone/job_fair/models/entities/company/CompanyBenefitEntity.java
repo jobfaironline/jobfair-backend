@@ -16,7 +16,7 @@ import javax.persistence.*;
 public class CompanyBenefitEntity {
 
     @Id
-    @GeneratedValue (strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @Column(name = "description", length = 200)
     private String description;
@@ -38,7 +38,7 @@ public class CompanyBenefitEntity {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
         CompanyBenefitEntity that = (CompanyBenefitEntity) o;
-        if(id == null || that.getId() == null) return false;
+        if (id == null || that.getId() == null) return false;
         return getId().equals(that.getId());
     }
 

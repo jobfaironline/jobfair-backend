@@ -8,7 +8,7 @@ import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
 @Mapper(componentModel = "spring", uses = {BenefitEntityMapper.class}, nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-public interface CompanyBenefitMapper   {
+public interface CompanyBenefitMapper {
     @Mapping(source = "benefit", target = "benefitDTO")
     CompanyBenefitDTO toDTO(CompanyBenefitEntity entity);
 

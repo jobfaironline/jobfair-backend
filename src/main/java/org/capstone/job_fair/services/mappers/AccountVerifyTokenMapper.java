@@ -7,6 +7,7 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface AccountVerifyTokenMapper {
-    public AccountVerifyTokenDTO toAccountVerifyTokenDto(AccountVerifyTokenEntity entity);
-    public AccountVerifyTokenEntity toAccountVerifyTokenEntity(AccountVerifyTokenDTO dto);
+    AccountVerifyTokenDTO toAccountVerifyTokenDto(AccountVerifyTokenEntity entity);
+
+    AccountVerifyTokenEntity toAccountVerifyTokenEntity(AccountVerifyTokenDTO dto);
 }

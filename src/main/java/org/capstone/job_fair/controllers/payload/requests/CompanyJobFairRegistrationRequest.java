@@ -35,7 +35,7 @@ public class CompanyJobFairRegistrationRequest {
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class JobPosition{
+    public static class JobPosition {
 
         @NotNull
         private String jobPositionId;

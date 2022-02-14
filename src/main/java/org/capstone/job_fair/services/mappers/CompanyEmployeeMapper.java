@@ -22,7 +22,7 @@ public abstract class CompanyEmployeeMapper {
     @Mapping(source = "companyId", target = "companyDTO.id")
     @Mapping(source = "email", target = "account.email")
     @Mapping(source = "firstName", target = "account.firstname")
-    @Mapping(source = "middleName",  target = "account.middlename")
+    @Mapping(source = "middleName", target = "account.middlename")
     @Mapping(source = "lastName", target = "account.lastname")
     @Mapping(source = "phone", target = "account.phone")
     @Mapping(source = "gender", target = "account.gender")

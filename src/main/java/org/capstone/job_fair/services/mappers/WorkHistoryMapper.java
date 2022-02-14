@@ -12,9 +12,10 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 public abstract class WorkHistoryMapper {
 
     public abstract WorkHistoryEntity toEntity(WorkHistoryDTO dto);
+
     public abstract WorkHistoryDTO toDTO(WorkHistoryEntity entity);
 
-    public abstract  WorkHistoryDTO toDTO(UpdateAttendantRequest.WorkHistories request);
+    public abstract WorkHistoryDTO toDTO(UpdateAttendantRequest.WorkHistories request);
 
     public abstract void updateWorkHistoryEntityFromWorkHistoryDTO(WorkHistoryDTO dto, @MappingTarget WorkHistoryEntity entity);
 }

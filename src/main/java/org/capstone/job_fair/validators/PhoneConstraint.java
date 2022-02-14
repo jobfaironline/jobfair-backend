@@ -9,10 +9,12 @@ import java.lang.annotation.*;
 
 @Documented
 @Constraint(validatedBy = PhoneValidator.class)
-@Target( { ElementType.METHOD, ElementType.FIELD })
+@Target({ElementType.METHOD, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface PhoneConstraint {
     String message() default MessageConstant.InvalidFormatValidationMessage.INVALID_PHONE_FORMAT;
+
     Class<?>[] groups() default {};
+
     Class<? extends Payload>[] payload() default {};
 }

@@ -32,7 +32,7 @@ public class UserDetailsImpl implements UserDetails {
     public static UserDetailsImpl build(AccountEntity account) {
         List<GrantedAuthority> authorities = new ArrayList<>(
                 Arrays.asList(
-                        new SimpleGrantedAuthority(account.getRole().getName().toString())));
+                        new SimpleGrantedAuthority(account.getRole().getName())));
         return new UserDetailsImpl(
                 account.getEmail(),
                 account.getPassword(),

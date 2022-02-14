@@ -24,6 +24,7 @@ public class AccountDTO implements Serializable {
     private String middlename;
     private Gender gender;
     private Role role;
+
     public AccountDTO() {
 
     }

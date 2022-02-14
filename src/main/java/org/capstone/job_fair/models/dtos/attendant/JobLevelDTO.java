@@ -10,7 +10,8 @@ import java.io.Serializable;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor @Builder
+@AllArgsConstructor
+@Builder
 public class JobLevelDTO implements Serializable {
     private String id;
     private String name;

@@ -19,7 +19,7 @@ import java.util.Set;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "registration_job_position", schema = "dbo", catalog = "")
+@Table(name = "registration_job_position", schema = "dbo")
 public class RegistrationJobPositionEntity {
     @Id
     @Column(name = "id", nullable = false, length = 36)
@@ -88,5 +88,7 @@ public class RegistrationJobPositionEntity {
     }
 
     @Override
-    public int hashCode() {return getClass().hashCode(); }
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }

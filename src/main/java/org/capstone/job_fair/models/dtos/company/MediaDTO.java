@@ -14,6 +14,7 @@ public class MediaDTO {
     private String id;
     private String url;
     private CompanyDTO companyDTO;
+
     public MediaDTO(String url) {
         this.url = url;
     }

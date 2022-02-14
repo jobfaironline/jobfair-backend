@@ -15,5 +15,7 @@ public class BenefitDTO implements Serializable {
     private String name;
     private String description;
 
-    public BenefitDTO(int id) {this.id = id;}
+    public BenefitDTO(int id) {
+        this.id = id;
+    }
 }

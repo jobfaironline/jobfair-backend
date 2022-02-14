@@ -21,7 +21,7 @@ public class RoleEntity {
     @Column(name = "name")
     private String name;
 
-    public RoleEntity(Integer id){
+    public RoleEntity(Integer id) {
         this.id = id;
     }
 

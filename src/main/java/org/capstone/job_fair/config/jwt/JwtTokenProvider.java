@@ -22,7 +22,7 @@ public class JwtTokenProvider {
     @Value("${jwt.refresh-expiration}")
     private long JWT_REFRESH_EXPIRATION;
 
-    public String generateToken(String email, long expiredLength){
+    public String generateToken(String email, long expiredLength) {
         Date now = new Date();
         Date expiredDate = new Date(now.getTime() + expiredLength * 60 * 1000 * 1000);
 
@@ -35,7 +35,7 @@ public class JwtTokenProvider {
     }
 
 
-    public String generateToken(Authentication authentication, long expiredLength){
+    public String generateToken(Authentication authentication, long expiredLength) {
         Date now = new Date();
         Date expiredDate = new Date(now.getTime() + expiredLength * 60 * 1000 * 1000);
 
@@ -58,13 +58,13 @@ public class JwtTokenProvider {
         return generateToken(email, JWT_EXPIRATION);
     }
 
-    public String generateRefreshToken(Authentication authentication){
+    public String generateRefreshToken(Authentication authentication) {
         return generateToken(authentication, JWT_REFRESH_EXPIRATION);
     }
-    public String generateRefreshToken(String email){
+
+    public String generateRefreshToken(String email) {
         return generateToken(email, JWT_REFRESH_EXPIRATION);
     }
-
 
 
     public String getUsernameFromJwt(String token) {
@@ -87,5 +87,5 @@ public class JwtTokenProvider {
             log.error("JWT claims string is empty: {}", e.getMessage());
         }
         return false;
-        }
     }
+}

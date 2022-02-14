@@ -10,7 +10,9 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public abstract class ReferenceMapper {
     public abstract ReferenceEntity toEntity(ReferenceDTO dto);
+
     public abstract ReferenceDTO toDTO(ReferenceEntity entity);
+
     public abstract ReferenceDTO toDTO(UpdateAttendantRequest.References request);
 
     public abstract void updateReferenceEntityFromRefereceDTO(ReferenceDTO dto, @MappingTarget ReferenceEntity entity);

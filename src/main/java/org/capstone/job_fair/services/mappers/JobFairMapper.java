@@ -7,6 +7,7 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface JobFairMapper {
-    public JobFairEntity toJobFairEntity(JobFairDTO dto);
-    public JobFairDTO toJobFairDTO(JobFairEntity entity);
+    JobFairEntity toJobFairEntity(JobFairDTO dto);
+
+    JobFairDTO toJobFairDTO(JobFairEntity entity);
 }

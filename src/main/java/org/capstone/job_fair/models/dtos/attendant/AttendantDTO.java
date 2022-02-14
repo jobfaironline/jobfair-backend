@@ -28,7 +28,7 @@ public class AttendantDTO implements Serializable {
     private JobLevel jobLevel;
 
     private List<SkillDTO> skills;
-    private List<WorkHistoryDTO>  workHistories;
+    private List<WorkHistoryDTO> workHistories;
     private List<EducationDTO> educations;
     private List<CertificationDTO> certifications;
     private List<ReferenceDTO> references;

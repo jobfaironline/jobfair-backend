@@ -25,8 +25,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-       AccountEntity account = accountRepository
-                .findByEmailAndStatusIn(email, Arrays.asList(AccountStatus.VERIFIED,AccountStatus.REGISTERED))
+        AccountEntity account = accountRepository
+                .findByEmailAndStatusIn(email, Arrays.asList(AccountStatus.VERIFIED, AccountStatus.REGISTERED))
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with -> email : " + email));
         return UserDetailsImpl.build(account);
     }

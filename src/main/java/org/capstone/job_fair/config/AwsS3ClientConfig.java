@@ -13,7 +13,7 @@ public class AwsS3ClientConfig {
     private String regionValue;
 
     @Bean
-    public S3Client awsClient(){
+    public S3Client awsClient() {
         Region region = Region.of(regionValue);
         return S3Client.builder().region(region).build();
     }

@@ -124,7 +124,7 @@ public class UpdateAttendantRequest {
     @ToString
     public static class WorkHistories {
         private String id;
-        @Size(min = DataConstraint.WorkHistory.POSITION_MIN_LENGTH, max =DataConstraint.WorkHistory.POSITION_MAX_LENGTH)
+        @Size(min = DataConstraint.WorkHistory.POSITION_MIN_LENGTH, max = DataConstraint.WorkHistory.POSITION_MAX_LENGTH)
         @XSSConstraint
         private String position;
         @XSSConstraint
@@ -171,7 +171,7 @@ public class UpdateAttendantRequest {
         private String id;
         @NotEmpty
         @XSSConstraint
-        @Size(min = DataConstraint.Certification.NAME_MIN_LENGTH, max =DataConstraint.Certification.NAME_MAX_LENGTH)
+        @Size(min = DataConstraint.Certification.NAME_MIN_LENGTH, max = DataConstraint.Certification.NAME_MAX_LENGTH)
         private String name;
         @XSSConstraint
         @Size(min = DataConstraint.Certification.INSTITUTION_MIN_LENGTH, max = DataConstraint.Certification.INSTITUTION_MAX_LENGTH)
