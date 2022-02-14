@@ -56,8 +56,8 @@ public class StaffController {
             accountService.createNew(accountDTO);
 
             this.mailService.sendMail(request.getEmail(),
-                    MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMAIL_SUBJECT),
-                    MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMAIL_CONTENT) + password)
+                            MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMAIL_SUBJECT),
+                            MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMAIL_CONTENT) + password)
                     .exceptionally(throwable -> {
                         log.error(throwable.getMessage());
                         return null;

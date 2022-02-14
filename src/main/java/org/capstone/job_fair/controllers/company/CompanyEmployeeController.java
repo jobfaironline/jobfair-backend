@@ -180,8 +180,8 @@ public class CompanyEmployeeController {
             companyEmployeeService.createNewCompanyEmployeeAccount(dto);
 
             this.mailService.sendMail(request.getEmail(),
-                    MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMAIL_SUBJECT),
-                    MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMAIL_CONTENT) + dto.getAccount().getPassword())
+                            MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMAIL_SUBJECT),
+                            MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMAIL_CONTENT) + dto.getAccount().getPassword())
                     .exceptionally(throwable -> {
                         log.error(throwable.getMessage());
                         return null;

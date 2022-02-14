@@ -150,8 +150,8 @@ public class ResetPasswordController {
             //send mail
             try {
                 this.mailService.sendMail(account.getEmail(),
-                        ResetPasswordTokenConstants.MAIL_SUBJECT,
-                        String.format(ResetPasswordTokenConstants.MAIL_BODY, account.getEmail(), newToken.getOtp()))
+                                ResetPasswordTokenConstants.MAIL_SUBJECT,
+                                String.format(ResetPasswordTokenConstants.MAIL_BODY, account.getEmail(), newToken.getOtp()))
                         .exceptionally(throwable -> {
                             log.error(throwable.getMessage());
                             return null;
