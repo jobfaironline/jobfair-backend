@@ -6,8 +6,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-public interface JobFairMapper {
-    JobFairEntity toJobFairEntity(JobFairDTO dto);
+public abstract class JobFairMapper {
+    public abstract JobFairEntity toJobFairEntity(JobFairDTO dto);
 
-    JobFairDTO toJobFairDTO(JobFairEntity entity);
+    public abstract JobFairDTO toJobFairDTO(JobFairEntity entity);
 }
