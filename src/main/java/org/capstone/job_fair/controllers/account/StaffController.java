@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.capstone.job_fair.constants.AccountConstant;
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
-import org.capstone.job_fair.controllers.payload.requests.StaffRegisterRequest;
+import org.capstone.job_fair.controllers.payload.requests.account.StaffRegisterRequest;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
 import org.capstone.job_fair.models.enums.Role;

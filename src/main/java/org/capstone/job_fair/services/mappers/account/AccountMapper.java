@@ -1,6 +1,6 @@
 package org.capstone.job_fair.services.mappers.account;
 
-import org.capstone.job_fair.controllers.payload.requests.StaffRegisterRequest;
+import org.capstone.job_fair.controllers.payload.requests.account.StaffRegisterRequest;
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
 import org.capstone.job_fair.models.entities.account.GenderEntity;

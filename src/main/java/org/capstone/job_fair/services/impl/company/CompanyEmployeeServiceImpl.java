@@ -73,7 +73,7 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
         if (isEmailExist(dto.getAccount().getEmail())) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMAIL_EXISTED));
         }
-        CompanyEntity companyEntity = null;
+        CompanyEntity companyEntity;
         try {
             companyEntity = companyRepository.getById(dto.getCompanyDTO().getId());
         } catch (EntityNotFoundException ex) {
@@ -116,9 +116,7 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
 
     @Override
     public List<CompanyEmployeeDTO> getAllCompanyEmployees(String id) {
-        return employeeRepository.findAllByCompanyId(id).stream().map(companyEmployeeEntity -> {
-            return mapper.toDTO(companyEmployeeEntity);
-        }).collect(Collectors.toList());
+        return employeeRepository.findAllByCompanyId(id).stream().map(companyEmployeeEntity -> mapper.toDTO(companyEmployeeEntity)).collect(Collectors.toList());
     }
 
     @Override
@@ -167,6 +165,11 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
         manager.getAccount().setRole(new RoleEntity(Role.COMPANY_EMPLOYEE.ordinal()));
         employeeRepository.save(employee);
         employeeRepository.save(manager);
+    }
+
+    @Override
+    public Optional<CompanyEmployeeDTO> getCompanyEmployeeByAccountId(String accountID) {
+        return employeeRepository.findByAccountId(accountID).map(mapper::toDTO);
     }
 
 

@@ -1,7 +1,7 @@
 package org.capstone.job_fair.services.mappers.job_fair;
 
-import org.capstone.job_fair.controllers.payload.requests.CreateDecoratedItemMetaDataRequest;
-import org.capstone.job_fair.controllers.payload.requests.UpdateDecoratedItemMetaDataRequest;
+import org.capstone.job_fair.controllers.payload.requests.job_fair.CreateDecoratedItemMetaDataRequest;
+import org.capstone.job_fair.controllers.payload.requests.job_fair.UpdateDecoratedItemMetaDataRequest;
 import org.capstone.job_fair.models.dtos.job_fair.DecoratedItemDTO;
 import org.capstone.job_fair.models.entities.job_fair.DecoratedItemEntity;
 import org.mapstruct.Mapper;

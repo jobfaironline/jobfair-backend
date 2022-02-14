@@ -1,8 +1,8 @@
 package org.capstone.job_fair.services.mappers.company;
 
 
-import org.capstone.job_fair.controllers.payload.requests.CreateCompanyRequest;
-import org.capstone.job_fair.controllers.payload.requests.UpdateCompanyRequest;
+import org.capstone.job_fair.controllers.payload.requests.company.CreateCompanyRequest;
+import org.capstone.job_fair.controllers.payload.requests.company.UpdateCompanyRequest;
 import org.capstone.job_fair.models.dtos.company.*;
 import org.capstone.job_fair.models.entities.company.*;
 import org.mapstruct.*;
@@ -79,9 +79,7 @@ public abstract class CompanyMapper {
             entity.setId(subCategoryDTO.getId());
             entities.add(entity);
         });
-        entities.removeIf(entity -> {
-            return dtos.stream().noneMatch(subCategoryDTO -> entity.getId().equals(subCategoryDTO.getId()));
-        });
+        entities.removeIf(entity -> dtos.stream().noneMatch(subCategoryDTO -> entity.getId().equals(subCategoryDTO.getId())));
     }
 
     @Named("updateCompanyBenefitsOfCompanyEntity")
@@ -97,9 +95,7 @@ public abstract class CompanyMapper {
             CompanyBenefitEntity entity = companyBenefitMapper.toEntity(dto);
             entities.add(entity);
         });
-        entities.removeIf(entity -> {
-            return dtos.stream().noneMatch(dto -> entity.getBenefit().getId().equals(dto.getBenefitDTO().getId()));
-        });
+        entities.removeIf(entity -> dtos.stream().noneMatch(dto -> entity.getBenefit().getId().equals(dto.getBenefitDTO().getId())));
     }
 
     @Named("fromBenefitsOfUpdateCompanyRequest")

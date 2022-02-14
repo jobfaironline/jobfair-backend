@@ -1,14 +1,13 @@
 package org.capstone.job_fair.controllers.company;
 
 
-import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
-import org.capstone.job_fair.controllers.payload.requests.CompanyEmployeeRegisterRequest;
-import org.capstone.job_fair.controllers.payload.requests.CompanyManagerRegisterRequest;
-import org.capstone.job_fair.controllers.payload.requests.PromoteEmployeeToCompanyManagerRequest;
-import org.capstone.job_fair.controllers.payload.requests.UpdateCompanyEmployeeProfileRequest;
+import org.capstone.job_fair.controllers.payload.requests.company.CompanyEmployeeRegisterRequest;
+import org.capstone.job_fair.controllers.payload.requests.company.CompanyManagerRegisterRequest;
+import org.capstone.job_fair.controllers.payload.requests.company.PromoteEmployeeToCompanyManagerRequest;
+import org.capstone.job_fair.controllers.payload.requests.company.UpdateCompanyEmployeeProfileRequest;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
 import org.capstone.job_fair.models.dtos.company.CompanyDTO;

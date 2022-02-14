@@ -1,45 +1,39 @@
-package org.capstone.job_fair.controllers.payload.requests;
+package org.capstone.job_fair.controllers.payload.requests.account;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 import org.capstone.job_fair.constants.DataConstraint;
 import org.capstone.job_fair.models.enums.Gender;
 import org.capstone.job_fair.validators.EmailConstraint;
-import org.capstone.job_fair.validators.PasswordConstraint;
 import org.capstone.job_fair.validators.PhoneConstraint;
 import org.capstone.job_fair.validators.XSSConstraint;
 
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Data
 @AllArgsConstructor
-@ToString
 @NoArgsConstructor
-public class RegisterAttendantRequest {
-
-    @XSSConstraint
-    @NotEmpty
-    @PasswordConstraint
-    private String password;
+public class StaffRegisterRequest {
+    @NotNull
     @EmailConstraint
     private String email;
-    @PhoneConstraint
-    private String phone;
-    @NotEmpty
+    @NotBlank
     @Size(max = DataConstraint.Account.NAME_LENGTH)
     @XSSConstraint
-    @NotEmpty
     private String firstname;
     @Size(max = DataConstraint.Account.NAME_LENGTH)
     @XSSConstraint
-    @NotEmpty
-    private String lastname;
+    private String middlename;
+    @NotBlank
     @Size(max = DataConstraint.Account.NAME_LENGTH)
     @XSSConstraint
-    @NotEmpty
-    private String middlename;
+    private String lastname;
+    @NotNull
+    @PhoneConstraint
+    private String phone;
+    @NotNull
     private Gender gender;
 }

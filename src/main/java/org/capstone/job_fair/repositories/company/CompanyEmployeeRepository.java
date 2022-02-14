@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface CompanyEmployeeRepository extends JpaRepository<CompanyEmployeeEntity, String> {
@@ -14,4 +15,5 @@ public interface CompanyEmployeeRepository extends JpaRepository<CompanyEmployee
 
     Integer countByCompanyIdAndAccountStatusIn(String companyId, List<AccountStatus> status);
 
+    Optional<CompanyEmployeeEntity> findByAccountId(String accountId);
 }

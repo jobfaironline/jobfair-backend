@@ -1,30 +1,38 @@
 package org.capstone.job_fair.controllers.company;
 
+import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
-import org.capstone.job_fair.controllers.payload.requests.CancelCompanyJobFairRegistrationRequest;
-import org.capstone.job_fair.controllers.payload.requests.CompanyJobFairRegistrationRequest;
-import org.capstone.job_fair.controllers.payload.requests.StaffEvaluateCompanyRegistrationRequest;
+import org.capstone.job_fair.controllers.payload.requests.company.CancelCompanyJobFairRegistrationRequest;
+import org.capstone.job_fair.controllers.payload.requests.company.CompanyJobFairRegistrationRequest;
+import org.capstone.job_fair.controllers.payload.requests.company.StaffEvaluateCompanyRegistrationRequest;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
+import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
 import org.capstone.job_fair.models.dtos.company.CompanyRegistrationDTO;
 import org.capstone.job_fair.models.dtos.company.job.RegistrationJobPositionDTO;
+import org.capstone.job_fair.services.interfaces.company.CompanyEmployeeService;
 import org.capstone.job_fair.services.interfaces.company.CompanyRegistrationService;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class CompanyRegistrationController {
 
     @Autowired
     private CompanyRegistrationService companyRegistrationService;
+
+    @Autowired
+    private CompanyEmployeeService companyEmployeeService;
 
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
@@ -94,8 +102,14 @@ public class CompanyRegistrationController {
     @GetMapping(ApiEndPoint.CompanyRegistration.GET_ALL_OWN_COMPANY_REGISTRATION + "/{jobFairId}")
     public ResponseEntity<?> getAllOwnCompanyRegistration(@PathVariable String jobFairId) {
         try {
-            String companyId = companyRegistrationService.getCompanyIdInSecurityContext();
-            List<CompanyRegistrationDTO> companyRegistrationDTOS = companyRegistrationService.getAllOwnCompanyRegistrationOfAJobFair(jobFairId, companyId);
+            UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext()
+                    .getAuthentication().getPrincipal();
+            Optional<CompanyEmployeeDTO> companyEmployeeDTOOpt = companyEmployeeService.getCompanyEmployeeByAccountId(userDetails.getId());
+            if (!companyEmployeeDTOOpt.isPresent()) {
+                return GenericResponse.build(MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMPLOYEE_NOT_FOUND), HttpStatus.BAD_REQUEST);
+            }
+            String companyID = companyEmployeeDTOOpt.get().getCompanyDTO().getId();
+            List<CompanyRegistrationDTO> companyRegistrationDTOS = companyRegistrationService.getCompanyRegistrationByJobFairIDAndCompanyID(jobFairId, companyID);
             if (companyRegistrationDTOS.isEmpty()) return ResponseEntity.notFound().build();
             return new ResponseEntity<>(companyRegistrationDTOS, HttpStatus.OK);
         } catch (IllegalArgumentException e) {

@@ -1,4 +1,4 @@
-package org.capstone.job_fair.response;
+package org.capstone.job_fair.controllers.payload.responses;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

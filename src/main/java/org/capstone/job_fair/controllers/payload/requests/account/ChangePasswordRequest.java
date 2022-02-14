@@ -1,4 +1,4 @@
-package org.capstone.job_fair.controllers.payload.requests;
+package org.capstone.job_fair.controllers.payload.requests.account;
 
 import lombok.Data;
 import org.capstone.job_fair.validators.PasswordConstraint;

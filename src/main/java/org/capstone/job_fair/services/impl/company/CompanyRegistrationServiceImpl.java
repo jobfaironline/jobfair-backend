@@ -226,15 +226,8 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
         companyRegistrationRepository.save(entity);
     }
 
-    public String getCompanyIdInSecurityContext() {
-        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext()
-                .getAuthentication().getPrincipal();
-        CompanyEmployeeEntity companyEmployee = companyEmployeeRepository.findById(userDetails.getId()).get();
-        return companyEmployee.getCompany().getId();
-    }
-
     @Override
-    public List<CompanyRegistrationDTO> getAllOwnCompanyRegistrationOfAJobFair(String jobFairId, String companyId) {
+    public List<CompanyRegistrationDTO> getCompanyRegistrationByJobFairIDAndCompanyID(String jobFairId, String companyId) {
         List<CompanyRegistrationEntity> companyRegistrationEntities = companyRegistrationRepository.findAllByJobFairIdAndCompanyId(jobFairId, companyId);
         return companyRegistrationEntities.stream().map(companyRegistrationMapper::toDTO).collect(Collectors.toList());
     }

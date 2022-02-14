@@ -2,7 +2,7 @@ package org.capstone.job_fair.controllers.account;
 
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
-import org.capstone.job_fair.controllers.payload.requests.ChangePasswordRequest;
+import org.capstone.job_fair.controllers.payload.requests.account.ChangePasswordRequest;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
 import org.capstone.job_fair.models.dtos.token.AccountVerifyTokenDTO;

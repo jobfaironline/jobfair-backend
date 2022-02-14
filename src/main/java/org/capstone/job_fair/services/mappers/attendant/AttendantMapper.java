@@ -1,8 +1,8 @@
 package org.capstone.job_fair.services.mappers.attendant;
 
 import org.capstone.job_fair.constants.MessageConstant;
-import org.capstone.job_fair.controllers.payload.requests.RegisterAttendantRequest;
-import org.capstone.job_fair.controllers.payload.requests.UpdateAttendantRequest;
+import org.capstone.job_fair.controllers.payload.requests.attendant.RegisterAttendantRequest;
+import org.capstone.job_fair.controllers.payload.requests.attendant.UpdateAttendantRequest;
 import org.capstone.job_fair.models.dtos.attendant.AttendantDTO;
 import org.capstone.job_fair.models.dtos.attendant.cv.*;
 import org.capstone.job_fair.models.entities.attendant.AttendantEntity;

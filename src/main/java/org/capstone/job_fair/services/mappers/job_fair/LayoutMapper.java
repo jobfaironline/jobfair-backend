@@ -1,7 +1,7 @@
 package org.capstone.job_fair.services.mappers.job_fair;
 
-import org.capstone.job_fair.controllers.payload.requests.CreateLayoutMetaDataRequest;
-import org.capstone.job_fair.controllers.payload.requests.UpdateLayoutMetaDataRequest;
+import org.capstone.job_fair.controllers.payload.requests.job_fair.CreateLayoutMetaDataRequest;
+import org.capstone.job_fair.controllers.payload.requests.job_fair.UpdateLayoutMetaDataRequest;
 import org.capstone.job_fair.models.dtos.job_fair.LayoutDTO;
 import org.capstone.job_fair.models.entities.job_fair.LayoutEntity;
 import org.mapstruct.Mapper;

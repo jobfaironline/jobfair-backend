@@ -1,6 +1,6 @@
 package org.capstone.job_fair.services.mappers.company;
 
-import org.capstone.job_fair.controllers.payload.requests.CreateJobPositionRequest;
+import org.capstone.job_fair.controllers.payload.requests.company.CreateJobPositionRequest;
 import org.capstone.job_fair.models.dtos.company.SkillTagDTO;
 import org.capstone.job_fair.models.dtos.company.SubCategoryDTO;
 import org.capstone.job_fair.models.dtos.company.job.JobPositionDTO;

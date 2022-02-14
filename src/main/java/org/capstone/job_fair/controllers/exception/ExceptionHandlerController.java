@@ -3,7 +3,7 @@ package org.capstone.job_fair.controllers.exception;
 import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.capstone.job_fair.constants.MessageConstant;
-import org.capstone.job_fair.response.ErrorResponse;
+import org.capstone.job_fair.controllers.payload.responses.ErrorResponse;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
