@@ -16,7 +16,6 @@ import java.util.Set;
 @Entity
 @Getter
 @Setter
-@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "job_position", schema = "dbo")
@@ -72,5 +71,14 @@ public class JobPositionEntity {
     @Override
     public int hashCode() {
         return getClass().hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "(" +
+                "id = " + id + ", " +
+                "title = " + title + ", " +
+                "contactPersonName = " + contactPersonName + ", " +
+                "contactEmail = " + contactEmail + ")";
     }
 }

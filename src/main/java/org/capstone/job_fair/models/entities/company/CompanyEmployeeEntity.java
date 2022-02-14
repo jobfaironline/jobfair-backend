@@ -12,7 +12,6 @@ import java.util.Objects;
 @Entity
 @Getter
 @Setter
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "company_employee", schema = "dbo")
@@ -24,7 +23,7 @@ public class CompanyEmployeeEntity {
     @GenericGenerator(name = "uuid", strategy = "org.hibernate.id.UUIDGenerator")
     private String accountId;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id")
     @MapsId
     private AccountEntity account;

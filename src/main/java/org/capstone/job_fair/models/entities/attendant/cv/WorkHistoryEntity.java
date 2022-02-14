@@ -20,22 +20,21 @@ public class WorkHistoryEntity {
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "org.hibernate.id.UUIDGenerator")
     private String id;
-    @Basic
     @Column(name = "position", length = 100)
     private String position;
-    @Basic
+
     @Column(name = "company", length = 100)
     private String company;
-    @Basic
+
     @Column(name = "from_date")
     private Long fromDate;
-    @Basic
+
     @Column(name = "to_date")
     private Long toDate;
-    @Basic
+
     @Column(name = "is_current_job")
     private Boolean isCurrentJob;
-    @Basic
+
     @Column(name = "description", length = 5000)
     private String description;
 

@@ -22,41 +22,29 @@ public class JobFairEntity {
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "org.hibernate.id.UUIDGenerator")
     private String id;
-    @Basic
     @Column(name = "company_register_start_time")
     private long companyRegisterStartTime;
-    @Basic
     @Column(name = "company_register_end_time")
     private long companyRegisterEndTime;
-    @Basic
     @Column(name = "company_buy_booth_start_time")
     private long companyBuyBoothStartTime;
-    @Basic
     @Column(name = "company_buy_booth_end_time")
     private long companyBuyBoothEndTime;
-    @Basic
     @Column(name = "attendant_register_start_time")
     private long attendantRegisterStartTime;
-    @Basic
     @Column(name = "start_time")
     private Long startTime;
-    @Basic
     @Column(name = "end_time")
     private long endTime;
-    @Basic
     @Column(name = "description")
     private String description;
-    @Basic
-    @Column(name = "layout_id", nullable = true)
+    @Column(name = "layout_id")
     private String layoutId;
-    @Basic
     @Column(name = "status")
     private JobFairStatus status;
-    @Basic
     @Column(name = "creator_id")
     private String creatorId;
-    @Basic
-    @Column(name = "authorizer_id", nullable = true)
+    @Column(name = "authorizer_id")
     private String authorizerId;
     @Column(name = "reject_reason")
     private String rejectReason;
@@ -74,7 +62,7 @@ public class JobFairEntity {
 
     @Override
     public int hashCode() {
-        return id != null ? id.hashCode() : 0;
+        return getClass().hashCode();
     }
 
 }

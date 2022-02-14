@@ -18,7 +18,6 @@ public class ProfessionCategoryEntity implements Serializable {
     @Id
     @Column(name = "id")
     private Integer id;
-    @Basic
     @Column(name = "name", length = 100)
     private String name;
 
@@ -28,7 +27,7 @@ public class ProfessionCategoryEntity implements Serializable {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
         ProfessionCategoryEntity that = (ProfessionCategoryEntity) o;
-        return !Objects.equals(id, that.getId());
+        return id != null && Objects.equals(id, that.getId());
     }
 
     @Override

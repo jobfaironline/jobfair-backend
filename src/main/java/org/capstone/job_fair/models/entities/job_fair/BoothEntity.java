@@ -23,9 +23,9 @@ public class BoothEntity {
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "org.hibernate.id.UUIDGenerator")
     private String id;
-    @Column(name = "price", precision = 0)
+    @Column(name = "price")
     private Double price;
-    @Column(name = "status", nullable = true)
+    @Column(name = "status")
     @Enumerated(EnumType.ORDINAL)
     private BoothStatus status;
     @Column(name = "name", nullable = false, length = 100)
@@ -38,14 +38,12 @@ public class BoothEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-
         BoothEntity that = (BoothEntity) o;
-
-        return Objects.equals(id, that.id);
+        return id != null && Objects.equals(id, that.getId());
     }
 
     @Override
     public int hashCode() {
-        return id != null ? id.hashCode() : 0;
+       return getClass().hashCode();
     }
 }

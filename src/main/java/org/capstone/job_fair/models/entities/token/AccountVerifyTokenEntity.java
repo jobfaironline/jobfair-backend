@@ -5,6 +5,7 @@ import org.hibernate.Hibernate;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Table(name = "account_verify_token", schema = "dbo")
@@ -39,7 +40,7 @@ public class AccountVerifyTokenEntity {
 
         AccountVerifyTokenEntity that = (AccountVerifyTokenEntity) o;
 
-        return getId().equals(that.getId());
+        return id != null && Objects.equals(id, that.getId());
     }
 
     @Override

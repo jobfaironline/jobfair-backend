@@ -1,7 +1,10 @@
 package org.capstone.job_fair.models.entities.company;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.capstone.job_fair.models.statuses.CompanyStatus;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.GenericGenerator;
@@ -14,7 +17,6 @@ import java.util.Set;
 @Entity
 @Getter
 @Setter
-@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "company", schema = "dbo")
@@ -41,13 +43,13 @@ public class CompanyEntity {
     @Column(name = "status")
     @Enumerated(EnumType.ORDINAL)
     private CompanyStatus status;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "size_id")
     private CompanySizeEntity companySize;
     @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
     @JsonManagedReference
     private List<MediaEntity> medias;
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(
             name = "company_category",
             joinColumns = @JoinColumn(name = "company_id"),
@@ -69,5 +71,19 @@ public class CompanyEntity {
     @Override
     public int hashCode() {
         return getClass().hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "(" +
+                "id = " + id + ", " +
+                "taxId = " + taxId + ", " +
+                "name = " + name + ", " +
+                "address = " + address + ", " +
+                "phone = " + phone + ", " +
+                "email = " + email + ", " +
+                "websiteUrl = " + websiteUrl + ", " +
+                "employeeMaxNum = " + employeeMaxNum + ", " +
+                "status = " + status + ")";
     }
 }

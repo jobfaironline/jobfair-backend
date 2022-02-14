@@ -5,11 +5,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.Hibernate;
+import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @AllArgsConstructor
@@ -20,7 +19,8 @@ import javax.persistence.Table;
 public class DecoratedItemEntity {
     @Id
     @Column(name = "id", nullable = false, length = 36)
-    //do not use auto generated id here as we need pre generate id
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "org.hibernate.id.UUIDGenerator")
     private String id;
     @Column(name = "size", nullable = false)
     private Integer size;
@@ -35,14 +35,12 @@ public class DecoratedItemEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-
         DecoratedItemEntity that = (DecoratedItemEntity) o;
-
-        return getId() != null ? getId().equals(that.getId()) : that.getId() == null;
+        return id != null && Objects.equals(id, that.getId());
     }
 
     @Override
     public int hashCode() {
-        return getId() != null ? getId().hashCode() : 0;
+        return getClass().hashCode();
     }
 }

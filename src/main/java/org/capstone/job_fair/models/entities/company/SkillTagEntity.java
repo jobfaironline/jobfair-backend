@@ -1,9 +1,7 @@
 package org.capstone.job_fair.models.entities.company;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.hibernate.Hibernate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -18,6 +16,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @Setter
 @Getter
+@ToString
 public class SkillTagEntity implements Serializable {
     public SkillTagEntity(int id) {
         this.id = id;
@@ -26,17 +25,15 @@ public class SkillTagEntity implements Serializable {
     @Id
     @Column(name = "id", nullable = false)
     private Integer id;
-    @Column(name = "name", nullable = true, length = 100)
+    @Column(name = "name", length = 100)
     private String name;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
         SkillTagEntity that = (SkillTagEntity) o;
-
-        return Objects.equals(id, that.getId());
+        return id != null && Objects.equals(id, that.getId());
     }
 
     @Override

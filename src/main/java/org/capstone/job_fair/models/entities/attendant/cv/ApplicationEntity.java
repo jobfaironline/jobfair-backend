@@ -51,4 +51,13 @@ public class ApplicationEntity {
     public int hashCode() {
         return getClass().hashCode();
     }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "(" +
+                "id = " + id + ", " +
+                "summary = " + summary + ", " +
+                "createDate = " + createDate + ", " +
+                "status = " + status + ")";
+    }
 }
