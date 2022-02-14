@@ -9,7 +9,7 @@ import org.capstone.job_fair.repositories.company.SubCategoryRepository;
 import org.capstone.job_fair.repositories.company.job.JobPositionRepository;
 import org.capstone.job_fair.services.interfaces.company.CompanyService;
 import org.capstone.job_fair.services.interfaces.company.JobPositionService;
-import org.capstone.job_fair.services.mappers.JobPositionMapper;
+import org.capstone.job_fair.services.mappers.company.JobPositionMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

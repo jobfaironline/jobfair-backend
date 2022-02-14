@@ -1,4 +1,4 @@
-package org.capstone.job_fair.services.mappers;
+package org.capstone.job_fair.services.mappers.token;
 
 import org.capstone.job_fair.models.dtos.token.AccountVerifyTokenDTO;
 import org.capstone.job_fair.models.entities.token.AccountVerifyTokenEntity;

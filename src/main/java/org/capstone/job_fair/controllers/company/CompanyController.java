@@ -7,7 +7,7 @@ import org.capstone.job_fair.controllers.payload.requests.UpdateCompanyRequest;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.dtos.company.CompanyDTO;
 import org.capstone.job_fair.services.interfaces.company.CompanyService;
-import org.capstone.job_fair.services.mappers.CompanyMapper;
+import org.capstone.job_fair.services.mappers.company.CompanyMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

@@ -13,7 +13,7 @@ import org.capstone.job_fair.models.entities.job_fair.LayoutEntity;
 import org.capstone.job_fair.models.statuses.BoothStatus;
 import org.capstone.job_fair.repositories.job_fair.LayoutRepository;
 import org.capstone.job_fair.services.interfaces.job_fair.LayoutService;
-import org.capstone.job_fair.services.mappers.LayoutMapper;
+import org.capstone.job_fair.services.mappers.job_fair.LayoutMapper;
 import org.capstone.job_fair.utils.AwsUtil;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;

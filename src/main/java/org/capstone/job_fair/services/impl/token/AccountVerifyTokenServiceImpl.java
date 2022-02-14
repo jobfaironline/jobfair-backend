@@ -4,7 +4,7 @@ import org.capstone.job_fair.models.dtos.token.AccountVerifyTokenDTO;
 import org.capstone.job_fair.models.entities.token.AccountVerifyTokenEntity;
 import org.capstone.job_fair.repositories.token.AccountVerifyTokenEntityRepository;
 import org.capstone.job_fair.services.interfaces.token.AccountVerifyTokenService;
-import org.capstone.job_fair.services.mappers.AccountVerifyTokenMapper;
+import org.capstone.job_fair.services.mappers.token.AccountVerifyTokenMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

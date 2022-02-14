@@ -12,7 +12,7 @@ import org.capstone.job_fair.services.interfaces.account.AccountService;
 import org.capstone.job_fair.services.interfaces.attendant.AttendantService;
 import org.capstone.job_fair.services.interfaces.attendant.CountryService;
 import org.capstone.job_fair.services.interfaces.attendant.ResidenceService;
-import org.capstone.job_fair.services.mappers.AttendantMapper;
+import org.capstone.job_fair.services.mappers.attendant.AttendantMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;

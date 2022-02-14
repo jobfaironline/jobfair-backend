@@ -6,7 +6,7 @@ import org.capstone.job_fair.models.dtos.job_fair.DecoratedItemDTO;
 import org.capstone.job_fair.models.entities.job_fair.DecoratedItemEntity;
 import org.capstone.job_fair.repositories.job_fair.DecoratedItemRepository;
 import org.capstone.job_fair.services.interfaces.job_fair.DecoratedItemService;
-import org.capstone.job_fair.services.mappers.DecoratedItemMapper;
+import org.capstone.job_fair.services.mappers.job_fair.DecoratedItemMapper;
 import org.capstone.job_fair.utils.AwsUtil;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;

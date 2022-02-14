@@ -10,7 +10,7 @@ import org.capstone.job_fair.models.enums.Role;
 import org.capstone.job_fair.models.statuses.AccountStatus;
 import org.capstone.job_fair.services.interfaces.account.AccountService;
 import org.capstone.job_fair.services.interfaces.util.MailService;
-import org.capstone.job_fair.services.mappers.AccountMapper;
+import org.capstone.job_fair.services.mappers.account.AccountMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.capstone.job_fair.utils.PasswordGenerator;
 import org.springframework.beans.factory.annotation.Autowired;

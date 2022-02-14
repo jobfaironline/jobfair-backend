@@ -1,4 +1,4 @@
-package org.capstone.job_fair.services.mappers;
+package org.capstone.job_fair.services.mappers.company;
 
 import org.capstone.job_fair.controllers.payload.requests.CreateJobPositionRequest;
 import org.capstone.job_fair.models.dtos.company.SkillTagDTO;
@@ -13,6 +13,7 @@ import org.capstone.job_fair.models.entities.company.job.JobTypeEntity;
 import org.capstone.job_fair.models.enums.JobLevel;
 import org.capstone.job_fair.models.enums.JobType;
 import org.capstone.job_fair.models.enums.Language;
+import org.capstone.job_fair.services.mappers.job_fair.SkillTagMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -52,6 +53,7 @@ public abstract class JobPositionMapper {
     @Mapping(source = "companyId", target = "companyDTO.id")
     @Mapping(source = "subCategoryIds", target = "subCategoryDTOs", qualifiedByName = "fromSubCategoryIdsOfCreateJobPositionRequest")
     @Mapping(source = "skillTagIds", target = "skillTagDTOS", qualifiedByName = "fromSkillTagIdsOfCreateJobPositionRequest")
+    @Mapping(target = "id", ignore = true)
     public abstract JobPositionDTO toDTO(CreateJobPositionRequest request);
 
     @Named("fromSubCategoryIdsOfCreateJobPositionRequest")

@@ -12,7 +12,7 @@ import org.capstone.job_fair.repositories.account.AccountRepository;
 import org.capstone.job_fair.services.interfaces.account.AccountService;
 import org.capstone.job_fair.services.interfaces.token.AccountVerifyTokenService;
 import org.capstone.job_fair.services.interfaces.util.MailService;
-import org.capstone.job_fair.services.mappers.AccountMapper;
+import org.capstone.job_fair.services.mappers.account.AccountMapper;
 import org.capstone.job_fair.utils.DomainUtil;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;

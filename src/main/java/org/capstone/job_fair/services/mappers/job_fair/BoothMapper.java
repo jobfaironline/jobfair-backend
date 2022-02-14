@@ -1,4 +1,4 @@
-package org.capstone.job_fair.services.mappers;
+package org.capstone.job_fair.services.mappers.job_fair;
 
 import org.capstone.job_fair.models.dtos.job_fair.BoothDTO;
 import org.capstone.job_fair.models.entities.job_fair.BoothEntity;

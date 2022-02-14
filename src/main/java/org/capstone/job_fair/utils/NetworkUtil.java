@@ -4,7 +4,6 @@ package org.capstone.job_fair.utils;
 
 import java.io.IOException;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
 
 public class NetworkUtil {
     // Sends ping request to a provided IP address

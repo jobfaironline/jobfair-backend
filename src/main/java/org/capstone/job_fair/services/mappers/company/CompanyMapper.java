@@ -1,4 +1,4 @@
-package org.capstone.job_fair.services.mappers;
+package org.capstone.job_fair.services.mappers.company;
 
 
 import org.capstone.job_fair.controllers.payload.requests.CreateCompanyRequest;
@@ -49,6 +49,9 @@ public abstract class CompanyMapper {
     @Mapping(source = "benefits", target = "companyBenefitDTOS", qualifiedByName = "fromBenefitsOfCreateCompanyRequest")
     @Mapping(source = "subCategoriesIds", target = "subCategoryDTOs", qualifiedByName = "fromSubCategoriesIdsOfCreateCompanyRequest")
     @Mapping(source = "taxId", target = "taxId")
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "employeeMaxNum", ignore = true)
+    @Mapping(target = "status", ignore = true)
     public abstract CompanyDTO toDTO(CreateCompanyRequest request);
 
     @Mapping(source = "url", target = "websiteUrl")

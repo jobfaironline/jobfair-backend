@@ -1,4 +1,4 @@
-package org.capstone.job_fair.services.mappers;
+package org.capstone.job_fair.services.mappers.attendant;
 
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.controllers.payload.requests.RegisterAttendantRequest;
@@ -9,6 +9,7 @@ import org.capstone.job_fair.models.entities.attendant.AttendantEntity;
 import org.capstone.job_fair.models.entities.attendant.CountryEntity;
 import org.capstone.job_fair.models.entities.attendant.ResidenceEntity;
 import org.capstone.job_fair.models.entities.attendant.cv.*;
+import org.capstone.job_fair.services.mappers.account.AccountMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,6 +89,21 @@ public abstract class AttendantMapper {
     @Mapping(source = "lastname", target = "account.lastname")
     @Mapping(source = "middlename", target = "account.middlename")
     @Mapping(source = "gender", target = "account.gender")
+    @Mapping(target = "title", ignore = true)
+    @Mapping(target = "address", ignore = true)
+    @Mapping(target = "dob", ignore = true)
+    @Mapping(target = "jobTitle", ignore = true)
+    @Mapping(target = "yearOfExp", ignore = true)
+    @Mapping(target = "maritalStatus", ignore = true)
+    @Mapping(target = "countryId", ignore = true)
+    @Mapping(target = "residenceId", ignore = true)
+    @Mapping(target = "jobLevel", ignore = true)
+    @Mapping(target = "skills", ignore = true)
+    @Mapping(target = "workHistories", ignore = true)
+    @Mapping(target = "educations", ignore = true)
+    @Mapping(target = "certifications", ignore = true)
+    @Mapping(target = "references", ignore = true)
+    @Mapping(target = "activities", ignore = true)
     public abstract AttendantDTO toDTO(RegisterAttendantRequest request);
 
     @Named("fromCountryIdOfAttendantDTO")

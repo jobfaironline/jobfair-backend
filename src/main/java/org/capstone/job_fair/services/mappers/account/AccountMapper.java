@@ -1,7 +1,6 @@
-package org.capstone.job_fair.services.mappers;
+package org.capstone.job_fair.services.mappers.account;
 
 import org.capstone.job_fair.controllers.payload.requests.StaffRegisterRequest;
-import org.capstone.job_fair.controllers.payload.requests.UpdateAttendantRequest;
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
 import org.capstone.job_fair.models.entities.account.GenderEntity;
@@ -20,8 +19,12 @@ public abstract class AccountMapper {
     @Mapping(target = "role", qualifiedByName = "toAccountEntityRole")
     public abstract AccountEntity toEntity(AccountDTO account);
 
-    public abstract AccountDTO toDTO(UpdateAttendantRequest.AccountRequest request);
 
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "password", ignore = true)
+    @Mapping(target = "status", ignore = true)
+    @Mapping(target = "profileImageUrl", ignore = true)
+    @Mapping(target = "role", ignore = true)
     public abstract AccountDTO toDTO(StaffRegisterRequest request);
 
     @Named("toAccountDTOGender")
@@ -53,5 +56,7 @@ public abstract class AccountMapper {
         return Role.values()[entity.getId()];
     }
 
+    @Mapping(target = "role", qualifiedByName = "toAccountEntityRole")
+    @Mapping(target = "gender", qualifiedByName = "toAccountEntityGender")
     public abstract void updateAccountMapperFromDto(AccountDTO dto, @MappingTarget AccountEntity entity);
 }

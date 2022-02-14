@@ -13,7 +13,7 @@ import org.capstone.job_fair.repositories.account.AccountRepository;
 import org.capstone.job_fair.repositories.company.CompanyEmployeeRepository;
 import org.capstone.job_fair.repositories.company.CompanyRepository;
 import org.capstone.job_fair.services.interfaces.company.CompanyEmployeeService;
-import org.capstone.job_fair.services.mappers.CompanyEmployeeMapper;
+import org.capstone.job_fair.services.mappers.company.CompanyEmployeeMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.capstone.job_fair.utils.PasswordGenerator;
 import org.springframework.beans.factory.annotation.Autowired;

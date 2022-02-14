@@ -11,7 +11,7 @@ import org.capstone.job_fair.repositories.company.CompanyRepository;
 import org.capstone.job_fair.repositories.company.CompanySizeRepository;
 import org.capstone.job_fair.repositories.company.SubCategoryRepository;
 import org.capstone.job_fair.services.interfaces.company.CompanyService;
-import org.capstone.job_fair.services.mappers.CompanyMapper;
+import org.capstone.job_fair.services.mappers.company.CompanyMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

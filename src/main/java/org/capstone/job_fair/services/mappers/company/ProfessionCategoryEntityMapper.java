@@ -1,4 +1,4 @@
-package org.capstone.job_fair.services.mappers;
+package org.capstone.job_fair.services.mappers.company;
 
 import org.capstone.job_fair.models.dtos.company.ProfessionCategoryDTO;
 import org.capstone.job_fair.models.entities.company.ProfessionCategoryEntity;

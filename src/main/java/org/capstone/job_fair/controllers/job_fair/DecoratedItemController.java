@@ -9,7 +9,7 @@ import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.dtos.job_fair.DecoratedItemDTO;
 import org.capstone.job_fair.services.interfaces.job_fair.DecoratedItemService;
 import org.capstone.job_fair.services.interfaces.util.FileStorageService;
-import org.capstone.job_fair.services.mappers.DecoratedItemMapper;
+import org.capstone.job_fair.services.mappers.job_fair.DecoratedItemMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;

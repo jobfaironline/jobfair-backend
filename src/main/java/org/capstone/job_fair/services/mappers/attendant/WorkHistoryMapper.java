@@ -1,4 +1,4 @@
-package org.capstone.job_fair.services.mappers;
+package org.capstone.job_fair.services.mappers.attendant;
 
 
 import org.capstone.job_fair.controllers.payload.requests.UpdateAttendantRequest;

@@ -9,7 +9,7 @@ import org.capstone.job_fair.models.statuses.JobFairStatus;
 import org.capstone.job_fair.repositories.account.AccountRepository;
 import org.capstone.job_fair.repositories.job_fair.JobFairRepository;
 import org.capstone.job_fair.services.interfaces.job_fair.JobFairService;
-import org.capstone.job_fair.services.mappers.JobFairMapper;
+import org.capstone.job_fair.services.mappers.job_fair.JobFairMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;

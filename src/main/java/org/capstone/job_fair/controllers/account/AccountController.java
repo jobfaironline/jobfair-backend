@@ -8,7 +8,7 @@ import org.capstone.job_fair.models.dtos.account.AccountDTO;
 import org.capstone.job_fair.models.dtos.token.AccountVerifyTokenDTO;
 import org.capstone.job_fair.services.interfaces.account.AccountService;
 import org.capstone.job_fair.services.interfaces.token.AccountVerifyTokenService;
-import org.capstone.job_fair.services.mappers.AccountVerifyTokenMapper;
+import org.capstone.job_fair.services.mappers.token.AccountVerifyTokenMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
