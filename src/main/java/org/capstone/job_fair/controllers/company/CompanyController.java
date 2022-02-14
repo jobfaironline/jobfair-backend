@@ -37,8 +37,8 @@ public class CompanyController {
     }
 
     @GetMapping(ApiEndPoint.Company.COMPANY_ENDPOINT + "/" + "{id}")
-    public ResponseEntity<?> getByID(@PathVariable String id) {
-        Optional<CompanyEntity> opt = companyService.getCompanyById(id);
+    public ResponseEntity<?> getByID(@PathVariable(value = "id") String id) {
+        Optional<CompanyDTO> opt = companyService.getCompanyById(id);
         if (opt.isPresent()) {
             return new ResponseEntity<>(opt.get(), HttpStatus.OK);
         }
@@ -47,7 +47,7 @@ public class CompanyController {
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
     @DeleteMapping(ApiEndPoint.Company.COMPANY_ENDPOINT + "/" + "{id}")
-    public ResponseEntity<?> delete(@PathVariable String id) {
+    public ResponseEntity<?> delete(@PathVariable(value = "id") String id) {
         Boolean result = companyService.deleteCompany(id);
         if (result) {
             return GenericResponse.build(MessageUtil.getMessage(MessageConstant.Company.DELETE_SUCCESSFULLY), HttpStatus.OK);

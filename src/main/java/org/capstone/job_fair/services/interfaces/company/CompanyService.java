@@ -10,7 +10,7 @@ public interface CompanyService {
 
     List<CompanyDTO> getAllCompanies();
 
-    Optional<CompanyEntity> getCompanyById(String id);
+    Optional<CompanyDTO> getCompanyById(String id);
 
     void createCompany(CompanyDTO dto);
 
@@ -20,7 +20,6 @@ public interface CompanyService {
 
     Integer getCountById(String id);
 
-    Optional<CompanyEntity> findCompanyById(String id);
 
 
 }
