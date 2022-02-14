@@ -1,5 +1,8 @@
 package org.capstone.job_fair.constants;
 
-public class GLBConstant {
+public final class GLBConstant {
+    private GLBConstant() {
+    }
+
     public static final String BOOTH_NAME_PREFIX = "company";
 }

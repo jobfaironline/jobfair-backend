@@ -1,8 +1,14 @@
 package org.capstone.job_fair.constants;
 
-public class MessageConstant {
+public final class MessageConstant {
+    private MessageConstant() {
+
+    }
 
     public static final class Exception {
+        private Exception() {
+        }
+
         public static final String RESOURCE_NOT_FOUND = "error.exception.resource-not-found";
         public static final String JWT_ERROR = "error.exception.jwt-error";
         public static final String NO_PERMISSION = "error.exception.resource-no-permission";
@@ -13,6 +19,9 @@ public class MessageConstant {
     }
 
     public static final class JobFair {
+        private JobFair() {
+        }
+
         public static final String CREATE_JOB_FAIR_PLAN_SUCCESSFULLY = "job-fair-plan.success.create";
         public static final String DELETE_JOB_FAIR_PLAN_SUCCESSFULLY = "job-fair-plan.success.delete";
         public static final String SUBMIT_JOB_FAIR_PLAN_SUCCESSFULLY = "job-fair-plan.success.submit";
@@ -34,6 +43,9 @@ public class MessageConstant {
         //the value in this class belongs to Validator annotation
         //validator on default can use expression language to lookup message source
         //=> need to have {}
+        private InvalidFormatValidationMessage() {
+        }
+
         public static final String INVALID_EMAIL_FORMAT = "{error.format.invalid-email}";
         public static final String INVALID_PASSWORD_FORMAT = "{error.format.invalid-password}";
         public static final String INVALID_PHONE_FORMAT = "{error.format.invalid-phone}";
@@ -42,6 +54,9 @@ public class MessageConstant {
     }
 
     public static final class AccessControlMessage {
+        private AccessControlMessage() {
+        }
+
         public static final String INVALID_REFRESH_TOKEN = "access-control.error.invalid-refresh-token";
         public static final String TOKEN_CLAIM_INVALID = "access-control.error.invalid-token-claim";
         public static final String CONFIRM_PASSWORD_MISMATCH = "access-control.error.confirm-password-mismatch";
@@ -57,6 +72,9 @@ public class MessageConstant {
     }
 
     public static final class Account {
+        private Account() {
+        }
+
         public static final String NOT_FOUND = "account.error.not-found";
         public static final String EXISTED = "account.error.existed";
         public static final String EMAIL_EXISTED = "account.error.email-existed";
@@ -80,12 +98,18 @@ public class MessageConstant {
     }
 
     public static final class Attendant {
+        private Attendant() {
+        }
+
         public static final String UPDATE_PROFILE_SUCCESSFULLY = "attendant.success.update-profile";
         public static final String UPDATE_PROFILE_FAILED = "attendant.error.update-profile";
         public static final String REGISTER_SUCCESSFULLY = "attendant.success.create";
     }
 
     public static final class Company {
+        private Company() {
+        }
+
         public static final String TAX_ID_EXISTED = "company.error.tax-id-existed";
         public static final String EMAIL_EXISTED = "company.error.email-existed";
         public static final String NOT_FOUND = "company.error.not-found";
@@ -99,6 +123,9 @@ public class MessageConstant {
     }
 
     public static final class CompanyEmployee {
+        private CompanyEmployee() {
+        }
+
         public static final String EMAIL_EXISTED = "company-employee.error.email-existed";
         public static final String CREATE_EMPLOYEE_MANAGER_SUCCESSFULLY = "company-employee.success.create-company-manager";
         public static final String CREATE_EMPLOYEE_EMPLOYEE_SUCCESSFULLY = "company-employee.success.create-company-employee";
@@ -118,10 +145,16 @@ public class MessageConstant {
     }
 
     public static final class Gender {
+        private Gender() {
+        }
+
         public static final String NOT_FOUND = "gender.error.not-found";
     }
 
     public static final class Job {
+        private Job() {
+        }
+
         public static final String CREATE_JOB_SUCCESSFULLY = "job.success.create";
         public static final String SALARY_ERROR = "job.error.salary-error";
         public static final String JOB_POSITION_NOT_FOUND = "job-position.error.not-found";
@@ -129,53 +162,87 @@ public class MessageConstant {
     }
 
     public static final class Skill {
+        private Skill() {
+        }
+
         public static final String INVALID_SKILL = "skill.error.invalid";
         public static final String SKILL_NOT_FOUND = "skill.error.not-found";
     }
 
     public static final class WorkHistory {
+        private WorkHistory() {
+
+        }
+
         public static final String INVALID_WORK_HISTORY = "work-history.error.invalid";
         public static final String WORK_HISTORY_NOT_FOUND = "work-history.error.not-found";
     }
 
     public static final class Education {
+        private Education() {
+        }
+
         public static final String INVALID_EDUCATION = "education.error.invalid";
         public static final String EDUCATION_NOT_FOUND = "education.error.not-found";
     }
 
     public static final class Certification {
+        private Certification() {
+        }
+
         public static final String INVALID_CERTIFICATION = "certification.error.invalid";
         public static final String CERTIFICATION_NOT_FOUND = "certification.error.not-found";
     }
 
     public static final class Reference {
+        private Reference() {
+        }
+
         public static final String INVALID_REFERENCE = "reference.error.invalid";
         public static final String REFERENCE_NOT_FOUND = "reference.error.not-found";
     }
 
     public static final class Activity {
+        private Activity() {
+        }
+
         public static final String INVALID_ACTIVITY = "activity.error.invalid";
         public static final String ACTIVITY_NOT_FOUND = "activity.error.not-found";
     }
 
     public static final class Benefit {
+        private Benefit() {
+        }
+
         public static final String NOT_FOUND = "benefit.error.not-found";
     }
 
     public static final class SubCategory {
+        private SubCategory() {
+        }
+
         public static final String NOT_FOUND = "sub-category.error.not-found";
     }
 
     public static final class SkillTag {
+        private SkillTag() {
+        }
+
         public static final String NOT_FOUND = "skill-tag.error.not-found";
     }
 
     public static final class Mail {
+        private Mail() {
+        }
+
         public static final String NAME = "mail.sender.name";
         public static final String SEND_FAILED = "mail.error.send-failed";
     }
 
     public static final class CompanyRegistration {
+        private CompanyRegistration() {
+        }
+
         public static final String JOB_FAIR_REGISTRATION_OUT_OF_REGISTER_TIME = "company-registration.error.out-of-register-time";
         public static final String UNIQUE_JOB_POSITION_ERROR = "company-registration.error.unique-job-position";
         public static final String MIN_MAX_SALARY_ERROR = "company-registration.error.min-max-salary";
@@ -192,19 +259,27 @@ public class MessageConstant {
         public static final String COMPANY_REGISTER_SUCCESSFULLY = "company-registration.success.register";
 
 
-
     }
 
     public static final class Staff {
+        private Staff() {
+        }
+
         public static final String CREATE_SUCCESSFULLY = "staff.success.create-successfully";
     }
 
     public static final class DecoratedItem {
+        private DecoratedItem() {
+        }
+
         public static final String NOT_FOUND = "decorated-item.error.not-found";
         public static final String UPDATE_SUCCESSFULLY = "decorated-item.success.update-item";
     }
 
     public static final class Layout {
+        private Layout() {
+        }
+
         public static final String NOT_FOUND = "layout.error.not-found";
         public static final String UPDATE_SUCCESSFULLY = "layout.success.update-item";
         public static final String INVALID_GLB_FILE = "layout.error.invalid-glb-file";
