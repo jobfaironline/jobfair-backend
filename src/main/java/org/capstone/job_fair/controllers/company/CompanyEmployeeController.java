@@ -78,8 +78,7 @@ public class CompanyEmployeeController {
                     MessageUtil.getMessage(MessageConstant.AccessControlMessage.CONFIRM_PASSWORD_MISMATCH),
                     HttpStatus.BAD_REQUEST);
         }
-        CompanyEntity companyEntity = companyService.getCompanyById(request.getCompanyId()).get();
-        CompanyDTO companyDTO = companyMapper.toDTO(companyEntity);
+        CompanyDTO companyDTO = companyService.getCompanyById(request.getCompanyId()).get();
 
         AccountDTO accountDTO = new AccountDTO();
         accountDTO.setEmail(request.getEmail());

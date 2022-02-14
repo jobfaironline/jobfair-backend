@@ -112,8 +112,8 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    public Optional<CompanyEntity> getCompanyById(String id) {
-        return companyRepository.findById(id);
+    public Optional<CompanyDTO> getCompanyById(String id) {
+        return companyRepository.findById(id).map(companyMapper::toDTO);
     }
 
 
@@ -175,7 +175,7 @@ public class CompanyServiceImpl implements CompanyService {
     @Transactional
     @Override
     public Boolean deleteCompany(String id) {
-        Optional<CompanyEntity> result = this.getCompanyById(id);
+        Optional<CompanyEntity> result = companyRepository.findById(id);
         if (result.isPresent()) {
             companyRepository.delete(result.get());
             return true;
@@ -186,11 +186,6 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     public Integer getCountById(String id) {
         return companyRepository.countById(id);
-    }
-
-    @Override
-    public Optional<CompanyEntity> findCompanyById(String id) {
-        return companyRepository.findById(id);
     }
 
 
