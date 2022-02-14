@@ -98,20 +98,6 @@ public class AttendantServiceImpl implements AttendantService {
     }
 
     @Override
-    public Optional<AttendantDTO> getAttendantByEmail(String email) {
-        Optional<AccountEntity> accountOpt = accountService.getActiveAccountByEmail(email);
-        if (!accountOpt.isPresent()) {
-            return Optional.empty();
-        }
-        Optional<AttendantEntity> attendantOpt = attendantRepository.findById(accountOpt.get().getId());
-        if (!attendantOpt.isPresent()) {
-            return Optional.empty();
-        }
-        AttendantDTO dto = attendantMapper.toDTO(attendantOpt.get());
-        return Optional.of(dto);
-    }
-
-    @Override
     public AttendantDTO createNewAccount(AttendantDTO dto) {
         if (isEmailExist(dto.getAccount().getEmail())) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Account.EMAIL_EXISTED));

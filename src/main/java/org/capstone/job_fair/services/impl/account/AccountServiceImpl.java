@@ -101,12 +101,6 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public String getIdByEmail(String email) {
-        String id = accountRepository.findByEmail(email).get().getId().toString();
-        return id;
-    }
-
-    @Override
     @Transactional
     public void changePassword(String newPassword, String oldPassword) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -121,16 +115,16 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     @SneakyThrows
-    public void sendVerifyAccountEmail(String accountId){
+    public void sendVerifyAccountEmail(String accountId) {
         AccountEntity entity = accountRepository.getById(accountId);
         AccountVerifyTokenDTO lastTokenDTO = accountVerifyTokenService.getLastedToken(accountId);
         //if there is a token for this account
         //check for its validation
-        if (lastTokenDTO != null){
+        if (lastTokenDTO != null) {
             //if not validate check on expired time
-            if (!lastTokenDTO.getIsInvalidated()){
+            if (!lastTokenDTO.getIsInvalidated()) {
                 long currentTime = new Date().getTime();
-                if (lastTokenDTO.getExpiredTime() < currentTime){
+                if (lastTokenDTO.getExpiredTime() < currentTime) {
                     //token is expired
                     accountVerifyTokenService.invalidateTokenById(lastTokenDTO.getId());
                 } else {
@@ -140,13 +134,12 @@ public class AccountServiceImpl implements AccountService {
         }
         String token = accountVerifyTokenService.createToken(accountId).getId();
         this.mailService.sendMail(entity.getEmail(),
-                MessageUtil.getMessage(MessageConstant.Account.ACCOUNT_VERIFY_MAIL_TITLE),
-                domainUtil.generateCurrentDomain() + ApiEndPoint.Authorization.VERIFY_USER + "/" + accountId + "/" + token)
+                        MessageUtil.getMessage(MessageConstant.Account.ACCOUNT_VERIFY_MAIL_TITLE),
+                        domainUtil.generateCurrentDomain() + ApiEndPoint.Authorization.VERIFY_USER + "/" + accountId + "/" + token)
                 .exceptionally(throwable -> {
                     throwable.printStackTrace();
                     return null;
-                });;
-
+                });
     }
 
     @Override

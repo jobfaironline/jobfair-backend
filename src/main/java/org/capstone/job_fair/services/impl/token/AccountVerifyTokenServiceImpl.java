@@ -52,15 +52,6 @@ public class AccountVerifyTokenServiceImpl implements AccountVerifyTokenService 
     }
 
     @Override
-    public void invalidateAllTokenByAccountId(String accountId) {
-        List<AccountVerifyTokenEntity> entities = accountVerifyTokenEntityRepository.findByAccountId(accountId);
-        entities.forEach(entity -> {
-            entity.setIsInvalidated(true);
-        });
-        accountVerifyTokenEntityRepository.saveAll(entities);
-    }
-
-    @Override
     public void invalidateTokenById(String tokenId) {
         accountVerifyTokenEntityRepository.findById(tokenId).ifPresent(entity -> {
             entity.setIsInvalidated(true);
