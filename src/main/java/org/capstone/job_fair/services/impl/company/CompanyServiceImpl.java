@@ -160,7 +160,7 @@ public class CompanyServiceImpl implements CompanyService {
                 && isTaxIDExisted(dto.getTaxId())) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Company.TAX_ID_EXISTED));
         }
-        if (dto.getTaxId() != null && isSizeIdValid(dto.getSizeId())) {
+        if (dto.getSizeId() != null && !isSizeIdValid(dto.getSizeId())) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Company.SIZE_INVALID));
         }
         checkCompanyDTOValid(dto);

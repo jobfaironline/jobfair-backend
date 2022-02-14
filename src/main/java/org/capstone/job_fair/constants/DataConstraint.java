@@ -138,6 +138,7 @@ public class DataConstraint {
         public static final int DEFAULT_EMPLOYEE_MAX_NUM = 5;
         public static final int MIN_JOB_POSITION = 1;
         public static final int MAX_DESCRIPTION_LENGTH = 10000;
+        public static final int TAX_ID_LENGTH = 9;
     }
 
 
