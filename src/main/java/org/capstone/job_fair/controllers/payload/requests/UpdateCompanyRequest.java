@@ -6,6 +6,7 @@ import org.capstone.job_fair.models.statuses.CompanyStatus;
 import org.capstone.job_fair.validators.EmailConstraint;
 import org.capstone.job_fair.validators.PhoneConstraint;
 import org.capstone.job_fair.validators.XSSConstraint;
+import org.hibernate.validator.constraints.Length;
 
 
 import javax.validation.Valid;
@@ -24,6 +25,7 @@ public class UpdateCompanyRequest {
     @NotNull
     private String id;
 
+    @Length(min = DataConstraint.Company.TAX_ID_LENGTH, max = DataConstraint.Company.TAX_ID_LENGTH)
     private String taxId;
 
     @Size(min = DataConstraint.Company.NAME_MIN_LENGTH, max = DataConstraint.Company.NAME_MAX_LENGTH)
