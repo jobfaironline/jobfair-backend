@@ -1,7 +1,7 @@
 package org.capstone.job_fair.config.jwt.details;
 
-import org.capstone.job_fair.models.statuses.AccountStatus;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
+import org.capstone.job_fair.models.statuses.AccountStatus;
 import org.capstone.job_fair.repositories.account.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;

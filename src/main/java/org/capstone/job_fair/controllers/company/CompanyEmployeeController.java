@@ -12,7 +12,6 @@ import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
 import org.capstone.job_fair.models.dtos.company.CompanyDTO;
 import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
-import org.capstone.job_fair.models.entities.company.CompanyEntity;
 import org.capstone.job_fair.services.interfaces.account.AccountService;
 import org.capstone.job_fair.services.interfaces.company.CompanyEmployeeService;
 import org.capstone.job_fair.services.interfaces.company.CompanyService;

@@ -1,8 +1,8 @@
 package org.capstone.job_fair.config.jwt;
 
-import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
+import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;

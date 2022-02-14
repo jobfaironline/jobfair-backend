@@ -1,6 +1,9 @@
 package org.capstone.job_fair.models.dtos.company;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.capstone.job_fair.models.statuses.CompanyStatus;
 
 import java.util.List;

@@ -3,7 +3,6 @@ package org.capstone.job_fair.models.entities.company.job;
 import lombok.*;
 import org.capstone.job_fair.models.entities.attendant.JobLevelEntity;
 import org.capstone.job_fair.models.entities.attendant.LanguageEntity;
-import org.capstone.job_fair.models.entities.company.CompanyEntity;
 import org.capstone.job_fair.models.entities.company.CompanyRegistrationEntity;
 import org.capstone.job_fair.models.entities.company.SkillTagEntity;
 import org.capstone.job_fair.models.entities.company.SubCategoryEntity;

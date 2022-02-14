@@ -4,7 +4,6 @@ import lombok.*;
 import org.capstone.job_fair.models.statuses.CompanyRegistrationStatus;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.GenericGenerator;
-import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import java.util.Objects;

@@ -5,7 +5,6 @@ import org.hibernate.Hibernate;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.util.Objects;
 
 @Entity
 @Table(name = "account_verify_token", schema = "dbo")

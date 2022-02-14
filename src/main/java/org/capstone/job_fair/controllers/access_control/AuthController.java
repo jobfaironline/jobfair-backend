@@ -1,23 +1,20 @@
 package org.capstone.job_fair.controllers.access_control;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.config.jwt.JwtTokenProvider;
 import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
+import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
-import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
-import org.capstone.job_fair.models.entities.account.AccountEntity;
 import org.capstone.job_fair.controllers.payload.requests.LoginRequest;
-import org.capstone.job_fair.controllers.payload.responses.LoginResponse;
 import org.capstone.job_fair.controllers.payload.requests.RefreshTokenRequest;
+import org.capstone.job_fair.controllers.payload.responses.LoginResponse;
 import org.capstone.job_fair.controllers.payload.responses.RefreshTokenResponse;
-import lombok.AllArgsConstructor;
-import org.capstone.job_fair.models.entities.token.AccountVerifyTokenEntity;
+import org.capstone.job_fair.models.entities.account.AccountEntity;
 import org.capstone.job_fair.models.enums.Role;
 import org.capstone.job_fair.models.statuses.AccountStatus;
 import org.capstone.job_fair.services.interfaces.account.AccountService;
 import org.capstone.job_fair.services.interfaces.company.CompanyEmployeeService;
-import org.capstone.job_fair.services.interfaces.token.AccountVerifyTokenService;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,9 +24,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Date;
 import java.util.Optional;
 import java.util.stream.Collectors;
 

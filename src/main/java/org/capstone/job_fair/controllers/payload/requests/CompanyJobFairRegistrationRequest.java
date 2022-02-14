@@ -6,7 +6,6 @@ import org.capstone.job_fair.constants.DataConstraint;
 import org.capstone.job_fair.validators.XSSConstraint;
 import org.springframework.format.annotation.NumberFormat;
 
-
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import java.util.List;

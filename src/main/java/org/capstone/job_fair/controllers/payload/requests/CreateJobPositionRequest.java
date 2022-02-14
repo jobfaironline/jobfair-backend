@@ -12,7 +12,9 @@ import org.capstone.job_fair.validators.EmailConstraint;
 import org.capstone.job_fair.validators.XSSConstraint;
 
 import javax.validation.Valid;
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.List;
 
 @Data

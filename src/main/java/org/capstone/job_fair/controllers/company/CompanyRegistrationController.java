@@ -8,7 +8,6 @@ import org.capstone.job_fair.controllers.payload.requests.StaffEvaluateCompanyRe
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.dtos.company.CompanyRegistrationDTO;
 import org.capstone.job_fair.models.dtos.company.job.RegistrationJobPositionDTO;
-import org.capstone.job_fair.models.entities.company.CompanyRegistrationEntity;
 import org.capstone.job_fair.services.interfaces.company.CompanyRegistrationService;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;

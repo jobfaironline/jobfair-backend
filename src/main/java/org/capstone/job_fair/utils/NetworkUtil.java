@@ -1,8 +1,10 @@
 package org.capstone.job_fair.utils;
 
 // Java Program to Ping an IP address
-import java.io.*;
-import java.net.*;
+
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 public class NetworkUtil {
         // Sends ping request to a provided IP address

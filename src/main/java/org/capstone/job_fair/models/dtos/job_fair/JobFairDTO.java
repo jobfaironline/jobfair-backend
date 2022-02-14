@@ -3,7 +3,6 @@ package org.capstone.job_fair.models.dtos.job_fair;
 import lombok.*;
 import org.capstone.job_fair.models.statuses.JobFairStatus;
 
-import javax.persistence.*;
 import java.io.Serializable;
 
 @Data

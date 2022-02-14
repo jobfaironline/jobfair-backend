@@ -2,7 +2,6 @@ package org.capstone.job_fair.controllers.payload.requests;
 
 import lombok.*;
 import org.capstone.job_fair.constants.DataConstraint;
-import org.capstone.job_fair.models.statuses.JobFairStatus;
 import org.capstone.job_fair.validators.XSSConstraint;
 import org.springframework.format.annotation.NumberFormat;
 

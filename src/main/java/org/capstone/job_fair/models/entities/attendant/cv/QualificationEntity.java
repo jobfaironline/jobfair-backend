@@ -3,7 +3,10 @@ package org.capstone.job_fair.models.entities.attendant.cv;
 import lombok.*;
 import org.hibernate.Hibernate;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.Objects;
 
 @Entity

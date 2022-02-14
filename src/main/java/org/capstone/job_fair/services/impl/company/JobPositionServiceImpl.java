@@ -2,10 +2,7 @@ package org.capstone.job_fair.services.impl.company;
 
 import lombok.AllArgsConstructor;
 import org.capstone.job_fair.constants.MessageConstant;
-import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.dtos.company.job.JobPositionDTO;
-import org.capstone.job_fair.models.entities.company.CompanyEntity;
-import org.capstone.job_fair.models.entities.company.SkillTagEntity;
 import org.capstone.job_fair.models.entities.company.job.JobPositionEntity;
 import org.capstone.job_fair.repositories.company.SkillTagRepository;
 import org.capstone.job_fair.repositories.company.SubCategoryRepository;
@@ -15,11 +12,8 @@ import org.capstone.job_fair.services.interfaces.company.JobPositionService;
 import org.capstone.job_fair.services.mappers.JobPositionMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor

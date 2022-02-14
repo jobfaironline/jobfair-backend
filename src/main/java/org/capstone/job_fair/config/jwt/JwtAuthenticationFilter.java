@@ -1,7 +1,7 @@
 package org.capstone.job_fair.config.jwt;
 
-import org.capstone.job_fair.config.jwt.details.UserDetailsServiceImpl;
 import lombok.extern.slf4j.Slf4j;
+import org.capstone.job_fair.config.jwt.details.UserDetailsServiceImpl;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;

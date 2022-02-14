@@ -4,7 +4,6 @@ import lombok.*;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.GenericGenerator;
-import org.springframework.data.domain.Persistable;
 
 import javax.persistence.*;
 

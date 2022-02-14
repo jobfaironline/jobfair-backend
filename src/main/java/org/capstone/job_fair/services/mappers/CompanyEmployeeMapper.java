@@ -3,7 +3,10 @@ package org.capstone.job_fair.services.mappers;
 import org.capstone.job_fair.controllers.payload.requests.CompanyEmployeeRegisterRequest;
 import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
 import org.capstone.job_fair.models.entities.company.CompanyEmployeeEntity;
-import org.mapstruct.*;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 
 @Mapper(componentModel = "spring", uses = {CompanyMapper.class, AccountMapper.class},
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
