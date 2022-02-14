@@ -63,6 +63,7 @@ public class AttendantServiceImpl implements AttendantService {
 
 
     @Override
+    @Transactional
     public void updateAccount(AttendantDTO dto) {
         Optional<AccountEntity> opt = accountService.getActiveAccountById(dto.getAccount().getId());
         if (!opt.isPresent()) {
@@ -94,6 +95,7 @@ public class AttendantServiceImpl implements AttendantService {
         if (attendantOpt.isPresent()) {
             AttendantEntity entity = attendantOpt.get();
             attendantMapper.updateAttendantMapperFromDto(dto, entity);
+            attendantRepository.save(entity);
         }
     }
 

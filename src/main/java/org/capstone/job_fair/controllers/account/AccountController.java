@@ -1,6 +1,7 @@
 package org.capstone.job_fair.controllers.account;
 
 import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
+import org.capstone.job_fair.constants.AWSConstant;
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.controllers.payload.requests.ChangePasswordRequest;
@@ -10,6 +11,7 @@ import org.capstone.job_fair.models.dtos.token.AccountVerifyTokenDTO;
 import org.capstone.job_fair.models.entities.token.AccountVerifyTokenEntity;
 import org.capstone.job_fair.services.interfaces.account.AccountService;
 import org.capstone.job_fair.services.interfaces.token.AccountVerifyTokenService;
+import org.capstone.job_fair.services.interfaces.util.FileStorageService;
 import org.capstone.job_fair.services.mappers.AccountVerifyTokenMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +20,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.net.URI;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -34,6 +39,9 @@ public class AccountController {
 
     @Autowired
     private AccountVerifyTokenMapper mapper;
+
+    @Autowired
+    private FileStorageService fileStorageService;
 
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
@@ -97,6 +105,21 @@ public class AccountController {
         } catch (IllegalArgumentException e){
             return GenericResponse.build(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @PostMapping(ApiEndPoint.Account.PICTURE_PROFILE_ENDPOINT)
+    public ResponseEntity<?>uploadProfilePicture(@RequestParam("file")MultipartFile file) {
+        AccountDTO accountDTO;
+        try {
+            accountDTO = accountService.createNewProfilePicture();
+            fileStorageService.store(file.getBytes(), AWSConstant.PICTURE_PROFILE_FOLDER + "/" + accountDTO.getId()).exceptionally(throwable -> {
+                throwable.printStackTrace();
+                return null;
+            });
+        } catch (IOException e) {
+            return GenericResponse.build((e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return ResponseEntity.created(URI.create(accountDTO.getProfileImageUrl())).build();
     }
 
 }

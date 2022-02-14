@@ -34,4 +34,6 @@ public interface AccountService {
 
     AccountDTO createNew(AccountDTO dto);
 
+    AccountDTO createNewProfilePicture();
+
 }

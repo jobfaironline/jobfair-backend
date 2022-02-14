@@ -2,6 +2,7 @@ package org.capstone.job_fair.services.impl.account;
 
 import lombok.SneakyThrows;
 import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
+import org.capstone.job_fair.constants.AWSConstant;
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
@@ -14,6 +15,7 @@ import org.capstone.job_fair.services.interfaces.account.AccountService;
 import org.capstone.job_fair.services.interfaces.token.AccountVerifyTokenService;
 import org.capstone.job_fair.services.interfaces.util.MailService;
 import org.capstone.job_fair.services.mappers.AccountMapper;
+import org.capstone.job_fair.utils.AwsUtil;
 import org.capstone.job_fair.utils.DomainUtil;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +51,9 @@ public class AccountServiceImpl implements AccountService {
 
     @Autowired
     private MailService mailService;
+
+    @Autowired
+    private AwsUtil awsUtil;
 
     @Override
     public List<AccountDTO> getAllAccounts() {
@@ -157,6 +162,18 @@ public class AccountServiceImpl implements AccountService {
         }
         accountEntity = accountRepository.save(accountEntity);
         return accountMapper.toDTO(accountEntity);
+    }
+
+    @Override
+    public AccountDTO createNewProfilePicture() {
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext()
+                .getAuthentication().getPrincipal();
+        String id = userDetails.getId();
+        String url = awsUtil.generateAwsS3AccessString(AWSConstant.PICTURE_PROFILE_FOLDER, id);
+        AccountEntity account = accountRepository.getById(id);
+        account.setProfileImageUrl(url);
+        accountRepository.save(account);
+        return accountMapper.toDTO(account);
     }
 
 }
