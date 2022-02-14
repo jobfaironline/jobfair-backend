@@ -5,17 +5,17 @@ import lombok.*;
 import java.io.Serializable;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
-@ToString
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class SubCategoryDTO implements Serializable {
+    @EqualsAndHashCode.Include
+    private int id;
+    private String name;
+    private ProfessionCategoryDTO category;
+
     public SubCategoryDTO(int id) {
         this.id = id;
     }
-
-    private int id;
-    private String name;
-
-    private ProfessionCategoryDTO category;
 }

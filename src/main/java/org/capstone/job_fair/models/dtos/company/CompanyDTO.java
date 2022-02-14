@@ -1,9 +1,6 @@
 package org.capstone.job_fair.models.dtos.company;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.capstone.job_fair.models.statuses.CompanyStatus;
 
 import java.util.List;
@@ -11,11 +8,12 @@ import java.util.Set;
 
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class CompanyDTO {
-
+    @EqualsAndHashCode.Include
     private String id;
     private String taxId;
     private String name;

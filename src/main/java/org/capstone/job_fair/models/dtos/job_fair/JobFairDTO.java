@@ -7,12 +7,11 @@ import java.io.Serializable;
 
 @Data
 @AllArgsConstructor
-@Builder
-@Getter
-@Setter
 @NoArgsConstructor
+@Builder
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class JobFairDTO implements Serializable {
-
+    @EqualsAndHashCode.Include
     private String id;
 
     private long companyRegisterStartTime;

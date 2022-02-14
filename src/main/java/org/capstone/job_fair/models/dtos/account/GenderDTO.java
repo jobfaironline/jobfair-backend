@@ -2,12 +2,10 @@ package org.capstone.job_fair.models.dtos.account;
 
 import lombok.*;
 
-
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
-@ToString
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class GenderDTO {
     @EqualsAndHashCode.Include
