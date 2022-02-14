@@ -59,7 +59,7 @@ public class CompanyRegistrationController {
     public ResponseEntity<?> submitJobFairRegistration(@PathVariable("id") String registrationId) {
         try {
             companyRegistrationService.submitCompanyRegistration(registrationId);
-            return GenericResponse.build(MessageUtil.getMessage(MessageConstant.CompanyRegistration.SUBMIT_SUCESSFULLY)
+            return GenericResponse.build(MessageUtil.getMessage(MessageConstant.CompanyRegistration.SUBMIT_SUCCESSFULLY)
                     , HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return GenericResponse.build(e.getMessage(), HttpStatus.BAD_REQUEST);
