@@ -1,12 +1,10 @@
 package org.capstone.job_fair.services.impl.util;
 
-import lombok.SneakyThrows;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.services.interfaces.util.MailService;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
@@ -19,6 +17,7 @@ import java.util.concurrent.CompletableFuture;
 
 @Service
 public class MailServiceImpl implements MailService {
+
     @Autowired
     private JavaMailSender mailSender;
     @Value("${from.email.address}")

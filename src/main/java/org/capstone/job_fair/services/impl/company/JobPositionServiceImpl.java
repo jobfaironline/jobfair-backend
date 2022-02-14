@@ -23,7 +23,7 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
-@Transactional
+@Transactional(readOnly = true)
 public class JobPositionServiceImpl implements JobPositionService {
     @Autowired
     private JobPositionRepository jobPositionRepository;
@@ -40,22 +40,23 @@ public class JobPositionServiceImpl implements JobPositionService {
         return subCategoryRepository.existsById(id);
     }
 
-    private boolean isSkillTagIdValid(int id){
+    private boolean isSkillTagIdValid(int id) {
         return skillTagRepository.existsById(id);
     }
 
     @Override
+    @Transactional
     public void createNewJobPosition(JobPositionDTO dto) {
-        if (dto.getSubCategoryDTOs() != null){
+        if (dto.getSubCategoryDTOs() != null) {
             dto.getSubCategoryDTOs().forEach(subCategoryDTO -> {
-                if (!isSubCategoryIdValid(subCategoryDTO.getId())){
+                if (!isSubCategoryIdValid(subCategoryDTO.getId())) {
                     throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.SubCategory.NOT_FOUND));
                 }
             });
         }
-        if (dto.getSkillTagDTOS() != null){
+        if (dto.getSkillTagDTOS() != null) {
             dto.getSkillTagDTOS().forEach(skillTagDTO -> {
-                if (!isSkillTagIdValid(skillTagDTO.getId())){
+                if (!isSkillTagIdValid(skillTagDTO.getId())) {
                     throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.SkillTag.NOT_FOUND));
                 }
             });

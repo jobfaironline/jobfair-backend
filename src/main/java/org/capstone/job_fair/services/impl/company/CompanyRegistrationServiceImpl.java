@@ -29,6 +29,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional(readOnly = true)
 public class CompanyRegistrationServiceImpl implements CompanyRegistrationService {
 
     @Autowired
@@ -87,7 +88,7 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
                 MessageUtil.getMessage(MessageConstant.JobFair.JOB_FAIR_NOT_FOUND));
         JobFairEntity jobFairEntity = jobFairOpt.get();
         //Check if job fair has been approved
-        if(jobFairEntity.getStatus() != JobFairStatus.APPROVE) throw new
+        if (jobFairEntity.getStatus() != JobFairStatus.APPROVE) throw new
                 IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.JOB_FAIR_IS_NOT_APPROVED));
         //Validate job fair registration time of company
         long currentTime = new Date().getTime();
@@ -173,6 +174,7 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
     }
 
     @Override
+    @Transactional
     public void cancelCompanyRegistration(String registrationId, String cancelReason) {
         //check existed registration
         Optional<CompanyRegistrationEntity> registrationEntityOpt = companyRegistrationRepository.findById(registrationId);
@@ -199,6 +201,7 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
     }
 
     @Override
+    @Transactional
     public void staffEvaluateCompanyRegistration(String staffEvaluateCompanyRegistration, CompanyRegistrationStatus status, String message) {
         Optional<CompanyRegistrationEntity> companyRegistrationOpt = companyRegistrationRepository.findById(staffEvaluateCompanyRegistration);
         if (!companyRegistrationOpt.isPresent()) {
@@ -223,17 +226,16 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
         companyRegistrationRepository.save(entity);
     }
 
-    public String getCompanyIdInSecurityContext(){
+    public String getCompanyIdInSecurityContext() {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext()
                 .getAuthentication().getPrincipal();
         CompanyEmployeeEntity companyEmployee = companyEmployeeRepository.findById(userDetails.getId()).get();
-        String companyId = companyEmployee.getCompany().getId();
-        return  companyId;
+        return companyEmployee.getCompany().getId();
     }
 
     @Override
     public List<CompanyRegistrationDTO> getAllOwnCompanyRegistrationOfAJobFair(String jobFairId, String companyId) {
-        List<CompanyRegistrationEntity> companyRegistrationEntities = companyRegistrationRepository.findAllByJobFairIdAndCompanyId(jobFairId,companyId);
+        List<CompanyRegistrationEntity> companyRegistrationEntities = companyRegistrationRepository.findAllByJobFairIdAndCompanyId(jobFairId, companyId);
         return companyRegistrationEntities.stream().map(companyRegistrationMapper::toDTO).collect(Collectors.toList());
     }
 }

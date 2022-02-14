@@ -14,12 +14,14 @@ import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional(readOnly = true)
 public class JobFairServiceImpl implements JobFairService {
     @Autowired
     JobFairRepository jobFairRepository;
@@ -29,6 +31,7 @@ public class JobFairServiceImpl implements JobFairService {
     private JobFairMapper jobFairMapper;
 
     @Override
+    @Transactional
     public void createJobFair(JobFairDTO dto) {
         dto.setStatus(JobFairStatus.DRAFT);
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext()
@@ -89,6 +92,7 @@ public class JobFairServiceImpl implements JobFairService {
     }
 
     @Override
+    @Transactional
     public void deleteJobFairDraft(String jobFairId) {
         JobFairEntity entity = getValidatedJobFair(jobFairId, JobFairStatus.DRAFT);
         entity.setStatus(JobFairStatus.DELETED);
@@ -96,6 +100,7 @@ public class JobFairServiceImpl implements JobFairService {
     }
 
     @Override
+    @Transactional
     public void submitJobFairDraft(String jobFairId) {
         JobFairEntity entity = getValidatedJobFair(jobFairId, JobFairStatus.DRAFT);
         entity.setStatus(JobFairStatus.PENDING);
@@ -103,6 +108,7 @@ public class JobFairServiceImpl implements JobFairService {
     }
 
     @Override
+    @Transactional
     public void cancelPendingJobFair(String jobFairId) {
         JobFairEntity entity = getValidatedJobFair(jobFairId, JobFairStatus.PENDING);
         entity.setStatus(JobFairStatus.CANCEL);
@@ -110,6 +116,7 @@ public class JobFairServiceImpl implements JobFairService {
     }
 
     @Override
+    @Transactional
     public void restoreDeletedJobFair(String jobFairId) {
         JobFairEntity entity = getValidatedJobFair(jobFairId, JobFairStatus.DELETED);
         entity.setStatus(JobFairStatus.CANCEL);
@@ -117,6 +124,7 @@ public class JobFairServiceImpl implements JobFairService {
     }
 
     @Override
+    @Transactional
     public void adminEvaluateJobFair(String jobFairId, JobFairStatus status, String message) {
         Optional<JobFairEntity> jobFairEntityOpt = jobFairRepository.findById(jobFairId);
         if (!jobFairEntityOpt.isPresent()) {
@@ -147,7 +155,7 @@ public class JobFairServiceImpl implements JobFairService {
     @Override
     public List<JobFairDTO> getAllJobFairByStatus(JobFairStatus jobFairStatus) {
         List<JobFairEntity> jobFairEntities = jobFairRepository.findAllByStatus(jobFairStatus);
-            return jobFairEntities.stream().map(jobFairMapper::toJobFairDTO).collect(Collectors.toList());
+        return jobFairEntities.stream().map(jobFairMapper::toJobFairDTO).collect(Collectors.toList());
     }
 
 }

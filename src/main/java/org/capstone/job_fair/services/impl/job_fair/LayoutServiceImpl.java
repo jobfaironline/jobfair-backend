@@ -30,6 +30,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional(readOnly = true)
 public class LayoutServiceImpl implements LayoutService {
 
     @Autowired
@@ -52,6 +53,7 @@ public class LayoutServiceImpl implements LayoutService {
     }
 
     @Override
+    @Transactional
     public LayoutDTO createNew(LayoutDTO dto) {
         LayoutEntity entity = layoutMapper.toEntity(dto);
         String id = UUID.randomUUID().toString();
@@ -65,6 +67,7 @@ public class LayoutServiceImpl implements LayoutService {
     }
 
     @Override
+    @Transactional
     public void update(LayoutDTO dto) {
         Optional<LayoutEntity> layoutEntityOpt = layoutRepository.findById(dto.getId());
         if (!layoutEntityOpt.isPresent()) {

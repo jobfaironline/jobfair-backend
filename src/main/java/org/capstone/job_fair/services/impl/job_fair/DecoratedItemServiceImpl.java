@@ -11,6 +11,7 @@ import org.capstone.job_fair.utils.AwsUtil;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,6 +19,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional(readOnly = true)
 public class DecoratedItemServiceImpl implements DecoratedItemService {
 
     @Autowired
@@ -41,6 +43,7 @@ public class DecoratedItemServiceImpl implements DecoratedItemService {
     }
 
     @Override
+    @Transactional
     public DecoratedItemDTO createNew(DecoratedItemDTO dto) {
         DecoratedItemEntity entity = decoratedItemMapper.toEntity(dto);
         String id = UUID.randomUUID().toString();
@@ -52,6 +55,7 @@ public class DecoratedItemServiceImpl implements DecoratedItemService {
     }
 
     @Override
+    @Transactional
     public void update(DecoratedItemDTO dto) {
         Optional<DecoratedItemEntity> decoratedItemEntityOpt = decoratedItemRepository.findById(dto.getId());
         if (!decoratedItemEntityOpt.isPresent()) {

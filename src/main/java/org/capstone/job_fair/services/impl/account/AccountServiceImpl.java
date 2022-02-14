@@ -9,7 +9,6 @@ import org.capstone.job_fair.models.dtos.token.AccountVerifyTokenDTO;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
 import org.capstone.job_fair.models.statuses.AccountStatus;
 import org.capstone.job_fair.repositories.account.AccountRepository;
-import org.capstone.job_fair.repositories.token.AccountVerifyTokenEntityRepository;
 import org.capstone.job_fair.services.interfaces.account.AccountService;
 import org.capstone.job_fair.services.interfaces.token.AccountVerifyTokenService;
 import org.capstone.job_fair.services.interfaces.util.MailService;
@@ -25,11 +24,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 public class AccountServiceImpl implements AccountService {
 
     @Autowired
@@ -63,6 +61,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    @Transactional
     public AccountEntity save(AccountEntity account) {
         return accountRepository.save(account);
     }
@@ -94,6 +93,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    @Transactional
     public void activateAccount(String id) {
         AccountEntity accountEntity = accountRepository.findById(id).get();
         accountEntity.setStatus(AccountStatus.VERIFIED);
@@ -143,6 +143,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    @Transactional
     public AccountDTO createNew(AccountDTO dto) {
         AccountEntity accountEntity = accountMapper.toEntity(dto);
         if (accountRepository.countByEmail(dto.getEmail()) != 0) {

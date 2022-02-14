@@ -29,7 +29,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
     @Autowired
     private CompanyEmployeeMapper mapper;
@@ -52,6 +52,7 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
     }
 
     @Override
+    @Transactional
     public CompanyEmployeeDTO createNewCompanyManagerAccount(CompanyEmployeeDTO dto) {
         dto.getAccount().setRole(Role.COMPANY_MANAGER);
         CompanyEmployeeEntity entity = mapper.toEntity(dto);
@@ -67,6 +68,7 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
 
 
     @Override
+    @Transactional
     public void createNewCompanyEmployeeAccount(CompanyEmployeeDTO dto) {
         if (isEmailExist(dto.getAccount().getEmail())) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMAIL_EXISTED));
@@ -96,6 +98,7 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
     }
 
     @Override
+    @Transactional
     public void updateProfile(CompanyEmployeeDTO dto) {
         try {
             employeeRepository.findById(dto.getAccountId()).map((atd) -> {
@@ -119,6 +122,7 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
     }
 
     @Override
+    @Transactional
     public Boolean deleteEmployee(String id) {
         Optional<CompanyEmployeeEntity> companyEmployeeEntity = employeeRepository.findById(id);
         if (!companyEmployeeEntity.isPresent()) return false;
@@ -128,6 +132,7 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
     }
 
     @Override
+    @Transactional
     public void updateEmployeeStatus(String email) {
         AccountEntity accountEntity = accountRepository.findByEmail(email).get();
         accountEntity.setStatus(AccountStatus.VERIFIED);
@@ -154,7 +159,6 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
         if (manager.getAccount().getRole().getId() != Role.COMPANY_MANAGER.ordinal()) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyEmployee.INVALID_ROLE));
         }
-        System.out.println(employee.getCompany().equals(manager.getCompany()));
         if (!manager.getCompany().equals(employee.getCompany())) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyEmployee.DIFFERENT_COMPANY_ERROR));
         }
