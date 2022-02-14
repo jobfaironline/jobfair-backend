@@ -22,7 +22,6 @@ public class MessageConstant {
         public static final String INVALID_JOB_FAIR_STATUS = "job-fair-plan.error.invalid-job-fair-status";
         public static final String END_TIME_LESS_THAN_START_TIME_ERROR = "job-fair-plan.error.end-time-less-than-start-time";
         public static final String INVALID_END_TIME = "job-fair-plan.error.invalid-end-time";
-        public static final String COMPANY_REGISTER_SUCCESSFULLY = "job-fair.company.success.register";
         public static final String INVALID_BUY_BOOTH_TIME = "job-fair-plan.error.invalid-buy-booth-time";
         public static final String INVALID_STATUS_WHEN_EVALUATE = "job-fair-plan.error.invalid-status-when-evaluate";
         public static final String REJECT_MISSING_REASON = "job-fair-plan.error.reject-missing-reason";
@@ -190,6 +189,8 @@ public class MessageConstant {
         public static final String INVALID_STATUS_WHEN_EVALUATE = "company-registration.error.invalid-status-when-evaluate";
         public static final String INVALID_COMPANY_REGISTRATION_STATUS_WHEN_EVALUATE = "company-registration.error.invalid-company-registration-status-when-evaluate";
         public static final String EVALUATE_SUCCESSFULLY = "company-registration.success.evaluate";
+        public static final String COMPANY_REGISTER_SUCCESSFULLY = "company-registration.success.register";
+
 
 
     }
