@@ -1,5 +1,6 @@
 package org.capstone.job_fair.controllers.job_fair;
 
+import lombok.extern.slf4j.Slf4j;
 import org.capstone.job_fair.constants.AWSConstant;
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
@@ -29,6 +30,7 @@ import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 @RestController
+@Slf4j
 public class DecoratedItemController {
 
     @Autowired
@@ -70,11 +72,10 @@ public class DecoratedItemController {
 
     @PostMapping(ApiEndPoint.DecoratedItem.DECORATED_ITEM_ENDPOINT + "/{id}/content")
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).STAFF)")
-    @Async("threadPoolTaskExecutor")
     public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file, @PathVariable("id") String id) {
         try {
             fileStorageService.store(file.getBytes(), AWSConstant.DECORATED_ITEMS_FOLDER + "/" + id).exceptionally(throwable -> {
-                throwable.printStackTrace();
+                log.error(throwable.getMessage());
                 return null;
             });
         } catch (IOException e) {

@@ -2,6 +2,7 @@ package org.capstone.job_fair.controllers.company;
 
 
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.controllers.payload.requests.CompanyEmployeeRegisterRequest;
@@ -35,7 +36,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @RestController
-@NoArgsConstructor
+@Slf4j
 public class CompanyEmployeeController {
 
     @Autowired
@@ -63,7 +64,6 @@ public class CompanyEmployeeController {
 
     @Transactional
     @PostMapping(ApiEndPoint.CompanyEmployee.REGISTER_COMPANY_MANAGER)
-    @Async("threadPoolTaskExecutor")
     public ResponseEntity<?> register(@Validated @RequestBody CompanyManagerRegisterRequest request) {
         //check if email existed?
         if (isEmailExist(request.getEmail())) {
@@ -182,7 +182,11 @@ public class CompanyEmployeeController {
 
             this.mailService.sendMail(request.getEmail(),
                     MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMAIL_SUBJECT),
-                    MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMAIL_CONTENT) + dto.getAccount().getPassword());
+                    MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMAIL_CONTENT) + dto.getAccount().getPassword())
+                    .exceptionally(throwable -> {
+                        log.error(throwable.getMessage());
+                        return null;
+                    });
             return CompletableFuture.completedFuture(GenericResponse.build(
                     MessageUtil.getMessage(MessageConstant.CompanyEmployee.CREATE_EMPLOYEE_EMPLOYEE_SUCCESSFULLY),
                     HttpStatus.CREATED));

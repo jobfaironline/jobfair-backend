@@ -1,5 +1,6 @@
 package org.capstone.job_fair.controllers.access_control;
 
+import lombok.extern.slf4j.Slf4j;
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.constants.ResetPasswordTokenConstants;
@@ -28,6 +29,7 @@ import java.util.Date;
 import java.util.Optional;
 
 @RestController
+@Slf4j
 public class ResetPasswordController {
 
     @Value("${reset-password-expiration}")
@@ -44,6 +46,7 @@ public class ResetPasswordController {
 
     @Autowired
     private BCryptPasswordEncoder encoder;
+
 
     @PostMapping(ApiEndPoint.Authentication.RESET_PASSWORD_ENDPOINT)
     @Transactional
@@ -119,8 +122,12 @@ public class ResetPasswordController {
             try {
 
                 this.mailService.sendMail(account.getEmail(),
-                        ResetPasswordTokenConstants.MAIL_SUBJECT,
-                        String.format(ResetPasswordTokenConstants.MAIL_BODY, account.getEmail(), tokenEntity.getOtp()));
+                                ResetPasswordTokenConstants.MAIL_SUBJECT,
+                                String.format(ResetPasswordTokenConstants.MAIL_BODY, account.getEmail(), tokenEntity.getOtp()))
+                        .exceptionally(throwable -> {
+                            log.error(throwable.getMessage());
+                            return null;
+                        });
                 return GenericResponse.build(
                         MessageUtil.getMessage(MessageConstant.AccessControlMessage.REQUEST_RESET_PASSWORD_SUCCESSFULLY),
                         HttpStatus.OK);
@@ -144,7 +151,11 @@ public class ResetPasswordController {
             try {
                 this.mailService.sendMail(account.getEmail(),
                         ResetPasswordTokenConstants.MAIL_SUBJECT,
-                        String.format(ResetPasswordTokenConstants.MAIL_BODY, account.getEmail(), newToken.getOtp()));
+                        String.format(ResetPasswordTokenConstants.MAIL_BODY, account.getEmail(), newToken.getOtp()))
+                        .exceptionally(throwable -> {
+                            log.error(throwable.getMessage());
+                            return null;
+                        });
                 return GenericResponse.build(
                         MessageUtil.getMessage(MessageConstant.AccessControlMessage.REQUEST_RESET_PASSWORD_SUCCESSFULLY),
                         HttpStatus.OK);

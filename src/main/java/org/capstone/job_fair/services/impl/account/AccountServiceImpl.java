@@ -1,6 +1,7 @@
 package org.capstone.job_fair.services.impl.account;
 
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
@@ -28,6 +29,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
+@Slf4j
 public class AccountServiceImpl implements AccountService {
 
     @Autowired
@@ -137,7 +139,7 @@ public class AccountServiceImpl implements AccountService {
                         MessageUtil.getMessage(MessageConstant.Account.ACCOUNT_VERIFY_MAIL_TITLE),
                         domainUtil.generateCurrentDomain() + ApiEndPoint.Authorization.VERIFY_USER + "/" + accountId + "/" + token)
                 .exceptionally(throwable -> {
-                    throwable.printStackTrace();
+                    log.error(throwable.getMessage());
                     return null;
                 });
     }

@@ -1,5 +1,6 @@
 package org.capstone.job_fair.controllers.job_fair;
 
+import lombok.extern.slf4j.Slf4j;
 import org.capstone.job_fair.constants.AWSConstant;
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
@@ -28,6 +29,7 @@ import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 @RestController
+@Slf4j
 public class LayoutController {
 
     @Autowired
@@ -70,7 +72,7 @@ public class LayoutController {
         try {
             layoutService.validateAndGenerateBoothSlot(file, id);
             fileStorageService.store(file.getBytes(), AWSConstant.LAYOUT_FOLDER + "/" + id).exceptionally(throwable -> {
-                throwable.printStackTrace();
+                log.error(throwable.getMessage());
                 return null;
             });
         } catch (IllegalArgumentException e) {

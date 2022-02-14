@@ -1,5 +1,6 @@
 package org.capstone.job_fair.controllers.account;
 
+import lombok.extern.slf4j.Slf4j;
 import org.capstone.job_fair.constants.AccountConstant;
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
@@ -27,6 +28,7 @@ import javax.validation.Valid;
 import java.io.UnsupportedEncodingException;
 
 @RestController
+@Slf4j
 public class StaffController {
 
     @Autowired
@@ -55,7 +57,11 @@ public class StaffController {
 
             this.mailService.sendMail(request.getEmail(),
                     MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMAIL_SUBJECT),
-                    MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMAIL_CONTENT) + password);
+                    MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMAIL_CONTENT) + password)
+                    .exceptionally(throwable -> {
+                        log.error(throwable.getMessage());
+                        return null;
+                    });
 
             return GenericResponse.build(MessageUtil.getMessage(MessageConstant.Staff.CREATE_SUCCESSFULLY), HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
