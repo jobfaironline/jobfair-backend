@@ -1,12 +1,9 @@
 package org.capstone.job_fair.repositories.attendant.cv;
 
-import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.models.entities.attendant.cv.ActivityEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.rest.core.annotation.RepositoryRestResource;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.stereotype.Repository;
 
-@Transactional
-@RepositoryRestResource(path = ApiEndPoint.RestDataEndpoint.ACTIVITY)
+@Repository
 public interface ActivityRepository extends JpaRepository<ActivityEntity, String> {
 }
