@@ -1,7 +1,6 @@
 package org.capstone.job_fair.validators.impl;
 
 import org.capstone.job_fair.constants.RegexPattern;
-import org.capstone.job_fair.validators.PhoneConstraint;
 import org.capstone.job_fair.validators.XSSConstraint;
 
 import javax.validation.ConstraintValidator;

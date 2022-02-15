@@ -18,10 +18,10 @@ import java.util.Objects;
 @Table(name = "benefit", schema = "dbo")
 public class BenefitEntity {
 
-    public BenefitEntity(Integer id){
+    public BenefitEntity(Integer id) {
         this.id = id;
     }
-    
+
     @Id
     @Column(name = "id")
     private Integer id;

@@ -1,9 +1,6 @@
 package org.capstone.job_fair.models.dtos.company.job;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.capstone.job_fair.models.dtos.company.CompanyDTO;
 import org.capstone.job_fair.models.dtos.company.SkillTagDTO;
 import org.capstone.job_fair.models.dtos.company.SubCategoryDTO;
@@ -16,10 +13,12 @@ import java.util.List;
 
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class JobPositionDTO implements Serializable {
+    @EqualsAndHashCode.Include
     private String id;
     private String title;
     private String contactPersonName;

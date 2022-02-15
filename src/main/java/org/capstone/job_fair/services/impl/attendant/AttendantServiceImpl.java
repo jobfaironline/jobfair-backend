@@ -2,7 +2,6 @@ package org.capstone.job_fair.services.impl.attendant;
 
 import org.capstone.job_fair.constants.AccountConstant;
 import org.capstone.job_fair.constants.MessageConstant;
-import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.dtos.attendant.AttendantDTO;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
 import org.capstone.job_fair.models.entities.attendant.AttendantEntity;
@@ -13,10 +12,9 @@ import org.capstone.job_fair.services.interfaces.account.AccountService;
 import org.capstone.job_fair.services.interfaces.attendant.AttendantService;
 import org.capstone.job_fair.services.interfaces.attendant.CountryService;
 import org.capstone.job_fair.services.interfaces.attendant.ResidenceService;
-import org.capstone.job_fair.services.mappers.AttendantMapper;
+import org.capstone.job_fair.services.mappers.attendant.AttendantMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +25,7 @@ import java.util.stream.Collectors;
 
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 public class AttendantServiceImpl implements AttendantService {
 
     @Autowired
@@ -63,6 +61,7 @@ public class AttendantServiceImpl implements AttendantService {
 
 
     @Override
+    @Transactional
     public void updateAccount(AttendantDTO dto) {
         Optional<AccountEntity> opt = accountService.getActiveAccountById(dto.getAccount().getId());
         if (!opt.isPresent()) {
@@ -98,20 +97,7 @@ public class AttendantServiceImpl implements AttendantService {
     }
 
     @Override
-    public Optional<AttendantDTO> getAttendantByEmail(String email) {
-        Optional<AccountEntity> accountOpt = accountService.getActiveAccountByEmail(email);
-        if (!accountOpt.isPresent()) {
-            return Optional.empty();
-        }
-        Optional<AttendantEntity> attendantOpt = attendantRepository.findById(accountOpt.get().getId());
-        if (!attendantOpt.isPresent()) {
-            return Optional.empty();
-        }
-        AttendantDTO dto = attendantMapper.toDTO(attendantOpt.get());
-        return Optional.of(dto);
-    }
-
-    @Override
+    @Transactional
     public AttendantDTO createNewAccount(AttendantDTO dto) {
         if (isEmailExist(dto.getAccount().getEmail())) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Account.EMAIL_EXISTED));

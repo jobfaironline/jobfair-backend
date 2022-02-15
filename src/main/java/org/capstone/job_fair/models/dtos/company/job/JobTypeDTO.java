@@ -1,13 +1,14 @@
 package org.capstone.job_fair.models.dtos.company.job;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class JobTypeDTO {
+    @EqualsAndHashCode.Include
     private int id;
     private String name;
 }

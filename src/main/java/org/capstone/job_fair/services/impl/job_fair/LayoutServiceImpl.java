@@ -13,7 +13,7 @@ import org.capstone.job_fair.models.entities.job_fair.LayoutEntity;
 import org.capstone.job_fair.models.statuses.BoothStatus;
 import org.capstone.job_fair.repositories.job_fair.LayoutRepository;
 import org.capstone.job_fair.services.interfaces.job_fair.LayoutService;
-import org.capstone.job_fair.services.mappers.LayoutMapper;
+import org.capstone.job_fair.services.mappers.job_fair.LayoutMapper;
 import org.capstone.job_fair.utils.AwsUtil;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +30,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional(readOnly = true)
 public class LayoutServiceImpl implements LayoutService {
 
     @Autowired
@@ -52,6 +53,7 @@ public class LayoutServiceImpl implements LayoutService {
     }
 
     @Override
+    @Transactional
     public LayoutDTO createNew(LayoutDTO dto) {
         LayoutEntity entity = layoutMapper.toEntity(dto);
         String id = UUID.randomUUID().toString();
@@ -65,6 +67,7 @@ public class LayoutServiceImpl implements LayoutService {
     }
 
     @Override
+    @Transactional
     public void update(LayoutDTO dto) {
         Optional<LayoutEntity> layoutEntityOpt = layoutRepository.findById(dto.getId());
         if (!layoutEntityOpt.isPresent()) {

@@ -4,7 +4,6 @@ import lombok.*;
 import org.capstone.job_fair.models.statuses.CompanyRegistrationStatus;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.GenericGenerator;
-import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -15,7 +14,7 @@ import java.util.Objects;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "company_registration", schema = "dbo", catalog = "")
+@Table(name = "company_registration", schema = "dbo")
 public class CompanyRegistrationEntity {
     @Id
     @Column(name = "id", nullable = false, length = 36)
@@ -56,11 +55,6 @@ public class CompanyRegistrationEntity {
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (int) (createDate ^ (createDate >>> 32));
-        result = 31 * result + (description != null ? description.hashCode() : 0);
-        result = 31 * result + (jobFairId != null ? jobFairId.hashCode() : 0);
-        result = 31 * result + (companyId != null ? companyId.hashCode() : 0);
-        return result;
+        return getClass().hashCode();
     }
 }

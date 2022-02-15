@@ -3,8 +3,8 @@ package org.capstone.job_fair.config.jwt.details;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.capstone.job_fair.models.statuses.AccountStatus;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
+import org.capstone.job_fair.models.statuses.AccountStatus;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -32,7 +32,7 @@ public class UserDetailsImpl implements UserDetails {
     public static UserDetailsImpl build(AccountEntity account) {
         List<GrantedAuthority> authorities = new ArrayList<>(
                 Arrays.asList(
-                        new SimpleGrantedAuthority(account.getRole().getName().toString())));
+                        new SimpleGrantedAuthority(account.getRole().getName())));
         return new UserDetailsImpl(
                 account.getEmail(),
                 account.getPassword(),

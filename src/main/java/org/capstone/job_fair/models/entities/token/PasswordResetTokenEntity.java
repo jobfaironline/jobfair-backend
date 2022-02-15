@@ -1,12 +1,15 @@
 package org.capstone.job_fair.models.entities.token;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.GenericGenerator;
-import org.springframework.data.domain.Persistable;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Table(name = "password_reset_token", schema = "dbo")
@@ -14,7 +17,6 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
 public class PasswordResetTokenEntity {
     @Id
     @Column(name = "id", updatable = false, nullable = false)
@@ -44,11 +46,21 @@ public class PasswordResetTokenEntity {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
         PasswordResetTokenEntity that = (PasswordResetTokenEntity) o;
-        return getId().equals(that.getId());
+        return id != null && Objects.equals(id, that.getId());
     }
 
     @Override
     public int hashCode() {
-        return getId().hashCode();
+        return getClass().hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "(" +
+                "id = " + id + ", " +
+                "otp = " + otp + ", " +
+                "expiredTime = " + expiredTime + ", " +
+                "createTime = " + createTime + ", " +
+                "isInvalidated = " + isInvalidated + ")";
     }
 }

@@ -10,7 +10,6 @@ import java.util.regex.Matcher;
 public class PasswordValidator implements ConstraintValidator<PasswordConstraint, String> {
 
 
-
     @Override
     public void initialize(PasswordConstraint constraintAnnotation) {
         ConstraintValidator.super.initialize(constraintAnnotation);

@@ -2,16 +2,10 @@ package org.capstone.job_fair.models.dtos.account;
 
 import lombok.*;
 
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Id;
-
-
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
-@ToString
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class GenderDTO {
     @EqualsAndHashCode.Include

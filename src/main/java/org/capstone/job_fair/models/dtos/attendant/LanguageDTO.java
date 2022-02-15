@@ -5,12 +5,13 @@ import lombok.*;
 import java.io.Serializable;
 
 
-@Getter
-@Setter
-@ToString
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class LanguageDTO implements Serializable {
+    @EqualsAndHashCode.Include
     private String id;
     private String name;
 }

@@ -1,22 +1,19 @@
 package org.capstone.job_fair.controllers.account;
 
-import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
-import org.capstone.job_fair.controllers.payload.requests.ChangePasswordRequest;
+import org.capstone.job_fair.controllers.payload.requests.account.ChangePasswordRequest;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
 import org.capstone.job_fair.models.dtos.token.AccountVerifyTokenDTO;
-import org.capstone.job_fair.models.entities.token.AccountVerifyTokenEntity;
 import org.capstone.job_fair.services.interfaces.account.AccountService;
 import org.capstone.job_fair.services.interfaces.token.AccountVerifyTokenService;
-import org.capstone.job_fair.services.mappers.AccountVerifyTokenMapper;
+import org.capstone.job_fair.services.mappers.token.AccountVerifyTokenMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -94,7 +91,7 @@ public class AccountController {
         try {
             accountService.sendVerifyAccountEmail(id);
             return GenericResponse.build(MessageUtil.getMessage(MessageConstant.Account.SEND_NEW_VERIFICATION_LINK_SUCCESSFULLY), HttpStatus.OK);
-        } catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             return GenericResponse.build(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }

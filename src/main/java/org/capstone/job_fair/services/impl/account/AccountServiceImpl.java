@@ -1,6 +1,7 @@
 package org.capstone.job_fair.services.impl.account;
 
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
@@ -9,11 +10,10 @@ import org.capstone.job_fair.models.dtos.token.AccountVerifyTokenDTO;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
 import org.capstone.job_fair.models.statuses.AccountStatus;
 import org.capstone.job_fair.repositories.account.AccountRepository;
-import org.capstone.job_fair.repositories.token.AccountVerifyTokenEntityRepository;
 import org.capstone.job_fair.services.interfaces.account.AccountService;
 import org.capstone.job_fair.services.interfaces.token.AccountVerifyTokenService;
 import org.capstone.job_fair.services.interfaces.util.MailService;
-import org.capstone.job_fair.services.mappers.AccountMapper;
+import org.capstone.job_fair.services.mappers.account.AccountMapper;
 import org.capstone.job_fair.utils.DomainUtil;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,11 +25,11 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
+@Slf4j
 public class AccountServiceImpl implements AccountService {
 
     @Autowired
@@ -63,6 +63,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    @Transactional
     public AccountEntity save(AccountEntity account) {
         return accountRepository.save(account);
     }
@@ -94,16 +95,11 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    @Transactional
     public void activateAccount(String id) {
         AccountEntity accountEntity = accountRepository.findById(id).get();
         accountEntity.setStatus(AccountStatus.VERIFIED);
         accountRepository.save(accountEntity);
-    }
-
-    @Override
-    public String getIdByEmail(String email) {
-        String id = accountRepository.findByEmail(email).get().getId().toString();
-        return id;
     }
 
     @Override
@@ -121,16 +117,16 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     @SneakyThrows
-    public void sendVerifyAccountEmail(String accountId){
+    public void sendVerifyAccountEmail(String accountId) {
         AccountEntity entity = accountRepository.getById(accountId);
         AccountVerifyTokenDTO lastTokenDTO = accountVerifyTokenService.getLastedToken(accountId);
         //if there is a token for this account
         //check for its validation
-        if (lastTokenDTO != null){
+        if (lastTokenDTO != null) {
             //if not validate check on expired time
-            if (!lastTokenDTO.getIsInvalidated()){
+            if (!lastTokenDTO.getIsInvalidated()) {
                 long currentTime = new Date().getTime();
-                if (lastTokenDTO.getExpiredTime() < currentTime){
+                if (lastTokenDTO.getExpiredTime() < currentTime) {
                     //token is expired
                     accountVerifyTokenService.invalidateTokenById(lastTokenDTO.getId());
                 } else {
@@ -140,16 +136,16 @@ public class AccountServiceImpl implements AccountService {
         }
         String token = accountVerifyTokenService.createToken(accountId).getId();
         this.mailService.sendMail(entity.getEmail(),
-                MessageUtil.getMessage(MessageConstant.Account.ACCOUNT_VERIFY_MAIL_TITLE),
-                domainUtil.generateCurrentDomain() + ApiEndPoint.Authorization.VERIFY_USER + "/" + accountId + "/" + token)
+                        MessageUtil.getMessage(MessageConstant.Account.ACCOUNT_VERIFY_MAIL_TITLE),
+                        domainUtil.generateCurrentDomain() + ApiEndPoint.Authorization.VERIFY_USER + "/" + accountId + "/" + token)
                 .exceptionally(throwable -> {
-                    throwable.printStackTrace();
+                    log.error(throwable.getMessage());
                     return null;
-                });;
-
+                });
     }
 
     @Override
+    @Transactional
     public AccountDTO createNew(AccountDTO dto) {
         AccountEntity accountEntity = accountMapper.toEntity(dto);
         if (accountRepository.countByEmail(dto.getEmail()) != 0) {

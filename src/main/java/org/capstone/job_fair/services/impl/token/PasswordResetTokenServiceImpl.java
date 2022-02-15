@@ -3,7 +3,6 @@ package org.capstone.job_fair.services.impl.token;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
 import org.capstone.job_fair.models.entities.token.PasswordResetTokenEntity;
 import org.capstone.job_fair.repositories.token.PasswordResetTokenRepository;
-import org.capstone.job_fair.services.interfaces.account.AccountService;
 import org.capstone.job_fair.services.interfaces.token.PasswordResetTokenService;
 import org.capstone.job_fair.utils.OTPGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,17 +12,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 public class PasswordResetTokenServiceImpl implements PasswordResetTokenService {
 
     @Autowired
     private PasswordResetTokenRepository resetRepository;
-
-    @Autowired
-    private AccountService accountService;
 
     @Value("${reset-password-expiration}")
     private String RESET_PASSWORD_TOKEN_EXPIRED_TIME;
@@ -35,6 +30,7 @@ public class PasswordResetTokenServiceImpl implements PasswordResetTokenService 
     }
 
     @Override
+    @Transactional
     public PasswordResetTokenEntity createResetToken(AccountEntity account) {
         //generate otp
         String otp = OTPGenerator.generateOTP();
@@ -50,6 +46,7 @@ public class PasswordResetTokenServiceImpl implements PasswordResetTokenService 
     }
 
     @Override
+    @Transactional
     public void invalidateEntity(PasswordResetTokenEntity entity) {
         entity.setInvalidated(true);
         resetRepository.save(entity);

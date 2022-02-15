@@ -10,12 +10,12 @@ import java.io.Serializable;
 import java.util.List;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
-@Setter
-@Getter
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class AttendantDTO implements Serializable {
+    @EqualsAndHashCode.Include
     private AccountDTO account;
     private String title;
     private String address;
@@ -28,7 +28,7 @@ public class AttendantDTO implements Serializable {
     private JobLevel jobLevel;
 
     private List<SkillDTO> skills;
-    private List<WorkHistoryDTO>  workHistories;
+    private List<WorkHistoryDTO> workHistories;
     private List<EducationDTO> educations;
     private List<CertificationDTO> certifications;
     private List<ReferenceDTO> references;

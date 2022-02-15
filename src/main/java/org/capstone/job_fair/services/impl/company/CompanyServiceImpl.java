@@ -1,39 +1,28 @@
 package org.capstone.job_fair.services.impl.company;
 
-import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import org.capstone.job_fair.constants.DataConstraint;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.models.dtos.company.CompanyDTO;
-import org.capstone.job_fair.models.dtos.company.CompanyRegistrationDTO;
 import org.capstone.job_fair.models.dtos.company.SubCategoryDTO;
-import org.capstone.job_fair.models.dtos.company.job.RegistrationJobPositionDTO;
-import org.capstone.job_fair.models.entities.company.CompanyEmployeeEntity;
 import org.capstone.job_fair.models.entities.company.CompanyEntity;
-import org.capstone.job_fair.models.entities.company.CompanyRegistrationEntity;
-import org.capstone.job_fair.models.entities.company.job.JobPositionEntity;
-import org.capstone.job_fair.models.entities.company.job.RegistrationJobPositionEntity;
-import org.capstone.job_fair.models.entities.job_fair.JobFairEntity;
-import org.capstone.job_fair.models.statuses.CompanyRegistrationStatus;
 import org.capstone.job_fair.models.statuses.CompanyStatus;
-import org.capstone.job_fair.repositories.company.*;
-import org.capstone.job_fair.repositories.company.job.JobPositionRepository;
-import org.capstone.job_fair.repositories.company.job.RegistrationJobPositionRepository;
-import org.capstone.job_fair.repositories.job_fair.JobFairRepository;
+import org.capstone.job_fair.repositories.company.BenefitRepository;
+import org.capstone.job_fair.repositories.company.CompanyRepository;
+import org.capstone.job_fair.repositories.company.CompanySizeRepository;
+import org.capstone.job_fair.repositories.company.SubCategoryRepository;
 import org.capstone.job_fair.services.interfaces.company.CompanyService;
-import org.capstone.job_fair.services.mappers.CompanyMapper;
-import org.capstone.job_fair.services.mappers.CompanyRegistrationMapper;
-import org.capstone.job_fair.services.mappers.JobPositionMapper;
-import org.capstone.job_fair.services.mappers.RegistrationJobPositionMapper;
+import org.capstone.job_fair.services.mappers.company.CompanyMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional(readOnly = true)
 public class CompanyServiceImpl implements CompanyService {
 
     @Autowired
@@ -50,7 +39,6 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Autowired
     private BenefitRepository benefitRepository;
-
 
     @Autowired
     private SubCategoryRepository subCategoryRepository;
@@ -118,6 +106,7 @@ public class CompanyServiceImpl implements CompanyService {
 
 
     @Override
+    @Transactional
     public void createCompany(CompanyDTO dto) {
         if (isEmailExisted(dto.getEmail())) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Company.EMAIL_EXISTED));
@@ -142,8 +131,8 @@ public class CompanyServiceImpl implements CompanyService {
         companyRepository.save(entity);
     }
 
-    @Transactional
     @Override
+    @Transactional
     public void updateCompany(CompanyDTO dto) {
         Optional<CompanyEntity> opt = companyRepository.findById(dto.getId());
 

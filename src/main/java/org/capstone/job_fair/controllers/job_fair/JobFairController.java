@@ -2,8 +2,8 @@ package org.capstone.job_fair.controllers.job_fair;
 
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
-import org.capstone.job_fair.controllers.payload.requests.AdminEvaluateJobFairRequest;
-import org.capstone.job_fair.controllers.payload.requests.CreateJobFairPlanRequest;
+import org.capstone.job_fair.controllers.payload.requests.job_fair.AdminEvaluateJobFairRequest;
+import org.capstone.job_fair.controllers.payload.requests.job_fair.CreateJobFairPlanRequest;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.dtos.job_fair.JobFairDTO;
 import org.capstone.job_fair.models.statuses.JobFairStatus;

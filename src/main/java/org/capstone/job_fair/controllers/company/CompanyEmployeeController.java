@@ -1,24 +1,23 @@
 package org.capstone.job_fair.controllers.company;
 
 
-import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
-import org.capstone.job_fair.controllers.payload.requests.CompanyEmployeeRegisterRequest;
-import org.capstone.job_fair.controllers.payload.requests.CompanyManagerRegisterRequest;
-import org.capstone.job_fair.controllers.payload.requests.PromoteEmployeeToCompanyManagerRequest;
-import org.capstone.job_fair.controllers.payload.requests.UpdateCompanyEmployeeProfileRequest;
+import org.capstone.job_fair.controllers.payload.requests.company.CompanyEmployeeRegisterRequest;
+import org.capstone.job_fair.controllers.payload.requests.company.CompanyManagerRegisterRequest;
+import org.capstone.job_fair.controllers.payload.requests.company.PromoteEmployeeToCompanyManagerRequest;
+import org.capstone.job_fair.controllers.payload.requests.company.UpdateCompanyEmployeeProfileRequest;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
 import org.capstone.job_fair.models.dtos.company.CompanyDTO;
 import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
-import org.capstone.job_fair.models.entities.company.CompanyEntity;
 import org.capstone.job_fair.services.interfaces.account.AccountService;
 import org.capstone.job_fair.services.interfaces.company.CompanyEmployeeService;
 import org.capstone.job_fair.services.interfaces.company.CompanyService;
 import org.capstone.job_fair.services.interfaces.util.MailService;
-import org.capstone.job_fair.services.mappers.CompanyEmployeeMapper;
-import org.capstone.job_fair.services.mappers.CompanyMapper;
+import org.capstone.job_fair.services.mappers.company.CompanyEmployeeMapper;
+import org.capstone.job_fair.services.mappers.company.CompanyMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -36,7 +35,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @RestController
-@NoArgsConstructor
+@Slf4j
 public class CompanyEmployeeController {
 
     @Autowired
@@ -64,7 +63,6 @@ public class CompanyEmployeeController {
 
     @Transactional
     @PostMapping(ApiEndPoint.CompanyEmployee.REGISTER_COMPANY_MANAGER)
-    @Async("threadPoolTaskExecutor")
     public ResponseEntity<?> register(@Validated @RequestBody CompanyManagerRegisterRequest request) {
         //check if email existed?
         if (isEmailExist(request.getEmail())) {
@@ -182,8 +180,12 @@ public class CompanyEmployeeController {
             companyEmployeeService.createNewCompanyEmployeeAccount(dto);
 
             this.mailService.sendMail(request.getEmail(),
-                    MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMAIL_SUBJECT),
-                    MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMAIL_CONTENT) + dto.getAccount().getPassword());
+                            MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMAIL_SUBJECT),
+                            MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMAIL_CONTENT) + dto.getAccount().getPassword())
+                    .exceptionally(throwable -> {
+                        log.error(throwable.getMessage());
+                        return null;
+                    });
             return CompletableFuture.completedFuture(GenericResponse.build(
                     MessageUtil.getMessage(MessageConstant.CompanyEmployee.CREATE_EMPLOYEE_EMPLOYEE_SUCCESSFULLY),
                     HttpStatus.CREATED));

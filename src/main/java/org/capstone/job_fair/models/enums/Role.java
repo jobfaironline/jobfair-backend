@@ -15,6 +15,5 @@ public enum Role implements GrantedAuthority {
     }
 
 
-
 }
 

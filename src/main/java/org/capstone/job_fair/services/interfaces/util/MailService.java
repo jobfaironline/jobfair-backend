@@ -6,5 +6,5 @@ import java.util.concurrent.CompletableFuture;
 
 public interface MailService {
 
-     CompletableFuture<Void> sendMail(String recipient, String subject, String content) throws UnsupportedEncodingException, MessagingException;
+    CompletableFuture<Void> sendMail(String recipient, String subject, String content) throws UnsupportedEncodingException, MessagingException;
 }
