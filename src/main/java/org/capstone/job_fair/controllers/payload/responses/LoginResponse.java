@@ -17,4 +17,5 @@ public class LoginResponse {
     private String refreshToken;
     private boolean isEmployeeFirstTime;
     private String userId;
+    private String companyId;
 }

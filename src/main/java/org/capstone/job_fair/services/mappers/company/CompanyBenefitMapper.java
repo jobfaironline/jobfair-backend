@@ -12,11 +12,11 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public abstract class CompanyBenefitMapper {
     @Mapping(source = "benefit", target = "benefitDTO")
-    @Mapping(source = "company", target = "companyDTO")
+    @Mapping(target = "companyDTO", ignore = true)
     public abstract CompanyBenefitDTO toDTO(CompanyBenefitEntity entity);
 
     @Mapping(source = "benefitDTO", target = "benefit")
-    @Mapping(source = "companyDTO", target = "company")
+    @Mapping(target = "company", ignore = true)
     public abstract CompanyBenefitEntity toEntity(CompanyBenefitDTO dto);
 
     @Mapping(source = "benefitDTO", target = "benefit")
