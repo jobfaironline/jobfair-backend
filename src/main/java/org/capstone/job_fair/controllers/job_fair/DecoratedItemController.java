@@ -1,22 +1,22 @@
 package org.capstone.job_fair.controllers.job_fair;
 
+import lombok.extern.slf4j.Slf4j;
 import org.capstone.job_fair.constants.AWSConstant;
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
-import org.capstone.job_fair.controllers.payload.requests.CreateDecoratedItemMetaDataRequest;
-import org.capstone.job_fair.controllers.payload.requests.UpdateDecoratedItemMetaDataRequest;
+import org.capstone.job_fair.controllers.payload.requests.job_fair.CreateDecoratedItemMetaDataRequest;
+import org.capstone.job_fair.controllers.payload.requests.job_fair.UpdateDecoratedItemMetaDataRequest;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.dtos.job_fair.DecoratedItemDTO;
 import org.capstone.job_fair.services.interfaces.job_fair.DecoratedItemService;
 import org.capstone.job_fair.services.interfaces.util.FileStorageService;
-import org.capstone.job_fair.services.mappers.DecoratedItemMapper;
+import org.capstone.job_fair.services.mappers.job_fair.DecoratedItemMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,6 +29,7 @@ import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 @RestController
+@Slf4j
 public class DecoratedItemController {
 
     @Autowired
@@ -54,10 +55,7 @@ public class DecoratedItemController {
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).STAFF)")
     public ResponseEntity<DecoratedItemDTO> getById(@PathVariable("id") String id) {
         Optional<DecoratedItemDTO> decoratedItemDTOOpt = decoratedItemService.findById(id);
-        if (!decoratedItemDTOOpt.isPresent()) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(decoratedItemDTOOpt.get());
+        return decoratedItemDTOOpt.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping(ApiEndPoint.DecoratedItem.DECORATED_ITEM_ENDPOINT)
@@ -70,11 +68,10 @@ public class DecoratedItemController {
 
     @PostMapping(ApiEndPoint.DecoratedItem.DECORATED_ITEM_ENDPOINT + "/{id}/content")
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).STAFF)")
-    @Async("threadPoolTaskExecutor")
     public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file, @PathVariable("id") String id) {
         try {
             fileStorageService.store(file.getBytes(), AWSConstant.DECORATED_ITEMS_FOLDER + "/" + id).exceptionally(throwable -> {
-                throwable.printStackTrace();
+                log.error(throwable.getMessage());
                 return null;
             });
         } catch (IOException e) {
@@ -86,7 +83,7 @@ public class DecoratedItemController {
     @GetMapping(ApiEndPoint.DecoratedItem.DECORATED_ITEM_ENDPOINT + "/{id}/content")
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).STAFF)")
     public ResponseEntity<?> getFile(@PathVariable String id) {
-        Resource file = null;
+        Resource file;
         try {
             file = fileStorageService.loadAsResource(id).get();
         } catch (InterruptedException | ExecutionException e) {

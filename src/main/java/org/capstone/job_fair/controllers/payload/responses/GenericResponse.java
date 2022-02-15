@@ -1,6 +1,7 @@
 package org.capstone.job_fair.controllers.payload.responses;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 

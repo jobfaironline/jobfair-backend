@@ -1,16 +1,17 @@
 package org.capstone.job_fair.controllers.access_control;
 
+import lombok.extern.slf4j.Slf4j;
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.constants.ResetPasswordTokenConstants;
-import org.capstone.job_fair.controllers.payload.requests.GenerateOTPRequest;
-import org.capstone.job_fair.controllers.payload.requests.ResetPasswordRequest;
+import org.capstone.job_fair.controllers.payload.requests.accesss_control.GenerateOTPRequest;
+import org.capstone.job_fair.controllers.payload.requests.account.ResetPasswordRequest;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
 import org.capstone.job_fair.models.entities.token.PasswordResetTokenEntity;
 import org.capstone.job_fair.services.interfaces.account.AccountService;
-import org.capstone.job_fair.services.interfaces.util.MailService;
 import org.capstone.job_fair.services.interfaces.token.PasswordResetTokenService;
+import org.capstone.job_fair.services.interfaces.util.MailService;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,6 +29,7 @@ import java.util.Date;
 import java.util.Optional;
 
 @RestController
+@Slf4j
 public class ResetPasswordController {
 
     @Value("${reset-password-expiration}")
@@ -44,6 +46,7 @@ public class ResetPasswordController {
 
     @Autowired
     private BCryptPasswordEncoder encoder;
+
 
     @PostMapping(ApiEndPoint.Authentication.RESET_PASSWORD_ENDPOINT)
     @Transactional
@@ -119,15 +122,18 @@ public class ResetPasswordController {
             try {
 
                 this.mailService.sendMail(account.getEmail(),
-                        ResetPasswordTokenConstants.MAIL_SUBJECT,
-                        String.format(ResetPasswordTokenConstants.MAIL_BODY, account.getEmail(), tokenEntity.getOtp()));
+                                ResetPasswordTokenConstants.MAIL_SUBJECT,
+                                String.format(ResetPasswordTokenConstants.MAIL_BODY, account.getEmail(), tokenEntity.getOtp()))
+                        .exceptionally(throwable -> {
+                            log.error(throwable.getMessage());
+                            return null;
+                        });
                 return GenericResponse.build(
                         MessageUtil.getMessage(MessageConstant.AccessControlMessage.REQUEST_RESET_PASSWORD_SUCCESSFULLY),
                         HttpStatus.OK);
-            } catch (UnsupportedEncodingException | MessagingException ex2){
-                return GenericResponse.build(MessageUtil.getMessage(MessageConstant.Mail.SEND_FAILED),HttpStatus.BAD_REQUEST);
+            } catch (UnsupportedEncodingException | MessagingException ex2) {
+                return GenericResponse.build(MessageUtil.getMessage(MessageConstant.Mail.SEND_FAILED), HttpStatus.BAD_REQUEST);
             }
-
 
 
         }
@@ -144,13 +150,17 @@ public class ResetPasswordController {
             //send mail
             try {
                 this.mailService.sendMail(account.getEmail(),
-                        ResetPasswordTokenConstants.MAIL_SUBJECT,
-                        String.format(ResetPasswordTokenConstants.MAIL_BODY, account.getEmail(), newToken.getOtp()));
+                                ResetPasswordTokenConstants.MAIL_SUBJECT,
+                                String.format(ResetPasswordTokenConstants.MAIL_BODY, account.getEmail(), newToken.getOtp()))
+                        .exceptionally(throwable -> {
+                            log.error(throwable.getMessage());
+                            return null;
+                        });
                 return GenericResponse.build(
                         MessageUtil.getMessage(MessageConstant.AccessControlMessage.REQUEST_RESET_PASSWORD_SUCCESSFULLY),
                         HttpStatus.OK);
-            } catch (UnsupportedEncodingException | MessagingException ex2){
-                return GenericResponse.build(MessageUtil.getMessage(MessageConstant.Mail.SEND_FAILED),HttpStatus.INTERNAL_SERVER_ERROR);
+            } catch (UnsupportedEncodingException | MessagingException ex2) {
+                return GenericResponse.build(MessageUtil.getMessage(MessageConstant.Mail.SEND_FAILED), HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
     }

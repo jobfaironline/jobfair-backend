@@ -1,18 +1,17 @@
 package org.capstone.job_fair.models.dtos.company;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.capstone.job_fair.models.statuses.CompanyRegistrationStatus;
 
 import java.io.Serializable;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class CompanyRegistrationDTO implements Serializable {
+    @EqualsAndHashCode.Include
     private String id;
     private long createDate;
     private String description;

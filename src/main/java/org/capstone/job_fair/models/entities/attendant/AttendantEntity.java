@@ -1,6 +1,9 @@
 package org.capstone.job_fair.models.entities.attendant;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
 import org.capstone.job_fair.models.entities.attendant.cv.*;
 import org.capstone.job_fair.models.enums.JobLevel;
@@ -14,7 +17,6 @@ import java.util.Objects;
 @Entity
 @Getter
 @Setter
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "attendant", schema = "dbo")
@@ -42,7 +44,7 @@ public class AttendantEntity {
     @Enumerated(EnumType.ORDINAL)
     private Marital maritalStatus;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
+    @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
     @JoinColumn(name = "account_id")
     @MapsId
     private AccountEntity account;
@@ -77,6 +79,8 @@ public class AttendantEntity {
     private List<CertificationEntity> certificationEntities;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
+    @JoinColumn(name = "attendant_id", referencedColumnName = "account_id")
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
     @JoinColumn(name = "attendant_id", referencedColumnName = "account_id" )
     private List<ReferenceEntity> referenceEntities;
 
@@ -96,5 +100,18 @@ public class AttendantEntity {
     @Override
     public int hashCode() {
         return getClass().hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "(" +
+                "accountId = " + accountId + ", " +
+                "title = " + title + ", " +
+                "address = " + address + ", " +
+                "dob = " + dob + ", " +
+                "jobTitle = " + jobTitle + ", " +
+                "yearOfExp = " + yearOfExp + ", " +
+                "maritalStatus = " + maritalStatus + ", " +
+                "currentJobLevel = " + currentJobLevel + ")";
     }
 }

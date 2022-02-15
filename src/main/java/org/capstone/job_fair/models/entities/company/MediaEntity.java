@@ -1,7 +1,9 @@
 package org.capstone.job_fair.models.entities.company;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -11,12 +13,10 @@ import java.util.Objects;
 @Entity
 @Getter
 @Setter
-@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "media", schema = "dbo")
 public class MediaEntity {
-    @EqualsAndHashCode.Include
     @Id
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "org.hibernate.id.UUIDGenerator")
@@ -28,8 +28,6 @@ public class MediaEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id")
-    @JsonBackReference
-    @ToString.Exclude
     private CompanyEntity company;
 
     @Override
@@ -43,5 +41,12 @@ public class MediaEntity {
     @Override
     public int hashCode() {
         return getClass().hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "(" +
+                "id = " + id + ", " +
+                "url = " + url + ")";
     }
 }

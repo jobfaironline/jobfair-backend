@@ -3,7 +3,14 @@ package org.capstone.job_fair.constants;
 import java.awt.image.BufferedImage;
 
 public class DataConstraint {
+public final class DataConstraint {
+    private DataConstraint() {
+    }
+
     public static final class Skill {
+        private Skill() {
+        }
+
         public static final int MIN_PROFICIENCY = 1;
         public static final int MAX_PROFICIENCY = 5;
         public static final int MIN_NAME_LENGTH = 1;
@@ -12,6 +19,9 @@ public class DataConstraint {
     }
 
     public static class JobFair {
+        private JobFair() {
+        }
+
         public static final int MIN_TIME = 0;
         public static final int MAX_DESCRIPTION_LENGTH = 500000;
         public static final long VALID_TIME = 60 * 60 * 24 * 365 * 1000L;
@@ -28,12 +38,18 @@ public class DataConstraint {
 
     }
 
-    public static final class CompanyRegistration{
+    public static final class CompanyRegistration {
+        private CompanyRegistration() {
+        }
+
         public static final int MESSAGE_MIN_LENGTH = 1;
         public static final int MESSAGE_MAX_LENGTH = 500;
     }
 
     public static final class WorkHistory {
+        private WorkHistory() {
+        }
+
         public static final int POSITION_MIN_LENGTH = 1;
         public static final int POSITION_MAX_LENGTH = 100;
         public static final int COMPANY_MIN_LENGTH = 1;
@@ -44,6 +60,9 @@ public class DataConstraint {
     }
 
     public static final class Education {
+        private Education() {
+        }
+
         public static final int SUBJECT_MIN_LENGTH = 1;
         public static final int SUBJECT_MAX_LENGTH = 100;
         public static final int SCHOOL_MIN_LENGTH = 1;
@@ -54,6 +73,9 @@ public class DataConstraint {
     }
 
     public static final class Certification {
+        private Certification() {
+        }
+
         public static final int NAME_MIN_LENGTH = 1;
         public static final int NAME_MAX_LENGTH = 1000;
         public static final int INSTITUTION_MIN_LENGTH = 1;
@@ -64,6 +86,9 @@ public class DataConstraint {
     }
 
     public static final class Reference {
+        private Reference() {
+        }
+
         public static final int FULLNAME_MIN_LENGTH = 1;
         public static final int FULLNAME_MAX_LENGTH = 1000;
         public static final int POSITION_MIN_LENGTH = 1;
@@ -73,6 +98,9 @@ public class DataConstraint {
     }
 
     public static final class Activity {
+        private Activity() {
+        }
+
         public static final int MIN_NAME_LENGTH = 1;
         public static final int MAX_NAME_LENGTH = 100;
         public static final int FUNCTION_MIN_LENGTH = 1;
@@ -86,6 +114,9 @@ public class DataConstraint {
     }
 
     public static final class JobPosition {
+        private JobPosition() {
+        }
+
         public static final int TITLE_LENGTH = 200;
         public static final int DESCRIPTION_LENGTH = 1000;
         public static final int REQUIREMENT_LENGTH = 1000;
@@ -102,6 +133,9 @@ public class DataConstraint {
     }
 
     public static final class Account {
+        private Account() {
+        }
+
         public static final int NAME_LENGTH = 100;
         public static final int URL_MIN_LENGTH = 1;
         public static final int URL_MAX_LENGTH = 2048;
@@ -113,6 +147,9 @@ public class DataConstraint {
     }
 
     public static final class Attendant {
+        private Attendant() {
+        }
+
         public static final int ADDRESS_LENGTH = 1000;
         public static final int TITTLE_LENGTH = 100;
         public static final int JOB_TITTLE_LENGTH = 100;
@@ -129,11 +166,10 @@ public class DataConstraint {
     }
 
 
-    public static final class Residence {
-
-    }
-
     public static final class Company {
+        private Company() {
+        }
+
         public static final int NAME_MIN_LENGTH = 1;
         public static final int NAME_MAX_LENGTH = 1000;
         public static final int ADDRESS_MIN_LENGTH = 1;
@@ -149,6 +185,9 @@ public class DataConstraint {
 
 
     public static final class DecoratedItem {
+        private DecoratedItem() {
+        }
+
         public static final int NAME_MAX_LENGTH = 100;
         public static final int NAME_MIN_LENGTH = 1;
         public static final int DESCRIPTION_MAX_LENGTH = 5000;
@@ -158,6 +197,9 @@ public class DataConstraint {
     }
 
     public static final class Layout {
+        private Layout() {
+        }
+
         public static final int NAME_MAX_LENGTH = 100;
         public static final int NAME_MIN_LENGTH = 1;
         public static final int DESCRIPTION_MAX_LENGTH = 500;

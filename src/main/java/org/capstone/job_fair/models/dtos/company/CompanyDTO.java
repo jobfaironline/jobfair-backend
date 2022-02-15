@@ -8,11 +8,12 @@ import java.util.Set;
 
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class CompanyDTO {
-
+    @EqualsAndHashCode.Include
     private String id;
     private String taxId;
     private String name;

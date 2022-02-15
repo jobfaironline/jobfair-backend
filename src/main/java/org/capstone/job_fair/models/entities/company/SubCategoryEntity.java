@@ -21,7 +21,7 @@ public class SubCategoryEntity {
     @Column(name = "name", length = 100)
     private String name;
 
-    public SubCategoryEntity(int id){
+    public SubCategoryEntity(int id) {
         this.id = id;
     }
 

@@ -3,7 +3,6 @@ package org.capstone.job_fair.models.entities.company.job;
 import lombok.*;
 import org.capstone.job_fair.models.entities.attendant.JobLevelEntity;
 import org.capstone.job_fair.models.entities.attendant.LanguageEntity;
-import org.capstone.job_fair.models.entities.company.CompanyEntity;
 import org.capstone.job_fair.models.entities.company.CompanyRegistrationEntity;
 import org.capstone.job_fair.models.entities.company.SkillTagEntity;
 import org.capstone.job_fair.models.entities.company.SubCategoryEntity;
@@ -17,10 +16,9 @@ import java.util.Set;
 @Entity
 @Getter
 @Setter
-@ToString
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "registration_job_position", schema = "dbo", catalog = "")
+@Table(name = "registration_job_position", schema = "dbo")
 public class RegistrationJobPositionEntity {
     @Id
     @Column(name = "id", nullable = false, length = 36)
@@ -46,15 +44,16 @@ public class RegistrationJobPositionEntity {
     @JoinColumn(name = "company_registration_id")
     private CompanyRegistrationEntity companyRegistration;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
     @JoinTable(
             name = "registration_job_category",
             joinColumns = @JoinColumn(name = "registration_job_position_id"),
-            inverseJoinColumns = @JoinColumn(name = "sub_category_id"))
+            inverseJoinColumns = @JoinColumn(name = "sub_category_id")
+    )
     @ToString.Exclude
     Set<SubCategoryEntity> categories;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
     @JoinTable(
             name = "registration_job_skill_tag",
             joinColumns = @JoinColumn(name = "registration_job_position_id"),
@@ -89,5 +88,22 @@ public class RegistrationJobPositionEntity {
     }
 
     @Override
-    public int hashCode() {return getClass().hashCode(); }
+    public int hashCode() {
+        return getClass().hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "(" +
+                "id = " + id + ", " +
+                "title = " + title + ", " +
+                "contactPersonName = " + contactPersonName + ", " +
+                "contactEmail = " + contactEmail + ", " +
+                "description = " + description + ", " +
+                "requirements = " + requirements + ", " +
+                "minSalary = " + minSalary + ", " +
+                "maxSalary = " + maxSalary + ", " +
+                "numOfPosition = " + numOfPosition + ", " +
+                "locationId = " + locationId + ")";
+    }
 }

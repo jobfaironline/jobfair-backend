@@ -3,7 +3,7 @@ package org.capstone.job_fair.controllers.exception;
 import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.capstone.job_fair.constants.MessageConstant;
-import org.capstone.job_fair.response.ErrorResponse;
+import org.capstone.job_fair.controllers.payload.responses.ErrorResponse;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -16,7 +16,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import javax.persistence.EntityNotFoundException;
 import java.nio.file.AccessDeniedException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
 
 @ControllerAdvice
 @Slf4j

@@ -40,7 +40,7 @@ public class AccountVerifyTokenEntity {
 
         AccountVerifyTokenEntity that = (AccountVerifyTokenEntity) o;
 
-        return getId().equals(that.getId());
+        return id != null && Objects.equals(id, that.getId());
     }
 
     @Override

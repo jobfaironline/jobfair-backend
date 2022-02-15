@@ -1,15 +1,16 @@
 package org.capstone.job_fair.controllers.job_fair;
 
+import lombok.extern.slf4j.Slf4j;
 import org.capstone.job_fair.constants.AWSConstant;
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
-import org.capstone.job_fair.controllers.payload.requests.CreateLayoutMetaDataRequest;
-import org.capstone.job_fair.controllers.payload.requests.UpdateLayoutMetaDataRequest;
+import org.capstone.job_fair.controllers.payload.requests.job_fair.CreateLayoutMetaDataRequest;
+import org.capstone.job_fair.controllers.payload.requests.job_fair.UpdateLayoutMetaDataRequest;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.dtos.job_fair.LayoutDTO;
 import org.capstone.job_fair.services.interfaces.job_fair.LayoutService;
 import org.capstone.job_fair.services.interfaces.util.FileStorageService;
-import org.capstone.job_fair.services.mappers.LayoutMapper;
+import org.capstone.job_fair.services.mappers.job_fair.LayoutMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -28,6 +29,7 @@ import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 @RestController
+@Slf4j
 public class LayoutController {
 
     @Autowired
@@ -70,7 +72,7 @@ public class LayoutController {
         try {
             layoutService.validateAndGenerateBoothSlot(file, id);
             fileStorageService.store(file.getBytes(), AWSConstant.LAYOUT_FOLDER + "/" + id).exceptionally(throwable -> {
-                throwable.printStackTrace();
+                log.error(throwable.getMessage());
                 return null;
             });
         } catch (IllegalArgumentException e) {

@@ -9,10 +9,11 @@ import java.io.Serializable;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
-@Getter
-@Setter
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class AccountDTO implements Serializable {
+    @EqualsAndHashCode.Include
     private String id;
     private String email;
     private String password;
@@ -24,7 +25,4 @@ public class AccountDTO implements Serializable {
     private String middlename;
     private Gender gender;
     private Role role;
-    public AccountDTO() {
-
-    }
 }

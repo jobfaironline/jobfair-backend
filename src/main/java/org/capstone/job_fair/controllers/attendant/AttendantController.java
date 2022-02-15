@@ -2,13 +2,13 @@ package org.capstone.job_fair.controllers.attendant;
 
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
-import org.capstone.job_fair.controllers.payload.requests.RegisterAttendantRequest;
-import org.capstone.job_fair.controllers.payload.requests.UpdateAttendantRequest;
+import org.capstone.job_fair.controllers.payload.requests.attendant.RegisterAttendantRequest;
+import org.capstone.job_fair.controllers.payload.requests.attendant.UpdateAttendantRequest;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.dtos.attendant.AttendantDTO;
 import org.capstone.job_fair.services.interfaces.account.AccountService;
 import org.capstone.job_fair.services.interfaces.attendant.AttendantService;
-import org.capstone.job_fair.services.mappers.AttendantMapper;
+import org.capstone.job_fair.services.mappers.attendant.AttendantMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

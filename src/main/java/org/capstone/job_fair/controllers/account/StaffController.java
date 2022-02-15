@@ -1,16 +1,17 @@
 package org.capstone.job_fair.controllers.account;
 
+import lombok.extern.slf4j.Slf4j;
 import org.capstone.job_fair.constants.AccountConstant;
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
-import org.capstone.job_fair.controllers.payload.requests.StaffRegisterRequest;
+import org.capstone.job_fair.controllers.payload.requests.account.StaffRegisterRequest;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
 import org.capstone.job_fair.models.enums.Role;
 import org.capstone.job_fair.models.statuses.AccountStatus;
 import org.capstone.job_fair.services.interfaces.account.AccountService;
 import org.capstone.job_fair.services.interfaces.util.MailService;
-import org.capstone.job_fair.services.mappers.AccountMapper;
+import org.capstone.job_fair.services.mappers.account.AccountMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.capstone.job_fair.utils.PasswordGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,7 @@ import javax.validation.Valid;
 import java.io.UnsupportedEncodingException;
 
 @RestController
+@Slf4j
 public class StaffController {
 
     @Autowired
@@ -54,8 +56,12 @@ public class StaffController {
             accountService.createNew(accountDTO);
 
             this.mailService.sendMail(request.getEmail(),
-                    MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMAIL_SUBJECT),
-                    MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMAIL_CONTENT) + password);
+                            MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMAIL_SUBJECT),
+                            MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMAIL_CONTENT) + password)
+                    .exceptionally(throwable -> {
+                        log.error(throwable.getMessage());
+                        return null;
+                    });
 
             return GenericResponse.build(MessageUtil.getMessage(MessageConstant.Staff.CREATE_SUCCESSFULLY), HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {

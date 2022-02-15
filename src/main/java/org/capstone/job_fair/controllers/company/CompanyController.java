@@ -2,13 +2,12 @@ package org.capstone.job_fair.controllers.company;
 
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
-import org.capstone.job_fair.controllers.payload.requests.CreateCompanyRequest;
-import org.capstone.job_fair.controllers.payload.requests.UpdateCompanyRequest;
+import org.capstone.job_fair.controllers.payload.requests.company.CreateCompanyRequest;
+import org.capstone.job_fair.controllers.payload.requests.company.UpdateCompanyRequest;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.dtos.company.CompanyDTO;
-import org.capstone.job_fair.models.entities.company.CompanyEntity;
 import org.capstone.job_fair.services.interfaces.company.CompanyService;
-import org.capstone.job_fair.services.mappers.CompanyMapper;
+import org.capstone.job_fair.services.mappers.company.CompanyMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

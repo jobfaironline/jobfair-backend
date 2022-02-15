@@ -3,17 +3,15 @@ package org.capstone.job_fair.models.dtos.job_fair;
 import lombok.*;
 import org.capstone.job_fair.models.statuses.JobFairStatus;
 
-import javax.persistence.*;
 import java.io.Serializable;
 
 @Data
 @AllArgsConstructor
-@Builder
-@Getter
-@Setter
 @NoArgsConstructor
+@Builder
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class JobFairDTO implements Serializable {
-
+    @EqualsAndHashCode.Include
     private String id;
 
     private long companyRegisterStartTime;

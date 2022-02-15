@@ -25,8 +25,6 @@ public interface AccountService {
 
     void activateAccount(String id);
 
-    String getIdByEmail(String email);
-
     void changePassword(String newPassword, String oldPassword);
 
     void sendVerifyAccountEmail(String accountId);

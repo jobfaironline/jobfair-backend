@@ -12,6 +12,5 @@ public interface PasswordResetTokenService {
 
     void invalidateEntity(PasswordResetTokenEntity entity);
 
-
     Optional<PasswordResetTokenEntity> findTokenByOTPAndAccountID(String otp, String accountID);
 }

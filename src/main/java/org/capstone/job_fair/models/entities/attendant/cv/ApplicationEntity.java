@@ -1,8 +1,10 @@
 package org.capstone.job_fair.models.entities.attendant.cv;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.capstone.job_fair.models.entities.attendant.AttendantEntity;
-import org.capstone.job_fair.models.entities.attendant.JobLevelEntity;
 import org.capstone.job_fair.models.enums.Application;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.GenericGenerator;
@@ -48,5 +50,14 @@ public class ApplicationEntity {
     @Override
     public int hashCode() {
         return getClass().hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "(" +
+                "id = " + id + ", " +
+                "summary = " + summary + ", " +
+                "createDate = " + createDate + ", " +
+                "status = " + status + ")";
     }
 }

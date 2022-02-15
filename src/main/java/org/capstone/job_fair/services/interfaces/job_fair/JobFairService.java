@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface JobFairService {
     void createJobFair(JobFairDTO dto);
+
     List<JobFairDTO> getAllJobFairPlanOfCurrentAccount();
 
     void deleteJobFairDraft(String jobFairId);

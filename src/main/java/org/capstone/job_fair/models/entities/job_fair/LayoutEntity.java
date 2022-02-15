@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.Hibernate;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -20,7 +21,8 @@ public class LayoutEntity {
 
     @Id
     @Column(name = "id", nullable = false, length = 36)
-    //do not use auto generated id here as we need pre generate id
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "org.hibernate.id.UUIDGenerator")
     private String id;
     @Column(name = "name", length = 100)
     private String name;
@@ -38,12 +40,11 @@ public class LayoutEntity {
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
 
         LayoutEntity that = (LayoutEntity) o;
-
-        return Objects.equals(id, that.id);
+        return id != null && Objects.equals(id, that.getId());
     }
 
     @Override
     public int hashCode() {
-        return id != null ? id.hashCode() : 0;
+        return getClass().hashCode();
     }
 }

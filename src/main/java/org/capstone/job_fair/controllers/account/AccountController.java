@@ -4,7 +4,7 @@ import org.capstone.job_fair.constants.AWSConstant;
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.DataConstraint;
 import org.capstone.job_fair.constants.MessageConstant;
-import org.capstone.job_fair.controllers.payload.requests.ChangePasswordRequest;
+import org.capstone.job_fair.controllers.payload.requests.account.ChangePasswordRequest;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
 import org.capstone.job_fair.models.dtos.token.AccountVerifyTokenDTO;
@@ -13,6 +13,7 @@ import org.capstone.job_fair.services.interfaces.token.AccountVerifyTokenService
 import org.capstone.job_fair.services.interfaces.util.FileStorageService;
 import org.capstone.job_fair.services.mappers.AccountVerifyTokenMapper;
 import org.capstone.job_fair.utils.ImageUtil;
+import org.capstone.job_fair.services.mappers.token.AccountVerifyTokenMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -106,7 +107,7 @@ public class AccountController {
         try {
             accountService.sendVerifyAccountEmail(id);
             return GenericResponse.build(MessageUtil.getMessage(MessageConstant.Account.SEND_NEW_VERIFICATION_LINK_SUCCESSFULLY), HttpStatus.OK);
-        } catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             return GenericResponse.build(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }

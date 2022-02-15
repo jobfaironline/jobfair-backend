@@ -1,8 +1,14 @@
 package org.capstone.job_fair.constants;
 
-public class MessageConstant {
+public final class MessageConstant {
+    private MessageConstant() {
+
+    }
 
     public static final class Exception {
+        private Exception() {
+        }
+
         public static final String RESOURCE_NOT_FOUND = "error.exception.resource-not-found";
         public static final String JWT_ERROR = "error.exception.jwt-error";
         public static final String NO_PERMISSION = "error.exception.resource-no-permission";
@@ -13,17 +19,19 @@ public class MessageConstant {
     }
 
     public static final class JobFair {
+        private JobFair() {
+        }
+
         public static final String CREATE_JOB_FAIR_PLAN_SUCCESSFULLY = "job-fair-plan.success.create";
         public static final String DELETE_JOB_FAIR_PLAN_SUCCESSFULLY = "job-fair-plan.success.delete";
         public static final String SUBMIT_JOB_FAIR_PLAN_SUCCESSFULLY = "job-fair-plan.success.submit";
         public static final String CANCEL_JOB_FAIR_PLAN_SUCCESSFULLY = "job-fair-plan.success.cancel";
-        public static final String JOB_FAIR_NOT_FOUND = "job-fair-plan.not-found";
+        public static final String JOB_FAIR_NOT_FOUND = "job-fair-plan.error.not-found";
         public static final String INVALID_CREATOR_ID = "job-fair-plan.error.invalid-creator-id";
         public static final String INVALID_JOB_FAIR_STATUS = "job-fair-plan.error.invalid-job-fair-status";
         public static final String END_TIME_LESS_THAN_START_TIME_ERROR = "job-fair-plan.error.end-time-less-than-start-time";
-        public static final String INVALID_END_TIME = "job-fair-plan.invalid-end-time";
-        public static final String COMPANY_REGISTER_SUCCESSFULLY = "job-fair.company.register.successfully";
-        public static final String INVALID_BUY_BOOTH_TIME = "job-fair.invalid-buy-booth-time";
+        public static final String INVALID_END_TIME = "job-fair-plan.error.invalid-end-time";
+        public static final String INVALID_BUY_BOOTH_TIME = "job-fair-plan.error.invalid-buy-booth-time";
         public static final String INVALID_STATUS_WHEN_EVALUATE = "job-fair-plan.error.invalid-status-when-evaluate";
         public static final String REJECT_MISSING_REASON = "job-fair-plan.error.reject-missing-reason";
         public static final String EVALUATE_SUCCESSFULLY = "job-fair-plan.success.evaluate-successfully";
@@ -35,6 +43,9 @@ public class MessageConstant {
         //the value in this class belongs to Validator annotation
         //validator on default can use expression language to lookup message source
         //=> need to have {}
+        private InvalidFormatValidationMessage() {
+        }
+
         public static final String INVALID_EMAIL_FORMAT = "{error.format.invalid-email}";
         public static final String INVALID_PASSWORD_FORMAT = "{error.format.invalid-password}";
         public static final String INVALID_PHONE_FORMAT = "{error.format.invalid-phone}";
@@ -43,6 +54,9 @@ public class MessageConstant {
     }
 
     public static final class AccessControlMessage {
+        private AccessControlMessage() {
+        }
+
         public static final String INVALID_REFRESH_TOKEN = "access-control.error.invalid-refresh-token";
         public static final String TOKEN_CLAIM_INVALID = "access-control.error.invalid-token-claim";
         public static final String CONFIRM_PASSWORD_MISMATCH = "access-control.error.confirm-password-mismatch";
@@ -58,6 +72,9 @@ public class MessageConstant {
     }
 
     public static final class Account {
+        private Account() {
+        }
+
         public static final String NOT_FOUND = "account.error.not-found";
         public static final String EXISTED = "account.error.existed";
         public static final String EMAIL_EXISTED = "account.error.email-existed";
@@ -81,13 +98,18 @@ public class MessageConstant {
     }
 
     public static final class Attendant {
+        private Attendant() {
+        }
+
         public static final String UPDATE_PROFILE_SUCCESSFULLY = "attendant.success.update-profile";
-        public static final String UPDATE_PROFILE_FAILED = "attendant.fail.update-profile";
+        public static final String UPDATE_PROFILE_FAILED = "attendant.error.update-profile";
         public static final String REGISTER_SUCCESSFULLY = "attendant.success.create";
-        public static final String ACCOUNT_VERIFY_MAIL_CONTENT = "attendant.verify.email-title";
     }
 
     public static final class Company {
+        private Company() {
+        }
+
         public static final String TAX_ID_EXISTED = "company.error.tax-id-existed";
         public static final String EMAIL_EXISTED = "company.error.email-existed";
         public static final String NOT_FOUND = "company.error.not-found";
@@ -101,113 +123,163 @@ public class MessageConstant {
     }
 
     public static final class CompanyEmployee {
+        private CompanyEmployee() {
+        }
+
         public static final String EMAIL_EXISTED = "company-employee.error.email-existed";
         public static final String CREATE_EMPLOYEE_MANAGER_SUCCESSFULLY = "company-employee.success.create-company-manager";
         public static final String CREATE_EMPLOYEE_EMPLOYEE_SUCCESSFULLY = "company-employee.success.create-company-employee";
         public static final String UPDATE_PROFILE_SUCCESSFULLY = "company-employee.success.update-profile";
         public static final String DELETE_SUCCESSFULLY = "company-employee.success.delete-employee";
-        public static final String DELETE_FAILED = "company-employee.error.delete";
+        public static final String DELETE_FAILED = "company-employee.error.delete-failed";
         public static final String EMAIL_SUBJECT = "company-employee.email.subject";
         public static final String EMAIL_CONTENT = "company-employee.email.body";
-        public static final String MANAGER_NOT_FOUND = "company-employee.manager-not-found";
-        public static final String INVALID_ROLE = "company-employee.invalid-role";
-        public static final String EMPLOYEE_NOT_FOUND = "company-employee.employee-not-found";
-        public static final String DIFFERENT_COMPANY_ERROR = "company-employee.different-company-error";
-        public static final String PROMOTE_EMPLOYEE_SUCCESSFULLY = "company-employee.promote-employee-successfully";
-        public static final String EMPLOYEE_NOT_ACTIVE = "company-employee.not-active";
+        public static final String MANAGER_NOT_FOUND = "company-employee.error.manager-not-found";
+        public static final String INVALID_ROLE = "company-employee.error.invalid-role";
+        public static final String EMPLOYEE_NOT_FOUND = "company-employee.error.not-found";
+        public static final String DIFFERENT_COMPANY_ERROR = "company-employee.error.different-company";
+        public static final String PROMOTE_EMPLOYEE_SUCCESSFULLY = "company-employee.success.promote-employee";
+        public static final String EMPLOYEE_NOT_ACTIVE = "company-employee.error.not-active";
         public static final String MAX_QUOTA_FOR_COMPANY_EMPLOYEE = "company-employee.error.max-quota";
 
     }
 
     public static final class Gender {
+        private Gender() {
+        }
+
         public static final String NOT_FOUND = "gender.error.not-found";
     }
 
     public static final class Job {
+        private Job() {
+        }
+
         public static final String CREATE_JOB_SUCCESSFULLY = "job.success.create";
         public static final String SALARY_ERROR = "job.error.salary-error";
-        public static final String JOB_POSITION_NOT_FOUND = "job-position.not-found";
-        public static final String COMPANY_MISMATCH = "job-position.company-mismatch";
+        public static final String JOB_POSITION_NOT_FOUND = "job-position.error.not-found";
+        public static final String COMPANY_MISMATCH = "job-position.error.company-mismatch";
     }
 
     public static final class Skill {
-        public static final String INVALID_SKILL = "skill.fields.invalid";
-        public static final String SKILL_NOT_FOUND = "skill.notfound";
+        private Skill() {
+        }
+
+        public static final String INVALID_SKILL = "skill.error.invalid";
+        public static final String SKILL_NOT_FOUND = "skill.error.not-found";
     }
 
     public static final class WorkHistory {
-        public static final String INVALID_WORK_HISTORY = "work.history.invalid";
-        public static final String WORK_HISTORY_NOT_FOUND = "work.history.notfound";
+        private WorkHistory() {
+
+        }
+
+        public static final String INVALID_WORK_HISTORY = "work-history.error.invalid";
+        public static final String WORK_HISTORY_NOT_FOUND = "work-history.error.not-found";
     }
 
     public static final class Education {
-        public static final String INVALID_EDUCATION = "education.invalid";
-        public static final String EDUCATION_NOT_FOUND = "education.notfound";
+        private Education() {
+        }
+
+        public static final String INVALID_EDUCATION = "education.error.invalid";
+        public static final String EDUCATION_NOT_FOUND = "education.error.not-found";
     }
 
     public static final class Certification {
-        public static final String INVALID_CERTIFICATION = "certification.invalid";
-        public static final String CERTIFICATION_NOT_FOUND = "certification.notfound";
+        private Certification() {
+        }
+
+        public static final String INVALID_CERTIFICATION = "certification.error.invalid";
+        public static final String CERTIFICATION_NOT_FOUND = "certification.error.not-found";
     }
 
     public static final class Reference {
-        public static final String INVALID_REFERENCE = "reference.invalid";
-        public static final String REFERENCE_NOT_FOUND = "reference.notfound";
+        private Reference() {
+        }
+
+        public static final String INVALID_REFERENCE = "reference.error.invalid";
+        public static final String REFERENCE_NOT_FOUND = "reference.error.not-found";
     }
 
     public static final class Activity {
-        public static final String INVALID_ACTIVITY = "activity.invalid";
-        public static final String ACTIVITY_NOT_FOUND = "activity.notfound";
+        private Activity() {
+        }
+
+        public static final String INVALID_ACTIVITY = "activity.error.invalid";
+        public static final String ACTIVITY_NOT_FOUND = "activity.error.not-found";
     }
 
     public static final class Benefit {
+        private Benefit() {
+        }
+
         public static final String NOT_FOUND = "benefit.error.not-found";
     }
 
     public static final class SubCategory {
+        private SubCategory() {
+        }
+
         public static final String NOT_FOUND = "sub-category.error.not-found";
     }
 
     public static final class SkillTag {
+        private SkillTag() {
+        }
+
         public static final String NOT_FOUND = "skill-tag.error.not-found";
     }
 
     public static final class Mail {
+        private Mail() {
+        }
+
         public static final String NAME = "mail.sender.name";
-        public static final String SEND_FAILED = "mail.send-failed";
+        public static final String SEND_FAILED = "mail.error.send-failed";
     }
 
     public static final class CompanyRegistration {
+        private CompanyRegistration() {
+        }
+
         public static final String JOB_FAIR_REGISTRATION_OUT_OF_REGISTER_TIME = "company-registration.error.out-of-register-time";
         public static final String UNIQUE_JOB_POSITION_ERROR = "company-registration.error.unique-job-position";
         public static final String MIN_MAX_SALARY_ERROR = "company-registration.error.min-max-salary";
-        public static final String SUBMIT_SUCESSFULLY = "company-registration.success.submit";
+        public static final String SUBMIT_SUCCESSFULLY = "company-registration.success.submit";
         public static final String NOT_FOUND = "company-registration.error.not-found";
         public static final String COMPANY_MISMATCH = "company-registration.error.mismatch";
         public static final String EXISTED_PENDING_REGISTRATION = "company-registration.error.existed-pending-registration";
         public static final String NOT_ALLOW_CANCEL = "company-registration.error.not-allow-cancel";
         public static final String CANCEL_SUCCESSFULLY = "company-registration.success.cancel";
         public static final String REJECT_MISSING_REASON = "company-registration.error.reject-missing-reason";
-        public static final String EVALUATE_SUCCESSFULLY = "company-registration.evaluate-successfully";
-        public static final String COMPANY_REGISTRATION_NOT_FOUND = "company-registration.not-found";
-        public static final String INVALID_STATUS_WHEN_EVALUATE = "company-registration.invalid-status-when-evaluate";
-        public static final String INVALID_COMPANY_REISTRATION_STATUS_WHEN_EVALUATE = "company-registration.invalid-company-registration-status-when-evaluate";
+        public static final String INVALID_STATUS_WHEN_EVALUATE = "company-registration.error.invalid-status-when-evaluate";
+        public static final String INVALID_COMPANY_REGISTRATION_STATUS_WHEN_EVALUATE = "company-registration.error.invalid-company-registration-status-when-evaluate";
+        public static final String EVALUATE_SUCCESSFULLY = "company-registration.success.evaluate";
+        public static final String COMPANY_REGISTER_SUCCESSFULLY = "company-registration.success.register";
 
 
     }
 
     public static final class Staff {
+        private Staff() {
+        }
+
         public static final String CREATE_SUCCESSFULLY = "staff.success.create-successfully";
-        public static final String ACCOUNT_INFORMATION_EMAIL_TITLE = "staff.account-information-email-title";
-        public static final String ACCOUNT_INFORMATION_EMAIL_BODY = "staff.account-information-email-body";
     }
 
     public static final class DecoratedItem {
+        private DecoratedItem() {
+        }
+
         public static final String NOT_FOUND = "decorated-item.error.not-found";
         public static final String UPDATE_SUCCESSFULLY = "decorated-item.success.update-item";
     }
 
     public static final class Layout {
+        private Layout() {
+        }
+
         public static final String NOT_FOUND = "layout.error.not-found";
         public static final String UPDATE_SUCCESSFULLY = "layout.success.update-item";
         public static final String INVALID_GLB_FILE = "layout.error.invalid-glb-file";

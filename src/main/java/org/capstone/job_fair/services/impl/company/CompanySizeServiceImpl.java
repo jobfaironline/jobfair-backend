@@ -1,14 +1,13 @@
 package org.capstone.job_fair.services.impl.company;
 
-import org.capstone.job_fair.models.entities.company.CompanySizeEntity;
 import org.capstone.job_fair.repositories.company.CompanySizeRepository;
 import org.capstone.job_fair.services.interfaces.company.CompanySizeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional(readOnly = true)
 public class CompanySizeServiceImpl implements CompanySizeService {
 
     @Autowired
