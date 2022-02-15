@@ -69,6 +69,7 @@ public final class MessageConstant {
         public static final String INVALIDATED_VERIFY_TOKEN = "access-control.error.invalidated-account-verify-token";
         public static final String EXPIRED_TOKEN = "access-control.error.expired-account-verify-token";
         public static final String VERIFY_ACCOUNT_SUCCESSFULLY = "access-control.success.verify-account";
+        public static final String UNAUTHORIZED_ACTION = "access-control.error.unauthorized-action";
     }
 
     public static final class Account {

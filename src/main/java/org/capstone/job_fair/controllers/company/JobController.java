@@ -1,11 +1,15 @@
 package org.capstone.job_fair.controllers.company;
 
+import lombok.SneakyThrows;
+import org.apache.tomcat.websocket.AuthenticationException;
+import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.controllers.payload.requests.company.CreateJobPositionRequest;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
+import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
 import org.capstone.job_fair.models.dtos.company.job.JobPositionDTO;
-import org.capstone.job_fair.services.interfaces.company.CompanyService;
+import org.capstone.job_fair.services.interfaces.company.CompanyEmployeeService;
 import org.capstone.job_fair.services.interfaces.company.JobPositionService;
 import org.capstone.job_fair.services.mappers.company.JobPositionMapper;
 import org.capstone.job_fair.utils.MessageUtil;
@@ -13,14 +17,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Optional;
+
 @RestController
 public class JobController {
-    private static final String SALARY_ERROR = "";
+
     @Autowired
     private JobPositionService jobPositionService;
 
@@ -28,12 +35,23 @@ public class JobController {
     private JobPositionMapper jobPositionMapper;
 
     @Autowired
-    private CompanyService companyService;
+    private CompanyEmployeeService companyEmployeeService;
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) ")
     @PostMapping(ApiEndPoint.Job.JOB_POSITION_ENDPOINT)
+    @SneakyThrows
     public ResponseEntity<?> createJobPosition(@Validated @RequestBody CreateJobPositionRequest request) {
         try {
+            UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            Optional<CompanyEmployeeDTO> companyEmployeeDTOOpt = companyEmployeeService.getCompanyEmployeeByAccountId(userDetails.getId());
+            if (!companyEmployeeDTOOpt.isPresent()) {
+                throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.AccessControlMessage.UNAUTHORIZED_ACTION));
+            }
+            String userCompanyID = companyEmployeeDTOOpt.get().getCompanyDTO().getId();
+            if (!userCompanyID.equals(request.getCompanyId())) {
+                throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Job.COMPANY_MISMATCH));
+            }
+
             JobPositionDTO jobPositionDTO = jobPositionMapper.toDTO(request);
             jobPositionService.createNewJobPosition(jobPositionDTO);
             return GenericResponse.build(
