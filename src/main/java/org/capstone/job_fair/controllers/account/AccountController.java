@@ -1,28 +1,32 @@
 package org.capstone.job_fair.controllers.account;
 
-import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import org.capstone.job_fair.constants.AWSConstant;
 import org.capstone.job_fair.constants.ApiEndPoint;
+import org.capstone.job_fair.constants.DataConstraint;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.controllers.payload.requests.ChangePasswordRequest;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
 import org.capstone.job_fair.models.dtos.token.AccountVerifyTokenDTO;
-import org.capstone.job_fair.models.entities.token.AccountVerifyTokenEntity;
 import org.capstone.job_fair.services.interfaces.account.AccountService;
 import org.capstone.job_fair.services.interfaces.token.AccountVerifyTokenService;
 import org.capstone.job_fair.services.interfaces.util.FileStorageService;
 import org.capstone.job_fair.services.mappers.AccountVerifyTokenMapper;
+import org.capstone.job_fair.utils.ImageUtil;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.Date;
 import java.util.List;
@@ -111,8 +115,10 @@ public class AccountController {
     public ResponseEntity<?>uploadProfilePicture(@RequestParam("file")MultipartFile file) {
         AccountDTO accountDTO;
         try {
-            accountDTO = accountService.createNewProfilePicture();
-            fileStorageService.store(file.getBytes(), AWSConstant.PICTURE_PROFILE_FOLDER + "/" + accountDTO.getId()).exceptionally(throwable -> {
+            byte[] image = ImageUtil.ConvertImage(file, DataConstraint.Account.IMAGE_TYPE,DataConstraint.Account.WIDTH_FACTOR, DataConstraint.Account.HEIGHT_FACTOR);
+            String pictureProfileFolder = AWSConstant.PICTURE_PROFILE_FOLDER;
+            accountDTO = accountService.updateProfilePicture(pictureProfileFolder);
+            fileStorageService.store(image, pictureProfileFolder + "/" + accountDTO.getId()).exceptionally(throwable -> {
                 throwable.printStackTrace();
                 return null;
             });
