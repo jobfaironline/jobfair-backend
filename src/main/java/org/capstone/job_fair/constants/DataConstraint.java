@@ -1,5 +1,7 @@
 package org.capstone.job_fair.constants;
 
+import java.awt.image.BufferedImage;
+
 public final class DataConstraint {
     private DataConstraint() {
     }
@@ -136,6 +138,10 @@ public final class DataConstraint {
         public static final int NAME_LENGTH = 100;
         public static final int URL_MIN_LENGTH = 1;
         public static final int URL_MAX_LENGTH = 2048;
+        public static final int IMAGE_TYPE = BufferedImage.TYPE_INT_BGR;
+        public static final double WIDTH_FACTOR = 0.5;
+        public static final double HEIGHT_FACTOR = 0.5;
+
 
     }
 
