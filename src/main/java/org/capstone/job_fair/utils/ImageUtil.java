@@ -14,10 +14,14 @@ import java.io.InputStream;
 
 public class ImageUtil {
     public static byte[] convertImage(MultipartFile file) throws IOException {
-        return convertImage(file, DataConstraint.Account.IMAGE_TYPE, DataConstraint.Account.WIDTH_FACTOR, DataConstraint.Account.HEIGHT_FACTOR);
+        return convertImage(file, DataConstraint.Account.IMAGE_TYPE, DataConstraint.Account.WIDTH_FACTOR, DataConstraint.Account.HEIGHT_FACTOR, DataConstraint.Account.IMAGE_EXTENSION_TYPE);
     }
 
-    public static byte[] convertImage(MultipartFile file, int imageType, double fWidth, double fHeight) throws IOException {
+    public static byte[] convertCompanyLogo(MultipartFile file) throws IOException {
+        return convertImage(file, DataConstraint.Company.COMPANY_LOGO_TYPE, DataConstraint.Company.WIDTH_FACTOR, DataConstraint.Company.HEIGHT_FACTOR, DataConstraint.Company.COMPANY_LOGO_EXTENSION_TYPE);
+    }
+
+    public static byte[] convertImage(MultipartFile file, int imageType, double fWidth, double fHeight, String fileExtensionType) throws IOException {
         BufferedImage dbi = null;
 
         byte[] bytes = file.getBytes();
@@ -34,7 +38,7 @@ public class ImageUtil {
         }
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ImageIO.write(dbi, "jpg", baos);
+        ImageIO.write(dbi, fileExtensionType, baos);
         bytes = baos.toByteArray();
         return bytes;
     }

@@ -46,6 +46,9 @@ public class UpdateCompanyRequest {
     @XSSConstraint
     private String url;
 
+    @XSSConstraint
+    private String companyDescription;
+
     private Integer sizeId;
 
     private CompanyStatus status;

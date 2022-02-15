@@ -27,6 +27,8 @@ public class CompanyDTO {
     private Set<SubCategoryDTO> subCategoryDTOs;
     private Set<CompanyBenefitDTO> companyBenefitDTOS;
     private List<MediaDTO> mediaDTOS;
+    private String companyLogoURL;
+    private String companyDescription;
 
     public CompanyDTO(String id) {
         this.id = id;
