@@ -1,5 +1,6 @@
 package org.capstone.job_fair.utils;
 
+import org.capstone.job_fair.constants.DataConstraint;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
@@ -12,7 +13,10 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class ImageUtil {
-    public static byte[] ConvertImage(MultipartFile file, int imageType, double fWidth, double fHeight) throws IOException {
+    public static byte[]convertImage(MultipartFile file) throws IOException{
+        return convertImage(file, DataConstraint.Account.IMAGE_TYPE, DataConstraint.Account.WIDTH_FACTOR, DataConstraint.Account.HEIGHT_FACTOR);
+    }
+    public static byte[] convertImage(MultipartFile file, int imageType, double fWidth, double fHeight) throws IOException {
         BufferedImage dbi = null;
 
         byte[] bytes = file.getBytes();

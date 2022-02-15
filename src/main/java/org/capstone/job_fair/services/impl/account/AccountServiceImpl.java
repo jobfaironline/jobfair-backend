@@ -160,10 +160,8 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public AccountDTO updateProfilePicture(String pictureProfileFolder) {
-        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext()
-                .getAuthentication().getPrincipal();
-        String id = userDetails.getId();
+    public AccountDTO updateProfilePicture(String pictureProfileFolder, String id) {
+
         String url = awsUtil.generateAwsS3AccessString(pictureProfileFolder, id);
         AccountEntity account = accountRepository.getById(id);
         account.setProfileImageUrl(url);

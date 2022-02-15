@@ -1,8 +1,9 @@
 package org.capstone.job_fair.controllers.account;
 
+import lombok.extern.slf4j.Slf4j;
+import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import org.capstone.job_fair.constants.AWSConstant;
 import org.capstone.job_fair.constants.ApiEndPoint;
-import org.capstone.job_fair.constants.DataConstraint;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.controllers.payload.requests.account.ChangePasswordRequest;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -28,6 +30,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
+@Slf4j
 public class AccountController {
 
     @Autowired
@@ -110,11 +113,14 @@ public class AccountController {
     public ResponseEntity<?> uploadProfilePicture(@RequestParam("file") MultipartFile file) {
         AccountDTO accountDTO;
         try {
-            byte[] image = ImageUtil.ConvertImage(file, DataConstraint.Account.IMAGE_TYPE, DataConstraint.Account.WIDTH_FACTOR, DataConstraint.Account.HEIGHT_FACTOR);
+            UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext()
+                    .getAuthentication().getPrincipal();
+            String id = userDetails.getId();
+            byte[] image = ImageUtil.convertImage(file);
             String pictureProfileFolder = AWSConstant.PICTURE_PROFILE_FOLDER;
-            accountDTO = accountService.updateProfilePicture(pictureProfileFolder);
+            accountDTO = accountService.updateProfilePicture(pictureProfileFolder, id);
             fileStorageService.store(image, pictureProfileFolder + "/" + accountDTO.getId()).exceptionally(throwable -> {
-                throwable.printStackTrace();
+                log.error(throwable.getMessage());
                 return null;
             });
         } catch (IOException e) {

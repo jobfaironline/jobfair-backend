@@ -31,6 +31,6 @@ public interface AccountService {
 
     AccountDTO createNew(AccountDTO dto);
 
-    AccountDTO updateProfilePicture(String pictureProfileFolder);
+    AccountDTO updateProfilePicture(String pictureProfileFolder, String id);
 
 }
