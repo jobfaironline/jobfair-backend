@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import org.capstone.job_fair.constants.AWSConstant;
 import org.capstone.job_fair.constants.ApiEndPoint;
+import org.capstone.job_fair.constants.DataConstraint;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.controllers.payload.requests.company.CreateCompanyRequest;
 import org.capstone.job_fair.controllers.payload.requests.company.UpdateCompanyRequest;
@@ -88,12 +89,11 @@ public class CompanyController {
     public ResponseEntity<?> uploadCompanyLogo(@RequestParam("file") MultipartFile file) {
         CompanyDTO companyDTO;
         try {
-            UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext()
-                    .getAuthentication().getPrincipal();
+            UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             String userId = userDetails.getId();
             CompanyEmployeeDTO companyEmployeeDTO = companyEmployeeService.getCompanyEmployeeByAccountId(userId).get();
             String companyId = companyEmployeeDTO.getCompanyDTO().getId();
-            byte[] image = ImageUtil.convertCompanyLogo(file);
+            byte[] image = ImageUtil.convertImage(file, DataConstraint.Company.COMPANY_LOGO_TYPE, DataConstraint.Company.WIDTH_FACTOR, DataConstraint.Company.HEIGHT_FACTOR, DataConstraint.Company.COMPANY_LOGO_EXTENSION_TYPE);
             String companyLogoFolder = AWSConstant.COMPANY_LOGO_FOLDER;
             companyDTO = companyService.updateCompanyLogo(companyLogoFolder, companyId);
             fileStorageService.store(image, companyLogoFolder + "/" + companyDTO.getId()).exceptionally(throwable -> {

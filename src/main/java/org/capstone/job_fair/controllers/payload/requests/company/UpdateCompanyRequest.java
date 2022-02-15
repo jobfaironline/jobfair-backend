@@ -47,6 +47,7 @@ public class UpdateCompanyRequest {
     private String url;
 
     @XSSConstraint
+    @Size(min = DataConstraint.Company.DESCRIPTION_MIN_LENGTH, max = DataConstraint.Company.DESCRIPTION_MAX_LENGTH)
     private String companyDescription;
 
     private Integer sizeId;

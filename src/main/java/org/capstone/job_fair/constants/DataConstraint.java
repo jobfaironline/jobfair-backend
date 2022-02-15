@@ -172,6 +172,8 @@ public final class DataConstraint {
 
         public static final int NAME_MIN_LENGTH = 1;
         public static final int NAME_MAX_LENGTH = 1000;
+        public static final int DESCRIPTION_MIN_LENGTH = 1;
+        public static final int DESCRIPTION_MAX_LENGTH = 1000;
         public static final int ADDRESS_MIN_LENGTH = 1;
         public static final int ADDRESS_MAX_LENGTH = 1000;
         public static final int COMPANY_MIN_NUM = 1;
