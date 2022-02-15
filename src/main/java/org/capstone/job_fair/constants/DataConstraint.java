@@ -2,7 +2,6 @@ package org.capstone.job_fair.constants;
 
 import java.awt.image.BufferedImage;
 
-public class DataConstraint {
 public final class DataConstraint {
     private DataConstraint() {
     }

@@ -80,8 +80,6 @@ public class AttendantEntity {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
     @JoinColumn(name = "attendant_id", referencedColumnName = "account_id")
-    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
-    @JoinColumn(name = "attendant_id", referencedColumnName = "account_id" )
     private List<ReferenceEntity> referenceEntities;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
