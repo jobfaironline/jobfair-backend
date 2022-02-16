@@ -45,16 +45,17 @@ public class JobController {
     }
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE) ")
-    @PutMapping(ApiEndPoint.Job.JOB_POSITION_ENDPOINT)
-    public ResponseEntity<?> updateJobPosition(@Validated @RequestBody UpdateJobPositionRequest request) {
+    @PutMapping(ApiEndPoint.Job.JOB_POSITION_ENDPOINT + "/{jobId}")
+    public ResponseEntity<?> updateJobPosition(@Validated @RequestBody UpdateJobPositionRequest request, @PathVariable("jobId") String jobPositionId) {
         try {
             UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             String userId = userDetails.getId();
             CompanyEmployeeDTO companyEmployeeDTO = companyEmployeeService.getCompanyEmployeeByAccountId(userId).get();
             String companyId = companyEmployeeDTO.getCompanyDTO().getId();
             JobPositionDTO jobPositionDTO = jobPositionMapper.toDTO(request);
+            jobPositionDTO.setId(jobPositionId);
             jobPositionDTO = jobPositionService.updateJobPosition(jobPositionDTO, companyId);
-            return GenericResponse.build((jobPositionDTO.toString()), HttpStatus.OK);
+            return ResponseEntity.ok(jobPositionDTO);
         } catch (IllegalArgumentException ex) {
             return GenericResponse.build(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }

@@ -12,7 +12,6 @@ import org.capstone.job_fair.validators.EmailConstraint;
 import org.capstone.job_fair.validators.XSSConstraint;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.List;
 
@@ -33,8 +32,6 @@ public class UpdateJobPositionRequest {
     private JobLevel level;
     private JobType jobType;
     private String locationId;
-    @NotNull
-    private String id;
     @Valid
     @Size(min = DataConstraint.JobPosition.CATEGORY_MIN, max = DataConstraint.JobPosition.CATEGORY_MAX)
     private List<Integer> subCategoryIds;
