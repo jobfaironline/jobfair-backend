@@ -25,5 +25,5 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
       #Build the application using Maven
-      - name: Test
-        run: mvn test
+      - name: Run jar file
+        run: nohup java -jar target/jobfair-backend.jar &
