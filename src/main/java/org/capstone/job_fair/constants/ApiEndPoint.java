@@ -61,6 +61,7 @@ public final class ApiEndPoint {
         }
 
         public static final String COMPANY_ENDPOINT = ROOT_ENDPOINT + VERSION + "/companies";
+        public static final String COMPANY_LOGO_ENPOINT = COMPANY_ENDPOINT + "/upload-logo";
     }
 
     public static final class Job {

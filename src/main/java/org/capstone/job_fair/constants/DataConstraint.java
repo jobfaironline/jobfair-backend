@@ -139,6 +139,7 @@ public final class DataConstraint {
         public static final int URL_MIN_LENGTH = 1;
         public static final int URL_MAX_LENGTH = 2048;
         public static final int IMAGE_TYPE = BufferedImage.TYPE_INT_BGR;
+        public static final String IMAGE_EXTENSION_TYPE = "jpg";
         public static final double WIDTH_FACTOR = 0.5;
         public static final double HEIGHT_FACTOR = 0.5;
 
@@ -171,6 +172,8 @@ public final class DataConstraint {
 
         public static final int NAME_MIN_LENGTH = 1;
         public static final int NAME_MAX_LENGTH = 1000;
+        public static final int DESCRIPTION_MIN_LENGTH = 1;
+        public static final int DESCRIPTION_MAX_LENGTH = 1000;
         public static final int ADDRESS_MIN_LENGTH = 1;
         public static final int ADDRESS_MAX_LENGTH = 1000;
         public static final int COMPANY_MIN_NUM = 1;
@@ -180,6 +183,10 @@ public final class DataConstraint {
         public static final int MIN_JOB_POSITION = 1;
         public static final int MAX_DESCRIPTION_LENGTH = 10000;
         public static final int TAX_ID_LENGTH = 9;
+        public static final int COMPANY_LOGO_TYPE = BufferedImage.TYPE_INT_ARGB;
+        public static final String COMPANY_LOGO_EXTENSION_TYPE = "png";
+        public static final double WIDTH_FACTOR = 0.5;
+        public static final double HEIGHT_FACTOR = 0.5;
     }
 
 
@@ -193,6 +200,7 @@ public final class DataConstraint {
         public static final int DESCRIPTION_MIN_LENGTH = 1;
         public static final int SIZE_MIN = 0;
         public static final int SIZE_MAX = 100;
+
     }
 
     public static final class Layout {

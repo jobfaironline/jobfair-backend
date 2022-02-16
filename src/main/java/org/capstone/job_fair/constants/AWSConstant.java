@@ -8,4 +8,5 @@ public final class AWSConstant {
     public static final String DECORATED_ITEMS_FOLDER = "DecorateItems";
     public static final String PICTURE_PROFILE_FOLDER = "PictureProfile";
     public static final String LAYOUT_FOLDER = "Layout";
+    public static final String COMPANY_LOGO_FOLDER = "CompanyLogo";
 }

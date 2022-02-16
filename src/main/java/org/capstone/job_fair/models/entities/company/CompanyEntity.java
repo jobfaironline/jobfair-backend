@@ -43,13 +43,17 @@ public class CompanyEntity {
     @Column(name = "status")
     @Enumerated(EnumType.ORDINAL)
     private CompanyStatus status;
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @Column(name = "company_logo_url")
+    private String companyLogoURL;
+    @Column(name = "description")
+    private String companyDescription;
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "size_id")
     private CompanySizeEntity companySize;
     @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
     @JsonManagedReference
     private List<MediaEntity> medias;
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "company_category",
             joinColumns = @JoinColumn(name = "company_id"),
@@ -57,7 +61,7 @@ public class CompanyEntity {
     )
     private Set<SubCategoryEntity> subCategories;
 
-    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "company")
     private Set<CompanyBenefitEntity> companyBenefits;
 
     @Override
