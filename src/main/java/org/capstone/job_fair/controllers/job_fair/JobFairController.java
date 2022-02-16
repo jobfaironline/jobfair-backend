@@ -3,7 +3,7 @@ package org.capstone.job_fair.controllers.job_fair;
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.controllers.payload.requests.job_fair.AdminEvaluateJobFairRequest;
-import org.capstone.job_fair.controllers.payload.requests.job_fair.CreateJobFairPlanRequest;
+import org.capstone.job_fair.controllers.payload.requests.job_fair.DraftJobFairPlanRequest;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.dtos.job_fair.JobFairDTO;
 import org.capstone.job_fair.models.statuses.JobFairStatus;
@@ -27,7 +27,7 @@ public class JobFairController {
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).STAFF)")
     @PostMapping(ApiEndPoint.JobFair.JOB_FAIR_PLAN)
-    public ResponseEntity<?> draftJobFairPlan(@Validated @RequestBody CreateJobFairPlanRequest request) {
+    public ResponseEntity<?> draftJobFairPlan(@Validated @RequestBody DraftJobFairPlanRequest request) {
         try {
             JobFairDTO dto = JobFairDTO.builder()
                     .attendantRegisterStartTime(request.getAttendantRegisterStartTime())
@@ -40,7 +40,7 @@ public class JobFairController {
                     .startTime(request.getStartTime())
                     .layoutId(request.getLayoutId())
                     .build();
-            jobFairService.createJobFair(dto);
+            jobFairService.draftJobFair(dto);
 
             return GenericResponse.build(MessageUtil.getMessage(MessageConstant.JobFair.CREATE_JOB_FAIR_PLAN_SUCCESSFULLY)
                     , HttpStatus.OK);

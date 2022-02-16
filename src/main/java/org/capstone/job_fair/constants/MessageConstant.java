@@ -37,6 +37,7 @@ public final class MessageConstant {
         public static final String EVALUATE_SUCCESSFULLY = "job-fair-plan.success.evaluate-successfully";
         public static final String JOB_FAIR_IS_NOT_APPROVED = "job-fair-plan.error.not-approved";
         public static final String INVALID_COMPANY_REGISTER_START_TIME = "job-fair-plan.error.invalid-company-register-start-time";
+        public static final String INVALID_JOB_FAIR = "job-fair-plan.error.invalid-job-fair";
 
     }
 

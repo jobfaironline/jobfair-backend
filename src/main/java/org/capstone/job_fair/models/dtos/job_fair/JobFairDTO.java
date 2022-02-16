@@ -14,19 +14,19 @@ public class JobFairDTO implements Serializable {
     @EqualsAndHashCode.Include
     private String id;
 
-    private long companyRegisterStartTime;
+    private Long companyRegisterStartTime;
 
-    private long companyRegisterEndTime;
+    private Long companyRegisterEndTime;
 
-    private long companyBuyBoothStartTime;
+    private Long companyBuyBoothStartTime;
 
-    private long companyBuyBoothEndTime;
+    private Long companyBuyBoothEndTime;
 
-    private long attendantRegisterStartTime;
+    private Long attendantRegisterStartTime;
 
     private Long startTime;
 
-    private long endTime;
+    private Long endTime;
 
     private String description;
 

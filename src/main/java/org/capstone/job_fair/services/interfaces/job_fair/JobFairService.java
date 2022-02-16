@@ -6,7 +6,7 @@ import org.capstone.job_fair.models.statuses.JobFairStatus;
 import java.util.List;
 
 public interface JobFairService {
-    void createJobFair(JobFairDTO dto);
+    void draftJobFair(JobFairDTO dto);
 
     List<JobFairDTO> getAllJobFairPlanOfCurrentAccount();
 
