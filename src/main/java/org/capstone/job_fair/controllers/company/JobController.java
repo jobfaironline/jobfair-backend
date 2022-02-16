@@ -1,7 +1,5 @@
 package org.capstone.job_fair.controllers.company;
 
-import lombok.SneakyThrows;
-import org.apache.tomcat.websocket.AuthenticationException;
 import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;

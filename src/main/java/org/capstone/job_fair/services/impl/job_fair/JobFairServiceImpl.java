@@ -16,6 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -38,7 +39,10 @@ public class JobFairServiceImpl implements JobFairService {
                 .getAuthentication().getPrincipal();
         dto.setCreatorId(userDetails.getId());
 
-
+        long currentTime = new Date().getTime();
+        if (dto.getCompanyRegisterStartTime() - currentTime > DataConstraint.JobFair.VALID_START_JOB_FAIR_PLAN) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.INVALID_COMPANY_REGISTER_START_TIME));
+        }
         if (dto.getCompanyRegisterEndTime() - dto.getCompanyRegisterStartTime() > DataConstraint.JobFair.VALID_REGISTER_TIME)
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.INVALID_END_TIME));
 
@@ -69,9 +73,9 @@ public class JobFairServiceImpl implements JobFairService {
         String id = userDetails.getId();
         List<JobFairEntity> entities = jobFairRepository.findAllByCreatorId(id);
         if (entities.isEmpty()) return null;
-        return entities.stream().map(jobFairEntity -> {
-            return jobFairMapper.toJobFairDTO(jobFairEntity);
-        }).collect(Collectors.toList());
+        return entities.stream()
+                .map(jobFairEntity -> jobFairMapper.toJobFairDTO(jobFairEntity))
+                .collect(Collectors.toList());
     }
 
     private JobFairEntity getValidatedJobFair(String jobFairId, JobFairStatus status) {
