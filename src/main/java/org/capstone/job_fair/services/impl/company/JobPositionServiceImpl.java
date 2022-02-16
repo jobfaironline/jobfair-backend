@@ -96,5 +96,21 @@ public class JobPositionServiceImpl implements JobPositionService {
         jobPositionRepository.save(jobPositionEntity);
     }
 
+    @Override
+    @Transactional
+    public void deleteJobPosition(String jobPositionId, String companyId) {
+        Optional<JobPositionEntity> jobPositionEntityOpt = jobPositionRepository.findById(jobPositionId);
+
+        if (!jobPositionEntityOpt.isPresent()) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Job.JOB_POSITION_NOT_FOUND));
+        }
+        JobPositionEntity jobPositionEntity = jobPositionEntityOpt.get();
+
+        if (!jobPositionEntity.getCompany().getId().equals(companyId))
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Job.COMPANY_MISMATCH));
+
+        jobPositionRepository.delete(jobPositionEntity);
+    }
+
 
 }

@@ -18,9 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class JobController {
@@ -57,6 +55,21 @@ public class JobController {
             JobPositionDTO jobPositionDTO = jobPositionMapper.toDTO(request);
             jobPositionService.updateJobPosition(jobPositionDTO, companyId);
             return GenericResponse.build(MessageUtil.getMessage(MessageConstant.Job.UPDATE_JOB_SUCCESSFULLY), HttpStatus.OK);
+        } catch (IllegalArgumentException ex) {
+            return GenericResponse.build(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(ApiEndPoint.Job.DELETE_JOB_POSITION_ENDPOINT + "/{jobId}")
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).STAFF) ")
+    public ResponseEntity<?> deleteJobPosition(@PathVariable("jobId") String jobPositionId) {
+        try {
+            UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            String userId = userDetails.getId();
+            CompanyEmployeeDTO companyEmployeeDTO = companyEmployeeService.getCompanyEmployeeByAccountId(userId).get();
+            String companyId = companyEmployeeDTO.getCompanyDTO().getId();
+            jobPositionService.deleteJobPosition(jobPositionId, companyId);
+            return GenericResponse.build(MessageUtil.getMessage(MessageConstant.Job.DELETE_JOB_SUCCESSFULLY), HttpStatus.OK);
         } catch (IllegalArgumentException ex) {
             return GenericResponse.build(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }

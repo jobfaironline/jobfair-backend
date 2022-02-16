@@ -6,4 +6,6 @@ public interface JobPositionService {
     void createNewJobPosition(JobPositionDTO dto);
 
     void updateJobPosition(JobPositionDTO dto, String companyId);
+
+    void deleteJobPosition(String jobPositionId, String companyId);
 }
