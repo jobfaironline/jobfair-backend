@@ -166,8 +166,9 @@ public class JobFairServiceImpl implements JobFairService {
 
     @Override
     @Transactional
-    public void cancelPendingJobFair(String jobFairId) {
+    public void cancelPendingJobFair(String jobFairId, String reason) {
         JobFairEntity entity = getValidatedJobFair(jobFairId, JobFairStatus.PENDING);
+        entity.setCancelReason(reason);
         entity.setStatus(JobFairStatus.CANCEL);
         jobFairRepository.save(entity);
     }
@@ -176,7 +177,7 @@ public class JobFairServiceImpl implements JobFairService {
     @Transactional
     public void restoreDeletedJobFair(String jobFairId) {
         JobFairEntity entity = getValidatedJobFair(jobFairId, JobFairStatus.DELETED);
-        entity.setStatus(JobFairStatus.CANCEL);
+        entity.setStatus(JobFairStatus.DRAFT);
         jobFairRepository.save(entity);
     }
 

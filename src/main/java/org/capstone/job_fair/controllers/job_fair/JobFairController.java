@@ -3,6 +3,7 @@ package org.capstone.job_fair.controllers.job_fair;
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.controllers.payload.requests.job_fair.AdminEvaluateJobFairRequest;
+import org.capstone.job_fair.controllers.payload.requests.job_fair.CancelJobFairRequest;
 import org.capstone.job_fair.controllers.payload.requests.job_fair.DraftJobFairPlanRequest;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.dtos.job_fair.JobFairDTO;
@@ -64,7 +65,7 @@ public class JobFairController {
     public ResponseEntity<?> deleteJobFairPlanDraft(@PathVariable("jobfairId") String jobFairId) {
         try {
             jobFairService.deleteJobFairDraft(jobFairId);
-            return GenericResponse.build(MessageConstant.JobFair.DELETE_JOB_FAIR_PLAN_SUCCESSFULLY, HttpStatus.OK);
+            return GenericResponse.build(MessageUtil.getMessage(MessageConstant.JobFair.DELETE_JOB_FAIR_PLAN_SUCCESSFULLY), HttpStatus.OK);
         } catch (IllegalArgumentException ex) {
             return GenericResponse.build(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }
@@ -75,7 +76,7 @@ public class JobFairController {
     public ResponseEntity<?> submitJobFairPlanDraft(@PathVariable("jobfairId") String jobFairId) {
         try {
             jobFairService.submitJobFairDraft(jobFairId);
-            return GenericResponse.build(MessageConstant.JobFair.SUBMIT_JOB_FAIR_PLAN_SUCCESSFULLY, HttpStatus.OK);
+            return GenericResponse.build(MessageUtil.getMessage(MessageConstant.JobFair.SUBMIT_JOB_FAIR_PLAN_SUCCESSFULLY), HttpStatus.OK);
         } catch (IllegalArgumentException ex) {
             return GenericResponse.build(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }
@@ -83,11 +84,11 @@ public class JobFairController {
 
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).STAFF)")
-    @GetMapping(ApiEndPoint.JobFair.CANCEL_PENDING_JOB_FAIR_PLAN + "/{jobfairId}")
-    public ResponseEntity<?> cancelJobFairPlanPending(@PathVariable("jobfairId") String jobFairId) {
+    @PostMapping(ApiEndPoint.JobFair.CANCEL_PENDING_JOB_FAIR_PLAN)
+    public ResponseEntity<?> cancelJobFairPlanPending(@RequestBody @Valid CancelJobFairRequest request) {
         try {
-            jobFairService.cancelPendingJobFair(jobFairId);
-            return GenericResponse.build(MessageConstant.JobFair.CANCEL_JOB_FAIR_PLAN_SUCCESSFULLY, HttpStatus.OK);
+            jobFairService.cancelPendingJobFair(request.getId(), request.getMessage());
+            return GenericResponse.build(MessageUtil.getMessage(MessageConstant.JobFair.CANCEL_JOB_FAIR_PLAN_SUCCESSFULLY), HttpStatus.OK);
         } catch (IllegalArgumentException ex) {
             return GenericResponse.build(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }
@@ -97,8 +98,8 @@ public class JobFairController {
     @GetMapping(ApiEndPoint.JobFair.RESTORE_DELETED_JOB_FAIR_PLAN + "/{jobfairId}")
     public ResponseEntity<?> restoreDeletedJobFairPlan(@PathVariable("jobfairId") String jobFairId) {
         try {
-            jobFairService.cancelPendingJobFair(jobFairId);
-            return GenericResponse.build(MessageConstant.JobFair.CANCEL_JOB_FAIR_PLAN_SUCCESSFULLY, HttpStatus.OK);
+            jobFairService.restoreDeletedJobFair(jobFairId);
+            return GenericResponse.build(MessageUtil.getMessage(MessageConstant.JobFair.CANCEL_JOB_FAIR_PLAN_SUCCESSFULLY), HttpStatus.OK);
         } catch (IllegalArgumentException ex) {
             return GenericResponse.build(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }

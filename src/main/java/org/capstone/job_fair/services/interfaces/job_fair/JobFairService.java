@@ -14,7 +14,7 @@ public interface JobFairService {
 
     void submitJobFairDraft(String jobFairId);
 
-    void cancelPendingJobFair(String jobFairId);
+    void cancelPendingJobFair(String jobFairId, String reason);
 
     void restoreDeletedJobFair(String jobFairId);
 
