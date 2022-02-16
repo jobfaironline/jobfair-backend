@@ -69,6 +69,8 @@ public final class ApiEndPoint {
         }
 
         public static final String JOB_POSITION_ENDPOINT = ROOT_ENDPOINT + VERSION + "/job";
+        public static final String UPDATE_JOB_POSITION_ENDPOINT = JOB_POSITION_ENDPOINT + "/update";
+
     }
 
     public static final class Attendant {
