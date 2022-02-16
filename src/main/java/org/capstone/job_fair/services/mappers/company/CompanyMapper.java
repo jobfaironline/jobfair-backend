@@ -52,6 +52,7 @@ public abstract class CompanyMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "employeeMaxNum", ignore = true)
     @Mapping(target = "status", ignore = true)
+    @Mapping(target = "companyLogoURL", ignore = true)
     public abstract CompanyDTO toDTO(CreateCompanyRequest request);
 
     @Mapping(source = "url", target = "websiteUrl")
@@ -59,6 +60,7 @@ public abstract class CompanyMapper {
     @Mapping(source = "benefits", target = "companyBenefitDTOS", qualifiedByName = "fromBenefitsOfUpdateCompanyRequest")
     @Mapping(source = "subCategoriesIds", target = "subCategoryDTOs", qualifiedByName = "fromSubCategoriesIdsOfCreateCompanyRequest")
     @Mapping(source = "taxId", target = "taxId")
+    @Mapping(target = "companyLogoURL", ignore = true)
     public abstract CompanyDTO toDTO(UpdateCompanyRequest request);
 
 
