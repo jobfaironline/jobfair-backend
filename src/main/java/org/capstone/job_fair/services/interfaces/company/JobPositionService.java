@@ -5,7 +5,7 @@ import org.capstone.job_fair.models.dtos.company.job.JobPositionDTO;
 public interface JobPositionService {
     void createNewJobPosition(JobPositionDTO dto);
 
-    void updateJobPosition(JobPositionDTO dto, String companyId);
+    JobPositionDTO updateJobPosition(JobPositionDTO dto, String companyId);
 
     void deleteJobPosition(String jobPositionId, String companyId);
 }

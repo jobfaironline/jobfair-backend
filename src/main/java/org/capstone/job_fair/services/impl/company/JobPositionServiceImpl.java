@@ -67,7 +67,7 @@ public class JobPositionServiceImpl implements JobPositionService {
 
     @Override
     @Transactional
-    public void updateJobPosition(JobPositionDTO dto, String companyId) {
+    public JobPositionDTO updateJobPosition(JobPositionDTO dto, String companyId) {
         Optional<JobPositionEntity> jobPositionEntityOpt = jobPositionRepository.findById(dto.getId());
 
         if (!jobPositionEntityOpt.isPresent()) {
@@ -94,6 +94,7 @@ public class JobPositionServiceImpl implements JobPositionService {
         }
         mapper.updateJobPositionEntity(dto, jobPositionEntity);
         jobPositionRepository.save(jobPositionEntity);
+        return mapper.toDTO(jobPositionEntity);
     }
 
     @Override
