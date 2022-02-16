@@ -3,9 +3,13 @@ name: CI
 on:
   push:
     branches: [ main ]
+
+
 jobs:
-  Test:
-    name: Test
+   #Build's job
+  build:
+    #Depends on sonar's job
+    name: Build
     #Run on Ubuntu using the latest version
     runs-on: ubuntu-latest
     steps:
@@ -25,5 +29,36 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
       #Build the application using Maven
-      - name: Run jar file
-        run: nohup java -jar target/jobfair-backend.jar &
+      - name: Build with Maven
+        run: mvn clean install
+      #Build the application using Maven
+      - name: Upload JAR
+        #This uploads artifacts from your workflow allowing you to share data between jobs and store data once a workflow is complete.
+        uses: actions/upload-artifact@v2
+        with:
+          #Set artifact name
+          name: artifact
+          #From this path
+          path: target/jobfair-backend.jar
+          
+  #Test's job
+  test:
+    #Depends on build's job
+    needs: build
+    name: Test
+    #Run on Ubuntu using the latest version
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download JAR
+        #Download the artifact which was uploaded in the build's job
+        uses: actions/download-artifact@v2
+        with:
+          name: artifact
+    #Set up JDK 11
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: '11'
+   #Run file
+      - name: Run file
+        run: nohup java -jar jobfair-backend.jar &
