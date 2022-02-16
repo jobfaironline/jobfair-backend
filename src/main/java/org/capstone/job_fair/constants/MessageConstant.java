@@ -157,9 +157,11 @@ public final class MessageConstant {
         }
 
         public static final String CREATE_JOB_SUCCESSFULLY = "job.success.create";
+        public static final String DELETE_JOB_SUCCESSFULLY = "job.success.delete";
         public static final String SALARY_ERROR = "job.error.salary-error";
         public static final String JOB_POSITION_NOT_FOUND = "job-position.error.not-found";
         public static final String COMPANY_MISMATCH = "job-position.error.company-mismatch";
+        public static final String UPDATE_JOB_SUCCESSFULLY = "job-position.success.update";
     }
 
     public static final class Skill {

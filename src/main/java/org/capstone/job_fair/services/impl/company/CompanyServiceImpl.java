@@ -1,5 +1,6 @@
 package org.capstone.job_fair.services.impl.company;
 
+import org.capstone.job_fair.constants.CompanyConstant;
 import org.capstone.job_fair.constants.DataConstraint;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.models.dtos.company.CompanyDTO;
@@ -12,6 +13,7 @@ import org.capstone.job_fair.repositories.company.CompanySizeRepository;
 import org.capstone.job_fair.repositories.company.SubCategoryRepository;
 import org.capstone.job_fair.services.interfaces.company.CompanyService;
 import org.capstone.job_fair.services.mappers.company.CompanyMapper;
+import org.capstone.job_fair.utils.AwsUtil;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,6 +44,9 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Autowired
     private SubCategoryRepository subCategoryRepository;
+
+    @Autowired
+    private AwsUtil awsUtil;
 
 
     private boolean isEmailExisted(String email) {
@@ -122,6 +127,7 @@ public class CompanyServiceImpl implements CompanyService {
 
         dto.setStatus(CompanyStatus.REGISTERED);
         dto.setEmployeeMaxNum(DataConstraint.Company.DEFAULT_EMPLOYEE_MAX_NUM);
+        dto.setCompanyLogoURL(CompanyConstant.DEFAULT_COMPANY_LOGO_URL);
 
         CompanyEntity entity = mapper.toEntity(dto);
         if (entity.getCompanyBenefits() != null) {
@@ -175,6 +181,16 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     public Integer getCountById(String id) {
         return companyRepository.countById(id);
+    }
+
+    @Override
+    @Transactional
+    public CompanyDTO updateCompanyLogo(String companyLogoFolder, String companyId) {
+        String url = awsUtil.generateAwsS3AccessString(companyLogoFolder, companyId);
+        CompanyEntity company = companyRepository.getById(companyId);
+        company.setCompanyLogoURL(url);
+        companyRepository.save(company);
+        return companyMapper.toDTO(company);
     }
 
 

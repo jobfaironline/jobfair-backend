@@ -1,6 +1,10 @@
 package org.capstone.job_fair.controllers.account;
 
+import lombok.extern.slf4j.Slf4j;
+import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
+import org.capstone.job_fair.constants.AWSConstant;
 import org.capstone.job_fair.constants.ApiEndPoint;
+import org.capstone.job_fair.constants.DataConstraint;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.controllers.payload.requests.account.ChangePasswordRequest;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
@@ -8,19 +12,26 @@ import org.capstone.job_fair.models.dtos.account.AccountDTO;
 import org.capstone.job_fair.models.dtos.token.AccountVerifyTokenDTO;
 import org.capstone.job_fair.services.interfaces.account.AccountService;
 import org.capstone.job_fair.services.interfaces.token.AccountVerifyTokenService;
+import org.capstone.job_fair.services.interfaces.util.FileStorageService;
 import org.capstone.job_fair.services.mappers.token.AccountVerifyTokenMapper;
+import org.capstone.job_fair.utils.ImageUtil;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.net.URI;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 @RestController
+@Slf4j
 public class AccountController {
 
     @Autowired
@@ -31,6 +42,9 @@ public class AccountController {
 
     @Autowired
     private AccountVerifyTokenMapper mapper;
+
+    @Autowired
+    private FileStorageService fileStorageService;
 
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
@@ -53,34 +67,25 @@ public class AccountController {
     public ResponseEntity<?> verifyAccount(@PathVariable("userId") String userId, @PathVariable("token") String tokenId) {
         AccountVerifyTokenDTO token = accountVerifyTokenService.getLastedToken(userId);
         if (token == null) {
-            return GenericResponse.build(
-                    MessageUtil.getMessage(MessageConstant.AccessControlMessage.INVALID_VERIFY_TOKEN), HttpStatus.BAD_REQUEST
-            );
+            return GenericResponse.build(MessageUtil.getMessage(MessageConstant.AccessControlMessage.INVALID_VERIFY_TOKEN), HttpStatus.BAD_REQUEST);
         }
         if (token.getIsInvalidated()) {
-            return GenericResponse.build(
-                    MessageUtil.getMessage(MessageConstant.AccessControlMessage.INVALIDATED_VERIFY_TOKEN), HttpStatus.BAD_REQUEST
-            );
+            return GenericResponse.build(MessageUtil.getMessage(MessageConstant.AccessControlMessage.INVALIDATED_VERIFY_TOKEN), HttpStatus.BAD_REQUEST);
         }
         accountVerifyTokenService.invalidateEntity(mapper.toAccountVerifyTokenEntity(token));
         if (token.getExpiredTime() < new Date().getTime()) {
-            return GenericResponse.build(
-                    MessageUtil.getMessage(MessageConstant.AccessControlMessage.EXPIRED_TOKEN),
-                    HttpStatus.BAD_REQUEST);
+            return GenericResponse.build(MessageUtil.getMessage(MessageConstant.AccessControlMessage.EXPIRED_TOKEN), HttpStatus.BAD_REQUEST);
         }
         accountService.activateAccount(userId);
 
-        return GenericResponse.build(
-                MessageUtil.getMessage(MessageConstant.AccessControlMessage.VERIFY_ACCOUNT_SUCCESSFULLY),
-                HttpStatus.OK);
+        return GenericResponse.build(MessageUtil.getMessage(MessageConstant.AccessControlMessage.VERIFY_ACCOUNT_SUCCESSFULLY), HttpStatus.OK);
     }
 
     @PostMapping(path = ApiEndPoint.Account.CHANGE_PASSWORD_ENDPOINT)
     public ResponseEntity<?> changePassword(@RequestBody ChangePasswordRequest request) {
         try {
             accountService.changePassword(request.getNewPassword(), request.getOldPassword());
-            return GenericResponse.build(
-                    MessageUtil.getMessage(MessageConstant.Account.CHANGE_PASSWORD_SUCCESSFULLY), HttpStatus.OK);
+            return GenericResponse.build(MessageUtil.getMessage(MessageConstant.Account.CHANGE_PASSWORD_SUCCESSFULLY), HttpStatus.OK);
         } catch (IllegalArgumentException ex) {
             return GenericResponse.build(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }
@@ -94,6 +99,25 @@ public class AccountController {
         } catch (IllegalArgumentException e) {
             return GenericResponse.build(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @PostMapping(ApiEndPoint.Account.PICTURE_PROFILE_ENDPOINT)
+    public ResponseEntity<?> uploadProfilePicture(@RequestParam("file") MultipartFile file) {
+        AccountDTO accountDTO;
+        try {
+            UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            String id = userDetails.getId();
+            byte[] image = ImageUtil.convertImage(file, DataConstraint.Account.IMAGE_TYPE, DataConstraint.Account.WIDTH_FACTOR, DataConstraint.Account.HEIGHT_FACTOR, DataConstraint.Account.IMAGE_EXTENSION_TYPE);
+            String pictureProfileFolder = AWSConstant.PICTURE_PROFILE_FOLDER;
+            accountDTO = accountService.updateProfilePicture(pictureProfileFolder, id);
+            fileStorageService.store(image, pictureProfileFolder + "/" + accountDTO.getId()).exceptionally(throwable -> {
+                log.error(throwable.getMessage());
+                return null;
+            });
+        } catch (IOException e) {
+            return GenericResponse.build((e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return ResponseEntity.created(URI.create(accountDTO.getProfileImageUrl())).build();
     }
 
 }

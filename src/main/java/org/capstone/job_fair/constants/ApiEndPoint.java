@@ -61,6 +61,7 @@ public final class ApiEndPoint {
         }
 
         public static final String COMPANY_ENDPOINT = ROOT_ENDPOINT + VERSION + "/companies";
+        public static final String COMPANY_LOGO_ENPOINT = COMPANY_ENDPOINT + "/upload-logo";
     }
 
     public static final class Job {
@@ -68,6 +69,9 @@ public final class ApiEndPoint {
         }
 
         public static final String JOB_POSITION_ENDPOINT = ROOT_ENDPOINT + VERSION + "/job";
+        public static final String UPDATE_JOB_POSITION_ENDPOINT = JOB_POSITION_ENDPOINT + "/update";
+        public static final String DELETE_JOB_POSITION_ENDPOINT = JOB_POSITION_ENDPOINT + "/delete";
+
     }
 
     public static final class Attendant {
@@ -85,6 +89,7 @@ public final class ApiEndPoint {
 
         public static final String ACCOUNT_ENDPOINT = ROOT_ENDPOINT + VERSION + "/accounts";
         public static final String CHANGE_PASSWORD_ENDPOINT = ACCOUNT_ENDPOINT + "/change-password";
+        public static final String PICTURE_PROFILE_ENDPOINT = ACCOUNT_ENDPOINT + "/upload-picture-profile";
     }
 
     public static final class CompanyEmployee {

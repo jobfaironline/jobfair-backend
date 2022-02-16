@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 @AllArgsConstructor
 @Transactional(readOnly = true)
@@ -61,6 +63,54 @@ public class JobPositionServiceImpl implements JobPositionService {
 
         JobPositionEntity entity = mapper.toEntity(dto);
         jobPositionRepository.save(entity);
+    }
+
+    @Override
+    @Transactional
+    public JobPositionDTO updateJobPosition(JobPositionDTO dto, String companyId) {
+        Optional<JobPositionEntity> jobPositionEntityOpt = jobPositionRepository.findById(dto.getId());
+
+        if (!jobPositionEntityOpt.isPresent()) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Job.JOB_POSITION_NOT_FOUND));
+        }
+        JobPositionEntity jobPositionEntity = jobPositionEntityOpt.get();
+
+        if (!jobPositionEntity.getCompany().getId().equals(companyId))
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Job.COMPANY_MISMATCH));
+
+        if (dto.getSubCategoryDTOs() != null) {
+            dto.getSubCategoryDTOs().forEach(subCategoryDTO -> {
+                if (!isSubCategoryIdValid(subCategoryDTO.getId())) {
+                    throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.SubCategory.NOT_FOUND));
+                }
+            });
+        }
+        if (dto.getSkillTagDTOS() != null) {
+            dto.getSkillTagDTOS().forEach(skillTagDTO -> {
+                if (!isSkillTagIdValid(skillTagDTO.getId())) {
+                    throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.SkillTag.NOT_FOUND));
+                }
+            });
+        }
+        mapper.updateJobPositionEntity(dto, jobPositionEntity);
+        jobPositionRepository.save(jobPositionEntity);
+        return mapper.toDTO(jobPositionEntity);
+    }
+
+    @Override
+    @Transactional
+    public void deleteJobPosition(String jobPositionId, String companyId) {
+        Optional<JobPositionEntity> jobPositionEntityOpt = jobPositionRepository.findById(jobPositionId);
+
+        if (!jobPositionEntityOpt.isPresent()) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Job.JOB_POSITION_NOT_FOUND));
+        }
+        JobPositionEntity jobPositionEntity = jobPositionEntityOpt.get();
+
+        if (!jobPositionEntity.getCompany().getId().equals(companyId))
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Job.COMPANY_MISMATCH));
+
+        jobPositionRepository.delete(jobPositionEntity);
     }
 
 

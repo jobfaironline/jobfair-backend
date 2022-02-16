@@ -14,6 +14,7 @@ import org.capstone.job_fair.services.interfaces.account.AccountService;
 import org.capstone.job_fair.services.interfaces.token.AccountVerifyTokenService;
 import org.capstone.job_fair.services.interfaces.util.MailService;
 import org.capstone.job_fair.services.mappers.account.AccountMapper;
+import org.capstone.job_fair.utils.AwsUtil;
 import org.capstone.job_fair.utils.DomainUtil;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +50,9 @@ public class AccountServiceImpl implements AccountService {
 
     @Autowired
     private MailService mailService;
+
+    @Autowired
+    private AwsUtil awsUtil;
 
     @Override
     public List<AccountDTO> getAllAccounts() {
@@ -153,6 +157,16 @@ public class AccountServiceImpl implements AccountService {
         }
         accountEntity = accountRepository.save(accountEntity);
         return accountMapper.toDTO(accountEntity);
+    }
+
+    @Override
+    @Transactional
+    public AccountDTO updateProfilePicture(String pictureProfileFolder, String id) {
+        String url = awsUtil.generateAwsS3AccessString(pictureProfileFolder, id);
+        AccountEntity account = accountRepository.getById(id);
+        account.setProfileImageUrl(url);
+        accountRepository.save(account);
+        return accountMapper.toDTO(account);
     }
 
 }

@@ -93,6 +93,7 @@ public class AttendantServiceImpl implements AttendantService {
         if (attendantOpt.isPresent()) {
             AttendantEntity entity = attendantOpt.get();
             attendantMapper.updateAttendantMapperFromDto(dto, entity);
+            attendantRepository.save(entity);
         }
     }
 

@@ -10,6 +10,7 @@ import org.capstone.job_fair.controllers.payload.requests.accesss_control.LoginR
 import org.capstone.job_fair.controllers.payload.requests.accesss_control.RefreshTokenRequest;
 import org.capstone.job_fair.controllers.payload.responses.LoginResponse;
 import org.capstone.job_fair.controllers.payload.responses.RefreshTokenResponse;
+import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
 import org.capstone.job_fair.models.enums.Role;
 import org.capstone.job_fair.models.statuses.AccountStatus;
@@ -70,6 +71,11 @@ public class AuthController {
                 companyEmployeeService.updateEmployeeStatus(userDetails.getEmail());
                 isEmployeeFirstTime = true;
             }
+            String companyId = null;
+            if (isAccountHasRole(userDetails, Role.COMPANY_EMPLOYEE) || isAccountHasRole(userDetails, Role.COMPANY_MANAGER)) {
+                CompanyEmployeeDTO companyEmployee = companyEmployeeService.getCompanyEmployeeByAccountId(userDetails.getId()).get();
+                companyId = companyEmployee.getCompanyDTO().getId();
+            }
 
             //get list of roles
             String role = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.joining());
@@ -82,7 +88,8 @@ public class AuthController {
                     jwt,
                     refreshToken,
                     isEmployeeFirstTime,
-                    userDetails.getId()
+                    userDetails.getId(),
+                    companyId
             );
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
