@@ -89,6 +89,6 @@ jobs:
         uses: matt-ball/newman-action@master
         with:
           apiKey: ${{secrets.postmanApiKey}}
-          collection: https://www.getpostman.com/collections/b865bdc7ee6a36120fb6
-          environment: https://d3polnwtp0nqe6.cloudfront.net/enviroment.json
+          collection: 12119691-794a91af-afd7-4ba9-8de1-6e8f72a640c5
+          environment: 12119691-a0264365-764b-44f8-a26a-7930b5dd0233
   
