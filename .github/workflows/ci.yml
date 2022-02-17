@@ -90,5 +90,5 @@ jobs:
         with:
           apiKey: ${{secrets.postmanApiKey}}
           collection: https://www.getpostman.com/collections/b865bdc7ee6a36120fb6
-          environment: a0264365-764b-44f8-a26a-7930b5dd0233
+          environment: enviroment.json
   
