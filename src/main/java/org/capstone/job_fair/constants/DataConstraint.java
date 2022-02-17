@@ -181,8 +181,9 @@ public final class DataConstraint {
         public static final int CATEGORY_MIN = 1;
         public static final int CATEGORY_MAX = 4;
         public static final int DEFAULT_EMPLOYEE_MAX_NUM = 5;
-        public static final int MIN_JOB_POSITION = 1;
+        public static final int MIN_JOB_POSITION = 0;
         public static final int MAX_DESCRIPTION_LENGTH = 10000;
+        public static final int MIN_DESCRIPTION_LENGTH = 1;
         public static final int TAX_ID_LENGTH = 9;
         public static final int COMPANY_LOGO_TYPE = BufferedImage.TYPE_INT_ARGB;
         public static final String COMPANY_LOGO_EXTENSION_TYPE = "png";

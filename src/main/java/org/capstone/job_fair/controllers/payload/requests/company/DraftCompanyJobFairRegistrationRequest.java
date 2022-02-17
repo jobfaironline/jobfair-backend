@@ -17,7 +17,7 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
-public class CompanyJobFairRegistrationRequest {
+public class DraftCompanyJobFairRegistrationRequest {
     @NotNull
     private String jobFairId;
 
@@ -41,31 +41,31 @@ public class CompanyJobFairRegistrationRequest {
         private String jobPositionId;
 
         @XSSConstraint
-        @NotBlank
-        @Size(max = DataConstraint.Company.MAX_DESCRIPTION_LENGTH)
+        @NotNull
+        @Size(min = DataConstraint.Company.MIN_DESCRIPTION_LENGTH, max = DataConstraint.Company.MAX_DESCRIPTION_LENGTH)
         private String description;
 
         @XSSConstraint
-        @NotBlank
-        @Size(max = DataConstraint.Company.MAX_DESCRIPTION_LENGTH)
+        @NotNull
+        @Size(min = DataConstraint.Company.MIN_DESCRIPTION_LENGTH, max = DataConstraint.Company.MAX_DESCRIPTION_LENGTH)
         private String requirements;
 
-        @NotNull
         @NumberFormat
+        @NotNull
         @Min(DataConstraint.JobPosition.SALARY_MIN)
-        private double minSalary;
+        private Double minSalary;
 
-        @NotNull
         @NumberFormat
+        @NotNull
         @Min(DataConstraint.JobPosition.SALARY_MIN)
         @Max(DataConstraint.JobPosition.SALARY_MAX)
-        private double maxSalary;
+        private Double maxSalary;
 
-        @NotNull
         @NumberFormat
+        @NotNull
         @Min(DataConstraint.JobPosition.EMPLOYEE_MIN)
         @Max(DataConstraint.JobPosition.EMPLOYEE_MAX)
-        private int numOfPosition;
+        private Integer numOfPosition;
 
     }
 }
