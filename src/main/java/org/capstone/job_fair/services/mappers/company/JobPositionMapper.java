@@ -57,6 +57,8 @@ public abstract class JobPositionMapper {
     @Mapping(source = "preferredLanguage", target = "language")
     @Mapping(source = "subCategoryIds", target = "subCategoryDTOs", qualifiedByName = "fromSubCategoryIdsOfCreateJobPositionRequest")
     @Mapping(source = "skillTagIds", target = "skillTagDTOS", qualifiedByName = "fromSkillTagIdsOfCreateJobPositionRequest")
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "companyDTO", ignore = true)
     public abstract JobPositionDTO toDTO(UpdateJobPositionRequest request);
 
     @Mapping(target = "language", qualifiedByName = "toJobPositionEntityLanguage")
@@ -64,6 +66,7 @@ public abstract class JobPositionMapper {
     @Mapping(target = "jobTypeEntity", source = "jobType", qualifiedByName = "toJobPositionEntityJobType")
     @Mapping(target = "categories", source = "subCategoryDTOs", qualifiedByName = "toJobPositionEntitySubCategory")
     @Mapping(target = "skillTagEntities", source = "skillTagDTOS", qualifiedByName = "toJobPositionEntitySkillTag")
+    @Mapping(target = "company", ignore = true)
     public abstract void updateJobPositionEntity(JobPositionDTO dto, @MappingTarget JobPositionEntity entity);
 
     @Named("fromSubCategoryIdsOfCreateJobPositionRequest")

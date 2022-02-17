@@ -109,8 +109,14 @@ public class CompanyController {
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
     @PutMapping(ApiEndPoint.Company.COMPANY_ENDPOINT)
     public ResponseEntity<?> update(@Valid @RequestBody UpdateCompanyRequest request) {
-
         try {
+            UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            Optional<CompanyEmployeeDTO> opt = companyEmployeeService.getCompanyEmployeeByAccountId(userDetails.getId());
+            String companyId = opt.get().getCompanyDTO().getId();
+            if (!companyId.equals(request.getId())){
+                throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Company.COMPANY_MISSMATCH));
+            }
+
             CompanyDTO dto = companyMapper.toDTO(request);
             companyService.updateCompany(dto);
             return GenericResponse.build(MessageUtil.getMessage(MessageConstant.Company.UPDATE_SUCCESSFULLY), HttpStatus.OK);

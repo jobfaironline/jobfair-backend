@@ -123,6 +123,7 @@ public final class MessageConstant {
         public static final String DELETE_SUCCESSFULLY = "company.success.delete";
         public static final String DELETE_FAILED = "company.error.delete";
         public static final String SIZE_INVALID = "company.error.size-invalid";
+        public static final String COMPANY_MISSMATCH = "company.error.missmatch";
     }
 
     public static final class CompanyEmployee {
