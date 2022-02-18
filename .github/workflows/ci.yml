@@ -91,5 +91,5 @@ jobs:
         with:
           apiKey: ${{secrets.postmanApiKey}}
           collection: ${{secrets.POSTMAN_ACCOUNT_COLLECTION_ID}}
-          environment: $${{secrets.POSTMAN_ENVIRONMENT_ID}}
+          environment: ${{secrets.POSTMAN_ENVIRONMENT_ID}}
   
