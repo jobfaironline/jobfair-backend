@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
+import org.capstone.job_fair.models.entities.company.CompanyEntity;
 import org.capstone.job_fair.models.statuses.AccountStatus;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -26,6 +27,7 @@ public class UserDetailsImpl implements UserDetails {
     private String fullname;
     private String id;
     private AccountStatus status;
+    private String companyId;
 
     private Collection<? extends GrantedAuthority> authorities;
 
@@ -39,9 +41,16 @@ public class UserDetailsImpl implements UserDetails {
                 account.getFullname(),
                 account.getId(),
                 account.getStatus(),
+                null,
                 authorities
         );
 
+    }
+
+    public static UserDetailsImpl build(AccountEntity account, CompanyEntity company){
+        UserDetailsImpl userDetails = build(account);
+        userDetails.setCompanyId(company.getId());
+        return userDetails;
     }
 
     public AccountStatus getStatus() {

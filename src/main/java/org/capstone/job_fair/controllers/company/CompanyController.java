@@ -109,21 +109,16 @@ public class CompanyController {
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
     @PutMapping(ApiEndPoint.Company.COMPANY_ENDPOINT + "/{id}")
     public ResponseEntity<?> update(@PathVariable String id, @Valid @RequestBody UpdateCompanyRequest request) {
-        try {
-            UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            Optional<CompanyEmployeeDTO> opt = companyEmployeeService.getCompanyEmployeeByAccountId(userDetails.getId());
-            String companyId = opt.get().getCompanyDTO().getId();
-            if (!companyId.equals(id)){
-                throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Company.COMPANY_MISSMATCH));
-            }
-
-            CompanyDTO dto = companyMapper.toDTO(request);
-            dto.setId(id);
-            companyService.updateCompany(dto);
-            return GenericResponse.build(MessageUtil.getMessage(MessageConstant.Company.UPDATE_SUCCESSFULLY), HttpStatus.OK);
-        } catch (IllegalArgumentException ex) {
-            return GenericResponse.build(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String companyId = userDetails.getCompanyId();
+        if (!companyId.equals(id)) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Company.COMPANY_MISSMATCH));
         }
+
+        CompanyDTO dto = companyMapper.toDTO(request);
+        dto.setId(id);
+        companyService.updateCompany(dto);
+        return GenericResponse.build(MessageUtil.getMessage(MessageConstant.Company.UPDATE_SUCCESSFULLY), HttpStatus.OK);
     }
 
 

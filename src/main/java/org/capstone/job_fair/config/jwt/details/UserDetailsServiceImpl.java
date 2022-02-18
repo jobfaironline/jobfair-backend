@@ -1,9 +1,13 @@
 package org.capstone.job_fair.config.jwt.details;
 
 import org.capstone.job_fair.models.entities.account.AccountEntity;
+import org.capstone.job_fair.models.entities.company.CompanyEmployeeEntity;
+import org.capstone.job_fair.models.enums.Role;
 import org.capstone.job_fair.models.statuses.AccountStatus;
 import org.capstone.job_fair.repositories.account.AccountRepository;
+import org.capstone.job_fair.repositories.company.CompanyEmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -14,13 +18,11 @@ import java.util.Arrays;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
-
-    private final AccountRepository accountRepository;
+    @Autowired
+    private AccountRepository accountRepository;
 
     @Autowired
-    public UserDetailsServiceImpl(AccountRepository accountRepository) {
-        this.accountRepository = accountRepository;
-    }
+    private CompanyEmployeeRepository companyEmployeeRepository;
 
     @Override
     @Transactional
@@ -28,6 +30,12 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         AccountEntity account = accountRepository
                 .findByEmailAndStatusIn(email, Arrays.asList(AccountStatus.VERIFIED, AccountStatus.REGISTERED))
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with -> email : " + email));
+        if (account.getRole().getId() == Role.COMPANY_MANAGER.ordinal() || account.getRole().getId() == Role.COMPANY_EMPLOYEE.ordinal()) {
+            CompanyEmployeeEntity companyEmployee = companyEmployeeRepository
+                    .findByAccountId(account.getId())
+                    .orElseThrow(() -> new AuthenticationCredentialsNotFoundException("Company not found for this account"));
+            return UserDetailsImpl.build(account, companyEmployee.getCompany());
+        }
         return UserDetailsImpl.build(account);
     }
 }

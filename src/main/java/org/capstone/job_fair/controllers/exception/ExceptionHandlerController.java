@@ -4,6 +4,7 @@ import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.controllers.payload.responses.ErrorResponse;
+import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -62,11 +63,18 @@ public class ExceptionHandlerController {
         return buildErrorResponse(ex, MessageUtil.getMessage(MessageConstant.Exception.ENTITY_NOT_FOUND), HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler({IllegalArgumentException.class})
+    public ResponseEntity<?> handleIllegalArgumentException(IllegalArgumentException ex) {
+        return GenericResponse.build(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler({Exception.class})
     public ResponseEntity<?> handleGlobalException(Exception ex) {
         ex.printStackTrace();
         return buildErrorResponse(ex, MessageUtil.getMessage(MessageConstant.Exception.INTERNAL_ERROR), HttpStatus.BAD_REQUEST);
     }
+
+
 
     private ResponseEntity<?> buildErrorResponse(Exception exception, String message, HttpStatus httpStatus) {
         return ErrorResponse.build(httpStatus, message, exception.getClass().getSimpleName() + ": " + exception.getMessage());
