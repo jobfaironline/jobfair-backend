@@ -23,19 +23,19 @@ public class JobFairEntity {
     @GenericGenerator(name = "uuid", strategy = "org.hibernate.id.UUIDGenerator")
     private String id;
     @Column(name = "company_register_start_time")
-    private long companyRegisterStartTime;
+    private Long companyRegisterStartTime;
     @Column(name = "company_register_end_time")
-    private long companyRegisterEndTime;
+    private Long companyRegisterEndTime;
     @Column(name = "company_buy_booth_start_time")
-    private long companyBuyBoothStartTime;
+    private Long companyBuyBoothStartTime;
     @Column(name = "company_buy_booth_end_time")
-    private long companyBuyBoothEndTime;
+    private Long companyBuyBoothEndTime;
     @Column(name = "attendant_register_start_time")
-    private long attendantRegisterStartTime;
+    private Long attendantRegisterStartTime;
     @Column(name = "start_time")
     private Long startTime;
     @Column(name = "end_time")
-    private long endTime;
+    private Long endTime;
     @Column(name = "description")
     private String description;
     @Column(name = "layout_id")

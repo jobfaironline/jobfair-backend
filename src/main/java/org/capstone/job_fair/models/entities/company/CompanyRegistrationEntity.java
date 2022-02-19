@@ -1,11 +1,14 @@
 package org.capstone.job_fair.models.entities.company;
 
 import lombok.*;
+import org.capstone.job_fair.models.entities.attendant.cv.WorkHistoryEntity;
+import org.capstone.job_fair.models.entities.company.job.RegistrationJobPositionEntity;
 import org.capstone.job_fair.models.statuses.CompanyRegistrationStatus;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -24,7 +27,6 @@ public class CompanyRegistrationEntity {
 
     @Column(name = "create_date")
     private Long createDate;
-
     @Column(name = "description")
     private String description;
     @Column(name = "job_fair_id")
@@ -44,6 +46,10 @@ public class CompanyRegistrationEntity {
 
     @Column(name = "authorizer_id")
     private String authorizerId;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
+    @JoinColumn(name = "company_registration_id", referencedColumnName = "id")
+    private List<RegistrationJobPositionEntity> registrationJobPositions;
 
     @Override
     public boolean equals(Object o) {

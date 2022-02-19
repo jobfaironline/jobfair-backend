@@ -20,8 +20,6 @@ import java.util.List;
 @Getter
 @Setter
 public class UpdateCompanyRequest {
-    @NotNull
-    private String id;
 
     @Length(min = DataConstraint.Company.TAX_ID_LENGTH, max = DataConstraint.Company.TAX_ID_LENGTH)
     private String taxId;

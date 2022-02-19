@@ -6,8 +6,6 @@ import org.capstone.job_fair.validators.XSSConstraint;
 import org.springframework.format.annotation.NumberFormat;
 
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Data
@@ -16,52 +14,40 @@ import javax.validation.constraints.Size;
 @Getter
 @Setter
 @ToString
-public class CreateJobFairPlanRequest {
+public class DraftJobFairPlanRequest {
 
-    @NotNull
     @NumberFormat
     @Min(DataConstraint.JobFair.MIN_TIME)
-    private long companyRegisterStartTime;
+    private Long companyRegisterStartTime;
 
-    @NotNull
     @NumberFormat
     @Min(DataConstraint.JobFair.MIN_TIME)
-    private long companyRegisterEndTime;
+    private Long companyRegisterEndTime;
 
-    @NotNull
     @NumberFormat
     @Min(DataConstraint.JobFair.MIN_TIME)
-    private long companyBuyBoothStartTime;
+    private Long companyBuyBoothStartTime;
 
-    @NotNull
     @NumberFormat
     @Min(DataConstraint.JobFair.MIN_TIME)
-    private long companyBuyBoothEndTime;
+    private Long companyBuyBoothEndTime;
 
-    @NotNull
     @NumberFormat
     @Min(DataConstraint.JobFair.MIN_TIME)
-    private long attendantRegisterStartTime;
+    private Long attendantRegisterStartTime;
 
-    @NotNull
     @NumberFormat
     @Min(DataConstraint.JobFair.MIN_TIME)
     private Long startTime;
 
-    @NotNull
     @NumberFormat
     @Min(DataConstraint.JobFair.MIN_TIME)
-    private long endTime;
+    private Long endTime;
 
     @XSSConstraint
-    @NotNull
-    @NotBlank
     @Size(max = DataConstraint.JobFair.MAX_DESCRIPTION_LENGTH)
     private String description;
 
-    @NotNull
-
     private String layoutId;
-
 
 }

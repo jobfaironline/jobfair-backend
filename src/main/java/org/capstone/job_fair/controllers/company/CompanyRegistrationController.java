@@ -4,7 +4,7 @@ import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.controllers.payload.requests.company.CancelCompanyJobFairRegistrationRequest;
-import org.capstone.job_fair.controllers.payload.requests.company.CompanyJobFairRegistrationRequest;
+import org.capstone.job_fair.controllers.payload.requests.company.DraftCompanyJobFairRegistrationRequest;
 import org.capstone.job_fair.controllers.payload.requests.company.StaffEvaluateCompanyRegistrationRequest;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
@@ -37,7 +37,7 @@ public class CompanyRegistrationController {
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
     @PostMapping(ApiEndPoint.CompanyRegistration.DRAFT)
-    public ResponseEntity<?> draftAJobFairRegistration(@Valid @RequestBody CompanyJobFairRegistrationRequest request) {
+    public ResponseEntity<?> draftAJobFairRegistration(@Valid @RequestBody DraftCompanyJobFairRegistrationRequest request) {
         try {
             //Map request to company registration dto and registration job position dto
             CompanyRegistrationDTO companyRegistrationDTO = new CompanyRegistrationDTO();
@@ -45,7 +45,7 @@ public class CompanyRegistrationController {
             companyRegistrationDTO.setDescription(request.getDescription());
 
             List<RegistrationJobPositionDTO> jobPositionDTOS = new ArrayList<>();
-            for (CompanyJobFairRegistrationRequest.JobPosition jobPosition : request.getJobPositions()) {
+            for (DraftCompanyJobFairRegistrationRequest.JobPosition jobPosition : request.getJobPositions()) {
                 RegistrationJobPositionDTO registrationJobPositionDTO = new RegistrationJobPositionDTO();
                 registrationJobPositionDTO.setId(jobPosition.getJobPositionId());
                 registrationJobPositionDTO.setDescription(jobPosition.getDescription());

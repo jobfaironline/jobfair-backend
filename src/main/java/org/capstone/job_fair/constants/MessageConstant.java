@@ -36,6 +36,8 @@ public final class MessageConstant {
         public static final String REJECT_MISSING_REASON = "job-fair-plan.error.reject-missing-reason";
         public static final String EVALUATE_SUCCESSFULLY = "job-fair-plan.success.evaluate-successfully";
         public static final String JOB_FAIR_IS_NOT_APPROVED = "job-fair-plan.error.not-approved";
+        public static final String INVALID_COMPANY_REGISTER_START_TIME = "job-fair-plan.error.invalid-company-register-start-time";
+        public static final String INVALID_JOB_FAIR = "job-fair-plan.error.invalid-job-fair";
 
     }
 
@@ -69,6 +71,7 @@ public final class MessageConstant {
         public static final String INVALIDATED_VERIFY_TOKEN = "access-control.error.invalidated-account-verify-token";
         public static final String EXPIRED_TOKEN = "access-control.error.expired-account-verify-token";
         public static final String VERIFY_ACCOUNT_SUCCESSFULLY = "access-control.success.verify-account";
+        public static final String UNAUTHORIZED_ACTION = "access-control.error.unauthorized-action";
     }
 
     public static final class Account {
@@ -120,6 +123,7 @@ public final class MessageConstant {
         public static final String DELETE_SUCCESSFULLY = "company.success.delete";
         public static final String DELETE_FAILED = "company.error.delete";
         public static final String SIZE_INVALID = "company.error.size-invalid";
+        public static final String COMPANY_MISSMATCH = "company.error.missmatch";
     }
 
     public static final class CompanyEmployee {

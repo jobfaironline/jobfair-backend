@@ -168,6 +168,17 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
                 .ifPresent((entity) -> {
                     throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyRegistration.EXISTED_PENDING_REGISTRATION));
                 });
+
+        //validate entity
+        try {
+            Objects.requireNonNull(registrationEntity.getDescription());
+        } catch (NullPointerException e) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.INVALID_JOB_FAIR));
+        }
+        if (registrationEntity.getRegistrationJobPositions().isEmpty()){
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.INVALID_JOB_FAIR));
+        }
+
         registrationEntity.setStatus(CompanyRegistrationStatus.PENDING);
         companyRegistrationRepository.save(registrationEntity);
 

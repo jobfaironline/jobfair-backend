@@ -6,7 +6,7 @@ import org.capstone.job_fair.models.statuses.JobFairStatus;
 import java.util.List;
 
 public interface JobFairService {
-    void createJobFair(JobFairDTO dto);
+    void draftJobFair(JobFairDTO dto);
 
     List<JobFairDTO> getAllJobFairPlanOfCurrentAccount();
 
@@ -14,7 +14,7 @@ public interface JobFairService {
 
     void submitJobFairDraft(String jobFairId);
 
-    void cancelPendingJobFair(String jobFairId);
+    void cancelPendingJobFair(String jobFairId, String reason);
 
     void restoreDeletedJobFair(String jobFairId);
 
