@@ -97,6 +97,7 @@ public final class MessageConstant {
         public static final String SEND_NEW_VERIFICATION_LINK_SUCCESSFULLY = "account.success.send-new-verification-link";
         public static final String ACCOUNT_VERIFY_MAIL_TITLE = "account.verify.email-title";
         public static final String VERIFY_ACCOUNT_TOKEN_INTERVAL_ERROR = "account.verify.token-interval-error";
+        public static final String ALREADY_VERIFIED = "account.verify.already-verified";
 
     }
 
