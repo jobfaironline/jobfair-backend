@@ -264,6 +264,8 @@ public final class MessageConstant {
         public static final String INVALID_COMPANY_REGISTRATION_STATUS_WHEN_EVALUATE = "company-registration.error.invalid-company-registration-status-when-evaluate";
         public static final String EVALUATE_SUCCESSFULLY = "company-registration.success.evaluate";
         public static final String COMPANY_REGISTER_SUCCESSFULLY = "company-registration.success.register";
+        public static final String INVALID_STATUS_WHEN_UPDATE = "company-registration.error.invalid-status-when-update";
+        public static final String UPDATE_COMPANY_REGISTRATION_DRAF_SUCCESSFULLY = "company-registration.success.update-company-registration-draft";
 
 
     }
