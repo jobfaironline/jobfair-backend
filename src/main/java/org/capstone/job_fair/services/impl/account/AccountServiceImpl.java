@@ -6,10 +6,11 @@ import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
-import org.capstone.job_fair.models.dtos.token.AccountVerifyTokenDTO;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
+import org.capstone.job_fair.models.entities.token.AccountVerifyTokenEntity;
 import org.capstone.job_fair.models.statuses.AccountStatus;
 import org.capstone.job_fair.repositories.account.AccountRepository;
+import org.capstone.job_fair.repositories.token.AccountVerifyTokenEntityRepository;
 import org.capstone.job_fair.services.interfaces.account.AccountService;
 import org.capstone.job_fair.services.interfaces.token.AccountVerifyTokenService;
 import org.capstone.job_fair.services.interfaces.util.MailService;
@@ -44,6 +45,10 @@ public class AccountServiceImpl implements AccountService {
 
     @Autowired
     private AccountVerifyTokenService accountVerifyTokenService;
+
+    @Autowired
+    private AccountVerifyTokenEntityRepository accountVerifyTokenEntityRepository;
+
 
     @Autowired
     private DomainUtil domainUtil;
@@ -124,17 +129,19 @@ public class AccountServiceImpl implements AccountService {
     @Transactional
     public void sendVerifyAccountEmail(String accountId) {
         AccountEntity entity = accountRepository.getById(accountId);
-        if(!entity.getStatus().equals(AccountStatus.REGISTERED)) throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Account.ALREADY_VERIFIED));
-        AccountVerifyTokenDTO lastTokenDTO = accountVerifyTokenService.getLastedToken(accountId);
+        if (!entity.getStatus().equals(AccountStatus.REGISTERED))
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Account.ALREADY_VERIFIED));
+        Optional<AccountVerifyTokenEntity> accountVerifyTokenEntityOptional = accountVerifyTokenEntityRepository.getFirstByAccountIdOrderByExpiredTimeDesc(accountId);
         //if there is a token for this account
         //check for its validation
-        if (lastTokenDTO != null) {
+        if (accountVerifyTokenEntityOptional.isPresent()) {
             //if not validate check on expired time
-            if (!lastTokenDTO.getIsInvalidated()) {
+            AccountVerifyTokenEntity lastToken = accountVerifyTokenEntityOptional.get();
+            if (!lastToken.getIsInvalidated()) {
                 long currentTime = new Date().getTime();
-                if (lastTokenDTO.getExpiredTime() < currentTime) {
+                if (lastToken.getExpiredTime() < currentTime) {
                     //token is expired
-                    accountVerifyTokenService.invalidateTokenById(lastTokenDTO.getId());
+                    accountVerifyTokenService.invalidateTokenById(lastToken.getId());
                 } else {
                     throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Account.VERIFY_ACCOUNT_TOKEN_INTERVAL_ERROR));
                 }
