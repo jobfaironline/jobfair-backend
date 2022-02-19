@@ -121,8 +121,10 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     @SneakyThrows
+    @Transactional
     public void sendVerifyAccountEmail(String accountId) {
         AccountEntity entity = accountRepository.getById(accountId);
+        if(!entity.getStatus().equals(AccountStatus.REGISTERED)) throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Account.ALREADY_VERIFIED));
         AccountVerifyTokenDTO lastTokenDTO = accountVerifyTokenService.getLastedToken(accountId);
         //if there is a token for this account
         //check for its validation
