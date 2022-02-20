@@ -5,10 +5,9 @@ import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import org.capstone.job_fair.constants.AWSConstant;
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
-import org.capstone.job_fair.controllers.payload.requests.company.CreateCompanyBoothLayoutMetaDataRequest;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
+import org.capstone.job_fair.models.dtos.company.CompanyBoothDTO;
 import org.capstone.job_fair.models.dtos.company.CompanyBoothLayoutDTO;
-import org.capstone.job_fair.models.dtos.company.CompanyDTO;
 import org.capstone.job_fair.services.interfaces.company.CompanyBoothLayoutService;
 import org.capstone.job_fair.services.interfaces.company.CompanyService;
 import org.capstone.job_fair.services.interfaces.util.FileStorageService;
@@ -22,7 +21,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.Valid;
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
@@ -94,35 +92,35 @@ public class CompanyBoothLayoutController {
 
     @PostMapping(ApiEndPoint.CompanyBoothLayout.COMPANY_BOOTH_LAYOUT)
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE)")
-    public ResponseEntity<?> uploadFileMetaData(@RequestBody @Valid CreateCompanyBoothLayoutMetaDataRequest request) {
+    public ResponseEntity<?> createNewLayout(@RequestParam("companyBoothId") String companyBoothId, @RequestParam("file") MultipartFile file) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String companyId = userDetails.getCompanyId();
 
-        Optional<String> companyIdOpt = companyService.getIdByCompanyBoothID(request.getCompanyBoothId());
+        Optional<String> companyIdOpt = companyService.getIdByCompanyBoothID(companyBoothId);
         if (!companyIdOpt.isPresent()) {
-            return ResponseEntity.noContent().build();
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyBoothLayout.NOT_FOUND));
         } else {
             if (!companyIdOpt.get().equals(companyId)) {
                 throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Company.COMPANY_MISSMATCH));
             }
         }
 
-        CompanyBoothLayoutDTO dto = companyBoothLayoutMapper.toDTO(request);
-        dto = companyBoothLayoutService.createNew(dto);
-        return ResponseEntity.created(URI.create(dto.getUrl())).body(dto);
-    }
+        CompanyBoothLayoutDTO dto = new CompanyBoothLayoutDTO();
+        CompanyBoothDTO companyBoothDTO = new CompanyBoothDTO();
+        companyBoothDTO.setId(companyBoothId);
+        dto.setCompanyBooth(companyBoothDTO);
+        dto = companyBoothLayoutService.createNew(dto, file);
 
-    @PostMapping(ApiEndPoint.CompanyBoothLayout.COMPANY_BOOTH_LAYOUT + "/{id}/content")
-    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE)")
-    public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file, @PathVariable("id") String id) {
         try {
-            fileStorageService.store(file.getBytes(), AWSConstant.COMPANY_BOOTH_LAYOUT_FOLDER + "/" + id).exceptionally(throwable -> {
+            fileStorageService.store(file.getBytes(), AWSConstant.COMPANY_BOOTH_LAYOUT_FOLDER + "/" + dto.getId()).exceptionally(throwable -> {
                 log.error(throwable.getMessage());
                 return null;
             });
         } catch (IOException e) {
             return GenericResponse.build(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return ResponseEntity.accepted().build();
+
+        return ResponseEntity.created(URI.create(dto.getUrl())).body(dto);
     }
+
 }
