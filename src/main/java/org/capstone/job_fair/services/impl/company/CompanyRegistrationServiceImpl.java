@@ -147,7 +147,7 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
 
     @Override
     @Transactional
-    public void updateDraftCompanyRegistration(CompanyRegistrationDTO companyRegistrationDTO, List<RegistrationJobPositionDTO> jobPositions, String companyId) {
+    public void updateDraftCompanyRegistration(CompanyRegistrationDTO companyRegistrationDTO, List<RegistrationJobPositionDTO> jobPositions) {
 
         //Create registration job position entity
 
@@ -176,7 +176,7 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
                     MessageUtil.getMessage(MessageConstant.Job.JOB_POSITION_NOT_FOUND));
             JobPositionEntity jobPositionEntity = jobPositionOpt.get();
             //Check if job position entity is belonged to company
-            if (!jobPositionEntity.getCompany().getId().equals(companyId))
+            if (!jobPositionEntity.getCompany().getId().equals(companyRegistrationDTO.getCompanyId()))
                 throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Job.COMPANY_MISMATCH));
             validateRegistrationJobPosition(registrationJobPositionDTO);
 

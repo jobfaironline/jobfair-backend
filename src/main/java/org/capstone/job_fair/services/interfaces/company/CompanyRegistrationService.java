@@ -9,7 +9,7 @@ import java.util.List;
 public interface CompanyRegistrationService {
     void createDraftCompanyRegistration(CompanyRegistrationDTO companyRegistrationDTO, List<RegistrationJobPositionDTO> jobPositions);
 
-    void updateDraftCompanyRegistration(CompanyRegistrationDTO companyRegistrationDTO, List<RegistrationJobPositionDTO> jobPositions, String companyId);
+    void updateDraftCompanyRegistration(CompanyRegistrationDTO companyRegistrationDTO, List<RegistrationJobPositionDTO> jobPositions);
 
     void submitCompanyRegistration(String registrationId);
 

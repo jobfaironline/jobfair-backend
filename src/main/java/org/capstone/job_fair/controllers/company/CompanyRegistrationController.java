@@ -90,8 +90,8 @@ public class CompanyRegistrationController {
         //Get company from user information in security context
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext()
                 .getAuthentication().getPrincipal();
-        String companyId = userDetails.getCompanyId();
-        companyRegistrationService.updateDraftCompanyRegistration(companyRegistrationDTO, jobPositionDTOS, companyId);
+        companyRegistrationDTO.setCompanyId(userDetails.getCompanyId());
+        companyRegistrationService.updateDraftCompanyRegistration(companyRegistrationDTO, jobPositionDTOS);
         return GenericResponse.build(MessageUtil.getMessage(MessageConstant.CompanyRegistration.UPDATE_COMPANY_REGISTRATION_DRAF_SUCCESSFULLY), HttpStatus.OK);
     }
 
