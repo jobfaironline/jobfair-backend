@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface RegistrationJobPositionRepository extends JpaRepository<RegistrationJobPositionEntity, String> {
+
+    Integer countById(String id);
 }

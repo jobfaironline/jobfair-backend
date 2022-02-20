@@ -123,4 +123,11 @@ public final class ApiEndPoint {
         public static final String LAYOUT_ENDPOINT = ROOT_ENDPOINT + VERSION + "/layouts";
     }
 
+    public static final class Application {
+        private Application() {
+
+        }
+        public static final String APPLICATION_ENDPOINT = ROOT_ENDPOINT + VERSION + "/applications";
+    }
+
 }
