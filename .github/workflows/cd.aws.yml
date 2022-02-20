@@ -61,8 +61,8 @@ jobs:
         with:
          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-         application_name: JobHub
-         environment_name: JobHub-env
+         application_name: job-fair-online-backend
+         environment_name: Jobfaironlinebackend-env
          version_label: ${{github.SHA}}
          region: ap-southeast-1
          deployment_package: jobfair-backend.jar
