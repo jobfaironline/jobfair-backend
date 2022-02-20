@@ -123,4 +123,13 @@ public final class ApiEndPoint {
         public static final String LAYOUT_ENDPOINT = ROOT_ENDPOINT + VERSION + "/layouts";
     }
 
+    public static final class CompanyBoothLayout {
+        private CompanyBoothLayout() {
+        }
+
+        public static final String COMPANY_BOOTH_LAYOUT = ROOT_ENDPOINT + VERSION + "/company-booth-layout";
+        public static final String LATEST_VERSION = COMPANY_BOOTH_LAYOUT + "/latest";
+
+    }
+
 }

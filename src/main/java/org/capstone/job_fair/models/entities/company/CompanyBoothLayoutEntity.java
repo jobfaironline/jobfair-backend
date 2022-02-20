@@ -26,6 +26,8 @@ public class CompanyBoothLayoutEntity {
     @ManyToOne
     @JoinColumn(name = "company_booth_id")
     private CompanyBoothEntity companyBooth;
+    @Column(name = "url", nullable = false)
+    private String url;
 
     @Override
     public boolean equals(Object o) {
