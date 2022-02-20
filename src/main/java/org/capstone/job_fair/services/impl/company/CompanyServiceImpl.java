@@ -193,5 +193,10 @@ public class CompanyServiceImpl implements CompanyService {
         return companyMapper.toDTO(company);
     }
 
+    @Override
+    public Optional<String> getIdByCompanyBoothID(String companyBoothId) {
+        return companyRepository.findCompanyIdByCompanyBoothID(companyBoothId);
+    }
+
 
 }
