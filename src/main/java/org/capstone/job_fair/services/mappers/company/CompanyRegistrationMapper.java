@@ -16,5 +16,5 @@ public abstract class CompanyRegistrationMapper {
     public abstract CompanyRegistrationEntity toEntity(CompanyRegistrationDTO dto);
 
     @Mapping(target = "createDate", ignore = true)
-    public abstract void UpdateCompanyRegistrationEntityFromDTO(@MappingTarget CompanyRegistrationEntity entity, CompanyRegistrationDTO dto);
+    public abstract void updateCompanyRegistrationEntityFromDTO(@MappingTarget CompanyRegistrationEntity entity, CompanyRegistrationDTO dto);
 }

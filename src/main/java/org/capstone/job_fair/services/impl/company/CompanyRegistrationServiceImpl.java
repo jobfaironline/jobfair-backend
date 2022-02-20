@@ -147,7 +147,7 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
 
     @Override
     @Transactional
-    public void updateDraftCompanyRegistration(CompanyRegistrationDTO companyRegistrationDTO, List<RegistrationJobPositionDTO> jobPositions) {
+    public void updateDraftCompanyRegistration(CompanyRegistrationDTO companyRegistrationDTO, List<RegistrationJobPositionDTO> jobPositions, String companyId) {
 
         //Create registration job position entity
 
@@ -161,17 +161,11 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
         //make sure the registration job position is unique
         validateUniqueJobPosition(jobPositions);
         //Create company registration entity
-        System.out.println("Company registration dto: " + companyRegistrationDTO);
-        companyRegistrationMapper.UpdateCompanyRegistrationEntityFromDTO(companyRegistrationEntity, companyRegistrationDTO);
-        System.out.println("Company registration entity: " + companyRegistrationEntity);
+        companyRegistrationMapper.updateCompanyRegistrationEntityFromDTO(companyRegistrationEntity, companyRegistrationDTO);
         companyRegistrationRepository.save(companyRegistrationEntity);
 
-        System.out.println("Job position entity: " + jobPositions);
 
-        //Get company from user information in security context
-        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext()
-                .getAuthentication().getPrincipal();
-        String companyId = userDetails.getCompanyId();
+
 
         for (RegistrationJobPositionDTO registrationJobPositionDTO : jobPositions) {
             //Get job position entity by job position id in request
@@ -185,7 +179,6 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
             if (!jobPositionEntity.getCompany().getId().equals(companyId))
                 throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Job.COMPANY_MISMATCH));
             validateRegistrationJobPosition(registrationJobPositionDTO);
-            System.out.println("Registration job position DTO: " + registrationJobPositionDTO);
 
             RegistrationJobPositionEntity entity = registrationJobPositionMapper.toEntity(registrationJobPositionDTO);
 

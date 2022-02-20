@@ -73,7 +73,6 @@ public class CompanyRegistrationController {
         companyRegistrationDTO.setDescription(request.getDescription());
 
         List<RegistrationJobPositionDTO> jobPositionDTOS = new ArrayList<>();
-        System.out.println("Job position DTO: " + request.getJobPositions());
         if (!request.getJobPositions().isEmpty()) {
             for (UpdateCompanyJobFairRegistrationRequest.JobPosition jobPosition : request.getJobPositions()) {
                 RegistrationJobPositionDTO registrationJobPositionDTO = new RegistrationJobPositionDTO();
@@ -88,7 +87,11 @@ public class CompanyRegistrationController {
             }
         }
 
-        companyRegistrationService.updateDraftCompanyRegistration(companyRegistrationDTO, jobPositionDTOS);
+        //Get company from user information in security context
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext()
+                .getAuthentication().getPrincipal();
+        String companyId = userDetails.getCompanyId();
+        companyRegistrationService.updateDraftCompanyRegistration(companyRegistrationDTO, jobPositionDTOS, companyId);
         return GenericResponse.build(MessageUtil.getMessage(MessageConstant.CompanyRegistration.UPDATE_COMPANY_REGISTRATION_DRAF_SUCCESSFULLY), HttpStatus.OK);
     }
 
