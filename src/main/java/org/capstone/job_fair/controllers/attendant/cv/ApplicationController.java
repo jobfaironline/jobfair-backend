@@ -59,7 +59,7 @@ public class ApplicationController {
             dto.setAttendantDTO(attendantDTO);
             dto.setRegistrationJobPositionDTO(regisDTO);
             ApplicationDTO result = applicationService.createNewApplication(dto);
-            return ResponseEntity.status(HttpStatus.OK).body(result);
+            return ResponseEntity.status(HttpStatus.CREATED).body(result);
         }
         catch (NoSuchElementException | IllegalArgumentException ex) {
             return GenericResponse.build(ex.getMessage(), HttpStatus.BAD_REQUEST);
