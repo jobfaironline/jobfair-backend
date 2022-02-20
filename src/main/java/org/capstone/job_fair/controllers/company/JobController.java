@@ -81,4 +81,5 @@ public class JobController {
         jobPositionService.deleteJobPosition(jobPositionId, companyId);
         return GenericResponse.build(MessageUtil.getMessage(MessageConstant.Job.DELETE_JOB_SUCCESSFULLY), HttpStatus.OK);
     }
+
 }
