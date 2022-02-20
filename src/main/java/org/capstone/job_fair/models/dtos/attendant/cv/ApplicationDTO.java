@@ -12,6 +12,7 @@ import org.capstone.job_fair.models.enums.Application;
 @Builder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class ApplicationDTO {
+    @EqualsAndHashCode.Include
     private String id;
     private String summary;
     private Long createDate;
