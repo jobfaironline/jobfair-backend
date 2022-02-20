@@ -7,10 +7,10 @@ import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.controllers.payload.requests.job_fair.CreateDecoratedItemMetaDataRequest;
 import org.capstone.job_fair.controllers.payload.requests.job_fair.UpdateDecoratedItemMetaDataRequest;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
-import org.capstone.job_fair.models.dtos.job_fair.DecoratedItemDTO;
-import org.capstone.job_fair.services.interfaces.job_fair.DecoratedItemService;
+import org.capstone.job_fair.models.dtos.job_fair.ThreeDimensionMediaDTO;
+import org.capstone.job_fair.services.interfaces.job_fair.ThreeDimensionMediaService;
 import org.capstone.job_fair.services.interfaces.util.FileStorageService;
-import org.capstone.job_fair.services.mappers.job_fair.DecoratedItemMapper;
+import org.capstone.job_fair.services.mappers.job_fair.ThreeDimensionMediaMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -30,43 +30,43 @@ import java.util.concurrent.ExecutionException;
 
 @RestController
 @Slf4j
-public class DecoratedItemController {
+public class ThreeDimensionMediaController {
 
     @Autowired
-    private DecoratedItemService decoratedItemService;
+    private ThreeDimensionMediaService threeDimensionMediaService;
 
     @Autowired
-    private DecoratedItemMapper decoratedItemMapper;
+    private ThreeDimensionMediaMapper threeDimensionMediaMapper;
 
     @Autowired
     private FileStorageService fileStorageService;
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).STAFF)")
-    @GetMapping(ApiEndPoint.DecoratedItem.DECORATED_ITEM_ENDPOINT)
-    public ResponseEntity<List<DecoratedItemDTO>> getAll() {
-        List<DecoratedItemDTO> result = decoratedItemService.getAll();
+    @GetMapping(ApiEndPoint.ThreeDimensionMedia.THREE_DIMENSION_MEDIA_ENDPOINT)
+    public ResponseEntity<List<ThreeDimensionMediaDTO>> getAll() {
+        List<ThreeDimensionMediaDTO> result = threeDimensionMediaService.getAll();
         if (result.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok().body(result);
     }
 
-    @GetMapping(ApiEndPoint.DecoratedItem.DECORATED_ITEM_ENDPOINT + "/{id}")
+    @GetMapping(ApiEndPoint.ThreeDimensionMedia.THREE_DIMENSION_MEDIA_ENDPOINT + "/{id}")
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).STAFF)")
-    public ResponseEntity<DecoratedItemDTO> getById(@PathVariable("id") String id) {
-        Optional<DecoratedItemDTO> decoratedItemDTOOpt = decoratedItemService.findById(id);
+    public ResponseEntity<ThreeDimensionMediaDTO> getById(@PathVariable("id") String id) {
+        Optional<ThreeDimensionMediaDTO> decoratedItemDTOOpt = threeDimensionMediaService.findById(id);
         return decoratedItemDTOOpt.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @PostMapping(ApiEndPoint.DecoratedItem.DECORATED_ITEM_ENDPOINT)
+    @PostMapping(ApiEndPoint.ThreeDimensionMedia.THREE_DIMENSION_MEDIA_ENDPOINT)
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).STAFF)")
-    public ResponseEntity<DecoratedItemDTO> uploadMetaData(@RequestBody @Valid CreateDecoratedItemMetaDataRequest request) {
-        DecoratedItemDTO dto = decoratedItemMapper.toDTO(request);
-        dto = decoratedItemService.createNew(dto);
+    public ResponseEntity<ThreeDimensionMediaDTO> uploadMetaData(@RequestBody @Valid CreateDecoratedItemMetaDataRequest request) {
+        ThreeDimensionMediaDTO dto = threeDimensionMediaMapper.toDTO(request);
+        dto = threeDimensionMediaService.createNew(dto);
         return ResponseEntity.created(URI.create(dto.getUrl())).body(dto);
     }
 
-    @PostMapping(ApiEndPoint.DecoratedItem.DECORATED_ITEM_ENDPOINT + "/{id}/content")
+    @PostMapping(ApiEndPoint.ThreeDimensionMedia.THREE_DIMENSION_MEDIA_ENDPOINT + "/{id}/content")
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).STAFF)")
     public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file, @PathVariable("id") String id) {
         try {
@@ -80,7 +80,7 @@ public class DecoratedItemController {
         return ResponseEntity.accepted().build();
     }
 
-    @GetMapping(ApiEndPoint.DecoratedItem.DECORATED_ITEM_ENDPOINT + "/{id}/content")
+    @GetMapping(ApiEndPoint.ThreeDimensionMedia.THREE_DIMENSION_MEDIA_ENDPOINT + "/{id}/content")
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).STAFF)")
     public ResponseEntity<?> getFile(@PathVariable String id) {
         Resource file;
@@ -93,13 +93,13 @@ public class DecoratedItemController {
                 "attachment; filename=\"" + file.getFilename() + "\"").body(file);
     }
 
-    @PutMapping(ApiEndPoint.DecoratedItem.DECORATED_ITEM_ENDPOINT + "/{id}")
+    @PutMapping(ApiEndPoint.ThreeDimensionMedia.THREE_DIMENSION_MEDIA_ENDPOINT + "/{id}")
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).STAFF)")
     public ResponseEntity<?> update(@Valid @RequestBody UpdateDecoratedItemMetaDataRequest request, @PathVariable String id) {
         try {
-            DecoratedItemDTO dto = decoratedItemMapper.toDTO(request);
+            ThreeDimensionMediaDTO dto = threeDimensionMediaMapper.toDTO(request);
             dto.setId(id);
-            decoratedItemService.update(dto);
+            threeDimensionMediaService.update(dto);
             return GenericResponse.build(
                     MessageUtil.getMessage(MessageConstant.DecoratedItem.UPDATE_SUCCESSFULLY),
                     HttpStatus.OK);
