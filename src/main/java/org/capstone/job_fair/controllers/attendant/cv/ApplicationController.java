@@ -32,13 +32,10 @@ public class ApplicationController {
     @Autowired
     private ApplicationService applicationService;
 
-//    @Autowired
-//    private ApplicationMapper applicationMapper;
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ATTENDANT)")
     @PostMapping(ApiEndPoint.Application.APPLICATION_ENDPOINT)
     public ResponseEntity create(@Validated @RequestBody CreateApplicationRequest request) {
-        try{
             //get accountId from Jwt
             SecurityContext securityContext = SecurityContextHolder.getContext();
             UserDetailsImpl user = (UserDetailsImpl) securityContext.getAuthentication().getPrincipal();
@@ -46,24 +43,23 @@ public class ApplicationController {
             //call applicationDTO and accountDTO
             ApplicationDTO dto = new ApplicationDTO();
             AccountDTO accountDTO = new AccountDTO();
-            //
+            //set accountDTO for attendantDTO
             accountDTO.setId(accountId);
             AttendantDTO attendantDTO = new AttendantDTO();
             attendantDTO.setAccount(accountDTO);
+            //call registrationJobPositionDTO + setId from request
             RegistrationJobPositionDTO regisDTO = new RegistrationJobPositionDTO();
             regisDTO.setId(request.getRegistrationJobPositionId());
-            //
+            //set summary, create date, status, attendantDTO, registrationJobPositionDTO for ApplicationDTO
             dto.setSummary(request.getSummary());
             dto.setCreateDate(new Date().getTime());
             dto.setStatus(Application.DRAFT);
             dto.setAttendantDTO(attendantDTO);
             dto.setRegistrationJobPositionDTO(regisDTO);
+            //call create method
             ApplicationDTO result = applicationService.createNewApplication(dto);
             return ResponseEntity.status(HttpStatus.CREATED).body(result);
-        }
-        catch (NoSuchElementException | IllegalArgumentException ex) {
-            return GenericResponse.build(ex.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+
     }
 
 }
