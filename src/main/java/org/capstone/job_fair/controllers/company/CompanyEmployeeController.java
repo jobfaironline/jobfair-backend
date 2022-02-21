@@ -2,6 +2,7 @@ package org.capstone.job_fair.controllers.company;
 
 
 import lombok.extern.slf4j.Slf4j;
+import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.controllers.payload.requests.company.CompanyEmployeeRegisterRequest;
@@ -24,6 +25,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -177,6 +179,11 @@ public class CompanyEmployeeController {
     public CompletableFuture<ResponseEntity<?>> createEmployee(@Validated @RequestBody CompanyEmployeeRegisterRequest request) {
         try {
             CompanyEmployeeDTO dto = companyEmployeeMapper.toDTO(request);
+            UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            String companyId = userDetails.getCompanyId();
+            CompanyDTO companyDTO = new CompanyDTO();
+            companyDTO.setId(companyId);
+            dto.setCompanyDTO(companyDTO);
             companyEmployeeService.createNewCompanyEmployeeAccount(dto);
 
             this.mailService.sendMail(request.getEmail(),
