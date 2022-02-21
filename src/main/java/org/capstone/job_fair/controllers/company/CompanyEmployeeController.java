@@ -7,7 +7,6 @@ import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.controllers.payload.requests.company.CompanyEmployeeRegisterRequest;
 import org.capstone.job_fair.controllers.payload.requests.company.CompanyManagerRegisterRequest;
-import org.capstone.job_fair.controllers.payload.requests.company.PromoteEmployeeToCompanyManagerRequest;
 import org.capstone.job_fair.controllers.payload.requests.company.UpdateCompanyEmployeeProfileRequest;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
@@ -206,10 +205,11 @@ public class CompanyEmployeeController {
     }
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
-    @PostMapping(ApiEndPoint.CompanyEmployee.PROMOTE_EMPLOYEE_ENDPOINT)
-    public ResponseEntity<?> promoteEmployee(@Validated @RequestBody PromoteEmployeeToCompanyManagerRequest request) {
+    @GetMapping(ApiEndPoint.CompanyEmployee.PROMOTE_EMPLOYEE_ENDPOINT + "/{employeeId}")
+    public ResponseEntity<?> promoteEmployee(@PathVariable String employeeId) {
         try {
-            companyEmployeeService.promoteEmployee(request.getEmployeeId(), request.getManagerId());
+            UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            companyEmployeeService.promoteEmployee(employeeId, userDetails.getId());
             return GenericResponse.build(
                     MessageUtil.getMessage(MessageConstant.CompanyEmployee.PROMOTE_EMPLOYEE_SUCCESSFULLY),
                     HttpStatus.OK);
