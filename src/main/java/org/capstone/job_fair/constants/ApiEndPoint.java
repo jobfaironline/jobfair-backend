@@ -102,11 +102,11 @@ public final class ApiEndPoint {
         public static final String PROMOTE_EMPLOYEE_ENDPOINT = COMPANY_EMPLOYEE_ENDPOINT + "/promote";
     }
 
-    public static final class DecoratedItem {
-        private DecoratedItem() {
+    public static final class ThreeDimensionMedia {
+        private ThreeDimensionMedia() {
         }
 
-        public static final String DECORATED_ITEM_ENDPOINT = ROOT_ENDPOINT + VERSION + "/decorated-items";
+        public static final String THREE_DIMENSION_MEDIA_ENDPOINT = ROOT_ENDPOINT + VERSION + "/3d-media";
     }
 
     public static final class Staff {
@@ -121,6 +121,15 @@ public final class ApiEndPoint {
         }
 
         public static final String LAYOUT_ENDPOINT = ROOT_ENDPOINT + VERSION + "/layouts";
+    }
+
+    public static final class CompanyBoothLayout {
+        private CompanyBoothLayout() {
+        }
+
+        public static final String COMPANY_BOOTH_LAYOUT = ROOT_ENDPOINT + VERSION + "/company-booth-layout";
+        public static final String LATEST_VERSION = COMPANY_BOOTH_LAYOUT + "/latest";
+
     }
 
 }
