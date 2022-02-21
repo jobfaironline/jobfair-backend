@@ -105,7 +105,9 @@ public class CompanyEmployeeController {
     @PutMapping(ApiEndPoint.CompanyEmployee.UPDATE_PROFILE_ENDPOINT)
     public ResponseEntity<?> updateProfile(@Valid @RequestBody UpdateCompanyEmployeeProfileRequest request) {
 
-        if ((accountService.getCountActiveAccountById(request.getAccountId()) == 0)) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if ((accountService.getCountActiveAccountById(userDetails.getId()) == 0)) {
             return GenericResponse.build(
                     MessageUtil.getMessage(MessageConstant.Account.NOT_FOUND),
                     HttpStatus.BAD_REQUEST);
@@ -119,7 +121,7 @@ public class CompanyEmployeeController {
 
         AccountDTO accountDTO = request.getAccountRequest() != null ?
                 AccountDTO.builder()
-                        .id(request.getAccountId())
+                        .id(userDetails.getId())
                         .email(request.getAccountRequest().getEmail())
                         .phone(request.getAccountRequest().getPhone())
                         .profileImageUrl(request.getAccountRequest().getProfileImageUrl())
@@ -131,21 +133,9 @@ public class CompanyEmployeeController {
                 new AccountDTO();
 
 
-        CompanyDTO companyDTO = null;
-        if (request.getCompanyId() != null) {
-            if ((companyService.getCountById(request.getCompanyId()) == 0)) {
-                return GenericResponse.build(
-                        MessageUtil.getMessage(MessageConstant.Company.NOT_FOUND)
-                        , HttpStatus.BAD_REQUEST);
-            }
-            companyDTO = new CompanyDTO();
-            companyDTO.setId(request.getCompanyId());
-        }
-
         CompanyEmployeeDTO companyEmployeeDTO = CompanyEmployeeDTO.builder()
-                .companyDTO(companyDTO)
                 .account(accountDTO)
-                .accountId(request.getAccountId())
+                .accountId(userDetails.getId())
                 .build();
         companyEmployeeService.updateProfile(companyEmployeeDTO);
 
