@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 @Mapper(componentModel = "spring", uses = {AccountMapper.class, SkillMapper.class, WorkHistoryMapper.class, EducationMapper.class, CertificationMapper.class, ReferenceMapper.class, ActivityMapper.class},
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
@@ -144,7 +145,7 @@ public abstract class AttendantMapper {
                 SkillEntity entity = skillMapper.toEntity(skillDTO);
                 entities.add(entity);
             } else {
-                SkillEntity existedEntity = entities.stream().filter(skillEntity -> skillEntity.getId().equals(skillDTO.getId()))
+                SkillEntity existedEntity = entities.stream().filter(skillEntity -> Objects.equals(skillEntity.getId(), skillDTO.getId()))
                         .findFirst()
                         .orElseThrow(() -> new NoSuchElementException(MessageUtil.getMessage(MessageConstant.Skill.SKILL_NOT_FOUND)));
                 skillMapper.updateSkillEntityFromSkillDTO(skillDTO, existedEntity);
@@ -269,7 +270,7 @@ public abstract class AttendantMapper {
                 entities.add(entity);
             } else {
                 ActivityEntity existedEntity = entities.stream()
-                        .filter(activityEntity -> activityEntity.getId().equals(activityDTO.getId()))
+                        .filter(activityEntity -> Objects.equals(activityEntity.getId(), activityDTO.getId()))
                         .findFirst()
                         .orElseThrow(() -> new NoSuchElementException(MessageUtil.getMessage(MessageConstant.Activity.ACTIVITY_NOT_FOUND)));
                 activityMapper.updateActivityEntityFromActivityDTO(activityDTO, existedEntity);
