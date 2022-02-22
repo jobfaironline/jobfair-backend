@@ -84,7 +84,7 @@ jobs:
           java-version: '11'
    #Run file
       - name: Run file
-        run: java -jar jobfair-backend.jar
+        run: nohup java -jar jobfair-backend.jar &
       - name: Test run
         run: apt update && apt install curl -y && curl http://localhost:5000/swagger-ui/index.html
    #Account test case    
