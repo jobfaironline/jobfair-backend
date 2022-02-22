@@ -85,7 +85,7 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: '11'
-   #Create database
+   #Create database by url
       - name: Get sql file
         run: sudo apt update && sudo apt install curl -y
       - name: Create database
