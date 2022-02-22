@@ -93,7 +93,7 @@ jobs:
          sudo /etc/init.d/mysql start
          curl -o schema.sql https://d3polnwtp0nqe6.cloudfront.net/Private/schema.sql && mysql -u ${{secrets.DATASOURCE_USERNAME}} -p${{ env.DB_PASSWORD }} < schema.sql
       - name: Run file
-        run: java -jar jobfair-backend.jar
+        run: nohup java -jar jobfair-backend.jar &
       - name: Verify that file has been started
         run: curl http://localhost:5000/swagger-ui/index.html
    #Account test case    
