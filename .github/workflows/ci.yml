@@ -86,6 +86,7 @@ jobs:
         with:
           java-version: '11'
    #Create database
+   #lala
       - name: Get sql file
         run: sudo apt update && sudo apt install curl -y
       - name: Create database
