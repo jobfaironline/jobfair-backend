@@ -95,6 +95,8 @@ jobs:
    #Run file
       - name: Run file
         run: nohup java -jar jobfair-backend.jar &
+      - name: Verify that file has been started
+        run: curl http://localhost:5000/swagger-ui/index.html
    #Account test case    
       - name: Run account test case
         uses: matt-ball/newman-action@master
