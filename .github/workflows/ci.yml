@@ -66,9 +66,6 @@ jobs:
       API_PORT: ${{secrets.API_PORT}}
       AWS_ACCESS_KEY_ID: ${{secrets.AWS_TEST_ACCESS_TOKEN_ID}}
       AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_TEST_ACCESS_SECRET_KEY}}
-      DB_DATABASE: ${{secrets.DATABASE_NAME}}
-      DB_USER: ${{secrets.DATASOURCE_USERNAME}}
-      DB_PASSWORD: ${{secrets.DATASOURCE_PASSWORD}}
     #Depends on build's job
     needs: build
     name: Test
@@ -91,8 +88,7 @@ jobs:
       - name: Create database
         run: |
          sudo /etc/init.d/mysql start
-         mysql -e 'CREATE DATABASE ${{ env.DB_DATABASE }};' -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }} 
-         mysql -u username -p database_name < schema.sql
+         mysql -e schema.sql -u${{secrets.DATASOURCE_USERNAME}} -p${{ env.DB_PASSWORD }} 
    #Run file
       - name: Run file
         run: nohup java -jar jobfair-backend.jar &
