@@ -92,7 +92,6 @@ jobs:
         run: |
          sudo /etc/init.d/mysql start
          curl -o schema.sql https://d3polnwtp0nqe6.cloudfront.net/Private/schema.sql && mysql -u ${{secrets.DATASOURCE_USERNAME}} -p${{ env.DB_PASSWORD }} < schema.sql
-   #Run file 1
       - name: Run file
         run: java -jar jobfair-backend.jar
       - name: Verify that file has been started
