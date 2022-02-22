@@ -91,7 +91,7 @@ jobs:
       - name: Create database
         run: |
          sudo /etc/init.d/mysql start
-         curl -o shcema.sql https://d3polnwtp0nqe6.cloudfront.net/Private/schema.sql && mysql -u ${{secrets.DATASOURCE_USERNAME}} -p${{ env.DB_PASSWORD }} < schema.sql
+         curl -o schema.sql https://d3polnwtp0nqe6.cloudfront.net/Private/schema.sql && mysql -u ${{secrets.DATASOURCE_USERNAME}} -p${{ env.DB_PASSWORD }} < schema.sql
    #Run file
       - name: Run file
         run: nohup java -jar jobfair-backend.jar &
