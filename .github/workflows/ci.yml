@@ -85,6 +85,8 @@ jobs:
    #Run file
       - name: Run file
         run: java -jar jobfair-backend.jar
+      - name: Test run
+        run: apt update && apt install curl -y && curl http://localhost:5000/swagger-ui/index.html
    #Account test case    
       - name: Run account test case
         uses: matt-ball/newman-action@master
