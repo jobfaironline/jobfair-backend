@@ -87,12 +87,11 @@ jobs:
           java-version: '11'
    #Create database
       - name: Get sql file
-        run: sudo apt update && sudo apt install curl -y && curl -o schema.sql https://d3polnwtp0nqe6.cloudfront.net/Private/schema.sql
+        run: sudo apt update && sudo apt install curl -y
       - name: Create database
         run: |
          sudo /etc/init.d/mysql start
-         mysql -e 'CREATE DATABASE ${{ env.DB_DATABASE }};' -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }} 
-         mysql -u username -p database_name < schema.sql
+         mysql -u ${{secrets.DATASOURCE_USERNAME}} -p${{ env.DB_PASSWORD }} < curl ${{secrets.SCHEMA_URL}}
    #Run file
       - name: Run file
         run: nohup java -jar jobfair-backend.jar &
