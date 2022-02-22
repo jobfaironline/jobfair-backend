@@ -145,6 +145,13 @@
             <version>2.0.1</version>
         </dependency>
         <!-- End GLTF dependencies -->
+        <!-- Agora dependencies -->
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.11</version>
+        </dependency>
+        <!-- End Agora dependencies -->
     </dependencies>
 
     <packaging>jar</packaging>
@@ -161,8 +168,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.6.1</version>
                 <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
+                    <source>9</source>
+                    <target>9</target>
                     <annotationProcessorPaths>
                         <path>
                             <groupId>org.projectlombok</groupId>

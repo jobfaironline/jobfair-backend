@@ -123,4 +123,10 @@ public final class ApiEndPoint {
         public static final String LAYOUT_ENDPOINT = ROOT_ENDPOINT + VERSION + "/layouts";
     }
 
+    public static final class AgoraToken {
+        private AgoraToken(){}
+        public static final String AGORA_RTM_TOKEN = ROOT_ENDPOINT + VERSION + "/agora-rtm-token";
+        public static final String AGORA_RTC_TOKEN = ROOT_ENDPOINT + VERSION + "/agora-rtc-token";
+    }
+
 }
