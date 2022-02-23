@@ -35,21 +35,14 @@ public class UpdateCompanyEmployeeProfileRequest {
         private AccountStatus status;
         @PhoneConstraint
         private String phone;
-        @NotEmpty
         @XSSConstraint
         private String profileImageUrl;
-        @NotNull
-        @NotBlank
         @Size(max = DataConstraint.Account.NAME_LENGTH)
         @XSSConstraint
         private String firstname;
-        @NotNull
-        @NotEmpty
         @Size(max = DataConstraint.Account.NAME_LENGTH)
         @XSSConstraint
         private String lastname;
-        @NotNull
-        @NotEmpty
         @Size(max = DataConstraint.Account.NAME_LENGTH)
         @XSSConstraint
         private String middlename;
@@ -57,8 +50,6 @@ public class UpdateCompanyEmployeeProfileRequest {
         private Gender gender;
     }
 
-    private String accountId;
     @Valid
     private AccountRequest accountRequest;
-    private String companyId;
 }

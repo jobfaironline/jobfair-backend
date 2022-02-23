@@ -68,7 +68,12 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Optional<AccountEntity> getActiveAccountByEmail(String email) {
-        return accountRepository.findByEmailAndStatus(email, AccountStatus.VERIFIED);
+        Optional<AccountEntity> accountOpt = accountRepository.findByEmail(email);
+        if (!accountOpt.isPresent())
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Account.NOT_FOUND));
+        if (!accountOpt.get().getStatus().equals(AccountStatus.VERIFIED))
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Account.NOT_VERIRIED));
+        return accountOpt;
     }
 
     @Override
