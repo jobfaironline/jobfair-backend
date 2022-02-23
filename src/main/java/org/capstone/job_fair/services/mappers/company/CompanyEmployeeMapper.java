@@ -21,7 +21,6 @@ public abstract class CompanyEmployeeMapper {
     @Mapping(source = "companyDTO", target = "company")
     public abstract void updateCompanyEmployeeMapperFromDto(CompanyEmployeeDTO dto, @MappingTarget CompanyEmployeeEntity entity);
 
-    @Mapping(source = "companyId", target = "companyDTO.id")
     @Mapping(source = "email", target = "account.email")
     @Mapping(source = "firstName", target = "account.firstname")
     @Mapping(source = "middleName", target = "account.middlename")

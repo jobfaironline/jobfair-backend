@@ -66,6 +66,9 @@ jobs:
       API_PORT: ${{secrets.API_PORT}}
       AWS_ACCESS_KEY_ID: ${{secrets.AWS_TEST_ACCESS_TOKEN_ID}}
       AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_TEST_ACCESS_SECRET_KEY}}
+      DB_DATABASE: ${{secrets.DATABASE_NAME}}
+      DB_USER: ${{secrets.DATASOURCE_USERNAME}}
+      DB_PASSWORD: ${{secrets.DATASOURCE_PASSWORD}}
     #Depends on build's job
     needs: build
     name: Test
@@ -82,9 +85,18 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: '11'
-   #Run file
+   #Create database
+   #lala
+      - name: Get sql file
+        run: sudo apt update && sudo apt install curl -y
+      - name: Create database
+        run: |
+         sudo /etc/init.d/mysql start
+         curl -o schema.sql https://d3polnwtp0nqe6.cloudfront.net/Private/schema.sql && mysql -u ${{secrets.DATASOURCE_USERNAME}} -p${{ env.DB_PASSWORD }} < schema.sql
       - name: Run file
         run: nohup java -jar jobfair-backend.jar &
+      - name: verify
+        run: curl http://localhost:5000/swagger-ui/index.html
    #Account test case    
       - name: Run account test case
         uses: matt-ball/newman-action@master

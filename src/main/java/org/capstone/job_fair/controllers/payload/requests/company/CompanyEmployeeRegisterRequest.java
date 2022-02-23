@@ -18,8 +18,6 @@ import javax.validation.constraints.Size;
 @Setter
 public class CompanyEmployeeRegisterRequest {
     @NotNull
-    private String companyId;
-    @NotNull
     @EmailConstraint
     private String email;
     @NotNull

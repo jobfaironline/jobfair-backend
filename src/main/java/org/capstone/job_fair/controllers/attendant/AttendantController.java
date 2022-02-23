@@ -34,6 +34,8 @@ public class AttendantController {
     private AccountService accountService;
 
 
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) " +
+            "or hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).STAFF)")
     @GetMapping(ApiEndPoint.Attendant.ATTENDANT_ENDPOINT)
     public ResponseEntity<List<AttendantDTO>> getAllAccounts() {
         return new ResponseEntity<>(attendantService.getAllAttendants(), HttpStatus.OK);
@@ -72,7 +74,6 @@ public class AttendantController {
         }
     }
 
-    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ATTENDANT) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
     @GetMapping(ApiEndPoint.Attendant.ATTENDANT_ENDPOINT + "/{attendantId}")
     public ResponseEntity<?> getAttendant(@PathVariable("attendantId") String attendantId) {
         Optional<AttendantDTO> opt = attendantService.getAttendantById(attendantId);

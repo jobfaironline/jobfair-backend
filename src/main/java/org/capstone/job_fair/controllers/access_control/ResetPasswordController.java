@@ -59,11 +59,7 @@ public class ResetPasswordController {
         }
         //check existed account
         Optional<AccountEntity> accountOpt = accountService.getActiveAccountByEmail(request.getEmail());
-        if (!accountOpt.isPresent()) {
-            return GenericResponse.build(
-                    MessageUtil.getMessage(MessageConstant.Account.NOT_FOUND),
-                    HttpStatus.BAD_REQUEST);
-        }
+
         AccountEntity account = accountOpt.get();
         //check existed token
         Optional<PasswordResetTokenEntity> tokenOpt = resetService.findTokenByOTPAndAccountID(request.getOtp(), account.getId());
@@ -108,11 +104,7 @@ public class ResetPasswordController {
     public ResponseEntity<?> generateOTP(@RequestBody GenerateOTPRequest request) {
         //check existed account
         Optional<AccountEntity> accountOpt = accountService.getActiveAccountByEmail(request.getEmail());
-        if (!accountOpt.isPresent()) {
-            return GenericResponse.build(
-                    MessageUtil.getMessage(MessageConstant.Account.NOT_FOUND),
-                    HttpStatus.BAD_REQUEST);
-        }
+
         AccountEntity account = accountOpt.get();
         //check existed and invalidated token
         Optional<PasswordResetTokenEntity> tokenOpt = resetService.findLastValidateTokenByAccountID(account.getId());

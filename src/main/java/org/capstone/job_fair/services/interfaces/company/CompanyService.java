@@ -20,7 +20,7 @@ public interface CompanyService {
 
     Integer getCountById(String id);
 
-
-    @Transactional
     CompanyDTO updateCompanyLogo(String companyLogoFolder, String companyId);
+
+    Optional<String> getIdByCompanyBoothID(String companyBoothId);
 }

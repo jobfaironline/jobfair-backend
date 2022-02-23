@@ -1,6 +1,7 @@
 package org.capstone.job_fair.models.dtos.job_fair;
 
 import lombok.*;
+import org.capstone.job_fair.models.statuses.ThreeDimensionMediaType;
 
 
 @Data
@@ -8,11 +9,11 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class DecoratedItemDTO {
+public class ThreeDimensionMediaDTO {
     @EqualsAndHashCode.Include
     private String id;
-    private Integer size;
     private String url;
     private String name;
     private String description;
+    private ThreeDimensionMediaType type;
 }
