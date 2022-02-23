@@ -114,7 +114,6 @@ public class CompanyController {
         if (!companyId.equals(id)) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Company.COMPANY_MISSMATCH));
         }
-
         CompanyDTO dto = companyMapper.toDTO(request);
         dto.setId(id);
         companyService.updateCompany(dto);

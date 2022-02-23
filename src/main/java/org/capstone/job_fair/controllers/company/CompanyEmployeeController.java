@@ -2,11 +2,11 @@ package org.capstone.job_fair.controllers.company;
 
 
 import lombok.extern.slf4j.Slf4j;
+import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.controllers.payload.requests.company.CompanyEmployeeRegisterRequest;
 import org.capstone.job_fair.controllers.payload.requests.company.CompanyManagerRegisterRequest;
-import org.capstone.job_fair.controllers.payload.requests.company.PromoteEmployeeToCompanyManagerRequest;
 import org.capstone.job_fair.controllers.payload.requests.company.UpdateCompanyEmployeeProfileRequest;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
@@ -24,6 +24,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -104,7 +105,9 @@ public class CompanyEmployeeController {
     @PutMapping(ApiEndPoint.CompanyEmployee.UPDATE_PROFILE_ENDPOINT)
     public ResponseEntity<?> updateProfile(@Valid @RequestBody UpdateCompanyEmployeeProfileRequest request) {
 
-        if ((accountService.getCountActiveAccountById(request.getAccountId()) == 0)) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if ((accountService.getCountActiveAccountById(userDetails.getId()) == 0)) {
             return GenericResponse.build(
                     MessageUtil.getMessage(MessageConstant.Account.NOT_FOUND),
                     HttpStatus.BAD_REQUEST);
@@ -118,7 +121,7 @@ public class CompanyEmployeeController {
 
         AccountDTO accountDTO = request.getAccountRequest() != null ?
                 AccountDTO.builder()
-                        .id(request.getAccountId())
+                        .id(userDetails.getId())
                         .email(request.getAccountRequest().getEmail())
                         .phone(request.getAccountRequest().getPhone())
                         .profileImageUrl(request.getAccountRequest().getProfileImageUrl())
@@ -130,21 +133,9 @@ public class CompanyEmployeeController {
                 new AccountDTO();
 
 
-        CompanyDTO companyDTO = null;
-        if (request.getCompanyId() != null) {
-            if ((companyService.getCountById(request.getCompanyId()) == 0)) {
-                return GenericResponse.build(
-                        MessageUtil.getMessage(MessageConstant.Company.NOT_FOUND)
-                        , HttpStatus.BAD_REQUEST);
-            }
-            companyDTO = new CompanyDTO();
-            companyDTO.setId(request.getCompanyId());
-        }
-
         CompanyEmployeeDTO companyEmployeeDTO = CompanyEmployeeDTO.builder()
-                .companyDTO(companyDTO)
                 .account(accountDTO)
-                .accountId(request.getAccountId())
+                .accountId(userDetails.getId())
                 .build();
         companyEmployeeService.updateProfile(companyEmployeeDTO);
 
@@ -177,6 +168,11 @@ public class CompanyEmployeeController {
     public CompletableFuture<ResponseEntity<?>> createEmployee(@Validated @RequestBody CompanyEmployeeRegisterRequest request) {
         try {
             CompanyEmployeeDTO dto = companyEmployeeMapper.toDTO(request);
+            UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            String companyId = userDetails.getCompanyId();
+            CompanyDTO companyDTO = new CompanyDTO();
+            companyDTO.setId(companyId);
+            dto.setCompanyDTO(companyDTO);
             companyEmployeeService.createNewCompanyEmployeeAccount(dto);
 
             this.mailService.sendMail(request.getEmail(),
@@ -199,10 +195,11 @@ public class CompanyEmployeeController {
     }
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
-    @PostMapping(ApiEndPoint.CompanyEmployee.PROMOTE_EMPLOYEE_ENDPOINT)
-    public ResponseEntity<?> promoteEmployee(@Validated @RequestBody PromoteEmployeeToCompanyManagerRequest request) {
+    @GetMapping(ApiEndPoint.CompanyEmployee.PROMOTE_EMPLOYEE_ENDPOINT + "/{employeeId}")
+    public ResponseEntity<?> promoteEmployee(@PathVariable String employeeId) {
         try {
-            companyEmployeeService.promoteEmployee(request.getEmployeeId(), request.getManagerId());
+            UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            companyEmployeeService.promoteEmployee(employeeId, userDetails.getId());
             return GenericResponse.build(
                     MessageUtil.getMessage(MessageConstant.CompanyEmployee.PROMOTE_EMPLOYEE_SUCCESSFULLY),
                     HttpStatus.OK);
