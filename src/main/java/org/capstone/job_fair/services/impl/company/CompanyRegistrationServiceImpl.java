@@ -147,6 +147,59 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
 
     @Override
     @Transactional
+    public void updateDraftCompanyRegistration(CompanyRegistrationDTO companyRegistrationDTO, List<RegistrationJobPositionDTO> jobPositions) {
+
+        //Create registration job position entity
+
+        //Check job fair registration existence
+        Optional<CompanyRegistrationEntity> companyRegistrationEntityOpt = companyRegistrationRepository.findById(companyRegistrationDTO.getId());
+        if (!companyRegistrationEntityOpt.isPresent()) throw new IllegalArgumentException(
+                MessageUtil.getMessage(MessageConstant.CompanyRegistration.NOT_FOUND));
+        CompanyRegistrationEntity companyRegistrationEntity = companyRegistrationEntityOpt.get();
+        if (!companyRegistrationEntity.getStatus().equals(CompanyRegistrationStatus.DRAFT))
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyRegistration.INVALID_STATUS_WHEN_UPDATE));
+        //make sure the registration job position is unique
+        validateUniqueJobPosition(jobPositions);
+        //Create company registration entity
+        companyRegistrationMapper.updateCompanyRegistrationEntityFromDTO(companyRegistrationEntity, companyRegistrationDTO);
+        companyRegistrationRepository.save(companyRegistrationEntity);
+
+
+        for (RegistrationJobPositionDTO registrationJobPositionDTO : jobPositions) {
+            //Get job position entity by job position id in request
+            Optional<JobPositionEntity> jobPositionOpt =
+                    jobPositionRepository.findById(registrationJobPositionDTO.getId());
+            //Check job position existence
+            if (!jobPositionOpt.isPresent()) throw new IllegalArgumentException(
+                    MessageUtil.getMessage(MessageConstant.Job.JOB_POSITION_NOT_FOUND));
+            JobPositionEntity jobPositionEntity = jobPositionOpt.get();
+            //Check if job position entity is belonged to company
+            if (!jobPositionEntity.getCompany().getId().equals(companyRegistrationDTO.getCompanyId()))
+                throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Job.COMPANY_MISMATCH));
+            validateRegistrationJobPosition(registrationJobPositionDTO);
+
+            RegistrationJobPositionEntity entity = registrationJobPositionMapper.toEntity(registrationJobPositionDTO);
+
+            //Job position information
+            entity.setTitle(jobPositionEntity.getTitle());
+            entity.setContactPersonName(jobPositionEntity.getContactPersonName());
+            entity.setContactEmail(jobPositionEntity.getContactEmail());
+            entity.setLanguage(jobPositionEntity.getLanguage());
+            entity.setJobLevel(jobPositionEntity.getJobLevel());
+            entity.setJobTypeEntity(jobPositionEntity.getJobTypeEntity());
+            //Map company registration to registration job position entity
+            entity.setCompanyRegistration(companyRegistrationEntity);
+            //need new HashSet here to force load lazy-loading entities
+            entity.setCategories(new HashSet<>(jobPositionEntity.getCategories()));
+            entity.setSkillTagEntities(new HashSet<>(jobPositionEntity.getSkillTagEntities()));
+
+            registrationJobPositionRepository.save(entity);
+
+        }
+    }
+
+    @Override
+    @Transactional
     public void submitCompanyRegistration(String registrationId) {
         //check existed registration
         Optional<CompanyRegistrationEntity> registrationEntityOpt = companyRegistrationRepository.findById(registrationId);
@@ -175,7 +228,7 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
         } catch (NullPointerException e) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.INVALID_JOB_FAIR));
         }
-        if (registrationEntity.getRegistrationJobPositions().isEmpty()){
+        if (registrationEntity.getRegistrationJobPositions().isEmpty()) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.INVALID_JOB_FAIR));
         }
 

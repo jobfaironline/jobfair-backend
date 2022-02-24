@@ -34,7 +34,8 @@ public class ApplicationController {
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ATTENDANT)")
     @PostMapping(ApiEndPoint.Application.APPLICATION_ENDPOINT)
     public ResponseEntity create(@Validated @RequestBody CreateApplicationRequest request) {
-        try{
+        try {
+
             //get accountId from Jwt
             SecurityContext securityContext = SecurityContextHolder.getContext();
             UserDetailsImpl user = (UserDetailsImpl) securityContext.getAuthentication().getPrincipal();
@@ -58,8 +59,7 @@ public class ApplicationController {
             //call create method
             ApplicationDTO result = applicationService.createNewApplication(dto);
             return ResponseEntity.status(HttpStatus.CREATED).body(result);
-        }
-        catch (NoSuchElementException | IllegalArgumentException ex) {
+        } catch (NoSuchElementException | IllegalArgumentException ex) {
             return GenericResponse.build(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
