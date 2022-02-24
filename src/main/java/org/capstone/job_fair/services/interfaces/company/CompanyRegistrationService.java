@@ -9,6 +9,8 @@ import java.util.List;
 public interface CompanyRegistrationService {
     void createDraftCompanyRegistration(CompanyRegistrationDTO companyRegistrationDTO, List<RegistrationJobPositionDTO> jobPositions);
 
+    void updateDraftCompanyRegistration(CompanyRegistrationDTO companyRegistrationDTO, List<RegistrationJobPositionDTO> jobPositions);
+
     void submitCompanyRegistration(String registrationId);
 
     void cancelCompanyRegistration(String registrationId, String cancelReason);

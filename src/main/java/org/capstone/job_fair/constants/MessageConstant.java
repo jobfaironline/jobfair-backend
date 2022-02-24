@@ -97,6 +97,8 @@ public final class MessageConstant {
         public static final String SEND_NEW_VERIFICATION_LINK_SUCCESSFULLY = "account.success.send-new-verification-link";
         public static final String ACCOUNT_VERIFY_MAIL_TITLE = "account.verify.email-title";
         public static final String VERIFY_ACCOUNT_TOKEN_INTERVAL_ERROR = "account.verify.token-interval-error";
+        public static final String ALREADY_VERIFIED = "account.verify.already-verified";
+        public static final String NOT_VERIRIED = "account.verify.not-verified";
 
     }
 
@@ -263,6 +265,8 @@ public final class MessageConstant {
         public static final String INVALID_COMPANY_REGISTRATION_STATUS_WHEN_EVALUATE = "company-registration.error.invalid-company-registration-status-when-evaluate";
         public static final String EVALUATE_SUCCESSFULLY = "company-registration.success.evaluate";
         public static final String COMPANY_REGISTER_SUCCESSFULLY = "company-registration.success.register";
+        public static final String INVALID_STATUS_WHEN_UPDATE = "company-registration.error.invalid-status-when-update";
+        public static final String UPDATE_COMPANY_REGISTRATION_DRAF_SUCCESSFULLY = "company-registration.success.update-company-registration-draft";
 
 
     }
@@ -297,6 +301,14 @@ public final class MessageConstant {
         }
         public static final String NOT_FOUND_ATTENDANT = "application.error.not-found-attendant";
         public static final String NOT_FOUND_REGISTRATION_JOB_POSITION = "application.error.not-found-registration-job-position";
+
+    }
+
+
+    public static final class CompanyBoothLayout{
+        private CompanyBoothLayout(){}
+
+        public static final String NOT_FOUND = "company-booth-layout.error.not-found";
 
     }
 

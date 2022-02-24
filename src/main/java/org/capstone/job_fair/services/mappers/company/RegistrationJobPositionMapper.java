@@ -38,8 +38,8 @@ public abstract class RegistrationJobPositionMapper {
     @Mapping(target = "language", qualifiedByName = "toJobPositionDTOLanguage")
     @Mapping(target = "jobLevel", qualifiedByName = "toJobPositionDTOJobLevel")
     @Mapping(target = "jobType", source = "jobTypeEntity", qualifiedByName = "toJobPositionDTOJobType")
-    @Mapping(target = "subCategoryDTOs", source="categories", qualifiedByName = "toJobPositionDTOSubCategory")
-    @Mapping(target = "skillTagDTOS", source="skillTagEntities", qualifiedByName = "toJobPositionDTOSkillTag")
+    @Mapping(target = "subCategoryDTOs", source = "categories", qualifiedByName = "toJobPositionDTOSubCategory")
+    @Mapping(target = "skillTagDTOS", source = "skillTagEntities", qualifiedByName = "toJobPositionDTOSkillTag")
     @Mapping(target = "companyRegistration", ignore = true)
     public abstract RegistrationJobPositionDTO toDTO(RegistrationJobPositionEntity entity);
 
@@ -80,6 +80,7 @@ public abstract class RegistrationJobPositionMapper {
 
     @Named("toJobPositionEntityLanguage")
     public LanguageEntity toJobPositionEntityLanguage(Language language) {
+        if (language == null) return null;
         LanguageEntity entity = new LanguageEntity();
         entity.setId(language.getCode());
         return entity;
@@ -87,6 +88,7 @@ public abstract class RegistrationJobPositionMapper {
 
     @Named("toJobPositionEntityJobLevel")
     public JobLevelEntity toJobPositionEntityJobLevel(JobLevel jobLevel) {
+        if (jobLevel == null) return null;
         JobLevelEntity entity = new JobLevelEntity();
         entity.setId(jobLevel.ordinal());
         return entity;
@@ -94,6 +96,7 @@ public abstract class RegistrationJobPositionMapper {
 
     @Named("toJobPositionEntityJobType")
     public JobTypeEntity toJobPositionEntityJobType(JobType jobType) {
+        if (jobType == null) return null;
         JobTypeEntity entity = new JobTypeEntity();
         entity.setId(jobType.ordinal());
         return entity;
@@ -101,6 +104,7 @@ public abstract class RegistrationJobPositionMapper {
 
     @Named("toJobPositionEntitySubCategory")
     public Set<SubCategoryEntity> toJobPositionEntitySubCategory(List<SubCategoryDTO> categories) {
+        if (categories == null) return null;
         return categories.stream()
                 .map(SubCategoryDTO::getId)
                 .map(SubCategoryEntity::new)
@@ -109,6 +113,7 @@ public abstract class RegistrationJobPositionMapper {
 
     @Named("toJobPositionEntitySkillTag")
     public Set<SkillTagEntity> toJobPositionEntitySkillTag(List<SkillTagDTO> categories) {
+        if (categories == null) return null;
         return categories.stream()
                 .map(SkillTagDTO::getId)
                 .map(SkillTagEntity::new)
