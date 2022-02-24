@@ -9,6 +9,7 @@ import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -97,7 +98,7 @@ public abstract class CompanyMapper {
             CompanyBenefitEntity entity = companyBenefitMapper.toEntity(dto);
             entities.add(entity);
         });
-        entities.removeIf(entity -> dtos.stream().noneMatch(dto -> entity.getBenefit().getId().equals(dto.getBenefitDTO().getId())));
+        entities.removeIf(entity -> dtos.stream().noneMatch(dto -> Objects.equals(entity.getBenefit().getId(),dto.getBenefitDTO().getId())));
     }
 
     @Named("fromBenefitsOfUpdateCompanyRequest")
