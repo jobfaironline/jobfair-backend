@@ -127,6 +127,7 @@ public final class ApiEndPoint {
         private Application() {
 
         }
+
         public static final String APPLICATION_ENDPOINT = ROOT_ENDPOINT + VERSION + "/applications";
     }
 
@@ -138,5 +139,6 @@ public final class ApiEndPoint {
         public static final String LATEST_VERSION = COMPANY_BOOTH_LAYOUT + "/latest";
 
     }
+
 
 }

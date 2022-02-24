@@ -165,8 +165,6 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
         companyRegistrationRepository.save(companyRegistrationEntity);
 
 
-
-
         for (RegistrationJobPositionDTO registrationJobPositionDTO : jobPositions) {
             //Get job position entity by job position id in request
             Optional<JobPositionEntity> jobPositionOpt =

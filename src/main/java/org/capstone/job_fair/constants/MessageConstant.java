@@ -295,20 +295,25 @@ public final class MessageConstant {
         public static final String INVALID_GLB_FILE = "layout.error.invalid-glb-file";
     }
 
+
+    public static final class CompanyBoothLayout {
+        private CompanyBoothLayout() {
+        }
+
+        public static final String NOT_FOUND = "company-booth-layout.error.not-found";
+
+    }
+
     public static final class Application {
         private Application() {
 
         }
+
         public static final String NOT_FOUND_ATTENDANT = "application.error.not-found-attendant";
         public static final String NOT_FOUND_REGISTRATION_JOB_POSITION = "application.error.not-found-registration-job-position";
+        public static final String INALID_TIME = "application.error.invalid-time";
+        public static final String INVALID_PAGE_NUMBER = "application.error.invalid-page-number";
 
-    }
-
-
-    public static final class CompanyBoothLayout{
-        private CompanyBoothLayout(){}
-
-        public static final String NOT_FOUND = "company-booth-layout.error.not-found";
 
     }
 
