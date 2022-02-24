@@ -215,4 +215,11 @@ public final class DataConstraint {
         public static final int DESCRIPTION_MIN_LENGTH = 1;
     }
 
+    public static final class Application {
+        private Application() {
+
+        }
+        public static final int SUMMARY_MAX_LENGTH = 3000;
+    }
+
 }

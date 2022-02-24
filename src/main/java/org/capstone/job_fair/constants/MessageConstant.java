@@ -295,6 +295,15 @@ public final class MessageConstant {
         public static final String INVALID_GLB_FILE = "layout.error.invalid-glb-file";
     }
 
+    public static final class Application {
+        private Application() {
+
+        }
+        public static final String NOT_FOUND_ATTENDANT = "application.error.not-found-attendant";
+        public static final String NOT_FOUND_REGISTRATION_JOB_POSITION = "application.error.not-found-registration-job-position";
+
+    }
+
 
     public static final class CompanyBoothLayout{
         private CompanyBoothLayout(){}

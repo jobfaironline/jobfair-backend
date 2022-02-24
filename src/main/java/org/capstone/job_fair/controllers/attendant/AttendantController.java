@@ -81,6 +81,7 @@ public class AttendantController {
             return ResponseEntity.status(HttpStatus.OK).body(opt.get());
         }
         return GenericResponse.build(MessageUtil.getMessage(MessageConstant.Account.NOT_FOUND), HttpStatus.NOT_FOUND);
+
     }
 
 }
