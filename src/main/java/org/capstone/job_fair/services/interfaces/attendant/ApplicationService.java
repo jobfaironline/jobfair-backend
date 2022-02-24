@@ -7,6 +7,6 @@ import org.springframework.data.domain.Page;
 public interface ApplicationService {
     ApplicationDTO createNewApplication(ApplicationDTO dto);
 
-    Page<ApplicationDTO> getApplicationsByCompany(String companyId, Application status, long fromTime, long toTime, int offset, int pageSize, String field);
+    Page<ApplicationDTO> getAllApplicationsOfCompanyByCriteria(String companyId, Application status, long fromTime, long toTime, int offset, int pageSize, String field);
 
 }

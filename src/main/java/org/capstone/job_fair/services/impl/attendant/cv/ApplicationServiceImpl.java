@@ -106,7 +106,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public Page<ApplicationDTO> getApplicationsByCompany(String companyId, Application status, long fromTime, long toTime, int offset, int pageSize, String field) {
+    public Page<ApplicationDTO> getAllApplicationsOfCompanyByCriteria(String companyId, Application status, long fromTime, long toTime, int offset, int pageSize, String field) {
 
         if (fromTime > toTime)
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.INALID_TIME));
