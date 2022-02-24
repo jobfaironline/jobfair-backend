@@ -223,6 +223,9 @@ public final class DataConstraint {
         public static final int OFFSET_MIN = 0;
         public static final int PAGE_SIZE_MIN = 0;
 
+        public static final int SUMMARY_MAX_LENGTH = 3000;
+
     }
+
 
 }
