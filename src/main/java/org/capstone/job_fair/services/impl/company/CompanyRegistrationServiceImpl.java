@@ -298,7 +298,7 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
 
     @Override
     public List<CompanyRegistrationDTO> getCompanyRegistrationOfAJobFair(String jobFairId) {
-        List<CompanyRegistrationEntity> companyRegistrationEntities = companyRegistrationRepository.findAllByJobFairIdAndStatus(jobFairId, CompanyRegistrationStatus.APPROVE);
+        List<CompanyRegistrationEntity> companyRegistrationEntities = companyRegistrationRepository.findAllByJobFairId(jobFairId);
         return companyRegistrationEntities.stream().map(companyRegistrationMapper::toDTO).collect(Collectors.toList());
     }
 }
