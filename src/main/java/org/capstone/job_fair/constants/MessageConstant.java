@@ -26,6 +26,7 @@ public final class MessageConstant {
         public static final String DELETE_JOB_FAIR_PLAN_SUCCESSFULLY = "job-fair-plan.success.delete";
         public static final String SUBMIT_JOB_FAIR_PLAN_SUCCESSFULLY = "job-fair-plan.success.submit";
         public static final String CANCEL_JOB_FAIR_PLAN_SUCCESSFULLY = "job-fair-plan.success.cancel";
+        public static final String RESTORED_DELETED_JOB_FAIR_PLAN_SUCCESSFULLY = "job-fair-plan.success.restore";
         public static final String JOB_FAIR_NOT_FOUND = "job-fair-plan.error.not-found";
         public static final String INVALID_CREATOR_ID = "job-fair-plan.error.invalid-creator-id";
         public static final String INVALID_JOB_FAIR_STATUS = "job-fair-plan.error.invalid-job-fair-status";
