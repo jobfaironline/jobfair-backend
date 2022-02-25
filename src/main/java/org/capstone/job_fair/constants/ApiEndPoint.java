@@ -44,6 +44,7 @@ public final class ApiEndPoint {
         public static final String CANCEL = COMPANY_REGISTRATION_ENDPOINT + "/cancel";
         public static final String EVALUATE = COMPANY_REGISTRATION_ENDPOINT + "/evaluate";
         public static final String GET_ALL_OWN_COMPANY_REGISTRATION = COMPANY_REGISTRATION_ENDPOINT + "/getAllRegistrations";
+        public static final String GET_ALL_COMPANY_REGISTRATION_OF_JOB_FAIR = COMPANY_REGISTRATION_ENDPOINT + "/getAllRegistrationsOfJobFair";
 
 
     }

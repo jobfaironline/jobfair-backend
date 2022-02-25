@@ -295,4 +295,10 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
         List<CompanyRegistrationEntity> companyRegistrationEntities = companyRegistrationRepository.findAllByJobFairIdAndCompanyId(jobFairId, companyId);
         return companyRegistrationEntities.stream().map(companyRegistrationMapper::toDTO).collect(Collectors.toList());
     }
+
+    @Override
+    public List<CompanyRegistrationDTO> getCompanyRegistrationOfAJobFair(String jobFairId) {
+        List<CompanyRegistrationEntity> companyRegistrationEntities = companyRegistrationRepository.findAllByJobFairId(jobFairId);
+        return companyRegistrationEntities.stream().map(companyRegistrationMapper::toDTO).collect(Collectors.toList());
+    }
 }
