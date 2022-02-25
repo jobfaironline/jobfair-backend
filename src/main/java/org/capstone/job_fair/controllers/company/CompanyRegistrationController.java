@@ -149,4 +149,16 @@ public class CompanyRegistrationController {
         }
     }
 
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).STAFF)")
+    @GetMapping(ApiEndPoint.CompanyRegistration.GET_ALL_COMPANY_REGISTRATION_OF_JOB_FAIR + "/{jobFairId}")
+    public ResponseEntity<?> getAllCompanyRegistrationOfJobFair(@PathVariable String jobFairId) {
+        try {
+            List<CompanyRegistrationDTO> companyRegistrationDTOS = companyRegistrationService.getCompanyRegistrationOfAJobFair(jobFairId);
+            if (companyRegistrationDTOS.isEmpty()) return ResponseEntity.notFound().build();
+            return new ResponseEntity<>(companyRegistrationDTOS, HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return GenericResponse.build(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
 }

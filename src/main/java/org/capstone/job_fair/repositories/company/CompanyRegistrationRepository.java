@@ -13,4 +13,6 @@ public interface CompanyRegistrationRepository extends JpaRepository<CompanyRegi
     Optional<CompanyRegistrationEntity> findByCompanyIdAndStatus(String companyId, CompanyRegistrationStatus status);
 
     List<CompanyRegistrationEntity> findAllByJobFairIdAndCompanyId(String jobFairId, String companyId);
+
+    List<CompanyRegistrationEntity> findAllByJobFairIdAndStatus(String jobFairId, CompanyRegistrationStatus status);
 }
