@@ -15,6 +15,7 @@ import org.capstone.job_fair.repositories.job_fair.LayoutRepository;
 import org.capstone.job_fair.services.interfaces.job_fair.LayoutService;
 import org.capstone.job_fair.services.mappers.job_fair.LayoutMapper;
 import org.capstone.job_fair.utils.AwsUtil;
+import org.capstone.job_fair.utils.GLTFUtil;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,6 +42,7 @@ public class LayoutServiceImpl implements LayoutService {
 
     @Autowired
     private AwsUtil awsUtil;
+
 
     @Override
     public List<LayoutDTO> getAll() {
@@ -79,30 +81,6 @@ public class LayoutServiceImpl implements LayoutService {
     }
 
 
-    private GltfModel parseAndValidateModel(MultipartFile file) throws IOException {
-        //the current GLTF library do not throw Exception when having parse error
-        //but rather it just log the Error to logger
-        //this lead to an ad hoc way is to check all model if the sum is 0 then we know the file is not valid GLB file
-        GltfModelReader reader = new GltfModelReader();
-        GltfModel model = reader.readWithoutReferences(file.getInputStream());
-
-        int result = model.getTextureModels().size() +
-                model.getMaterialModels().size() +
-                model.getSceneModels().size() +
-                model.getNodeModels().size() +
-                model.getCameraModels().size() +
-                model.getBufferModels().size() +
-                model.getSceneModels().size() +
-                model.getAnimationModels().size() +
-                model.getAccessorModels().size() +
-                model.getImageModels().size() +
-                model.getBufferViewModels().size();
-        if (result == 0) {
-            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Layout.INVALID_GLB_FILE));
-        }
-        return model;
-    }
-
     @Override
     @SneakyThrows
     @Transactional
@@ -112,9 +90,9 @@ public class LayoutServiceImpl implements LayoutService {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Layout.NOT_FOUND));
         }
         LayoutEntity layoutEntity = layoutEntityOpt.get();
-        GltfModel gltfModel = null;
+        GltfModel gltfModel;
         try {
-            gltfModel = parseAndValidateModel(file);
+            gltfModel = GLTFUtil.parseAndValidateModel(file);
         } catch (IOException | UndeclaredThrowableException e) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Layout.INVALID_GLB_FILE));
         }

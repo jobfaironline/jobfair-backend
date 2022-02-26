@@ -44,6 +44,7 @@ public final class ApiEndPoint {
         public static final String CANCEL = COMPANY_REGISTRATION_ENDPOINT + "/cancel";
         public static final String EVALUATE = COMPANY_REGISTRATION_ENDPOINT + "/evaluate";
         public static final String GET_ALL_OWN_COMPANY_REGISTRATION = COMPANY_REGISTRATION_ENDPOINT + "/getAllRegistrations";
+        public static final String GET_ALL_COMPANY_REGISTRATION_OF_JOB_FAIR = COMPANY_REGISTRATION_ENDPOINT + "/getAllRegistrationsOfJobFair";
 
 
     }
@@ -102,11 +103,11 @@ public final class ApiEndPoint {
         public static final String PROMOTE_EMPLOYEE_ENDPOINT = COMPANY_EMPLOYEE_ENDPOINT + "/promote";
     }
 
-    public static final class DecoratedItem {
-        private DecoratedItem() {
+    public static final class ThreeDimensionMedia {
+        private ThreeDimensionMedia() {
         }
 
-        public static final String DECORATED_ITEM_ENDPOINT = ROOT_ENDPOINT + VERSION + "/decorated-items";
+        public static final String THREE_DIMENSION_MEDIA_ENDPOINT = ROOT_ENDPOINT + VERSION + "/3d-media";
     }
 
     public static final class Staff {
@@ -128,5 +129,23 @@ public final class ApiEndPoint {
         public static final String AGORA_RTM_TOKEN = ROOT_ENDPOINT + VERSION + "/agora-rtm-token";
         public static final String AGORA_RTC_TOKEN = ROOT_ENDPOINT + VERSION + "/agora-rtc-token";
     }
+
+    public static final class Application {
+        private Application() {
+
+        }
+
+        public static final String APPLICATION_ENDPOINT = ROOT_ENDPOINT + VERSION + "/applications";
+    }
+
+    public static final class CompanyBoothLayout {
+        private CompanyBoothLayout() {
+        }
+
+        public static final String COMPANY_BOOTH_LAYOUT = ROOT_ENDPOINT + VERSION + "/company-booth-layout";
+        public static final String LATEST_VERSION = COMPANY_BOOTH_LAYOUT + "/latest";
+
+    }
+
 
 }

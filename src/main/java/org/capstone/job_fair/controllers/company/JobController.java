@@ -20,6 +20,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -80,5 +81,15 @@ public class JobController {
         String companyId = userDetails.getCompanyId();
         jobPositionService.deleteJobPosition(jobPositionId, companyId);
         return GenericResponse.build(MessageUtil.getMessage(MessageConstant.Job.DELETE_JOB_SUCCESSFULLY), HttpStatus.OK);
+    }
+
+    @GetMapping(ApiEndPoint.Job.JOB_POSITION_ENDPOINT)
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE) ")
+    public ResponseEntity<?> getAllOwnJobPositionsOfCompany() {
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String companyId = userDetails.getCompanyId();
+        List<JobPositionDTO> jobPositions = jobPositionService.getAllJobPositionOfCompany(companyId);
+        if (jobPositions.isEmpty()) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(jobPositions);
     }
 }

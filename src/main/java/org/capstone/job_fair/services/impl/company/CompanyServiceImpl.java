@@ -83,7 +83,7 @@ public class CompanyServiceImpl implements CompanyService {
             dto.getCompanyBenefitDTOS().stream()
                     .map(companyBenefitDTO -> companyBenefitDTO.getBenefitDTO().getId())
                     .forEach(id -> {
-                        if (!isBenefitIdValid(id))
+                        if (id != null && !isBenefitIdValid(id))
                             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Benefit.NOT_FOUND));
                     });
         }
@@ -191,6 +191,11 @@ public class CompanyServiceImpl implements CompanyService {
         company.setCompanyLogoURL(url);
         companyRepository.save(company);
         return companyMapper.toDTO(company);
+    }
+
+    @Override
+    public Optional<String> getIdByCompanyBoothID(String companyBoothId) {
+        return companyRepository.findCompanyIdByCompanyBoothID(companyBoothId);
     }
 
 

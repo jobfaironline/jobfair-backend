@@ -85,6 +85,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 //Authenticated API Security
                 .authorizeRequests().antMatchers(ApiEndPoint.Authentication.AUTHENTICATION_ENDPOINT + "/**").permitAll().and()
+                //Attendant API Security
+                .authorizeRequests().antMatchers(ApiEndPoint.Attendant.ATTENDANT_ENDPOINT + "/{attendantId}").permitAll().and()
                 //Account API Security
                 .authorizeRequests().antMatchers(ApiEndPoint.Attendant.REGISTER_ENDPOINT).permitAll().and()
                 .authorizeRequests().antMatchers(ApiEndPoint.CompanyEmployee.REGISTER_COMPANY_MANAGER).permitAll().and()

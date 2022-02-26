@@ -184,7 +184,8 @@ public final class DataConstraint {
         public static final int MIN_JOB_POSITION = 0;
         public static final int MAX_DESCRIPTION_LENGTH = 10000;
         public static final int MIN_DESCRIPTION_LENGTH = 1;
-        public static final int TAX_ID_LENGTH = 9;
+        public static final int TAX_ID_MIN_LENGTH = 10;
+        public static final int TAX_ID_MAX_LENGTH = 13;
         public static final int COMPANY_LOGO_TYPE = BufferedImage.TYPE_INT_ARGB;
         public static final String COMPANY_LOGO_EXTENSION_TYPE = "png";
         public static final double WIDTH_FACTOR = 0.5;
@@ -214,5 +215,18 @@ public final class DataConstraint {
         public static final int DESCRIPTION_MAX_LENGTH = 500;
         public static final int DESCRIPTION_MIN_LENGTH = 1;
     }
+
+    public static final class Application {
+        private Application() {
+
+        }
+
+        public static final int OFFSET_MIN = 0;
+        public static final int PAGE_SIZE_MIN = 0;
+
+        public static final int SUMMARY_MAX_LENGTH = 3000;
+
+    }
+
 
 }

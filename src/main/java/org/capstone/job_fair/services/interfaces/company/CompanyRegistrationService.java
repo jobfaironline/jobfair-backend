@@ -9,6 +9,8 @@ import java.util.List;
 public interface CompanyRegistrationService {
     void createDraftCompanyRegistration(CompanyRegistrationDTO companyRegistrationDTO, List<RegistrationJobPositionDTO> jobPositions);
 
+    void updateDraftCompanyRegistration(CompanyRegistrationDTO companyRegistrationDTO, List<RegistrationJobPositionDTO> jobPositions);
+
     void submitCompanyRegistration(String registrationId);
 
     void cancelCompanyRegistration(String registrationId, String cancelReason);
@@ -16,4 +18,7 @@ public interface CompanyRegistrationService {
     void staffEvaluateCompanyRegistration(String companyRegistrationId, CompanyRegistrationStatus status, String message);
 
     List<CompanyRegistrationDTO> getCompanyRegistrationByJobFairIDAndCompanyID(String jobFairId, String companyId);
+
+    List<CompanyRegistrationDTO> getCompanyRegistrationOfAJobFair(String jobFairId);
+
 }

@@ -74,7 +74,6 @@ public class AttendantController {
         }
     }
 
-    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ATTENDANT) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
     @GetMapping(ApiEndPoint.Attendant.ATTENDANT_ENDPOINT + "/{attendantId}")
     public ResponseEntity<?> getAttendant(@PathVariable("attendantId") String attendantId) {
         Optional<AttendantDTO> opt = attendantService.getAttendantById(attendantId);
@@ -82,6 +81,7 @@ public class AttendantController {
             return ResponseEntity.status(HttpStatus.OK).body(opt.get());
         }
         return GenericResponse.build(MessageUtil.getMessage(MessageConstant.Account.NOT_FOUND), HttpStatus.NOT_FOUND);
+
     }
 
 }
