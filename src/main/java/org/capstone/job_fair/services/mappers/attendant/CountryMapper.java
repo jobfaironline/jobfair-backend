@@ -9,4 +9,6 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 public abstract class CountryMapper {
 
     public abstract CountryDTO toDTO(CountryEntity entity);
+
+    public abstract CountryEntity toEntity(CountryDTO dto);
 }
