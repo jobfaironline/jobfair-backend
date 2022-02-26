@@ -216,4 +216,50 @@ public class JobFairServiceImpl implements JobFairService {
         return jobFairEntities.stream().map(jobFairMapper::toJobFairDTO).collect(Collectors.toList());
     }
 
+    @Override
+    @Transactional
+    public void updateJobFairDraft(JobFairDTO dto) {
+        JobFairEntity jobFairEntity = getValidatedJobFair(dto.getId(), JobFairStatus.DRAFT);
+
+        long currentTime = new Date().getTime();
+        if (Objects.nonNull(dto.getCompanyRegisterStartTime())) {
+            if (dto.getCompanyRegisterStartTime() - currentTime > DataConstraint.JobFair.VALID_START_JOB_FAIR_PLAN) {
+                throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.INVALID_COMPANY_REGISTER_START_TIME));
+            }
+        }
+
+        if (Objects.nonNull(dto.getCompanyRegisterEndTime()) && Objects.nonNull(dto.getCompanyRegisterStartTime())) {
+            if (dto.getCompanyRegisterEndTime() - dto.getCompanyRegisterStartTime() > DataConstraint.JobFair.VALID_REGISTER_TIME)
+                throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.INVALID_END_TIME));
+        }
+
+        if (Objects.nonNull(dto.getCompanyRegisterEndTime()) && Objects.nonNull(dto.getCompanyBuyBoothStartTime())) {
+            if (dto.getCompanyRegisterEndTime() - dto.getCompanyBuyBoothStartTime() > DataConstraint.JobFair.VALID_REGISTER_TO_BUY_BOOTH_TIME)
+                throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.END_TIME_LESS_THAN_START_TIME_ERROR));
+        }
+
+        if (Objects.nonNull(dto.getCompanyBuyBoothEndTime()) && Objects.nonNull(dto.getCompanyBuyBoothStartTime())) {
+            if (dto.getCompanyBuyBoothEndTime() - dto.getCompanyBuyBoothStartTime() > DataConstraint.JobFair.VALID_BUY_BOOTH_TIME)
+                throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.INVALID_END_TIME));
+        }
+
+        if (Objects.nonNull(dto.getCompanyBuyBoothEndTime()) && Objects.nonNull(dto.getAttendantRegisterStartTime())) {
+            if (dto.getCompanyBuyBoothEndTime() - dto.getAttendantRegisterStartTime() > DataConstraint.JobFair.VALID_BUY_BOOTH_TO_PUBLIC_TIME)
+                throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.END_TIME_LESS_THAN_START_TIME_ERROR));
+        }
+
+        if (Objects.nonNull(dto.getAttendantRegisterStartTime()) && Objects.nonNull(dto.getStartTime())) {
+            if (dto.getAttendantRegisterStartTime() - dto.getStartTime() > DataConstraint.JobFair.VALID_PUBLIC_TO_EVENT_TIME)
+                throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.END_TIME_LESS_THAN_START_TIME_ERROR));
+        }
+
+        if (Objects.nonNull(dto.getEndTime()) && Objects.nonNull(dto.getStartTime())) {
+            if (dto.getEndTime() - dto.getStartTime() > DataConstraint.JobFair.VALID_EVENT_TIME)
+                throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.INVALID_END_TIME));
+        }
+
+        jobFairMapper.updateFromDTO(jobFairEntity, dto);
+        jobFairRepository.save(jobFairEntity);
+    }
+
 }
