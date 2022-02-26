@@ -83,8 +83,11 @@ public class JobController {
         return GenericResponse.build(MessageUtil.getMessage(MessageConstant.Job.DELETE_JOB_SUCCESSFULLY), HttpStatus.OK);
     }
 
-    @GetMapping(ApiEndPoint.Job.JOB_POSITION_ENDPOINT + "/{companyId}")
-    public ResponseEntity<?> getAllJobPositionsOfCompany(@PathVariable("companyId") String companyId) {
+    @GetMapping(ApiEndPoint.Job.JOB_POSITION_ENDPOINT)
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE) ")
+    public ResponseEntity<?> getAllOwnJobPositionsOfCompany() {
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String companyId = userDetails.getCompanyId();
         List<JobPositionDTO> jobPositions = jobPositionService.getAllJobPositionOfCompany(companyId);
         if (jobPositions.isEmpty()) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(jobPositions);
