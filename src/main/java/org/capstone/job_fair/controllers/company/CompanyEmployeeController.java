@@ -211,17 +211,18 @@ public class CompanyEmployeeController {
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
     @GetMapping(ApiEndPoint.CompanyEmployee.COMPANY_EMPLOYEE_ENDPOINT)
-    public ResponseEntity<?> getEmployeeById(@RequestParam(value = "companyID", required = false) String companyID,
-                                             @RequestParam(value = "employeeID", required = true) String employeeID) {
+    public ResponseEntity<?> getEmployeeById(@RequestParam(value = "employeeID", required = true) String employeeID) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String companyID = null;
+        //Get role from secutiry context
         String role = userDetails.getAuthorities().iterator().next().getAuthority();
-        if (role.equals(Role.ADMIN.getAuthority()) && companyID == null) {
-            return GenericResponse.build(MessageUtil.getMessage(MessageConstant.CompanyEmployee.COMPANY_ID_BLANK_ERROR), HttpStatus.BAD_REQUEST);
-        }
+        //If company manager then set company id
         if (role.equals(Role.COMPANY_MANAGER.getAuthority())) {
             companyID = userDetails.getCompanyId();
         }
-        CompanyEmployeeDTO employeeDTO = companyEmployeeService.getCompanyEmployeeByAccountIdAndCompanyId(employeeID, companyID);
+        CompanyEmployeeDTO employeeDTO = companyEmployeeService.getCompanyEmployeeByAccountId(employeeID, companyID);
+        if (employeeDTO == null)
+            return GenericResponse.build(MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMPLOYEE_NOT_FOUND), HttpStatus.NOT_FOUND);
         return ResponseEntity.ok(employeeDTO);
     }
 

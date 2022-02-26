@@ -173,13 +173,12 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
     }
 
     @Override
-    public CompanyEmployeeDTO getCompanyEmployeeByAccountIdAndCompanyId(String employeeID, String companyID) {
-        Optional<CompanyEntity> companyOpt = companyRepository.findById(companyID);
-        if (!companyOpt.isPresent())
-            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Company.NOT_FOUND));
-        Optional<CompanyEmployeeEntity> companyEmployeeEntityOpt = employeeRepository.findByAccountIdAndCompanyId(employeeID, companyID);
-        if (!companyEmployeeEntityOpt.isPresent())
-            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMPLOYEE_NOT_FOUND));
+    public CompanyEmployeeDTO getCompanyEmployeeByAccountId(String employeeID, String companyID) {
+        Optional<CompanyEmployeeEntity> companyEmployeeEntityOpt = null;
+        if (companyID != null)
+            companyEmployeeEntityOpt = employeeRepository.findByAccountIdAndCompanyId(employeeID, companyID);
+        else companyEmployeeEntityOpt = employeeRepository.findById(employeeID);
+        if (!companyEmployeeEntityOpt.isPresent()) return null;
         return mapper.toDTO(companyEmployeeEntityOpt.get());
     }
 

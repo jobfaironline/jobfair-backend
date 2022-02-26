@@ -22,6 +22,6 @@ public interface CompanyEmployeeService {
 
     Optional<CompanyEmployeeDTO> getCompanyEmployeeByAccountId(String accountID);
 
-    CompanyEmployeeDTO getCompanyEmployeeByAccountIdAndCompanyId(String employeeID, String companyID);
+    CompanyEmployeeDTO getCompanyEmployeeByAccountId(String employeeID, String companyID);
 
 }
