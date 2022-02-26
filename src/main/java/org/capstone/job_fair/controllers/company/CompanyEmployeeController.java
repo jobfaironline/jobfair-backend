@@ -12,6 +12,7 @@ import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
 import org.capstone.job_fair.models.dtos.company.CompanyDTO;
 import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
+import org.capstone.job_fair.models.enums.Role;
 import org.capstone.job_fair.services.interfaces.account.AccountService;
 import org.capstone.job_fair.services.interfaces.company.CompanyEmployeeService;
 import org.capstone.job_fair.services.interfaces.company.CompanyService;
@@ -206,6 +207,22 @@ public class CompanyEmployeeController {
         } catch (IllegalArgumentException ex) {
             return GenericResponse.build(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
+    @GetMapping(ApiEndPoint.CompanyEmployee.COMPANY_EMPLOYEE_ENDPOINT)
+    public ResponseEntity<?> getEmployeeById(@RequestParam(value = "companyID", required = false) String companyID,
+                                             @RequestParam(value = "employeeID", required = true) String employeeID) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String role = userDetails.getAuthorities().iterator().next().getAuthority();
+        if (role.equals(Role.ADMIN.getAuthority()) && companyID == null) {
+            return GenericResponse.build(MessageUtil.getMessage(MessageConstant.CompanyEmployee.COMPANY_ID_BLANK_ERROR), HttpStatus.BAD_REQUEST);
+        }
+        if (role.equals(Role.COMPANY_MANAGER.getAuthority())) {
+            companyID = userDetails.getCompanyId();
+        }
+        CompanyEmployeeDTO employeeDTO = companyEmployeeService.getCompanyEmployeeByAccountIdAndCompanyId(employeeID, companyID);
+        return ResponseEntity.ok(employeeDTO);
     }
 
 }

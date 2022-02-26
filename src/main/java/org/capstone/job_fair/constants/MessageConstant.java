@@ -148,6 +148,7 @@ public final class MessageConstant {
         public static final String PROMOTE_EMPLOYEE_SUCCESSFULLY = "company-employee.success.promote-employee";
         public static final String EMPLOYEE_NOT_ACTIVE = "company-employee.error.not-active";
         public static final String MAX_QUOTA_FOR_COMPANY_EMPLOYEE = "company-employee.error.max-quota";
+        public static final String COMPANY_ID_BLANK_ERROR = "company-employee.error.company-id-blank";
 
     }
 

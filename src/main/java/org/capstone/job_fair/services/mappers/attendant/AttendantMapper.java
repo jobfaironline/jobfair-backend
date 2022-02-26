@@ -79,7 +79,6 @@ public abstract class AttendantMapper {
 
 
     @Mapping(source = "accountId", target = "account.id")
-    @Mapping(source = "account", target = "account")
     public abstract AttendantDTO toDTO(UpdateAttendantRequest request);
 
 

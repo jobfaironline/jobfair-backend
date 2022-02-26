@@ -172,5 +172,16 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
         return employeeRepository.findByAccountId(accountID).map(mapper::toDTO);
     }
 
+    @Override
+    public CompanyEmployeeDTO getCompanyEmployeeByAccountIdAndCompanyId(String employeeID, String companyID) {
+        Optional<CompanyEntity> companyOpt = companyRepository.findById(companyID);
+        if (!companyOpt.isPresent())
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Company.NOT_FOUND));
+        Optional<CompanyEmployeeEntity> companyEmployeeEntityOpt = employeeRepository.findByAccountIdAndCompanyId(employeeID, companyID);
+        if (!companyEmployeeEntityOpt.isPresent())
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMPLOYEE_NOT_FOUND));
+        return mapper.toDTO(companyEmployeeEntityOpt.get());
+    }
+
 
 }
