@@ -3,7 +3,9 @@ package org.capstone.job_fair.services.impl.company;
 import lombok.AllArgsConstructor;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.models.dtos.company.job.JobPositionDTO;
+import org.capstone.job_fair.models.entities.company.CompanyEntity;
 import org.capstone.job_fair.models.entities.company.job.JobPositionEntity;
+import org.capstone.job_fair.repositories.company.CompanyRepository;
 import org.capstone.job_fair.repositories.company.SkillTagRepository;
 import org.capstone.job_fair.repositories.company.SubCategoryRepository;
 import org.capstone.job_fair.repositories.company.job.JobPositionRepository;
@@ -15,7 +17,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -31,6 +35,8 @@ public class JobPositionServiceImpl implements JobPositionService {
     private SubCategoryRepository subCategoryRepository;
     @Autowired
     private SkillTagRepository skillTagRepository;
+    @Autowired
+    private CompanyRepository companyRepository;
 
     private boolean isSubCategoryIdValid(int id) {
         return subCategoryRepository.existsById(id);
@@ -111,6 +117,16 @@ public class JobPositionServiceImpl implements JobPositionService {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Job.COMPANY_MISMATCH));
 
         jobPositionRepository.delete(jobPositionEntity);
+    }
+
+    @Override
+    public List<JobPositionDTO> getAllJobPositionOfCompany(String companyId) {
+        //Check for company existence
+        Optional<CompanyEntity> companyOpt = companyRepository.findById(companyId);
+        if (!companyOpt.isPresent()) throw new
+                IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Company.NOT_FOUND));
+        List<JobPositionEntity> jobPositionEntities = jobPositionRepository.findAllByCompanyId(companyId);
+        return jobPositionEntities.stream().map(mapper::toDTO).collect(Collectors.toList());
     }
 
 

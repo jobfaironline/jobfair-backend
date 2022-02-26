@@ -20,6 +20,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -82,4 +83,10 @@ public class JobController {
         return GenericResponse.build(MessageUtil.getMessage(MessageConstant.Job.DELETE_JOB_SUCCESSFULLY), HttpStatus.OK);
     }
 
+    @GetMapping(ApiEndPoint.Job.JOB_POSITION_ENDPOINT + "/{companyId}")
+    public ResponseEntity<?> getAllJobPositionsOfCompany(@PathVariable("companyId") String companyId) {
+        List<JobPositionDTO> jobPositions = jobPositionService.getAllJobPositionOfCompany(companyId);
+        if (jobPositions.isEmpty()) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(jobPositions);
+    }
 }
