@@ -19,4 +19,7 @@ public class BoothDTO implements Serializable {
     private String name;
     @JsonBackReference
     private LayoutDTO layout;
+    private Double x;
+    private Double y;
+    private Double z;
 }

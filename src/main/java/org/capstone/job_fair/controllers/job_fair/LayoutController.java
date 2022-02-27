@@ -110,15 +110,4 @@ public class LayoutController {
             return GenericResponse.build(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
-
-    @GetMapping(ApiEndPoint.Layout.GET_BY_JOB_FAIR_ID + "/{id}")
-    public ResponseEntity<?> getByJobFairId(@PathVariable(value = "id") String jobFairId){
-        System.out.println(jobFairId);
-        Optional<LayoutDTO> layoutDTOOpt = layoutService.findByJobFairId(jobFairId);
-        if (!layoutDTOOpt.isPresent()){
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(layoutDTOOpt.get());
-    }
-
 }

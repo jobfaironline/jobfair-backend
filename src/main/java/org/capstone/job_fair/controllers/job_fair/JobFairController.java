@@ -6,9 +6,16 @@ import org.capstone.job_fair.controllers.payload.requests.job_fair.AdminEvaluate
 import org.capstone.job_fair.controllers.payload.requests.job_fair.CancelJobFairRequest;
 import org.capstone.job_fair.controllers.payload.requests.job_fair.DraftJobFairPlanRequest;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
+import org.capstone.job_fair.controllers.payload.responses.RenderJobFairParkResponse;
+import org.capstone.job_fair.models.dtos.company.CompanyBoothDTO;
+import org.capstone.job_fair.models.dtos.company.CompanyBoothLayoutDTO;
 import org.capstone.job_fair.models.dtos.job_fair.JobFairDTO;
+import org.capstone.job_fair.models.dtos.job_fair.LayoutDTO;
 import org.capstone.job_fair.models.statuses.JobFairStatus;
+import org.capstone.job_fair.services.interfaces.company.CompanyBoothLayoutService;
+import org.capstone.job_fair.services.interfaces.company.CompanyBoothService;
 import org.capstone.job_fair.services.interfaces.job_fair.JobFairService;
+import org.capstone.job_fair.services.interfaces.job_fair.LayoutService;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,6 +33,15 @@ public class JobFairController {
 
     @Autowired
     private JobFairService jobFairService;
+
+    @Autowired
+    private CompanyBoothService companyBoothService;
+
+    @Autowired
+    private CompanyBoothLayoutService companyBoothLayoutService;
+
+    @Autowired
+    private LayoutService layoutService;
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).STAFF)")
     @PostMapping(ApiEndPoint.JobFair.JOB_FAIR_PLAN)
@@ -140,12 +156,38 @@ public class JobFairController {
     }
 
     @GetMapping(ApiEndPoint.JobFair.FOR_3D_MAP + "/{id}")
-    public ResponseEntity<?> getJobFairById(@PathVariable("id") String id) {
-        Optional<JobFairDTO> jobFairDTOOpt = jobFairService.getJobFairByID(id);
-        if (!jobFairDTOOpt.isPresent()) {
-            return ResponseEntity.notFound().build();
+    public ResponseEntity<?> getJobFairById(@PathVariable("id") String jobFairId) {
+        RenderJobFairParkResponse response = new RenderJobFairParkResponse();
+
+        Optional<LayoutDTO> layoutDTOOpt = layoutService.findByJobFairId(jobFairId);
+
+        if (!layoutDTOOpt.isPresent()){
+            return GenericResponse.build(MessageUtil.getMessage(MessageConstant.Layout.NOT_FOUND), HttpStatus.NOT_FOUND);
         }
-        return ResponseEntity.ok(jobFairDTOOpt.get());
+
+        LayoutDTO layoutDTO = layoutDTOOpt.get();
+        response.setJobFairLayoutUrl(layoutDTO.getUrl());
+
+        layoutDTO.getBooths().forEach(boothDTO -> {
+            Optional<CompanyBoothDTO> companyBoothOpt = companyBoothService.getCompanyBoothByJobFairIdAndBoothId(jobFairId, boothDTO.getId());
+            if (companyBoothOpt.isPresent()){
+                CompanyBoothDTO companyBooth = companyBoothOpt.get();
+
+                RenderJobFairParkResponse.BoothData boothData = new RenderJobFairParkResponse.BoothData();
+                boothData.setPosition(boothDTO.getX(), boothDTO.getY(), boothDTO.getZ());
+                boothData.setSlotName(boothDTO.getName());
+                boothData.setCompanyBoothId(boothDTO.getId());
+
+                Optional<CompanyBoothLayoutDTO> layoutDTOOptional = companyBoothLayoutService.getLatestVersionByCompanyBoothId(companyBooth.getId());
+                if (layoutDTOOptional.isPresent()){
+                    boothData.setBoothUrl(layoutDTOOptional.get().getUrl());
+                    response.addBoothDataInformation(boothData);
+                }
+            }
+        });
+
+        return ResponseEntity.ok(response);
 
     }
+
 }

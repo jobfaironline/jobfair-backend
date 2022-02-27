@@ -124,7 +124,6 @@ public final class ApiEndPoint {
         }
 
         public static final String LAYOUT_ENDPOINT = ROOT_ENDPOINT + VERSION + "/layouts";
-        public static final String GET_BY_JOB_FAIR_ID = LAYOUT_ENDPOINT + "/jobFair";
     }
 
     public static final class AgoraToken {

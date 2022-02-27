@@ -103,15 +103,24 @@ public class LayoutServiceImpl implements LayoutService {
         layoutEntity.getBooths().removeAll(layoutEntity.getBooths());
         Set<BoothEntity> boothEntities =
                 gltfModel.getNodeModels().stream()
-                        .map(NamedModelElement::getName)
-                        .filter(name -> name.startsWith(GLBConstant.BOOTH_NAME_PREFIX))
-                        .map(name -> {
+                        .filter(nodeModel -> nodeModel.getName().startsWith(GLBConstant.BOOTH_NAME_PREFIX))
+                        .map(nodeModel -> {
                             BoothEntity boothEntity = new BoothEntity();
                             boothEntity.setId(UUID.randomUUID().toString());
-                            boothEntity.setName(name);
+                            boothEntity.setName(nodeModel.getName().replaceAll("([._\\-])", ""));
                             boothEntity.setLayout(layoutEntity);
                             boothEntity.setStatus(BoothStatus.NORMAL);
                             boothEntity.setPrice(0.0);
+
+                            //get position
+                            //https://github.com/KhronosGroup/glTF-Tutorials/blob/master/gltfTutorial/gltfTutorial_004_ScenesNodes.md
+                            //see the matrix section
+                            float[] result = new float[16];
+                            nodeModel.computeGlobalTransform(result);
+                            boothEntity.setX(result[12]);
+                            boothEntity.setY(result[13]);
+                            boothEntity.setZ(result[14]);
+
                             return boothEntity;
                         })
                         .collect(Collectors.toSet());
