@@ -187,7 +187,7 @@ public class JobFairController {
 
         Optional<LayoutDTO> layoutDTOOpt = layoutService.findByJobFairId(jobFairId);
 
-        if (!layoutDTOOpt.isPresent()){
+        if (!layoutDTOOpt.isPresent()) {
             return GenericResponse.build(MessageUtil.getMessage(MessageConstant.Layout.NOT_FOUND), HttpStatus.NOT_FOUND);
         }
 
@@ -196,7 +196,7 @@ public class JobFairController {
 
         layoutDTO.getBooths().forEach(boothDTO -> {
             Optional<CompanyBoothDTO> companyBoothOpt = companyBoothService.getCompanyBoothByJobFairIdAndBoothId(jobFairId, boothDTO.getId());
-            if (companyBoothOpt.isPresent()){
+            if (companyBoothOpt.isPresent()) {
                 CompanyBoothDTO companyBooth = companyBoothOpt.get();
 
                 RenderJobFairParkResponse.BoothData boothData = new RenderJobFairParkResponse.BoothData();
@@ -205,7 +205,7 @@ public class JobFairController {
                 boothData.setCompanyBoothId(companyBooth.getId());
 
                 Optional<CompanyBoothLayoutDTO> layoutDTOOptional = companyBoothLayoutService.getLatestVersionByCompanyBoothId(companyBooth.getId());
-                if (layoutDTOOptional.isPresent()){
+                if (layoutDTOOptional.isPresent()) {
                     boothData.setBoothUrl(layoutDTOOptional.get().getUrl());
                     response.addBoothDataInformation(boothData);
                 }
@@ -214,6 +214,17 @@ public class JobFairController {
 
         return ResponseEntity.ok(response);
 
+    }
+
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).STAFF)")
+    @GetMapping(ApiEndPoint.JobFair.AVALAIBLE_JOB_FAIR_FOR_REGISTRATION)
+    public ResponseEntity<?> getAllAvalaibleForRegistration(@RequestParam(value = "fromTime", required = false) String fromTime,
+                                                            @RequestParam(value = "toTime", required = false) String toTime) {
+        List<JobFairDTO> result = jobFairService.getAllAvalaibleForRegistration(fromTime, toTime);
+        if (result.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(result);
     }
 
 }

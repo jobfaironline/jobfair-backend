@@ -2,6 +2,7 @@ package org.capstone.job_fair.services.impl.job_fair;
 
 import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import org.capstone.job_fair.constants.DataConstraint;
+import org.capstone.job_fair.constants.JobFairConstant;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.models.dtos.job_fair.JobFairDTO;
 import org.capstone.job_fair.models.entities.job_fair.JobFairEntity;
@@ -219,6 +220,23 @@ public class JobFairServiceImpl implements JobFairService {
     @Override
     public Optional<JobFairDTO> getJobFairByID(String id) {
         return jobFairRepository.findById(id).map(jobFairMapper::toJobFairDTO);
+    }
+
+    @Override
+    public List<JobFairDTO> getAllAvalaibleForRegistration(String fromTime, String toTime) {
+        long searchFromTime;
+        long searchToTime;
+        //if fromTime and toTime are null then set time range to be +-1 year from now
+        if (fromTime == null) searchFromTime = new Date().getTime() - JobFairConstant.ONE_YEAR_IN_MILLISECOND;
+        else searchFromTime = Long.parseLong(fromTime);
+        if (toTime == null) searchToTime = new Date().getTime() + JobFairConstant.ONE_YEAR_IN_MILLISECOND;
+        else searchToTime = Long.parseLong(toTime);
+        System.out.println("From time: " + searchFromTime + " to time: " + searchToTime);
+        if (searchFromTime > searchToTime)
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.INVALID_SEARCH_TIME_RANGE));
+        List<JobFairEntity> jobFairEntities = jobFairRepository.findAllByStatusAndCompanyRegisterStartTimeGreaterThanAndCompanyRegisterEndTimeLessThan(JobFairStatus.APPROVE, searchFromTime, searchToTime);
+        return jobFairEntities.stream().map(jobFairMapper::toJobFairDTO).collect(Collectors.toList());
+
     }
 
     @Transactional
