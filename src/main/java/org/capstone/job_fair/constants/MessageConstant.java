@@ -23,6 +23,7 @@ public final class MessageConstant {
         }
 
         public static final String CREATE_JOB_FAIR_PLAN_SUCCESSFULLY = "job-fair-plan.success.create";
+        public static final String UPDATE_JOB_FAIR_PLAN_SUCCESSFULLY = "job-fair-plan.success.update";
         public static final String DELETE_JOB_FAIR_PLAN_SUCCESSFULLY = "job-fair-plan.success.delete";
         public static final String SUBMIT_JOB_FAIR_PLAN_SUCCESSFULLY = "job-fair-plan.success.submit";
         public static final String CANCEL_JOB_FAIR_PLAN_SUCCESSFULLY = "job-fair-plan.success.cancel";
