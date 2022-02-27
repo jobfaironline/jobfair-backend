@@ -231,7 +231,6 @@ public class JobFairServiceImpl implements JobFairService {
         else searchFromTime = Long.parseLong(fromTime);
         if (toTime == null) searchToTime = new Date().getTime() + JobFairConstant.ONE_YEAR_IN_MILLISECOND;
         else searchToTime = Long.parseLong(toTime);
-        System.out.println("From time: " + searchFromTime + " to time: " + searchToTime);
         if (searchFromTime > searchToTime)
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.INVALID_SEARCH_TIME_RANGE));
         List<JobFairEntity> jobFairEntities = jobFairRepository.findAllByStatusAndCompanyRegisterStartTimeGreaterThanAndCompanyRegisterEndTimeLessThan(JobFairStatus.APPROVE, searchFromTime, searchToTime);
