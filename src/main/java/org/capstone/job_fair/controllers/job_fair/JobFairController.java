@@ -5,6 +5,7 @@ import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.controllers.payload.requests.job_fair.AdminEvaluateJobFairRequest;
 import org.capstone.job_fair.controllers.payload.requests.job_fair.CancelJobFairRequest;
 import org.capstone.job_fair.controllers.payload.requests.job_fair.DraftJobFairPlanRequest;
+import org.capstone.job_fair.controllers.payload.requests.job_fair.UpdateJobFairPlanDraftRequest;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.controllers.payload.responses.RenderJobFairParkResponse;
 import org.capstone.job_fair.models.dtos.company.CompanyBoothDTO;
@@ -61,6 +62,31 @@ public class JobFairController {
             jobFairService.draftJobFair(dto);
 
             return GenericResponse.build(MessageUtil.getMessage(MessageConstant.JobFair.CREATE_JOB_FAIR_PLAN_SUCCESSFULLY)
+                    , HttpStatus.OK);
+        } catch (IllegalArgumentException ex) {
+            return GenericResponse.build(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).STAFF)")
+    @PutMapping(ApiEndPoint.JobFair.JOB_FAIR_PLAN)
+    public ResponseEntity<?> updateJobFairPlanDraft(@Validated @RequestBody UpdateJobFairPlanDraftRequest request) {
+        try {
+            JobFairDTO dto = JobFairDTO.builder()
+                    .id(request.getJobFairID())
+                    .attendantRegisterStartTime(request.getAttendantRegisterStartTime())
+                    .companyBuyBoothEndTime(request.getCompanyBuyBoothEndTime())
+                    .companyBuyBoothStartTime(request.getCompanyBuyBoothStartTime())
+                    .companyRegisterEndTime(request.getCompanyRegisterEndTime())
+                    .companyRegisterStartTime(request.getCompanyRegisterStartTime())
+                    .description(request.getDescription())
+                    .endTime(request.getEndTime())
+                    .startTime(request.getStartTime())
+                    .layoutId(request.getLayoutId())
+                    .build();
+            jobFairService.updateJobFairDraft(dto);
+
+            return GenericResponse.build(MessageUtil.getMessage(MessageConstant.JobFair.UPDATE_JOB_FAIR_PLAN_SUCCESSFULLY)
                     , HttpStatus.OK);
         } catch (IllegalArgumentException ex) {
             return GenericResponse.build(ex.getMessage(), HttpStatus.BAD_REQUEST);

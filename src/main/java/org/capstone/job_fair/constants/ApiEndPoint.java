@@ -149,5 +149,13 @@ public final class ApiEndPoint {
 
     }
 
+    public static final class Country {
+        private Country() {
+
+        }
+
+        public static final String COUNTRY_ENPOINT = ROOT_ENDPOINT + VERSION + "/country";
+    }
+
 
 }

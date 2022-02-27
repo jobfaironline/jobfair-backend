@@ -23,6 +23,7 @@ public final class MessageConstant {
         }
 
         public static final String CREATE_JOB_FAIR_PLAN_SUCCESSFULLY = "job-fair-plan.success.create";
+        public static final String UPDATE_JOB_FAIR_PLAN_SUCCESSFULLY = "job-fair-plan.success.update";
         public static final String DELETE_JOB_FAIR_PLAN_SUCCESSFULLY = "job-fair-plan.success.delete";
         public static final String SUBMIT_JOB_FAIR_PLAN_SUCCESSFULLY = "job-fair-plan.success.submit";
         public static final String CANCEL_JOB_FAIR_PLAN_SUCCESSFULLY = "job-fair-plan.success.cancel";
@@ -148,6 +149,7 @@ public final class MessageConstant {
         public static final String PROMOTE_EMPLOYEE_SUCCESSFULLY = "company-employee.success.promote-employee";
         public static final String EMPLOYEE_NOT_ACTIVE = "company-employee.error.not-active";
         public static final String MAX_QUOTA_FOR_COMPANY_EMPLOYEE = "company-employee.error.max-quota";
+        public static final String COMPANY_ID_BLANK_ERROR = "company-employee.error.company-id-blank";
 
     }
 
