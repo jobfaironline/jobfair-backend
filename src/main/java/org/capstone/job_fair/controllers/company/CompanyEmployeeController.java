@@ -220,6 +220,8 @@ public class CompanyEmployeeController {
         if (role.equals(Role.COMPANY_MANAGER.getAuthority())) {
             companyID = userDetails.getCompanyId();
         }
+        //If role is admin => company id will be null
+        //Role is comany manager then company id will be their companyid
         CompanyEmployeeDTO employeeDTO = companyEmployeeService.getCompanyEmployeeByAccountId(employeeID, companyID);
         if (employeeDTO == null)
             return GenericResponse.build(MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMPLOYEE_NOT_FOUND), HttpStatus.NOT_FOUND);

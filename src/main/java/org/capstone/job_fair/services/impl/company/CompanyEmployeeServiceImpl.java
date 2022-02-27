@@ -175,6 +175,8 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
     @Override
     public CompanyEmployeeDTO getCompanyEmployeeByAccountId(String employeeID, String companyID) {
         Optional<CompanyEmployeeEntity> companyEmployeeEntityOpt = null;
+        //if company id not null => the manager is performing the search, then find employee base on id and comany id to make sure that employee is belonged to their company, not the others
+        //if company id is null => admin is performing the search, no need to check company id.
         if (companyID != null)
             companyEmployeeEntityOpt = employeeRepository.findByAccountIdAndCompanyId(employeeID, companyID);
         else companyEmployeeEntityOpt = employeeRepository.findById(employeeID);
