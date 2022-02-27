@@ -216,4 +216,10 @@ public class JobFairServiceImpl implements JobFairService {
         return jobFairEntities.stream().map(jobFairMapper::toJobFairDTO).collect(Collectors.toList());
     }
 
+    @Override
+    public Optional<JobFairDTO> getJobFairByID(String id) {
+        System.out.println(id);
+        return jobFairRepository.findById(id).map(jobFairMapper::toJobFairDTO);
+    }
+
 }

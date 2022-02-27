@@ -16,4 +16,6 @@ public interface LayoutService {
     void update(LayoutDTO dto);
 
     void validateAndGenerateBoothSlot(MultipartFile file, String layoutId);
+
+    Optional<LayoutDTO> findByJobFairId(String jobFairId);
 }

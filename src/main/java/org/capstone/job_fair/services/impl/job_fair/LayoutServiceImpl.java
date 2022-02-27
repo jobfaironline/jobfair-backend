@@ -2,15 +2,16 @@ package org.capstone.job_fair.services.impl.job_fair;
 
 import de.javagl.jgltf.model.GltfModel;
 import de.javagl.jgltf.model.NamedModelElement;
-import de.javagl.jgltf.model.io.GltfModelReader;
 import lombok.SneakyThrows;
 import org.capstone.job_fair.constants.AWSConstant;
 import org.capstone.job_fair.constants.GLBConstant;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.models.dtos.job_fair.LayoutDTO;
 import org.capstone.job_fair.models.entities.job_fair.BoothEntity;
+import org.capstone.job_fair.models.entities.job_fair.JobFairEntity;
 import org.capstone.job_fair.models.entities.job_fair.LayoutEntity;
 import org.capstone.job_fair.models.statuses.BoothStatus;
+import org.capstone.job_fair.repositories.job_fair.JobFairRepository;
 import org.capstone.job_fair.repositories.job_fair.LayoutRepository;
 import org.capstone.job_fair.services.interfaces.job_fair.LayoutService;
 import org.capstone.job_fair.services.mappers.job_fair.LayoutMapper;
@@ -36,6 +37,9 @@ public class LayoutServiceImpl implements LayoutService {
 
     @Autowired
     private LayoutRepository layoutRepository;
+
+    @Autowired
+    private JobFairRepository jobFairRepository;
 
     @Autowired
     private LayoutMapper layoutMapper;
@@ -114,5 +118,17 @@ public class LayoutServiceImpl implements LayoutService {
         layoutEntity.getBooths().addAll(boothEntities);
         layoutRepository.save(layoutEntity);
 
+    }
+
+    @Override
+    public Optional<LayoutDTO> findByJobFairId(String jobFairId) {
+        System.out.println(jobFairId);
+        Optional<JobFairEntity> jobFairEntityOpt = jobFairRepository.findById(jobFairId);
+        if (!jobFairEntityOpt.isPresent()) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.JOB_FAIR_NOT_FOUND));
+        }
+        JobFairEntity jobFairEntity = jobFairEntityOpt.get();
+        System.out.println(jobFairEntity);
+        return layoutRepository.findById(jobFairEntity.getLayoutId()).map(layoutMapper::toDTO);
     }
 }

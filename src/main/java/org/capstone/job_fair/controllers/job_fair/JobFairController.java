@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class JobFairController {
@@ -127,7 +128,7 @@ public class JobFairController {
     }
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE)")
-    @GetMapping
+    @GetMapping(ApiEndPoint.JobFair.GET_APPROVE_JOB_FAIR_PLAN)
     public ResponseEntity<?> getAllApprovedJobFair() {
         try {
             List<JobFairDTO> jobFairDTOS = jobFairService.getAllJobFairByStatus(JobFairStatus.APPROVE);
@@ -136,5 +137,15 @@ public class JobFairController {
         } catch (IllegalArgumentException e) {
             return GenericResponse.build(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @GetMapping(ApiEndPoint.JobFair.FOR_3D_MAP + "/{id}")
+    public ResponseEntity<?> getJobFairById(@PathVariable("id") String id) {
+        Optional<JobFairDTO> jobFairDTOOpt = jobFairService.getJobFairByID(id);
+        if (!jobFairDTOOpt.isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(jobFairDTOOpt.get());
+
     }
 }

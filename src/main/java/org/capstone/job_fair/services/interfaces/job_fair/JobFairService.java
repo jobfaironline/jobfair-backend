@@ -4,6 +4,7 @@ import org.capstone.job_fair.models.dtos.job_fair.JobFairDTO;
 import org.capstone.job_fair.models.statuses.JobFairStatus;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface JobFairService {
     void draftJobFair(JobFairDTO dto);
@@ -23,4 +24,6 @@ public interface JobFairService {
     List<JobFairDTO> getAll();
 
     List<JobFairDTO> getAllJobFairByStatus(JobFairStatus jobFairStatus);
+
+    Optional<JobFairDTO> getJobFairByID(String id);
 }
