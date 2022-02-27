@@ -21,8 +21,6 @@ public class LayoutEntity {
 
     @Id
     @Column(name = "id", nullable = false, length = 36)
-    @GeneratedValue(generator = "uuid")
-    @GenericGenerator(name = "uuid", strategy = "org.hibernate.id.UUIDGenerator")
     private String id;
     @Column(name = "name", length = 100)
     private String name;

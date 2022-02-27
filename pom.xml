@@ -145,6 +145,13 @@
             <version>2.0.1</version>
         </dependency>
         <!-- End GLTF dependencies -->
+        <!-- Agora dependencies -->
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.11</version>
+        </dependency>
+        <!-- End Agora dependencies -->
     </dependencies>
 
     <packaging>jar</packaging>

@@ -110,6 +110,4 @@ public class LayoutController {
             return GenericResponse.build(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
-
-
 }

@@ -15,16 +15,16 @@ import java.util.Objects;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "order", schema = "dbo")
+@Table(name = "`order`", schema = "dbo")
 public class OrderEntity {
     @Id
     @Column(name = "id", nullable = false, length = 36)
     private String id;
     @Column(name = "total", nullable = false)
     private Double total;
-    @Column(name = "createDate", nullable = false)
+    @Column(name = "create_date", nullable = false)
     private Long createDate;
-    @Column(name = "cancelDate")
+    @Column(name = "cancel_date")
     private Long cancelDate;
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.ORDINAL)

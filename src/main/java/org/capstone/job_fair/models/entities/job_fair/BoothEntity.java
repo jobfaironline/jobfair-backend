@@ -30,6 +30,12 @@ public class BoothEntity {
     private BoothStatus status;
     @Column(name = "name", nullable = false, length = 100)
     private String name;
+    @Column(name = "x")
+    private Float x;
+    @Column(name = "y")
+    private Float y;
+    @Column(name = "z")
+    private Float z;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "layout_id")
     private LayoutEntity layout;

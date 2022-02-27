@@ -7,9 +7,16 @@ import org.capstone.job_fair.controllers.payload.requests.job_fair.CancelJobFair
 import org.capstone.job_fair.controllers.payload.requests.job_fair.DraftJobFairPlanRequest;
 import org.capstone.job_fair.controllers.payload.requests.job_fair.UpdateJobFairPlanDraftRequest;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
+import org.capstone.job_fair.controllers.payload.responses.RenderJobFairParkResponse;
+import org.capstone.job_fair.models.dtos.company.CompanyBoothDTO;
+import org.capstone.job_fair.models.dtos.company.CompanyBoothLayoutDTO;
 import org.capstone.job_fair.models.dtos.job_fair.JobFairDTO;
+import org.capstone.job_fair.models.dtos.job_fair.LayoutDTO;
 import org.capstone.job_fair.models.statuses.JobFairStatus;
+import org.capstone.job_fair.services.interfaces.company.CompanyBoothLayoutService;
+import org.capstone.job_fair.services.interfaces.company.CompanyBoothService;
 import org.capstone.job_fair.services.interfaces.job_fair.JobFairService;
+import org.capstone.job_fair.services.interfaces.job_fair.LayoutService;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,12 +27,22 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class JobFairController {
 
     @Autowired
     private JobFairService jobFairService;
+
+    @Autowired
+    private CompanyBoothService companyBoothService;
+
+    @Autowired
+    private CompanyBoothLayoutService companyBoothLayoutService;
+
+    @Autowired
+    private LayoutService layoutService;
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).STAFF)")
     @PostMapping(ApiEndPoint.JobFair.JOB_FAIR_PLAN)
@@ -153,7 +170,7 @@ public class JobFairController {
     }
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE)")
-    @GetMapping
+    @GetMapping(ApiEndPoint.JobFair.GET_APPROVE_JOB_FAIR_PLAN)
     public ResponseEntity<?> getAllApprovedJobFair() {
         try {
             List<JobFairDTO> jobFairDTOS = jobFairService.getAllJobFairByStatus(JobFairStatus.APPROVE);
@@ -163,4 +180,40 @@ public class JobFairController {
             return GenericResponse.build(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
+
+    @GetMapping(ApiEndPoint.JobFair.FOR_3D_MAP + "/{id}")
+    public ResponseEntity<?> getJobFairById(@PathVariable("id") String jobFairId) {
+        RenderJobFairParkResponse response = new RenderJobFairParkResponse();
+
+        Optional<LayoutDTO> layoutDTOOpt = layoutService.findByJobFairId(jobFairId);
+
+        if (!layoutDTOOpt.isPresent()){
+            return GenericResponse.build(MessageUtil.getMessage(MessageConstant.Layout.NOT_FOUND), HttpStatus.NOT_FOUND);
+        }
+
+        LayoutDTO layoutDTO = layoutDTOOpt.get();
+        response.setJobFairLayoutUrl(layoutDTO.getUrl());
+
+        layoutDTO.getBooths().forEach(boothDTO -> {
+            Optional<CompanyBoothDTO> companyBoothOpt = companyBoothService.getCompanyBoothByJobFairIdAndBoothId(jobFairId, boothDTO.getId());
+            if (companyBoothOpt.isPresent()){
+                CompanyBoothDTO companyBooth = companyBoothOpt.get();
+
+                RenderJobFairParkResponse.BoothData boothData = new RenderJobFairParkResponse.BoothData();
+                boothData.setPosition(boothDTO.getX(), boothDTO.getY(), boothDTO.getZ());
+                boothData.setSlotName(boothDTO.getName());
+                boothData.setCompanyBoothId(companyBooth.getId());
+
+                Optional<CompanyBoothLayoutDTO> layoutDTOOptional = companyBoothLayoutService.getLatestVersionByCompanyBoothId(companyBooth.getId());
+                if (layoutDTOOptional.isPresent()){
+                    boothData.setBoothUrl(layoutDTOOptional.get().getUrl());
+                    response.addBoothDataInformation(boothData);
+                }
+            }
+        });
+
+        return ResponseEntity.ok(response);
+
+    }
+
 }
