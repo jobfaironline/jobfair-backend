@@ -106,15 +106,13 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public Page<ApplicationDTO> getAllApplicationsOfCompanyByCriteria(String companyId, Application status, long fromTime, long toTime, int offset, int pageSize, String field) {
+    public Page<ApplicationDTO> getAllApplicationsOfAttendantByCriteria(String attendantId, Application status, long fromTime, long toTime, int offset, int pageSize, String field) {
 
         if (fromTime > toTime)
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.INALID_TIME));
         if (offset < DataConstraint.Application.OFFSET_MIN || pageSize < DataConstraint.Application.PAGE_SIZE_MIN)
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.INVALID_PAGE_NUMBER));
-
-
-        return applicationRepository.findAllByCreateDateBetweenAndStatus(fromTime, toTime, status, PageRequest.of(offset, pageSize).withSort(Sort.by(field))).map(entity -> applicationMapper.toDTO(entity));
+        return applicationRepository.findAllByCreateDateBetweenAndStatusAndAttendantAccountId(fromTime, toTime, status, attendantId, PageRequest.of(offset, pageSize).withSort(Sort.by(field))).map(entity -> applicationMapper.toDTO(entity));
 
     }
 }
