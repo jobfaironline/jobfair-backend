@@ -215,5 +215,4 @@ public class JobFairServiceImpl implements JobFairService {
         List<JobFairEntity> jobFairEntities = jobFairRepository.findAllByStatus(jobFairStatus);
         return jobFairEntities.stream().map(jobFairMapper::toJobFairDTO).collect(Collectors.toList());
     }
-
 }
