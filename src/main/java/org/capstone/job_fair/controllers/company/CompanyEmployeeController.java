@@ -12,6 +12,7 @@ import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
 import org.capstone.job_fair.models.dtos.company.CompanyDTO;
 import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
+import org.capstone.job_fair.models.enums.Role;
 import org.capstone.job_fair.services.interfaces.account.AccountService;
 import org.capstone.job_fair.services.interfaces.company.CompanyEmployeeService;
 import org.capstone.job_fair.services.interfaces.company.CompanyService;
@@ -206,6 +207,25 @@ public class CompanyEmployeeController {
         } catch (IllegalArgumentException ex) {
             return GenericResponse.build(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
+    @GetMapping(ApiEndPoint.CompanyEmployee.COMPANY_EMPLOYEE_ENDPOINT)
+    public ResponseEntity<?> getEmployeeById(@RequestParam(value = "employeeID", required = true) String employeeID) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String companyID = null;
+        //Get role from secutiry context
+        String role = userDetails.getAuthorities().iterator().next().getAuthority();
+        //If company manager then set company id
+        if (role.equals(Role.COMPANY_MANAGER.getAuthority())) {
+            companyID = userDetails.getCompanyId();
+        }
+        //If role is admin => company id will be null
+        //Role is comany manager then company id will be their companyid
+        CompanyEmployeeDTO employeeDTO = companyEmployeeService.getCompanyEmployeeByAccountId(employeeID, companyID);
+        if (employeeDTO == null)
+            return GenericResponse.build(MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMPLOYEE_NOT_FOUND), HttpStatus.NOT_FOUND);
+        return ResponseEntity.ok(employeeDTO);
     }
 
 }
