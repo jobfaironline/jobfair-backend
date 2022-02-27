@@ -176,7 +176,7 @@ public class JobFairController {
                 RenderJobFairParkResponse.BoothData boothData = new RenderJobFairParkResponse.BoothData();
                 boothData.setPosition(boothDTO.getX(), boothDTO.getY(), boothDTO.getZ());
                 boothData.setSlotName(boothDTO.getName());
-                boothData.setCompanyBoothId(boothDTO.getId());
+                boothData.setCompanyBoothId(companyBooth.getId());
 
                 Optional<CompanyBoothLayoutDTO> layoutDTOOptional = companyBoothLayoutService.getLatestVersionByCompanyBoothId(companyBooth.getId());
                 if (layoutDTOOptional.isPresent()){

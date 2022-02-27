@@ -65,20 +65,7 @@ public class CompanyBoothLayoutController {
     }
 
     @GetMapping(ApiEndPoint.CompanyBoothLayout.LATEST_VERSION)
-    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE)")
     public ResponseEntity<?> getLatestVersionByCompanyBoothID(@RequestParam("companyBoothId") String companyBoothId) {
-        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String companyId = userDetails.getCompanyId();
-
-        Optional<String> companyIdOpt = companyService.getIdByCompanyBoothID(companyBoothId);
-        if (!companyIdOpt.isPresent()) {
-            return ResponseEntity.notFound().build();
-        } else {
-            if (!companyIdOpt.get().equals(companyId)) {
-                throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Company.COMPANY_MISSMATCH));
-            }
-        }
-
         Optional<CompanyBoothLayoutDTO> result = companyBoothLayoutService.getLatestVersionByCompanyBoothId(companyBoothId);
         return result.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
