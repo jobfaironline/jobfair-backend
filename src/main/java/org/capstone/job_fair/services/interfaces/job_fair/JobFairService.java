@@ -28,4 +28,6 @@ public interface JobFairService {
     List<JobFairDTO> getAllJobFairByStatus(JobFairStatus jobFairStatus);
 
     Optional<JobFairDTO> getJobFairByID(String id);
+
+    List<JobFairDTO> getAllAvalaibleForRegistration(String fromTime, String toTime);
 }

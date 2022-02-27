@@ -15,4 +15,6 @@ public interface JobFairRepository extends JpaRepository<JobFairEntity, String> 
     Optional<JobFairEntity> findById(String id);
 
     List<JobFairEntity> findAllByStatus(JobFairStatus status);
+
+    List<JobFairEntity> findAllByStatusAndCompanyRegisterStartTimeGreaterThanAndCompanyRegisterEndTimeLessThan(JobFairStatus status, Long startTime, Long endTime);
 }

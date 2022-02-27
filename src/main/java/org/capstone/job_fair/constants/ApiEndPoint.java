@@ -34,6 +34,7 @@ public final class ApiEndPoint {
         public static final String EVALUATE_JOB_FAIL_PLAN = JOB_FAIR_PLAN + "/evaluate";
         public static final String GET_APPROVE_JOB_FAIR_PLAN = JOB_FAIR_PLAN + "/approve";
         public static final String FOR_3D_MAP = JOB_FAIR_PLAN + "/for-3d-map";
+        public static final String AVALAIBLE_JOB_FAIR_FOR_REGISTRATION = JOB_FAIR_PLAN + "/available-register";
     }
 
     public static final class CompanyRegistration {
@@ -127,7 +128,9 @@ public final class ApiEndPoint {
     }
 
     public static final class AgoraToken {
-        private AgoraToken(){}
+        private AgoraToken() {
+        }
+
         public static final String AGORA_RTM_TOKEN = ROOT_ENDPOINT + VERSION + "/agora-rtm-token";
         public static final String AGORA_RTC_TOKEN = ROOT_ENDPOINT + VERSION + "/agora-rtc-token";
     }
