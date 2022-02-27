@@ -219,6 +219,7 @@ public class JobFairServiceImpl implements JobFairService {
     @Override
     public Optional<JobFairDTO> getJobFairByID(String id) {
         return jobFairRepository.findById(id).map(jobFairMapper::toJobFairDTO);
+    }
 
     @Transactional
     public void updateJobFairDraft(JobFairDTO dto) {
