@@ -110,4 +110,10 @@ public class LayoutController {
             return GenericResponse.build(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
+
+    @GetMapping(ApiEndPoint.Layout.GET_BY_JOBFAIR + "/{id}")
+    public ResponseEntity<?> getByJobFairId(@PathVariable("id") String id){
+        Optional<LayoutDTO> layoutDTOOpt = layoutService.findByJobFairId(id);
+        return layoutDTOOpt.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    }
 }
