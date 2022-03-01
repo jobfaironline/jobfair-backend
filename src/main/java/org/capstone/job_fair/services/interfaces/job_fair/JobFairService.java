@@ -2,6 +2,8 @@ package org.capstone.job_fair.services.interfaces.job_fair;
 
 import org.capstone.job_fair.models.dtos.job_fair.JobFairDTO;
 import org.capstone.job_fair.models.statuses.JobFairStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,7 +25,7 @@ public interface JobFairService {
 
     void adminEvaluateJobFair(String jobFairId, JobFairStatus status, String message);
 
-    List<JobFairDTO> getAll();
+    Page<JobFairDTO> getAll(int offset, int pageSize, String sortBy, Sort.Direction direction);
 
     List<JobFairDTO> getAllJobFairByStatus(JobFairStatus jobFairStatus);
 

@@ -41,6 +41,7 @@ public final class MessageConstant {
         public static final String INVALID_COMPANY_REGISTER_START_TIME = "job-fair-plan.error.invalid-company-register-start-time";
         public static final String INVALID_JOB_FAIR = "job-fair-plan.error.invalid-job-fair";
         public static final String INVALID_SEARCH_TIME_RANGE = "job-fair-plan.error.invalid-search-time-range";
+        public static final String INVALID_PAGE_NUMBER = "job-fair-plan.error.invalid-page-number";
 
     }
 

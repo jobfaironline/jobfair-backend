@@ -13,6 +13,9 @@ import org.capstone.job_fair.services.interfaces.job_fair.JobFairService;
 import org.capstone.job_fair.services.mappers.job_fair.JobFairMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -207,8 +210,10 @@ public class JobFairServiceImpl implements JobFairService {
     }
 
     @Override
-    public List<JobFairDTO> getAll() {
-        return jobFairRepository.findAll().stream().map(jobFairMapper::toJobFairDTO).collect(Collectors.toList());
+    public Page<JobFairDTO> getAll(int offset, int pageSize, String sortBy, Sort.Direction direction) {
+        if (offset < DataConstraint.CompanyRegistration.OFFSET_MIN || pageSize < DataConstraint.CompanyRegistration.PAGE_SIZE_MIN)
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.INVALID_PAGE_NUMBER));
+        return jobFairRepository.findAll(PageRequest.of(offset, pageSize).withSort(Sort.by(direction, sortBy))).map(entity -> jobFairMapper.toJobFairDTO(entity));
     }
 
     @Override

@@ -1,6 +1,7 @@
 package org.capstone.job_fair.controllers.job_fair;
 
 import org.capstone.job_fair.constants.ApiEndPoint;
+import org.capstone.job_fair.constants.JobFairConstant;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.controllers.payload.requests.job_fair.AdminEvaluateJobFairRequest;
 import org.capstone.job_fair.controllers.payload.requests.job_fair.CancelJobFairRequest;
@@ -19,6 +20,8 @@ import org.capstone.job_fair.services.interfaces.job_fair.JobFairService;
 import org.capstone.job_fair.services.interfaces.job_fair.LayoutService;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -150,8 +153,8 @@ public class JobFairController {
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
     @GetMapping(ApiEndPoint.JobFair.JOB_FAIR_PLAN)
-    public ResponseEntity<?> getAll() {
-        List<JobFairDTO> result = jobFairService.getAll();
+    public ResponseEntity<?> getAll(@RequestParam(value = "offset", defaultValue = JobFairConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset, @RequestParam(value = "pageSize", defaultValue = JobFairConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize, @RequestParam(value = "sortBy", required = false, defaultValue = JobFairConstant.DEFAULT_SEARCH_SORT_BY_VALUE) String sortBy, @RequestParam(value = "direction", required = false, defaultValue = JobFairConstant.DEFAULT_SEARCH_SORT_DIRECTION) Sort.Direction direction) {
+        Page<JobFairDTO> result = jobFairService.getAll(offset, pageSize, sortBy, direction);
         if (result.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
