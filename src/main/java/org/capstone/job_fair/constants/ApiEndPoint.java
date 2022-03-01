@@ -161,5 +161,8 @@ public final class ApiEndPoint {
         public static final String COUNTRY_ENPOINT = ROOT_ENDPOINT + VERSION + "/country";
     }
 
-
+    public static final class BoothPurchase {
+        private BoothPurchase(){}
+        public static final String BOOTH_PURCHASE = ROOT_ENDPOINT + VERSION + "/purchase-booth";
+    }
 }

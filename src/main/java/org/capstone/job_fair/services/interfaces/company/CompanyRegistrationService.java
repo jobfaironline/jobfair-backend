@@ -24,4 +24,5 @@ public interface CompanyRegistrationService {
 
     Optional<CompanyRegistrationDTO> getCompanyLatestApproveRegistrationByJobFairIdAndCompanyId(String jobFairId, String companyId);
 
+    Optional<CompanyRegistrationDTO> getById(String registrationId);
 }

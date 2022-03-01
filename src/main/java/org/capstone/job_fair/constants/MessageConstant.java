@@ -317,8 +317,16 @@ public final class MessageConstant {
         public static final String NOT_FOUND_REGISTRATION_JOB_POSITION = "application.error.not-found-registration-job-position";
         public static final String INALID_TIME = "application.error.invalid-time";
         public static final String INVALID_PAGE_NUMBER = "application.error.invalid-page-number";
+    }
 
+    public static final class Order {
+        private Order() {}
+        public static final String NOT_FOUND = "order.error.not-found";
+    }
 
+    public static final class Booth {
+        private Booth() {}
+        public static final String NOT_FOUND = "booth.error.not-found";
     }
 
 }

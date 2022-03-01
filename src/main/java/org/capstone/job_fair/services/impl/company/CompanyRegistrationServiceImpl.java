@@ -305,4 +305,9 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
         if (companyRegistrationEntities.isEmpty()) return Optional.empty();
         return Optional.of(companyRegistrationMapper.toDTO(companyRegistrationEntities.get(0)));
     }
+
+    @Override
+    public Optional<CompanyRegistrationDTO> getById(String registrationId) {
+        return companyRegistrationRepository.findById(registrationId).map(companyRegistrationMapper::toDTO);
+    }
 }
