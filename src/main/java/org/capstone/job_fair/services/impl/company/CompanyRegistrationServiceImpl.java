@@ -1,6 +1,7 @@
 package org.capstone.job_fair.services.impl.company;
 
 import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
+import org.capstone.job_fair.constants.DataConstraint;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.models.dtos.company.CompanyRegistrationDTO;
 import org.capstone.job_fair.models.dtos.company.job.RegistrationJobPositionDTO;
@@ -21,6 +22,9 @@ import org.capstone.job_fair.services.mappers.company.CompanyRegistrationMapper;
 import org.capstone.job_fair.services.mappers.company.RegistrationJobPositionMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -293,8 +297,10 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
     }
 
     @Override
-    public List<CompanyRegistrationDTO> getCompanyRegistrationOfAJobFair(String jobFairId) {
-        List<CompanyRegistrationEntity> companyRegistrationEntities = companyRegistrationRepository.findAllByJobFairId(jobFairId);
-        return companyRegistrationEntities.stream().map(companyRegistrationMapper::toDTO).collect(Collectors.toList());
+    public Page<CompanyRegistrationDTO> getCompanyRegistrationOfAJobFair(String jobFairId, int offset, int pageSize, String sortBy, Sort.Direction direction) {
+        if (offset < DataConstraint.CompanyRegistration.OFFSET_MIN || pageSize < DataConstraint.CompanyRegistration.PAGE_SIZE_MIN)
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyRegistration.INVALID_PAGE_NUMBER));
+        Page<CompanyRegistrationEntity> companyRegistrationEntityPage = companyRegistrationRepository.findAllByJobFairId(jobFairId, PageRequest.of(offset, pageSize).withSort(Sort.by(direction, sortBy)));
+        return companyRegistrationEntityPage.map(entity -> companyRegistrationMapper.toDTO(entity));
     }
 }
