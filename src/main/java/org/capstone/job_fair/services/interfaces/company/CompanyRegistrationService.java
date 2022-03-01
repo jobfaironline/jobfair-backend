@@ -7,7 +7,7 @@ import org.capstone.job_fair.models.statuses.CompanyRegistrationStatus;
 import java.util.List;
 
 public interface CompanyRegistrationService {
-    void createDraftCompanyRegistration(CompanyRegistrationDTO companyRegistrationDTO, List<RegistrationJobPositionDTO> jobPositions);
+    CompanyRegistrationDTO createDraftCompanyRegistration(CompanyRegistrationDTO companyRegistrationDTO, List<RegistrationJobPositionDTO> jobPositions);
 
     void updateDraftCompanyRegistration(CompanyRegistrationDTO companyRegistrationDTO, List<RegistrationJobPositionDTO> jobPositions);
 

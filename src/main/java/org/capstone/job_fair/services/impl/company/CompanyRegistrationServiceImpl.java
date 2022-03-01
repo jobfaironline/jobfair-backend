@@ -78,18 +78,19 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
 
     @Override
     @Transactional
-    public void createDraftCompanyRegistration(CompanyRegistrationDTO companyRegistrationDTO, List<RegistrationJobPositionDTO> jobPositions) {
+    public CompanyRegistrationDTO createDraftCompanyRegistration(CompanyRegistrationDTO companyRegistrationDTO, List<RegistrationJobPositionDTO> jobPositions) {
+        CompanyRegistrationDTO companyRegistrationDTOReturn = null;
 
         //Create registration job position entity
 
         //Check job fair existence
         Optional<JobFairEntity> jobFairOpt = jobFairRepository.findById(companyRegistrationDTO.getJobFairId());
-        if (!jobFairOpt.isPresent()) throw new IllegalArgumentException(
-                MessageUtil.getMessage(MessageConstant.JobFair.JOB_FAIR_NOT_FOUND));
+        if (!jobFairOpt.isPresent())
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.JOB_FAIR_NOT_FOUND));
         JobFairEntity jobFairEntity = jobFairOpt.get();
         //Check if job fair has been approved
-        if (jobFairEntity.getStatus() != JobFairStatus.APPROVE) throw new
-                IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.JOB_FAIR_IS_NOT_APPROVED));
+        if (jobFairEntity.getStatus() != JobFairStatus.APPROVE)
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.JOB_FAIR_IS_NOT_APPROVED));
         //Validate job fair registration time of company
         long currentTime = new Date().getTime();
         validateJobFair(jobFairEntity, currentTime);
@@ -98,8 +99,7 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
 
 
         //Get company from user information in security context
-        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext()
-                .getAuthentication().getPrincipal();
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         CompanyEmployeeEntity companyEmployee = companyEmployeeRepository.findById(userDetails.getId()).get();
 
         //Set company id to company registration dto
@@ -108,15 +108,14 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
         //Create company registration entity
         CompanyRegistrationEntity companyRegistrationEntity = companyRegistrationMapper.toEntity(companyRegistrationDTO);
         companyRegistrationEntity.setCreateDate(currentTime);
-        companyRegistrationRepository.save(companyRegistrationEntity);
+        companyRegistrationDTOReturn = companyRegistrationMapper.toDTO(companyRegistrationRepository.save(companyRegistrationEntity));
 
         for (RegistrationJobPositionDTO registrationJobPositionDTO : jobPositions) {
             //Get job position entity by job position id in request
-            Optional<JobPositionEntity> jobPositionOpt =
-                    jobPositionRepository.findById(registrationJobPositionDTO.getId());
+            Optional<JobPositionEntity> jobPositionOpt = jobPositionRepository.findById(registrationJobPositionDTO.getId());
             //Check job position existence
-            if (!jobPositionOpt.isPresent()) throw new IllegalArgumentException(
-                    MessageUtil.getMessage(MessageConstant.Job.JOB_POSITION_NOT_FOUND));
+            if (!jobPositionOpt.isPresent())
+                throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Job.JOB_POSITION_NOT_FOUND));
             JobPositionEntity jobPositionEntity = jobPositionOpt.get();
             //Check if job position entity is belonged to company
             if (!jobPositionEntity.getCompany().getId().equals(companyRegistrationDTO.getCompanyId()))
@@ -143,6 +142,8 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
             registrationJobPositionRepository.save(entity);
 
         }
+
+        return companyRegistrationDTOReturn;
     }
 
     @Override
@@ -153,8 +154,8 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
 
         //Check job fair registration existence
         Optional<CompanyRegistrationEntity> companyRegistrationEntityOpt = companyRegistrationRepository.findById(companyRegistrationDTO.getId());
-        if (!companyRegistrationEntityOpt.isPresent()) throw new IllegalArgumentException(
-                MessageUtil.getMessage(MessageConstant.CompanyRegistration.NOT_FOUND));
+        if (!companyRegistrationEntityOpt.isPresent())
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyRegistration.NOT_FOUND));
         CompanyRegistrationEntity companyRegistrationEntity = companyRegistrationEntityOpt.get();
         if (!companyRegistrationEntity.getStatus().equals(CompanyRegistrationStatus.DRAFT))
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyRegistration.INVALID_STATUS_WHEN_UPDATE));
@@ -167,11 +168,10 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
 
         for (RegistrationJobPositionDTO registrationJobPositionDTO : jobPositions) {
             //Get job position entity by job position id in request
-            Optional<JobPositionEntity> jobPositionOpt =
-                    jobPositionRepository.findById(registrationJobPositionDTO.getId());
+            Optional<JobPositionEntity> jobPositionOpt = jobPositionRepository.findById(registrationJobPositionDTO.getId());
             //Check job position existence
-            if (!jobPositionOpt.isPresent()) throw new IllegalArgumentException(
-                    MessageUtil.getMessage(MessageConstant.Job.JOB_POSITION_NOT_FOUND));
+            if (!jobPositionOpt.isPresent())
+                throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Job.JOB_POSITION_NOT_FOUND));
             JobPositionEntity jobPositionEntity = jobPositionOpt.get();
             //Check if job position entity is belonged to company
             if (!jobPositionEntity.getCompany().getId().equals(companyRegistrationDTO.getCompanyId()))
@@ -208,8 +208,7 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
         }
         CompanyRegistrationEntity registrationEntity = registrationEntityOpt.get();
         //Get company from user information in security context
-        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext()
-                .getAuthentication().getPrincipal();
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         CompanyEmployeeEntity companyEmployee = companyEmployeeRepository.findById(userDetails.getId()).get();
         String companyId = companyEmployee.getCompany().getId();
         //check if registration belong to company
@@ -217,10 +216,9 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyRegistration.COMPANY_MISMATCH));
         }
         //check for pending registration
-        companyRegistrationRepository.findByCompanyIdAndStatus(companyId, CompanyRegistrationStatus.PENDING)
-                .ifPresent((entity) -> {
-                    throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyRegistration.EXISTED_PENDING_REGISTRATION));
-                });
+        companyRegistrationRepository.findByCompanyIdAndStatus(companyId, CompanyRegistrationStatus.PENDING).ifPresent((entity) -> {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyRegistration.EXISTED_PENDING_REGISTRATION));
+        });
 
         //validate entity
         try {
@@ -247,8 +245,7 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
         }
         CompanyRegistrationEntity registrationEntity = registrationEntityOpt.get();
         //Get company from user information in security context
-        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext()
-                .getAuthentication().getPrincipal();
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         CompanyEmployeeEntity companyEmployee = companyEmployeeRepository.findById(userDetails.getId()).get();
         String companyId = companyEmployee.getCompany().getId();
         //check if registration belong to company
@@ -277,8 +274,7 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
         if (status == CompanyRegistrationStatus.REJECT && message == null) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyRegistration.REJECT_MISSING_REASON));
         }
-        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext()
-                .getAuthentication().getPrincipal();
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         CompanyRegistrationEntity entity = companyRegistrationOpt.get();
         if (entity.getStatus() != CompanyRegistrationStatus.PENDING) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyRegistration.INVALID_COMPANY_REGISTRATION_STATUS_WHEN_EVALUATE));

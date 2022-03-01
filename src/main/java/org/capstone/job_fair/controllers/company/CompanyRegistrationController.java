@@ -22,9 +22,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 public class CompanyRegistrationController {
@@ -57,8 +55,11 @@ public class CompanyRegistrationController {
 
                 jobPositionDTOS.add(registrationJobPositionDTO);
             }
-            companyRegistrationService.createDraftCompanyRegistration(companyRegistrationDTO, jobPositionDTOS);
-            return GenericResponse.build(MessageUtil.getMessage(MessageConstant.CompanyRegistration.COMPANY_REGISTER_SUCCESSFULLY), HttpStatus.OK);
+            String companyRegistrationId = companyRegistrationService.createDraftCompanyRegistration(companyRegistrationDTO, jobPositionDTOS).getId();
+            Map<String, String> response = new HashMap<>();
+            response.put("companyRegistrationId", companyRegistrationId);
+
+            return ResponseEntity.ok(response);
         } catch (IllegalArgumentException ex) {
             return GenericResponse.build(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }
@@ -95,7 +96,7 @@ public class CompanyRegistrationController {
         return GenericResponse.build(MessageUtil.getMessage(MessageConstant.CompanyRegistration.UPDATE_COMPANY_REGISTRATION_DRAF_SUCCESSFULLY), HttpStatus.OK);
     }
 
-    @GetMapping(ApiEndPoint.CompanyRegistration.SUBMIT + "/{id}")
+    @PostMapping(ApiEndPoint.CompanyRegistration.SUBMIT + "/{id}")
     public ResponseEntity<?> submitJobFairRegistration(@PathVariable("id") String registrationId) {
         try {
             companyRegistrationService.submitCompanyRegistration(registrationId);
