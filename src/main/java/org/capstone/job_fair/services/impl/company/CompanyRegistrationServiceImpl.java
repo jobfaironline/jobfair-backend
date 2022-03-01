@@ -303,4 +303,17 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
         Page<CompanyRegistrationEntity> companyRegistrationEntityPage = companyRegistrationRepository.findAllByJobFairId(jobFairId, PageRequest.of(offset, pageSize).withSort(Sort.by(direction, sortBy)));
         return companyRegistrationEntityPage.map(entity -> companyRegistrationMapper.toDTO(entity));
     }
+
+    @Override
+    public Optional<CompanyRegistrationDTO> getCompanyLatestApproveRegistrationByJobFairIdAndCompanyId(String jobFairId, String companyId) {
+        List<CompanyRegistrationEntity> companyRegistrationEntities = companyRegistrationRepository.findAllByJobFairIdAndCompanyIdAndStatus(jobFairId, companyId, CompanyRegistrationStatus.APPROVE);
+        companyRegistrationEntities.sort(Comparator.comparing(CompanyRegistrationEntity::getCreateDate));
+        if (companyRegistrationEntities.isEmpty()) return Optional.empty();
+        return Optional.of(companyRegistrationMapper.toDTO(companyRegistrationEntities.get(0)));
+    }
+
+    @Override
+    public Optional<CompanyRegistrationDTO> getById(String registrationId) {
+        return companyRegistrationRepository.findById(registrationId).map(companyRegistrationMapper::toDTO);
+    }
 }

@@ -48,7 +48,7 @@ public final class ApiEndPoint {
         public static final String EVALUATE = COMPANY_REGISTRATION_ENDPOINT + "/evaluate";
         public static final String GET_ALL_OWN_COMPANY_REGISTRATION = COMPANY_REGISTRATION_ENDPOINT + "/getAllRegistrations";
         public static final String GET_ALL_COMPANY_REGISTRATION_OF_JOB_FAIR = COMPANY_REGISTRATION_ENDPOINT + "/getAllRegistrationsOfJobFair";
-
+        public static final String GET_LATEST_APPROVE = COMPANY_REGISTRATION_ENDPOINT + "/latest-approve";
 
     }
 
@@ -125,6 +125,7 @@ public final class ApiEndPoint {
         }
 
         public static final String LAYOUT_ENDPOINT = ROOT_ENDPOINT + VERSION + "/layouts";
+        public static final String GET_BY_JOB_FAIR_AND_AVAILABLE_BOOTH_SLOT = LAYOUT_ENDPOINT + "/job-fair/available-slot";
     }
 
     public static final class AgoraToken {
@@ -160,5 +161,8 @@ public final class ApiEndPoint {
         public static final String COUNTRY_ENPOINT = ROOT_ENDPOINT + VERSION + "/country";
     }
 
-
+    public static final class BoothPurchase {
+        private BoothPurchase(){}
+        public static final String BOOTH_PURCHASE = ROOT_ENDPOINT + VERSION + "/purchase-booth";
+    }
 }

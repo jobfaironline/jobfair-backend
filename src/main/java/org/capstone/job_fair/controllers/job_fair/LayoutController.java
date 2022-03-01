@@ -110,4 +110,10 @@ public class LayoutController {
             return GenericResponse.build(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
+
+    @GetMapping(ApiEndPoint.Layout.GET_BY_JOB_FAIR_AND_AVAILABLE_BOOTH_SLOT + "/{id}")
+    public ResponseEntity<?> getLayoutAndAvailableBoothSlotByJobFairId(@PathVariable("id") String id){
+        Optional<LayoutDTO> layoutDTOOpt = layoutService.getByJobFairIdWithAvailableBoothSlot(id);
+        return layoutDTOOpt.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    }
 }

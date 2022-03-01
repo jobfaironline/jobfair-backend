@@ -166,4 +166,12 @@ public class CompanyRegistrationController {
         }
     }
 
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
+    @GetMapping(ApiEndPoint.CompanyRegistration.GET_LATEST_APPROVE + "/{jobFairId}")
+    public ResponseEntity<?> getLatestApproveCompanyRegistration(@PathVariable String jobFairId) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Optional<CompanyRegistrationDTO> optional = companyRegistrationService.getCompanyLatestApproveRegistrationByJobFairIdAndCompanyId(jobFairId, userDetails.getCompanyId());
+        return optional.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    }
+
 }
