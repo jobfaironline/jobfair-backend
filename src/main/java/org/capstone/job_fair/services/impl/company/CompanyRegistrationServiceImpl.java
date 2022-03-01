@@ -297,4 +297,12 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
         List<CompanyRegistrationEntity> companyRegistrationEntities = companyRegistrationRepository.findAllByJobFairId(jobFairId);
         return companyRegistrationEntities.stream().map(companyRegistrationMapper::toDTO).collect(Collectors.toList());
     }
+
+    @Override
+    public Optional<CompanyRegistrationDTO> getCompanyLatestApproveRegistrationByJobFairIdAndCompanyId(String jobFairId, String companyId) {
+        List<CompanyRegistrationEntity> companyRegistrationEntities = companyRegistrationRepository.findAllByJobFairIdAndCompanyIdAndStatus(jobFairId, companyId, CompanyRegistrationStatus.APPROVE);
+        companyRegistrationEntities.sort(Comparator.comparing(CompanyRegistrationEntity::getCreateDate));
+        if (companyRegistrationEntities.isEmpty()) return Optional.empty();
+        return Optional.of(companyRegistrationMapper.toDTO(companyRegistrationEntities.get(0)));
+    }
 }

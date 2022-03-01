@@ -5,6 +5,7 @@ import org.capstone.job_fair.models.dtos.company.job.RegistrationJobPositionDTO;
 import org.capstone.job_fair.models.statuses.CompanyRegistrationStatus;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface CompanyRegistrationService {
     CompanyRegistrationDTO createDraftCompanyRegistration(CompanyRegistrationDTO companyRegistrationDTO, List<RegistrationJobPositionDTO> jobPositions);
@@ -20,5 +21,7 @@ public interface CompanyRegistrationService {
     List<CompanyRegistrationDTO> getCompanyRegistrationByJobFairIDAndCompanyID(String jobFairId, String companyId);
 
     List<CompanyRegistrationDTO> getCompanyRegistrationOfAJobFair(String jobFairId);
+
+    Optional<CompanyRegistrationDTO> getCompanyLatestApproveRegistrationByJobFairIdAndCompanyId(String jobFairId, String companyId);
 
 }
