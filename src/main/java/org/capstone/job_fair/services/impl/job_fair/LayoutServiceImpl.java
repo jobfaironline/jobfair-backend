@@ -1,16 +1,17 @@
 package org.capstone.job_fair.services.impl.job_fair;
 
 import de.javagl.jgltf.model.GltfModel;
-import de.javagl.jgltf.model.NamedModelElement;
 import lombok.SneakyThrows;
 import org.capstone.job_fair.constants.AWSConstant;
 import org.capstone.job_fair.constants.GLBConstant;
 import org.capstone.job_fair.constants.MessageConstant;
+import org.capstone.job_fair.models.dtos.job_fair.BoothDTO;
 import org.capstone.job_fair.models.dtos.job_fair.LayoutDTO;
 import org.capstone.job_fair.models.entities.job_fair.BoothEntity;
 import org.capstone.job_fair.models.entities.job_fair.JobFairEntity;
 import org.capstone.job_fair.models.entities.job_fair.LayoutEntity;
 import org.capstone.job_fair.models.statuses.BoothStatus;
+import org.capstone.job_fair.repositories.company.CompanyBoothRepository;
 import org.capstone.job_fair.repositories.job_fair.JobFairRepository;
 import org.capstone.job_fair.repositories.job_fair.LayoutRepository;
 import org.capstone.job_fair.services.interfaces.job_fair.LayoutService;
@@ -46,6 +47,9 @@ public class LayoutServiceImpl implements LayoutService {
 
     @Autowired
     private AwsUtil awsUtil;
+
+    @Autowired
+    private CompanyBoothRepository companyBoothRepository;
 
 
     @Override
@@ -130,14 +134,31 @@ public class LayoutServiceImpl implements LayoutService {
     }
 
     @Override
-    public Optional<LayoutDTO> findByJobFairId(String jobFairId) {
-        System.out.println(jobFairId);
+    public Optional<LayoutDTO> getByJobFairId(String jobFairId) {
         Optional<JobFairEntity> jobFairEntityOpt = jobFairRepository.findById(jobFairId);
         if (!jobFairEntityOpt.isPresent()) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.JOB_FAIR_NOT_FOUND));
         }
         JobFairEntity jobFairEntity = jobFairEntityOpt.get();
-        System.out.println(jobFairEntity);
         return layoutRepository.findById(jobFairEntity.getLayoutId()).map(layoutMapper::toDTO);
+    }
+
+    @Override
+    public Optional<LayoutDTO> getByJobFairIdWithAvailableBoothSlot(String jobFairId) {
+        Optional<JobFairEntity> jobFairEntityOpt = jobFairRepository.findById(jobFairId);
+        if (!jobFairEntityOpt.isPresent()) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.JOB_FAIR_NOT_FOUND));
+        }
+        JobFairEntity jobFairEntity = jobFairEntityOpt.get();
+        Optional<LayoutEntity> layoutOpt = layoutRepository.findById(jobFairEntity.getLayoutId());
+        if (!layoutOpt.isPresent()) return Optional.empty();
+        //check for which booth is available
+        LayoutDTO layoutDTO = layoutMapper.toDTO(layoutOpt.get());
+        Set<BoothDTO> newBooths = layoutDTO.getBooths()
+                .stream()
+                .filter(boothDTO -> !companyBoothRepository.getCompanyBoothByJobFairIdAndBoothId(jobFairId, boothDTO.getId()).isPresent())
+                .collect(Collectors.toSet());
+        layoutDTO.setBooths(newBooths);
+        return Optional.of(layoutDTO);
     }
 }

@@ -185,7 +185,7 @@ public class JobFairController {
     public ResponseEntity<?> getJobFairById(@PathVariable("id") String jobFairId) {
         RenderJobFairParkResponse response = new RenderJobFairParkResponse();
 
-        Optional<LayoutDTO> layoutDTOOpt = layoutService.findByJobFairId(jobFairId);
+        Optional<LayoutDTO> layoutDTOOpt = layoutService.getByJobFairId(jobFairId);
 
         if (!layoutDTOOpt.isPresent()) {
             return GenericResponse.build(MessageUtil.getMessage(MessageConstant.Layout.NOT_FOUND), HttpStatus.NOT_FOUND);

@@ -15,4 +15,5 @@ public interface CompanyBoothRepository extends JpaRepository<CompanyBoothEntity
             nativeQuery = true
     )
     Optional<CompanyBoothEntity> getCompanyBoothByJobFairIdAndBoothId(@Param("jobFairId") String jobFairId, @Param("boothId") String boothId);
+
 }
