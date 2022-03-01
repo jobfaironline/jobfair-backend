@@ -41,6 +41,7 @@ public final class MessageConstant {
         public static final String INVALID_COMPANY_REGISTER_START_TIME = "job-fair-plan.error.invalid-company-register-start-time";
         public static final String INVALID_JOB_FAIR = "job-fair-plan.error.invalid-job-fair";
         public static final String INVALID_SEARCH_TIME_RANGE = "job-fair-plan.error.invalid-search-time-range";
+        public static final String INVALID_PAGE_NUMBER = "job-fair-plan.error.invalid-page-number";
 
     }
 
@@ -271,6 +272,7 @@ public final class MessageConstant {
         public static final String COMPANY_REGISTER_SUCCESSFULLY = "company-registration.success.register";
         public static final String INVALID_STATUS_WHEN_UPDATE = "company-registration.error.invalid-status-when-update";
         public static final String UPDATE_COMPANY_REGISTRATION_DRAF_SUCCESSFULLY = "company-registration.success.update-company-registration-draft";
+        public static final String INVALID_PAGE_NUMBER = "company-registration.error.invalid-page-number";
 
 
     }
