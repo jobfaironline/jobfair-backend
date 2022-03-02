@@ -11,6 +11,7 @@ import org.capstone.job_fair.services.interfaces.company.CompanyRegistrationServ
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,7 +29,7 @@ public class CompanyBuyBoothController {
     @Autowired
     private CompanyBoothPurchaseService companyBoothPurchaseService;
 
-
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
     @PostMapping(ApiEndPoint.BoothPurchase.BOOTH_PURCHASE)
     public ResponseEntity<?> companyBuyBooth(@Valid @RequestBody CompanyBuyBoothRequest request) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
