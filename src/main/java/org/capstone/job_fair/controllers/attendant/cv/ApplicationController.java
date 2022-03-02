@@ -67,7 +67,13 @@ public class ApplicationController {
 
     @GetMapping(ApiEndPoint.Application.APPLICATION_ENDPOINT)
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ATTENDANT)")
-    public ResponseEntity<?> getAllApplicationsOfCompanyByCriteria(@RequestParam(value = "status", defaultValue = ApplicationConstant.DEFAULT_SEARCH_STATUS_VALUE) Application status, @RequestParam(value = "fromTime", defaultValue = ApplicationConstant.DEFAULT_SEARCH_FROM_TIME_VALUE) long fromTime, @RequestParam(value = "toTime", defaultValue = ApplicationConstant.DEFAULT_SEARCH_TO_TIME_VALUE) long toTime, @RequestParam(value = "offset", defaultValue = ApplicationConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset, @RequestParam(value = "pageSize", defaultValue = ApplicationConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize, @RequestParam(value = "sortBy", defaultValue = ApplicationConstant.DEFAULT_SEARCH_SORT_BY_VALUE) String sortBy) {
+    public ResponseEntity<?> getAllApplicationsOfCompanyByCriteria(
+            @RequestParam(value = "status", defaultValue = ApplicationConstant.DEFAULT_SEARCH_STATUS_VALUE) Application status,
+            @RequestParam(value = "fromTime", defaultValue = ApplicationConstant.DEFAULT_SEARCH_FROM_TIME_VALUE) long fromTime,
+            @RequestParam(value = "toTime", defaultValue = ApplicationConstant.DEFAULT_SEARCH_TO_TIME_VALUE) long toTime,
+            @RequestParam(value = "offset", defaultValue = ApplicationConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset,
+            @RequestParam(value = "pageSize", defaultValue = ApplicationConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize,
+            @RequestParam(value = "sortBy", defaultValue = ApplicationConstant.DEFAULT_SEARCH_SORT_BY_VALUE) String sortBy) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Page<ApplicationDTO> applicationDTOList = applicationService.getAllApplicationsOfAttendantByCriteria(userDetails.getId(), status, fromTime, toTime, offset, pageSize, sortBy);
         return ResponseEntity.ok(applicationDTOList);

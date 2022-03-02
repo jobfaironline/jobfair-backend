@@ -1,6 +1,8 @@
 package org.capstone.job_fair.controllers.job_fair;
 
+import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import org.capstone.job_fair.constants.ApiEndPoint;
+import org.capstone.job_fair.constants.ApplicationConstant;
 import org.capstone.job_fair.constants.JobFairConstant;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.controllers.payload.requests.job_fair.AdminEvaluateJobFairRequest;
@@ -11,9 +13,11 @@ import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.controllers.payload.responses.RenderJobFairParkResponse;
 import org.capstone.job_fair.models.dtos.company.CompanyBoothDTO;
 import org.capstone.job_fair.models.dtos.company.CompanyBoothLayoutDTO;
+import org.capstone.job_fair.models.dtos.job_fair.CompanyJobFairDTO;
 import org.capstone.job_fair.models.dtos.job_fair.JobFairDTO;
 import org.capstone.job_fair.models.dtos.job_fair.LayoutDTO;
-import org.capstone.job_fair.models.statuses.JobFairStatus;
+import org.capstone.job_fair.models.statuses.JobFairCompanyStatus;
+import org.capstone.job_fair.models.statuses.JobFairPlanStatus;
 import org.capstone.job_fair.services.interfaces.company.CompanyBoothLayoutService;
 import org.capstone.job_fair.services.interfaces.company.CompanyBoothService;
 import org.capstone.job_fair.services.interfaces.job_fair.JobFairService;
@@ -25,6 +29,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -176,7 +181,7 @@ public class JobFairController {
     @GetMapping(ApiEndPoint.JobFair.GET_APPROVE_JOB_FAIR_PLAN)
     public ResponseEntity<?> getAllApprovedJobFair() {
         try {
-            List<JobFairDTO> jobFairDTOS = jobFairService.getAllJobFairByStatus(JobFairStatus.APPROVE);
+            List<JobFairDTO> jobFairDTOS = jobFairService.getAllJobFairByStatus(JobFairPlanStatus.APPROVE);
             if (jobFairDTOS.isEmpty()) return ResponseEntity.notFound().build();
             return new ResponseEntity<>(jobFairDTOS, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
@@ -185,7 +190,7 @@ public class JobFairController {
     }
 
     @GetMapping(ApiEndPoint.JobFair.FOR_3D_MAP + "/{id}")
-    public ResponseEntity<?> getJobFairById(@PathVariable("id") String jobFairId) {
+    public ResponseEntity<?> getJobFairInformationFor3DMap(@PathVariable("id") String jobFairId) {
         RenderJobFairParkResponse response = new RenderJobFairParkResponse();
 
         Optional<LayoutDTO> layoutDTOOpt = layoutService.getByJobFairId(jobFairId);
@@ -223,11 +228,22 @@ public class JobFairController {
     @GetMapping(ApiEndPoint.JobFair.AVALAIBLE_JOB_FAIR_FOR_REGISTRATION)
     public ResponseEntity<?> getAllAvalaibleForRegistration(@RequestParam(value = "fromTime", required = false) String fromTime,
                                                             @RequestParam(value = "toTime", required = false) String toTime) {
-        List<JobFairDTO> result = jobFairService.getAllAvalaibleForRegistration(fromTime, toTime);
+        List<JobFairDTO> result = jobFairService.getAllAvailableForRegistration(fromTime, toTime);
         if (result.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok(result);
     }
+
+    @GetMapping(ApiEndPoint.JobFair.COMPANY_END_POINT)
+    public ResponseEntity<?> getJobFairPlanOfCompany(
+            @RequestParam(value = "offset", defaultValue = ApplicationConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset,
+            @RequestParam(value = "pageSize", defaultValue = ApplicationConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize
+            ){
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Page<CompanyJobFairDTO> data = jobFairService.getAllJobFairForCompany(userDetails.getCompanyId(), null, offset, pageSize);
+        return ResponseEntity.ok(data);
+    }
+
 
 }
