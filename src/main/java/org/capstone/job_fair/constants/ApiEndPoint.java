@@ -166,4 +166,9 @@ public final class ApiEndPoint {
         private BoothPurchase(){}
         public static final String BOOTH_PURCHASE = ROOT_ENDPOINT + VERSION + "/purchase-booth";
     }
+
+    public static final class CompanyBooth{
+        private CompanyBooth(){}
+        public static final String COMPANY_BOOTH = ROOT_ENDPOINT + VERSION + "/company-booth";
+    }
 }
