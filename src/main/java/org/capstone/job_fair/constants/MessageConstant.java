@@ -42,6 +42,7 @@ public final class MessageConstant {
         public static final String INVALID_JOB_FAIR = "job-fair-plan.error.invalid-job-fair";
         public static final String INVALID_SEARCH_TIME_RANGE = "job-fair-plan.error.invalid-search-time-range";
         public static final String INVALID_PAGE_NUMBER = "job-fair-plan.error.invalid-page-number";
+        public static final String INVALID_JOB_FAIR_SEARCH_STATUS_OF_ADMIN = "job-fair-plan.error.invalid-job-fair-search-status-of-admin";
 
     }
 
@@ -322,12 +323,16 @@ public final class MessageConstant {
     }
 
     public static final class Order {
-        private Order() {}
+        private Order() {
+        }
+
         public static final String NOT_FOUND = "order.error.not-found";
     }
 
     public static final class Booth {
-        private Booth() {}
+        private Booth() {
+        }
+
         public static final String NOT_FOUND = "booth.error.not-found";
     }
 

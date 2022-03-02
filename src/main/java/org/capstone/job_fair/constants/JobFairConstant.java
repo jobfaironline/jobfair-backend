@@ -10,4 +10,5 @@ public class JobFairConstant {
     public static final String DEFAULT_SEARCH_PAGE_SIZE_VALUE = "10";
     public static final String DEFAULT_SEARCH_SORT_BY_VALUE = "startTime";
     public static final String DEFAULT_SEARCH_SORT_DIRECTION = "ASC";
+    public static final String DEFAULT_SEARCH_STATUS = "APPROVE";
 }
