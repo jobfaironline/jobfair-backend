@@ -4,10 +4,17 @@ import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import org.capstone.job_fair.constants.DataConstraint;
 import org.capstone.job_fair.constants.JobFairConstant;
 import org.capstone.job_fair.constants.MessageConstant;
+import org.capstone.job_fair.models.dtos.job_fair.CompanyJobFairDTO;
 import org.capstone.job_fair.models.dtos.job_fair.JobFairDTO;
+import org.capstone.job_fair.models.entities.company.CompanyBoothEntity;
+import org.capstone.job_fair.models.entities.company.CompanyRegistrationEntity;
 import org.capstone.job_fair.models.entities.job_fair.JobFairEntity;
+import org.capstone.job_fair.models.statuses.CompanyRegistrationStatus;
+import org.capstone.job_fair.models.statuses.JobFairCompanyStatus;
 import org.capstone.job_fair.models.statuses.JobFairPlanStatus;
 import org.capstone.job_fair.repositories.account.AccountRepository;
+import org.capstone.job_fair.repositories.company.CompanyBoothRepository;
+import org.capstone.job_fair.repositories.company.CompanyRegistrationRepository;
 import org.capstone.job_fair.repositories.job_fair.JobFairRepository;
 import org.capstone.job_fair.services.interfaces.job_fair.JobFairService;
 import org.capstone.job_fair.services.mappers.job_fair.JobFairMapper;
@@ -20,10 +27,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,6 +39,10 @@ public class JobFairServiceImpl implements JobFairService {
     AccountRepository accountRepository;
     @Autowired
     private JobFairMapper jobFairMapper;
+    @Autowired
+    private CompanyRegistrationRepository companyRegistrationRepository;
+    @Autowired
+    private CompanyBoothRepository companyBoothRepository;
 
     @Override
     @Transactional
@@ -228,7 +236,7 @@ public class JobFairServiceImpl implements JobFairService {
     }
 
     @Override
-    public List<JobFairDTO> getAllAvalaibleForRegistration(String fromTime, String toTime) {
+    public List<JobFairDTO> getAllAvailableForRegistration(String fromTime, String toTime) {
         long searchFromTime;
         long searchToTime;
         //if fromTime and toTime are null then set time range to be +-1 year from now
@@ -286,6 +294,50 @@ public class JobFairServiceImpl implements JobFairService {
 
         jobFairMapper.updateFromDTO(jobFairEntity, dto);
         jobFairRepository.save(jobFairEntity);
+    }
+
+
+    private JobFairCompanyStatus calculateJobFairCompanyStatus(JobFairEntity entity, String companyId){
+        JobFairCompanyStatus status = JobFairCompanyStatus.UNAVAILABLE;
+        Long currentTime = new Date().getTime();
+        if (entity.getCompanyRegisterStartTime() <= currentTime && entity.getCompanyRegisterEndTime() >= currentTime){
+            status = JobFairCompanyStatus.REGISTRABLE;
+        }
+        List<CompanyRegistrationEntity> companyRegistrations = companyRegistrationRepository.findAllByJobFairIdAndCompanyIdAndStatus(entity.getId(), companyId, CompanyRegistrationStatus.PENDING);
+        if (!companyRegistrations.isEmpty()){
+            status = JobFairCompanyStatus.SUBMITTED;
+        }
+        companyRegistrations = companyRegistrationRepository.findAllByJobFairIdAndCompanyIdAndStatus(entity.getId(), companyId, CompanyRegistrationStatus.APPROVE);
+        if (!companyRegistrations.isEmpty()){
+            status = JobFairCompanyStatus.APPROVE;
+        }
+        if (entity.getCompanyBuyBoothStartTime() <= currentTime && entity.getCompanyBuyBoothEndTime() >= currentTime){
+            status = JobFairCompanyStatus.CHOOSE_BOOTH;
+        }
+        List<CompanyBoothEntity> companyBoothEntities = companyBoothRepository.getCompanyBoothByJobFairIdAndCompanyId(entity.getId(), companyId);
+        if (!companyBoothEntities.isEmpty()){
+            status = JobFairCompanyStatus.DECORATE_BOOTH;
+        }
+        return status;
+
+    }
+
+    @Override
+    public Page<CompanyJobFairDTO> getAllJobFairForCompany(String companyId, JobFairCompanyStatus status, int offset, int pageSize) {
+        if (offset < DataConstraint.Application.OFFSET_MIN || pageSize < DataConstraint.Application.PAGE_SIZE_MIN)
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.INVALID_PAGE_NUMBER));
+        if (status == null){
+            Page<JobFairEntity> jobFairEntities = jobFairRepository.findAll(PageRequest.of(offset, pageSize));
+            return jobFairEntities.map(entity -> {
+                CompanyJobFairDTO dto = CompanyJobFairDTO.builder()
+                        .id(entity.getId())
+                        .description(entity.getDescription())
+                        .status(calculateJobFairCompanyStatus(entity, companyId))
+                        .build();
+                return dto;
+            });
+        }
+        return null;
     }
 
 }
