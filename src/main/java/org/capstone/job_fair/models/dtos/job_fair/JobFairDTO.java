@@ -1,7 +1,7 @@
 package org.capstone.job_fair.models.dtos.job_fair;
 
 import lombok.*;
-import org.capstone.job_fair.models.statuses.JobFairStatus;
+import org.capstone.job_fair.models.statuses.JobFairPlanStatus;
 
 import java.io.Serializable;
 
@@ -32,7 +32,7 @@ public class JobFairDTO implements Serializable {
 
     private String layoutId;
 
-    private JobFairStatus status;
+    private JobFairPlanStatus status;
 
     private String creatorId;
 

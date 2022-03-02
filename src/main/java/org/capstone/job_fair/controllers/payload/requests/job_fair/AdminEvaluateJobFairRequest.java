@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.capstone.job_fair.constants.DataConstraint;
-import org.capstone.job_fair.models.statuses.JobFairStatus;
+import org.capstone.job_fair.models.statuses.JobFairPlanStatus;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -16,7 +16,7 @@ public class AdminEvaluateJobFairRequest {
     @NotNull
     private String jobFairId;
     @NotNull
-    private JobFairStatus status;
+    private JobFairPlanStatus status;
     @Size(min = DataConstraint.JobFair.MESSAGE_MIN_LENGTH, max = DataConstraint.JobFair.MESSAGE_MAX_LENGTH)
     private String message;
 }

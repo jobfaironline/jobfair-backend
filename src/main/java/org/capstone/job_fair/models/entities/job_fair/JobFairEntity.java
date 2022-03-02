@@ -1,7 +1,7 @@
 package org.capstone.job_fair.models.entities.job_fair;
 
 import lombok.*;
-import org.capstone.job_fair.models.statuses.JobFairStatus;
+import org.capstone.job_fair.models.statuses.JobFairPlanStatus;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -41,7 +41,7 @@ public class JobFairEntity {
     @Column(name = "layout_id")
     private String layoutId;
     @Column(name = "status")
-    private JobFairStatus status;
+    private JobFairPlanStatus status;
     @Column(name = "creator_id")
     private String creatorId;
     @Column(name = "authorizer_id")

@@ -11,7 +11,7 @@ import org.capstone.job_fair.models.entities.company.job.JobPositionEntity;
 import org.capstone.job_fair.models.entities.company.job.RegistrationJobPositionEntity;
 import org.capstone.job_fair.models.entities.job_fair.JobFairEntity;
 import org.capstone.job_fair.models.statuses.CompanyRegistrationStatus;
-import org.capstone.job_fair.models.statuses.JobFairStatus;
+import org.capstone.job_fair.models.statuses.JobFairPlanStatus;
 import org.capstone.job_fair.repositories.company.CompanyEmployeeRepository;
 import org.capstone.job_fair.repositories.company.CompanyRegistrationRepository;
 import org.capstone.job_fair.repositories.company.job.JobPositionRepository;
@@ -93,7 +93,7 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.JOB_FAIR_NOT_FOUND));
         JobFairEntity jobFairEntity = jobFairOpt.get();
         //Check if job fair has been approved
-        if (jobFairEntity.getStatus() != JobFairStatus.APPROVE)
+        if (jobFairEntity.getStatus() != JobFairPlanStatus.APPROVE)
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.JOB_FAIR_IS_NOT_APPROVED));
         //Validate job fair registration time of company
         long currentTime = new Date().getTime();

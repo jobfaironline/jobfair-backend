@@ -1,7 +1,7 @@
 package org.capstone.job_fair.repositories.job_fair;
 
 import org.capstone.job_fair.models.entities.job_fair.JobFairEntity;
-import org.capstone.job_fair.models.statuses.JobFairStatus;
+import org.capstone.job_fair.models.statuses.JobFairPlanStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,9 +16,11 @@ public interface JobFairRepository extends JpaRepository<JobFairEntity, String> 
 
     Optional<JobFairEntity> findById(String id);
 
-    List<JobFairEntity> findAllByStatus(JobFairStatus status);
+    List<JobFairEntity> findAllByStatus(JobFairPlanStatus status);
 
-    List<JobFairEntity> findAllByStatusAndCompanyRegisterStartTimeGreaterThanAndCompanyRegisterEndTimeLessThan(JobFairStatus status, Long startTime, Long endTime);
+    List<JobFairEntity> findAllByStatusAndCompanyRegisterStartTimeGreaterThanAndCompanyRegisterEndTimeLessThan(JobFairPlanStatus status, Long startTime, Long endTime);
+
+    Page<JobFairEntity> findAll(Pageable pageable);
 
     Page<JobFairEntity> findByStatus(JobFairStatus status, Pageable pageable);
 
