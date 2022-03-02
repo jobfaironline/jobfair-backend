@@ -25,7 +25,7 @@ public interface JobFairService {
 
     void adminEvaluateJobFair(String jobFairId, JobFairStatus status, String message);
 
-    Page<JobFairDTO> getAll(int offset, int pageSize, String sortBy, Sort.Direction direction);
+    Page<JobFairDTO> getAll(JobFairStatus status, int offset, int pageSize, String sortBy, Sort.Direction direction);
 
     List<JobFairDTO> getAllJobFairByStatus(JobFairStatus jobFairStatus);
 
