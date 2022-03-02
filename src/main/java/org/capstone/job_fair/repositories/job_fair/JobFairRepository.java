@@ -22,7 +22,7 @@ public interface JobFairRepository extends JpaRepository<JobFairEntity, String> 
 
     Page<JobFairEntity> findAll(Pageable pageable);
 
-    Page<JobFairEntity> findByStatus(JobFairStatus status, Pageable pageable);
+    Page<JobFairEntity> findByStatus(JobFairPlanStatus status, Pageable pageable);
 
-    Page<JobFairEntity> findAllByStatusNot(JobFairStatus status, Pageable pageable);
+    Page<JobFairEntity> findAllByStatusNot(JobFairPlanStatus status, Pageable pageable);
 }

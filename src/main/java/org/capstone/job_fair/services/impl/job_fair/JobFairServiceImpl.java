@@ -27,7 +27,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -218,12 +221,12 @@ public class JobFairServiceImpl implements JobFairService {
     }
 
     @Override
-    public Page<JobFairDTO> getAll(JobFairStatus status, int offset, int pageSize, String sortBy, Sort.Direction direction) {
+    public Page<JobFairDTO> getAll(JobFairPlanStatus status, int offset, int pageSize, String sortBy, Sort.Direction direction) {
         if (offset < DataConstraint.CompanyRegistration.OFFSET_MIN || pageSize < DataConstraint.CompanyRegistration.PAGE_SIZE_MIN)
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.INVALID_PAGE_NUMBER));
         System.out.println("status " + status);
         if (status == null) {
-            Page<JobFairDTO> page = jobFairRepository.findAllByStatusNot(JobFairStatus.DRAFT, PageRequest.of(offset, pageSize).withSort(Sort.by(direction, sortBy))).map(entity -> jobFairMapper.toJobFairDTO(entity));
+            Page<JobFairDTO> page = jobFairRepository.findAllByStatusNot(JobFairPlanStatus.DRAFT, PageRequest.of(offset, pageSize).withSort(Sort.by(direction, sortBy))).map(entity -> jobFairMapper.toJobFairDTO(entity));
             return page;
         }
         return jobFairRepository.findByStatus(status, PageRequest.of(offset, pageSize).withSort(Sort.by(direction, sortBy))).map(entity -> jobFairMapper.toJobFairDTO(entity));
@@ -302,25 +305,25 @@ public class JobFairServiceImpl implements JobFairService {
     }
 
 
-    private JobFairCompanyStatus calculateJobFairCompanyStatus(JobFairEntity entity, String companyId){
+    private JobFairCompanyStatus calculateJobFairCompanyStatus(JobFairEntity entity, String companyId) {
         JobFairCompanyStatus status = JobFairCompanyStatus.UNAVAILABLE;
         Long currentTime = new Date().getTime();
-        if (entity.getCompanyRegisterStartTime() <= currentTime && entity.getCompanyRegisterEndTime() >= currentTime){
+        if (entity.getCompanyRegisterStartTime() <= currentTime && entity.getCompanyRegisterEndTime() >= currentTime) {
             status = JobFairCompanyStatus.REGISTRABLE;
         }
         List<CompanyRegistrationEntity> companyRegistrations = companyRegistrationRepository.findAllByJobFairIdAndCompanyIdAndStatus(entity.getId(), companyId, CompanyRegistrationStatus.PENDING);
-        if (!companyRegistrations.isEmpty()){
+        if (!companyRegistrations.isEmpty()) {
             status = JobFairCompanyStatus.SUBMITTED;
         }
         companyRegistrations = companyRegistrationRepository.findAllByJobFairIdAndCompanyIdAndStatus(entity.getId(), companyId, CompanyRegistrationStatus.APPROVE);
-        if (!companyRegistrations.isEmpty()){
+        if (!companyRegistrations.isEmpty()) {
             status = JobFairCompanyStatus.APPROVE;
         }
-        if (entity.getCompanyBuyBoothStartTime() <= currentTime && entity.getCompanyBuyBoothEndTime() >= currentTime){
+        if (entity.getCompanyBuyBoothStartTime() <= currentTime && entity.getCompanyBuyBoothEndTime() >= currentTime) {
             status = JobFairCompanyStatus.CHOOSE_BOOTH;
         }
         List<CompanyBoothEntity> companyBoothEntities = companyBoothRepository.getCompanyBoothByJobFairIdAndCompanyId(entity.getId(), companyId);
-        if (!companyBoothEntities.isEmpty()){
+        if (!companyBoothEntities.isEmpty()) {
             status = JobFairCompanyStatus.DECORATE_BOOTH;
         }
         return status;
@@ -331,7 +334,7 @@ public class JobFairServiceImpl implements JobFairService {
     public Page<CompanyJobFairDTO> getAllJobFairForCompany(String companyId, JobFairCompanyStatus status, int offset, int pageSize) {
         if (offset < DataConstraint.Application.OFFSET_MIN || pageSize < DataConstraint.Application.PAGE_SIZE_MIN)
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.INVALID_PAGE_NUMBER));
-        if (status == null){
+        if (status == null) {
             Page<JobFairEntity> jobFairEntities = jobFairRepository.findAll(PageRequest.of(offset, pageSize));
             return jobFairEntities.map(entity -> {
                 CompanyJobFairDTO dto = CompanyJobFairDTO.builder()
