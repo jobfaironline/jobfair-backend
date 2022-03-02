@@ -336,5 +336,10 @@ public final class MessageConstant {
         public static final String NOT_FOUND = "booth.error.not-found";
     }
 
+    public static final class BoothPurchase{
+        private BoothPurchase(){}
+        public static final String ALREADY_HAS_BOOTH = "booth-purchase.error.already-buy-booth";
+    }
+
 }
 
