@@ -221,10 +221,11 @@ public class JobFairServiceImpl implements JobFairService {
     }
 
     @Override
-    public Page<JobFairDTO> getAll(JobFairPlanStatus status, int offset, int pageSize, String sortBy, Sort.Direction direction) {
+    public Page<JobFairDTO> getAllForAdmin(JobFairPlanStatus status, int offset, int pageSize, String sortBy, Sort.Direction direction) {
         if (offset < DataConstraint.CompanyRegistration.OFFSET_MIN || pageSize < DataConstraint.CompanyRegistration.PAGE_SIZE_MIN)
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.INVALID_PAGE_NUMBER));
-        System.out.println("status " + status);
+        if (status.equals(JobFairPlanStatus.DRAFT))
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.INVALID_JOB_FAIR_SEARCH_STATUS_OF_ADMIN));
         if (status == null) {
             Page<JobFairDTO> page = jobFairRepository.findAllByStatusNot(JobFairPlanStatus.DRAFT, PageRequest.of(offset, pageSize).withSort(Sort.by(direction, sortBy))).map(entity -> jobFairMapper.toJobFairDTO(entity));
             return page;

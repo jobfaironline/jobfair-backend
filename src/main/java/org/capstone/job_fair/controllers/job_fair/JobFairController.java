@@ -158,10 +158,7 @@ public class JobFairController {
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
     @GetMapping(ApiEndPoint.JobFair.JOB_FAIR_PLAN)
     public ResponseEntity<?> getAll(@RequestParam(value = "status", required = false) JobFairPlanStatus status, @RequestParam(value = "offset", defaultValue = JobFairConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset, @RequestParam(value = "pageSize", defaultValue = JobFairConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize, @RequestParam(value = "sortBy", required = false, defaultValue = JobFairConstant.DEFAULT_SEARCH_SORT_BY_VALUE) String sortBy, @RequestParam(value = "direction", required = false, defaultValue = JobFairConstant.DEFAULT_SEARCH_SORT_DIRECTION) Sort.Direction direction) {
-        Page<JobFairDTO> result;
-        if (status != null && status.equals(JobFairPlanStatus.DRAFT))
-            return GenericResponse.build(MessageUtil.getMessage(MessageConstant.JobFair.INVALID_JOB_FAIR_SEARCH_STATUS_OF_ADMIN), HttpStatus.BAD_REQUEST);
-        else result = jobFairService.getAll(status, offset, pageSize, sortBy, direction);
+        Page<JobFairDTO> result = jobFairService.getAllForAdmin(status, offset, pageSize, sortBy, direction);
         if (result.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
