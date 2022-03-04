@@ -232,5 +232,13 @@ public final class DataConstraint {
 
     }
 
+    public static final class Paging{
+        private Paging(){
+
+        }
+        public static final int OFFSET_MIN = 0;
+        public static final int PAGE_SIZE_MIN = 0;
+    }
+
 
 }

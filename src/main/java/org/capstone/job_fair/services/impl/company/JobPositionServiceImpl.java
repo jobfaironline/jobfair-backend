@@ -128,7 +128,7 @@ public class JobPositionServiceImpl implements JobPositionService {
         Optional<CompanyEntity> companyOpt = companyRepository.findById(companyId);
         if (!companyOpt.isPresent()) throw new
                 IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Company.NOT_FOUND));
-        if (offset < DataConstraint.JobPosition.OFFSET_MIN || pageSize < DataConstraint.JobPosition.PAGE_SIZE_MIN)
+        if (offset < DataConstraint.Paging.OFFSET_MIN || pageSize < DataConstraint.Paging.PAGE_SIZE_MIN)
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Job.INVALID_PAGE_NUMBER));
         Integer jobLevelId = null;
         if (jobLevelId != null) jobLevel.ordinal();
