@@ -39,7 +39,9 @@ jobs:
             echo 'client_max_body_size 50M;' > proxy.conf
       #Build the application using Maven
       - name: Create source bundle file
-        run: zip -r backend.zip .platform/ target/jobfair-backend.jar
+        run: | 
+             mv target/jobfair-backend.jar .
+             zip -r backend.zip .platform/ jobfair-backend.jar
       - name: Upload JAR
           #This uploads artifacts from your workflow allowing you to share data between jobs and store data once a workflow is complete.
         uses: actions/upload-artifact@v2
