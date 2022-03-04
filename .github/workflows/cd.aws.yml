@@ -31,16 +31,23 @@ jobs:
       #Build the application using Maven
       - name: Build with Maven
         run: mvn clean install
+      - name: Create elastic beanstalk configuration file
+        run: |
+            mkdir -p .platform/nginx/conf.d/
+            cd .platform/nginx/conf.d/
+            touch proxy.conf
+            echo 'client_max_body_size 50M;' > proxy.conf
       #Build the application using Maven
+      - name: Create source bundle file
+        run: zip -r backend.zip .platform/ target/jobfair-backend.jar
       - name: Upload JAR
-        #This uploads artifacts from your workflow allowing you to share data between jobs and store data once a workflow is complete.
+          #This uploads artifacts from your workflow allowing you to share data between jobs and store data once a workflow is complete.
         uses: actions/upload-artifact@v2
         with:
-          #Set artifact name
-          name: artifact
-          #From this path
-          path: target/jobfair-backend.jar
-          
+            #Set artifact name
+            name: artifact
+            #From this path
+            path: backend.zip
           
   #Deploy's job
   deploy:
