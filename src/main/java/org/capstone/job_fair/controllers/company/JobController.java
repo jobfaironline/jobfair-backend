@@ -2,17 +2,21 @@ package org.capstone.job_fair.controllers.company;
 
 import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import org.capstone.job_fair.constants.ApiEndPoint;
+import org.capstone.job_fair.constants.JobPositionConstant;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.controllers.payload.requests.company.CreateJobPositionRequest;
 import org.capstone.job_fair.controllers.payload.requests.company.UpdateJobPositionRequest;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
 import org.capstone.job_fair.models.dtos.company.job.JobPositionDTO;
+import org.capstone.job_fair.models.enums.JobLevel;
 import org.capstone.job_fair.services.interfaces.company.CompanyEmployeeService;
 import org.capstone.job_fair.services.interfaces.company.JobPositionService;
 import org.capstone.job_fair.services.mappers.company.JobPositionMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,7 +24,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -85,10 +88,15 @@ public class JobController {
 
     @GetMapping(ApiEndPoint.Job.JOB_POSITION_ENDPOINT)
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE) ")
-    public ResponseEntity<?> getAllOwnJobPositionsOfCompany() {
+    public ResponseEntity<?> getAllOwnJobPositionsOfCompany(@RequestParam(value = "jobEntityId", required = false) Integer jobEntityId,
+                                                            @RequestParam(value = "jobLevelId", required = false) JobLevel jobLevel,
+                                                            @RequestParam(value = "offset", defaultValue = JobPositionConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset,
+                                                            @RequestParam(value = "pageSize", required = false, defaultValue = JobPositionConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize,
+                                                            @RequestParam(value = "sortBy", required = false, defaultValue = JobPositionConstant.DEFAULT_SEARCH_SORT_BY_VALUE) String sortBy,
+                                                            @RequestParam(value = "direction", required = false, defaultValue = JobPositionConstant.DEFAULT_SEARCH_SORT_DIRECTION) Sort.Direction direction) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String companyId = userDetails.getCompanyId();
-        List<JobPositionDTO> jobPositions = jobPositionService.getAllJobPositionOfCompany(companyId);
+        Page<JobPositionDTO> jobPositions = jobPositionService.getAllJobPositionOfCompany(companyId, jobEntityId, jobLevel, pageSize, offset, sortBy, direction);
         if (jobPositions.isEmpty()) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(jobPositions);
     }

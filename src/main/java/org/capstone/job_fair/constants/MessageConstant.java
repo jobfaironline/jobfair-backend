@@ -173,6 +173,7 @@ public final class MessageConstant {
         public static final String JOB_POSITION_NOT_FOUND = "job-position.error.not-found";
         public static final String COMPANY_MISMATCH = "job-position.error.company-mismatch";
         public static final String UPDATE_JOB_SUCCESSFULLY = "job-position.success.update";
+        public static final String INVALID_PAGE_NUMBER = "job-position.error.invalid-page-number";
     }
 
     public static final class Skill {
@@ -336,8 +337,10 @@ public final class MessageConstant {
         public static final String NOT_FOUND = "booth.error.not-found";
     }
 
-    public static final class BoothPurchase{
-        private BoothPurchase(){}
+    public static final class BoothPurchase {
+        private BoothPurchase() {
+        }
+
         public static final String ALREADY_HAS_BOOTH = "booth-purchase.error.already-buy-booth";
     }
 

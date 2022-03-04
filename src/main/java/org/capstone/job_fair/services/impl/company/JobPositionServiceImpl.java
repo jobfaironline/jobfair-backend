@@ -1,10 +1,12 @@
 package org.capstone.job_fair.services.impl.company;
 
 import lombok.AllArgsConstructor;
+import org.capstone.job_fair.constants.DataConstraint;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.models.dtos.company.job.JobPositionDTO;
 import org.capstone.job_fair.models.entities.company.CompanyEntity;
 import org.capstone.job_fair.models.entities.company.job.JobPositionEntity;
+import org.capstone.job_fair.models.enums.JobLevel;
 import org.capstone.job_fair.repositories.company.CompanyRepository;
 import org.capstone.job_fair.repositories.company.SkillTagRepository;
 import org.capstone.job_fair.repositories.company.SubCategoryRepository;
@@ -14,12 +16,13 @@ import org.capstone.job_fair.services.interfaces.company.JobPositionService;
 import org.capstone.job_fair.services.mappers.company.JobPositionMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -120,13 +123,17 @@ public class JobPositionServiceImpl implements JobPositionService {
     }
 
     @Override
-    public List<JobPositionDTO> getAllJobPositionOfCompany(String companyId) {
+    public Page<JobPositionDTO> getAllJobPositionOfCompany(String companyId, Integer jobEntityId, JobLevel jobLevel, int pageSize, int offset, String sortBy, Sort.Direction direction) {
         //Check for company existence
         Optional<CompanyEntity> companyOpt = companyRepository.findById(companyId);
         if (!companyOpt.isPresent()) throw new
                 IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Company.NOT_FOUND));
-        List<JobPositionEntity> jobPositionEntities = jobPositionRepository.findAllByCompanyId(companyId);
-        return jobPositionEntities.stream().map(mapper::toDTO).collect(Collectors.toList());
+        if (offset < DataConstraint.JobPosition.OFFSET_MIN || pageSize < DataConstraint.JobPosition.PAGE_SIZE_MIN)
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Job.INVALID_PAGE_NUMBER));
+        Integer jobLevelId = null;
+        if (jobLevelId != null) jobLevel.ordinal();
+        Page<JobPositionEntity> jobPositionEntities = jobPositionRepository.findAllByCriteria(companyId, jobEntityId, jobLevelId, PageRequest.of(offset, pageSize).withSort(Sort.by(direction, sortBy)));
+        return jobPositionEntities.map(entity -> mapper.toDTO(entity));
     }
 
 
