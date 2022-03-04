@@ -72,6 +72,6 @@ jobs:
          environment_name: Jobfaironlinebackend-env
          version_label: ${{github.SHA}}
          region: ap-southeast-1
-         deployment_package: jobfair-backend.jar
+         deployment_package: backend.zip
          use_existing_version_if_available: true
          wait_for_deployment: true
