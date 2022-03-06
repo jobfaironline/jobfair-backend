@@ -151,6 +151,8 @@ public final class ApiEndPoint {
 
         public static final String COMPANY_BOOTH_LAYOUT = ROOT_ENDPOINT + VERSION + "/company-booth-layout";
         public static final String LATEST_VERSION = COMPANY_BOOTH_LAYOUT + "/latest";
+        public static final String VIDEO_LAYOUT_WITH_FILE = COMPANY_BOOTH_LAYOUT + "/videos/file";
+        public static final String VIDEO_LAYOUT_WITH_URL = COMPANY_BOOTH_LAYOUT + "/videos/url";
 
     }
 

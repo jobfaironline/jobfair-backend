@@ -214,6 +214,7 @@ public class JobFairController {
                 Optional<CompanyBoothLayoutDTO> layoutDTOOptional = companyBoothLayoutService.getLatestVersionByCompanyBoothId(companyBooth.getId());
                 if (layoutDTOOptional.isPresent()) {
                     boothData.setBoothUrl(layoutDTOOptional.get().getUrl());
+                    boothData.setCompanyBoothLayoutVideos(layoutDTOOptional.get().getCompanyBoothLayoutVideos());
                     response.addBoothDataInformation(boothData);
                 }
             }

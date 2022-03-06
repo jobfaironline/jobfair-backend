@@ -3,10 +3,14 @@ package org.capstone.job_fair.services.impl.company;
 import org.capstone.job_fair.constants.AWSConstant;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.models.dtos.company.CompanyBoothLayoutDTO;
+import org.capstone.job_fair.models.dtos.company.CompanyBoothLayoutVideoDTO;
 import org.capstone.job_fair.models.entities.company.CompanyBoothLayoutEntity;
+import org.capstone.job_fair.models.entities.company.CompanyBoothLayoutVideoEntity;
 import org.capstone.job_fair.repositories.company.CompanyBoothLayoutRepository;
+import org.capstone.job_fair.repositories.company.CompanyBoothLayoutVideoRepository;
 import org.capstone.job_fair.services.interfaces.company.CompanyBoothLayoutService;
 import org.capstone.job_fair.services.mappers.company.CompanyBoothLayoutMapper;
+import org.capstone.job_fair.services.mappers.company.CompanyBoothLayoutVideoMapper;
 import org.capstone.job_fair.utils.AwsUtil;
 import org.capstone.job_fair.utils.GLTFUtil;
 import org.capstone.job_fair.utils.MessageUtil;
@@ -31,7 +35,13 @@ public class CompanyBoothLayoutServiceImpl implements CompanyBoothLayoutService 
     private CompanyBoothLayoutRepository companyBoothLayoutRepository;
 
     @Autowired
+    private CompanyBoothLayoutVideoRepository companyBoothLayoutVideoRepository;
+
+    @Autowired
     private CompanyBoothLayoutMapper boothLayoutMapper;
+
+    @Autowired
+    private CompanyBoothLayoutVideoMapper companyBoothLayoutVideoMapper;
 
     @Autowired
     private AwsUtil awsUtil;
@@ -81,5 +91,36 @@ public class CompanyBoothLayoutServiceImpl implements CompanyBoothLayoutService 
         entity.setCreateDate(new Date().getTime());
         entity = companyBoothLayoutRepository.save(entity);
         return boothLayoutMapper.toDTO(entity);
+    }
+
+    @Transactional
+    @Override
+    public CompanyBoothLayoutVideoDTO createNewVideoWithFile(CompanyBoothLayoutVideoDTO dto){
+        Optional<CompanyBoothLayoutEntity> layoutOpt = companyBoothLayoutRepository.findById(dto.getCompanyBoothLayoutId());
+        if (!layoutOpt.isPresent()){
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Layout.NOT_FOUND));
+        }
+
+        CompanyBoothLayoutVideoEntity entity = companyBoothLayoutVideoMapper.toEntity(dto);
+        String id = UUID.randomUUID().toString();
+        String url = awsUtil.generateAwsS3AccessString(AWSConstant.COMPANY_BOOTH_LAYOUT_VIDEO_FOLDER, id);
+        entity.setId(id);
+        entity.setUrl(url);
+        entity = companyBoothLayoutVideoRepository.save(entity);
+        return companyBoothLayoutVideoMapper.toDTO(entity);
+    }
+
+    @Override
+    @Transactional
+    public CompanyBoothLayoutVideoDTO createNewVideoWithUrl(CompanyBoothLayoutVideoDTO dto) {
+        Optional<CompanyBoothLayoutEntity> layoutOpt = companyBoothLayoutRepository.findById(dto.getCompanyBoothLayoutId());
+        if (!layoutOpt.isPresent()){
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Layout.NOT_FOUND));
+        }
+        CompanyBoothLayoutVideoEntity entity = companyBoothLayoutVideoMapper.toEntity(dto);
+        String id = UUID.randomUUID().toString();
+        entity.setId(id);
+        entity = companyBoothLayoutVideoRepository.save(entity);
+        return companyBoothLayoutVideoMapper.toDTO(entity);
     }
 }
