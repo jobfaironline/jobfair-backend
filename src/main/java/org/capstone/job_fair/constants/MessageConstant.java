@@ -156,6 +156,14 @@ public final class MessageConstant {
 
     }
 
+    public static final class Paging {
+        private Paging() {
+
+        }
+
+        public static final String INVALID_PAGE_NUMBER = "paging.error.invalid-page-number";
+    }
+
     public static final class Gender {
         private Gender() {
         }
