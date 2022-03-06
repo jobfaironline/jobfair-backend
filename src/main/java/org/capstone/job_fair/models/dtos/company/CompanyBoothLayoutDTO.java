@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -18,4 +19,5 @@ public class CompanyBoothLayoutDTO implements Serializable {
     @JsonBackReference
     private CompanyBoothDTO companyBooth;
     private String url;
+    List<CompanyBoothLayoutVideoDTO> companyBoothLayoutVideos;
 }

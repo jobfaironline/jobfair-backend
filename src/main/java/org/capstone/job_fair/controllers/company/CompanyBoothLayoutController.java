@@ -8,6 +8,7 @@ import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.dtos.company.CompanyBoothDTO;
 import org.capstone.job_fair.models.dtos.company.CompanyBoothLayoutDTO;
+import org.capstone.job_fair.models.dtos.company.CompanyBoothLayoutVideoDTO;
 import org.capstone.job_fair.services.interfaces.company.CompanyBoothLayoutService;
 import org.capstone.job_fair.services.interfaces.company.CompanyService;
 import org.capstone.job_fair.services.interfaces.util.FileStorageService;
@@ -110,4 +111,34 @@ public class CompanyBoothLayoutController {
         return ResponseEntity.created(URI.create(dto.getUrl())).body(dto);
     }
 
+    @PostMapping(ApiEndPoint.CompanyBoothLayout.VIDEO_LAYOUT_WITH_FILE)
+    public ResponseEntity<?> createNewVideoForLayoutWithFile(@RequestParam("layoutId") String layoutId,
+                                                     @RequestParam("itemName") String itemName,
+                                                     @RequestParam("file") MultipartFile file ){
+        CompanyBoothLayoutVideoDTO dto = CompanyBoothLayoutVideoDTO.builder().itemName(itemName).companyBoothLayoutId(layoutId).build();
+        dto = companyBoothLayoutService.createNewVideoWithFile(dto);
+        try {
+            fileStorageService.store(file.getBytes(), AWSConstant.COMPANY_BOOTH_LAYOUT_VIDEO_FOLDER + "/" + dto.getId()).exceptionally(throwable -> {
+                log.error(throwable.getMessage());
+                return null;
+            });
+        } catch (IOException e) {
+            return GenericResponse.build(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return ResponseEntity.created(URI.create(dto.getUrl())).body(dto);
+    }
+
+    @PostMapping(ApiEndPoint.CompanyBoothLayout.VIDEO_LAYOUT_WITH_URL)
+    public ResponseEntity<?> createNewVideoForLayoutWithUrl(@RequestParam("layoutId") String layoutId,
+                                                            @RequestParam("itemName") String itemName,
+                                                            @RequestParam("url") String url){
+        CompanyBoothLayoutVideoDTO dto = CompanyBoothLayoutVideoDTO.builder()
+                .itemName(itemName)
+                .companyBoothLayoutId(layoutId)
+                .url(url)
+                .build();
+
+        dto = companyBoothLayoutService.createNewVideoWithUrl(dto);
+        return ResponseEntity.created(URI.create(dto.getUrl())).body(dto);
+    }
 }

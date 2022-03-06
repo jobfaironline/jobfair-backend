@@ -5,9 +5,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.Hibernate;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -15,30 +15,27 @@ import java.util.Objects;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "company_booth_layout", schema = "dbo")
-public class CompanyBoothLayoutEntity {
+@Table(name = "company_booth_layout_video", schema = "dbo")
+public class CompanyBoothLayoutVideoEntity {
     @Id
     @Column(name = "id", nullable = false, length = 36)
     private String id;
-    @Column(name = "version", nullable = false)
-    private Integer version;
-    @Column(name = "create_date", nullable = false)
-    private Long createDate;
-    @ManyToOne
-    @JoinColumn(name = "company_booth_id")
-    private CompanyBoothEntity companyBooth;
-    @Column(name = "url", nullable = false)
+    @Column(name = "url", nullable = false, length = 2048)
     private String url;
+    @Column(name = "item_name", nullable = false, length = 100)
+    private String itemName;
+    @Column(name = "company_booth_layout_id", nullable = false, length = 36)
+    private String companyBoothLayoutId;
 
-    @OneToMany
-    @JoinColumn(name = "company_booth_layout_id", referencedColumnName = "id")
-    List<CompanyBoothLayoutVideoEntity> companyBoothLayoutVideos;
+
+
+
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        CompanyBoothEntity that = (CompanyBoothEntity) o;
+        CompanyBoothLayoutVideoEntity that = (CompanyBoothLayoutVideoEntity) o;
         return id != null && Objects.equals(id, that.getId());
     }
 

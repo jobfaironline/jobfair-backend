@@ -1,6 +1,7 @@
 package org.capstone.job_fair.controllers.payload.responses;
 
 import lombok.*;
+import org.capstone.job_fair.models.dtos.company.CompanyBoothLayoutVideoDTO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +30,7 @@ public class RenderJobFairParkResponse {
         private String slotName;
         private String boothUrl;
         private String companyBoothId;
+        private List<CompanyBoothLayoutVideoDTO> companyBoothLayoutVideos;
 
         public void setPosition(double x, double y, double z){
             this.position.setX(x);
