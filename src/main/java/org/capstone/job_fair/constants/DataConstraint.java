@@ -132,6 +132,8 @@ public final class DataConstraint {
         public static final int SKILL_TAG_MIN = 1;
         public static final int EMPLOYEE_MIN = 1;
         public static final int EMPLOYEE_MAX = 100000;
+        public static final int OFFSET_MIN = 0;
+        public static final int PAGE_SIZE_MIN = 0;
     }
 
     public static final class Account {
@@ -228,6 +230,14 @@ public final class DataConstraint {
 
         public static final int SUMMARY_MAX_LENGTH = 3000;
 
+    }
+
+    public static final class Paging{
+        private Paging(){
+
+        }
+        public static final int OFFSET_MIN = 0;
+        public static final int PAGE_SIZE_MIN = 0;
     }
 
 
