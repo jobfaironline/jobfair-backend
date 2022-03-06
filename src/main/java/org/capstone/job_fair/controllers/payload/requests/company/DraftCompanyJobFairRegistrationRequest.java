@@ -56,7 +56,6 @@ public class DraftCompanyJobFairRegistrationRequest {
         private Double minSalary;
 
         @NumberFormat
-        @NotNull
         @Min(DataConstraint.JobPosition.SALARY_MIN)
         @Max(DataConstraint.JobPosition.SALARY_MAX)
         private Double maxSalary;

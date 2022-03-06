@@ -75,7 +75,7 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
     }
 
     private void validateRegistrationJobPosition(RegistrationJobPositionDTO dto) {
-        if (dto.getMinSalary() > dto.getMaxSalary()) {
+        if (dto.getMinSalary() != null && dto.getMaxSalary() != null && dto.getMinSalary() > dto.getMaxSalary()) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyRegistration.MIN_MAX_SALARY_ERROR));
         }
     }
