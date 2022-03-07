@@ -12,6 +12,6 @@ public interface JobPositionService {
 
     void deleteJobPosition(String jobPositionId, String companyId);
 
-    Page<JobPositionDTO> getAllJobPositionOfCompany(String companyId, Integer jobEntityId, JobLevel jobLevelId, int pageSize, int offset, String sortBy, Sort.Direction direction);
+    Page<JobPositionDTO> getAllJobPositionOfCompany(String companyId, Integer jobTypeId, JobLevel jobLevelId, int pageSize, int offset, String sortBy, Sort.Direction direction);
 
 }

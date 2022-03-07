@@ -123,7 +123,7 @@ public class JobPositionServiceImpl implements JobPositionService {
     }
 
     @Override
-    public Page<JobPositionDTO> getAllJobPositionOfCompany(String companyId, Integer jobEntityId, JobLevel jobLevel, int pageSize, int offset, String sortBy, Sort.Direction direction) {
+    public Page<JobPositionDTO> getAllJobPositionOfCompany(String companyId, Integer jobTypeId, JobLevel jobLevel, int pageSize, int offset, String sortBy, Sort.Direction direction) {
         //Check for company existence
         Optional<CompanyEntity> companyOpt = companyRepository.findById(companyId);
         if (!companyOpt.isPresent()) throw new
@@ -132,7 +132,7 @@ public class JobPositionServiceImpl implements JobPositionService {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Job.INVALID_PAGE_NUMBER));
         Integer jobLevelId = null;
         if (jobLevelId != null) jobLevel.ordinal();
-        Page<JobPositionEntity> jobPositionEntities = jobPositionRepository.findAllByCriteria(companyId, jobEntityId, jobLevelId, PageRequest.of(offset, pageSize).withSort(Sort.by(direction, sortBy)));
+        Page<JobPositionEntity> jobPositionEntities = jobPositionRepository.findAllByCriteria(companyId, jobTypeId, jobLevelId, PageRequest.of(offset, pageSize).withSort(Sort.by(direction, sortBy)));
         return jobPositionEntities.map(entity -> mapper.toDTO(entity));
     }
 
