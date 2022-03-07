@@ -1,6 +1,6 @@
 package org.capstone.job_fair.services.interfaces.job_fair;
 
-import org.capstone.job_fair.models.dtos.job_fair.CompanyJobFairDTO;
+import org.capstone.job_fair.models.dtos.job_fair.CompanyJobFairStatusDTO;
 import org.capstone.job_fair.models.dtos.job_fair.JobFairDTO;
 import org.capstone.job_fair.models.statuses.JobFairCompanyStatus;
 import org.capstone.job_fair.models.statuses.JobFairPlanStatus;
@@ -35,5 +35,5 @@ public interface JobFairService {
 
     List<JobFairDTO> getAllAvailableForRegistration(String fromTime, String toTime);
 
-    Page<CompanyJobFairDTO> getAllJobFairForCompany(String companyId, JobFairCompanyStatus status, int offset, int pageSize);
+    Page<CompanyJobFairStatusDTO> getJobFairForCompany(String companyId, JobFairCompanyStatus status, int offset, int pageSize);
 }
