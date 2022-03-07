@@ -1,7 +1,9 @@
 package org.capstone.job_fair.services.interfaces.job_fair;
 
+import org.capstone.job_fair.models.dtos.job_fair.AttendantJobFairStatusDTO;
 import org.capstone.job_fair.models.dtos.job_fair.CompanyJobFairStatusDTO;
 import org.capstone.job_fair.models.dtos.job_fair.JobFairDTO;
+import org.capstone.job_fair.models.statuses.JobFairAttendantStatus;
 import org.capstone.job_fair.models.statuses.JobFairCompanyStatus;
 import org.capstone.job_fair.models.statuses.JobFairPlanStatus;
 import org.springframework.data.domain.Page;
@@ -36,4 +38,7 @@ public interface JobFairService {
     List<JobFairDTO> getAllAvailableForRegistration(String fromTime, String toTime);
 
     Page<CompanyJobFairStatusDTO> getJobFairForCompany(String companyId, JobFairCompanyStatus status, int offset, int pageSize);
+
+    Page<AttendantJobFairStatusDTO> getJobFairForAttendant(String attendantId, JobFairAttendantStatus status, int offset, int pageSize);
+
 }

@@ -4,15 +4,19 @@ import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import org.capstone.job_fair.constants.DataConstraint;
 import org.capstone.job_fair.constants.JobFairConstant;
 import org.capstone.job_fair.constants.MessageConstant;
+import org.capstone.job_fair.models.dtos.job_fair.AttendantJobFairStatusDTO;
 import org.capstone.job_fair.models.dtos.job_fair.CompanyJobFairStatusDTO;
 import org.capstone.job_fair.models.dtos.job_fair.JobFairDTO;
 import org.capstone.job_fair.models.entities.job_fair.JobFairEntity;
+import org.capstone.job_fair.models.statuses.JobFairAttendantStatus;
 import org.capstone.job_fair.models.statuses.JobFairCompanyStatus;
 import org.capstone.job_fair.models.statuses.JobFairPlanStatus;
 import org.capstone.job_fair.repositories.account.AccountRepository;
+import org.capstone.job_fair.repositories.job_fair.AttendantJobFairStatusRepository;
 import org.capstone.job_fair.repositories.job_fair.CompanyJobFairStatusRepository;
 import org.capstone.job_fair.repositories.job_fair.JobFairRepository;
 import org.capstone.job_fair.services.interfaces.job_fair.JobFairService;
+import org.capstone.job_fair.services.mappers.job_fair.AttendantJobFairStatusMapper;
 import org.capstone.job_fair.services.mappers.job_fair.CompanyJobFairStatusMapper;
 import org.capstone.job_fair.services.mappers.job_fair.JobFairMapper;
 import org.capstone.job_fair.utils.MessageUtil;
@@ -41,9 +45,13 @@ public class JobFairServiceImpl implements JobFairService {
     private JobFairMapper jobFairMapper;
     @Autowired
     private CompanyJobFairStatusRepository companyJobFairStatusRepository;
-
     @Autowired
     private CompanyJobFairStatusMapper companyJobFairStatusMapper;
+    @Autowired
+    private AttendantJobFairStatusRepository attendantJobFairStatusRepository;
+    @Autowired
+    private AttendantJobFairStatusMapper attendantJobFairStatusMapper;
+
 
 
     @Override
@@ -317,6 +325,20 @@ public class JobFairServiceImpl implements JobFairService {
                 .getByStatusAndCompanyId(status, companyId, PageRequest.of(offset, pageSize))
                 .map(companyJobFairStatusMapper::toDTO);
 
+    }
+
+    @Override
+    public Page<AttendantJobFairStatusDTO> getJobFairForAttendant(String attendantId, JobFairAttendantStatus status, int offset, int pageSize) {
+        if (offset < DataConstraint.Application.OFFSET_MIN || pageSize < DataConstraint.Application.PAGE_SIZE_MIN)
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.INVALID_PAGE_NUMBER));
+        if (status == null) {
+            return attendantJobFairStatusRepository
+                    .getAllByAttendantId(attendantId, PageRequest.of(offset, pageSize))
+                    .map(attendantJobFairStatusMapper::toDTO);
+        }
+        return attendantJobFairStatusRepository
+                .getByStatusAndAttendantId(status, attendantId, PageRequest.of(offset, pageSize))
+                .map(attendantJobFairStatusMapper::toDTO);
     }
 
 }
