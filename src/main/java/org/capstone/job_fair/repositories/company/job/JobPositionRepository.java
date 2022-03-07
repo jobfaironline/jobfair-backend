@@ -16,6 +16,6 @@ public interface JobPositionRepository extends JpaRepository<JobPositionEntity, 
 
     @Query("select j from JobPositionEntity j where j.company.id = :companyId and (:jobEntityId is null or j.jobTypeEntity.id = :jobEntityId) and (:jobLevelId is null or j.jobLevel.id = :jobLevelId)")
     Page<JobPositionEntity> findAllByCriteria(@Param("companyId") String companyId,
-                                              @Param("jobEntityId") Integer jobEntityId,
+                                              @Param("jobEntityId") Integer jobTypeId,
                                               @Param("jobLevelId") Integer jobLevelId, Pageable pageable);
 }
