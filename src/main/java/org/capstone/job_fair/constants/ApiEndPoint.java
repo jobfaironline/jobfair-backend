@@ -88,6 +88,16 @@ public final class ApiEndPoint {
         public static final String UPDATE_ENDPOINT = ATTENDANT_ENDPOINT + "/update";
     }
 
+    public static final class AttendantRegistration {
+        private AttendantRegistration() {
+
+        }
+
+        public static final String ATTENDANT_REGISTRATION_ENDPOINT = ROOT_ENDPOINT + VERSION + "/attendant-registration";
+        public static final String REGISTERED_JOB_FAIR = ATTENDANT_REGISTRATION_ENDPOINT + "/registered-jobfair";
+
+    }
+
     public static final class Account {
         private Account() {
         }
@@ -165,12 +175,16 @@ public final class ApiEndPoint {
     }
 
     public static final class BoothPurchase {
-        private BoothPurchase(){}
+        private BoothPurchase() {
+        }
+
         public static final String BOOTH_PURCHASE = ROOT_ENDPOINT + VERSION + "/purchase-booth";
     }
 
-    public static final class CompanyBooth{
-        private CompanyBooth(){}
+    public static final class CompanyBooth {
+        private CompanyBooth() {
+        }
+
         public static final String COMPANY_BOOTH = ROOT_ENDPOINT + VERSION + "/company-booth";
     }
 }
