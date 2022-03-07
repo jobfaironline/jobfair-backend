@@ -14,8 +14,10 @@ import org.capstone.job_fair.controllers.payload.responses.JobFairForCompanyResp
 import org.capstone.job_fair.controllers.payload.responses.RenderJobFairParkResponse;
 import org.capstone.job_fair.models.dtos.company.CompanyBoothDTO;
 import org.capstone.job_fair.models.dtos.company.CompanyBoothLayoutDTO;
+import org.capstone.job_fair.models.dtos.job_fair.AttendantJobFairStatusDTO;
 import org.capstone.job_fair.models.dtos.job_fair.JobFairDTO;
 import org.capstone.job_fair.models.dtos.job_fair.LayoutDTO;
+import org.capstone.job_fair.models.statuses.JobFairAttendantStatus;
 import org.capstone.job_fair.models.statuses.JobFairCompanyStatus;
 import org.capstone.job_fair.models.statuses.JobFairPlanStatus;
 import org.capstone.job_fair.services.interfaces.company.CompanyBoothLayoutService;
@@ -253,6 +255,17 @@ public class JobFairController {
 
                     return response;
                 });
+        return ResponseEntity.ok(data);
+    }
+
+    @GetMapping(ApiEndPoint.JobFair.ATTENDANT_END_POINT)
+    public ResponseEntity<?> getJobFairForAttendant(
+            @RequestParam(value = "offset", defaultValue = ApplicationConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset,
+            @RequestParam(value = "pageSize", defaultValue = ApplicationConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize,
+            @RequestParam(value = "filterStatus", required = false) JobFairAttendantStatus status
+    ) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Page<AttendantJobFairStatusDTO> data = jobFairService.getJobFairForAttendant(userDetails.getId(), status, offset, pageSize);
         return ResponseEntity.ok(data);
     }
 
