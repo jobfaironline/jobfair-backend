@@ -68,13 +68,13 @@ public class RegistrationJobPositionEntity {
     private String requirements;
 
     @Column(name = "min_salary")
-    private double minSalary;
+    private Double minSalary;
 
     @Column(name = "max_salary")
-    private double maxSalary;
+    private Double maxSalary;
 
     @Column(name = "num_of_position")
-    private int numOfPosition;
+    private Integer numOfPosition;
 
     @Column(name = "location_id")
     private String locationId;

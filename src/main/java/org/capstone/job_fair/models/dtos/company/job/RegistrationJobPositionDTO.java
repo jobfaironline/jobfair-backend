@@ -21,9 +21,9 @@ public class RegistrationJobPositionDTO implements Serializable {
     private String id;
     private String description;
     private String requirements;
-    private double minSalary;
-    private double maxSalary;
-    private int numOfPosition;
+    private Double minSalary;
+    private Double maxSalary;
+    private Integer numOfPosition;
 
     private String title;
     private String contactPersonName;
