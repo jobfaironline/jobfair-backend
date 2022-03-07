@@ -8,10 +8,10 @@ import org.capstone.job_fair.models.statuses.JobFairCompanyStatus;
 @NoArgsConstructor
 @Builder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class CompanyJobFairDTO {
+public class CompanyJobFairStatusDTO {
     @EqualsAndHashCode.Include
     private String id;
-    private String description;
+    private String companyId;
+    private JobFairDTO jobFair;
     private JobFairCompanyStatus status;
-    private String message;
 }

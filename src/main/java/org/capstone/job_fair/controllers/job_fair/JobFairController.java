@@ -10,12 +10,13 @@ import org.capstone.job_fair.controllers.payload.requests.job_fair.CancelJobFair
 import org.capstone.job_fair.controllers.payload.requests.job_fair.DraftJobFairPlanRequest;
 import org.capstone.job_fair.controllers.payload.requests.job_fair.UpdateJobFairPlanDraftRequest;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
+import org.capstone.job_fair.controllers.payload.responses.JobFairForCompanyResponse;
 import org.capstone.job_fair.controllers.payload.responses.RenderJobFairParkResponse;
 import org.capstone.job_fair.models.dtos.company.CompanyBoothDTO;
 import org.capstone.job_fair.models.dtos.company.CompanyBoothLayoutDTO;
-import org.capstone.job_fair.models.dtos.job_fair.CompanyJobFairDTO;
 import org.capstone.job_fair.models.dtos.job_fair.JobFairDTO;
 import org.capstone.job_fair.models.dtos.job_fair.LayoutDTO;
+import org.capstone.job_fair.models.statuses.JobFairCompanyStatus;
 import org.capstone.job_fair.models.statuses.JobFairPlanStatus;
 import org.capstone.job_fair.services.interfaces.company.CompanyBoothLayoutService;
 import org.capstone.job_fair.services.interfaces.company.CompanyBoothService;
@@ -238,10 +239,20 @@ public class JobFairController {
     @GetMapping(ApiEndPoint.JobFair.COMPANY_END_POINT)
     public ResponseEntity<?> getJobFairPlanOfCompany(
             @RequestParam(value = "offset", defaultValue = ApplicationConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset,
-            @RequestParam(value = "pageSize", defaultValue = ApplicationConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize
+            @RequestParam(value = "pageSize", defaultValue = ApplicationConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize,
+            @RequestParam(value = "filterStatus", required = false) JobFairCompanyStatus status
     ) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Page<CompanyJobFairDTO> data = jobFairService.getAllJobFairForCompany(userDetails.getCompanyId(), null, offset, pageSize);
+        Page<JobFairForCompanyResponse> data = jobFairService
+                .getJobFairForCompany(userDetails.getCompanyId(), status, offset, pageSize)
+                .map(dto -> {
+                    JobFairForCompanyResponse response = new JobFairForCompanyResponse();
+                    response.setId(dto.getJobFair().getId());
+                    response.setStatus(dto.getStatus());
+                    response.setDescription(dto.getJobFair().getDescription());
+
+                    return response;
+                });
         return ResponseEntity.ok(data);
     }
 
