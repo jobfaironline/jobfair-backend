@@ -51,4 +51,14 @@ public class CreateJobPositionRequest {
     @Valid
     @Size(min = DataConstraint.JobPosition.SKILL_TAG_MIN, max = DataConstraint.JobPosition.SKILL_TAG_MAX)
     private List<Integer> skillTagIds;
+
+    @XSSConstraint
+    @NotNull
+    @Size(min = DataConstraint.Company.MIN_DESCRIPTION_LENGTH, max = DataConstraint.Company.MAX_DESCRIPTION_LENGTH)
+    private String description;
+
+    @XSSConstraint
+    @NotNull
+    @Size(min = DataConstraint.Company.MIN_DESCRIPTION_LENGTH, max = DataConstraint.Company.MAX_DESCRIPTION_LENGTH)
+    private String requirements;
 }

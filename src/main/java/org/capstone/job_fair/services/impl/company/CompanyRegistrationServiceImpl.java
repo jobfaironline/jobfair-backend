@@ -131,6 +131,8 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
 
             //Job position information
             entity.setTitle(jobPositionEntity.getTitle());
+            entity.setDescription(jobPositionEntity.getDescription());
+            entity.setRequirements(jobPositionEntity.getRequirements());
             entity.setContactPersonName(jobPositionEntity.getContactPersonName());
             entity.setContactEmail(jobPositionEntity.getContactEmail());
             entity.setLanguage(jobPositionEntity.getLanguage());
@@ -186,6 +188,8 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
 
             //Job position information
             entity.setTitle(jobPositionEntity.getTitle());
+            entity.setDescription(jobPositionEntity.getDescription());
+            entity.setRequirements(jobPositionEntity.getRequirements());
             entity.setContactPersonName(jobPositionEntity.getContactPersonName());
             entity.setContactEmail(jobPositionEntity.getContactEmail());
             entity.setLanguage(jobPositionEntity.getLanguage());

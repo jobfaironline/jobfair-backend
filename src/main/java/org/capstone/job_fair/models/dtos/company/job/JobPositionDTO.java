@@ -29,4 +29,7 @@ public class JobPositionDTO implements Serializable {
     private CompanyDTO companyDTO;
     private List<SubCategoryDTO> subCategoryDTOs;
     private List<SkillTagDTO> skillTagDTOS;
+    private String description;
+    private String requirements;
+
 }

@@ -43,14 +43,6 @@ public class UpdateCompanyJobFairRegistrationRequest {
         @NotNull
         private String jobPositionId;
 
-        @XSSConstraint
-        @Size(min = DataConstraint.Company.MIN_DESCRIPTION_LENGTH, max = DataConstraint.Company.MAX_DESCRIPTION_LENGTH)
-        private String description;
-
-        @XSSConstraint
-        @Size(min = DataConstraint.Company.MIN_DESCRIPTION_LENGTH, max = DataConstraint.Company.MAX_DESCRIPTION_LENGTH)
-        private String requirements;
-
         @NumberFormat
         @Min(DataConstraint.JobPosition.SALARY_MIN)
         private Double minSalary;
