@@ -43,6 +43,11 @@ public class JobPositionEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id")
     private CompanyEntity company;
+    @Column(name = "description")
+    private String description;
+    @Column(name = "requirements")
+    private String requirements;
+
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(

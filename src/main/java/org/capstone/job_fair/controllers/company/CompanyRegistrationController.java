@@ -2,7 +2,6 @@ package org.capstone.job_fair.controllers.company;
 
 import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import org.capstone.job_fair.constants.ApiEndPoint;
-import org.capstone.job_fair.constants.ApplicationConstant;
 import org.capstone.job_fair.constants.CompanyRegistrationConstant;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.controllers.payload.requests.company.CancelCompanyJobFairRegistrationRequest;
@@ -51,8 +50,6 @@ public class CompanyRegistrationController {
             for (DraftCompanyJobFairRegistrationRequest.JobPosition jobPosition : request.getJobPositions()) {
                 RegistrationJobPositionDTO registrationJobPositionDTO = new RegistrationJobPositionDTO();
                 registrationJobPositionDTO.setId(jobPosition.getJobPositionId());
-                registrationJobPositionDTO.setDescription(jobPosition.getDescription());
-                registrationJobPositionDTO.setRequirements(jobPosition.getRequirements());
                 registrationJobPositionDTO.setMinSalary(jobPosition.getMinSalary());
                 registrationJobPositionDTO.setMaxSalary(jobPosition.getMaxSalary());
                 registrationJobPositionDTO.setNumOfPosition(jobPosition.getNumOfPosition());
@@ -82,8 +79,6 @@ public class CompanyRegistrationController {
             for (UpdateCompanyJobFairRegistrationRequest.JobPosition jobPosition : request.getJobPositions()) {
                 RegistrationJobPositionDTO registrationJobPositionDTO = new RegistrationJobPositionDTO();
                 registrationJobPositionDTO.setId(jobPosition.getJobPositionId());
-                registrationJobPositionDTO.setDescription(jobPosition.getDescription());
-                registrationJobPositionDTO.setRequirements(jobPosition.getRequirements());
                 registrationJobPositionDTO.setMinSalary(jobPosition.getMinSalary());
                 registrationJobPositionDTO.setMaxSalary(jobPosition.getMaxSalary());
                 registrationJobPositionDTO.setNumOfPosition(jobPosition.getNumOfPosition());
@@ -156,7 +151,7 @@ public class CompanyRegistrationController {
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).STAFF)")
     @GetMapping(ApiEndPoint.CompanyRegistration.GET_ALL_COMPANY_REGISTRATION_OF_JOB_FAIR + "/{jobFairId}")
-    public ResponseEntity<?> getAllCompanyRegistrationOfJobFair(@PathVariable String jobFairId, @RequestParam(value = "offset", defaultValue = CompanyRegistrationConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset, @RequestParam(value = "pageSize", defaultValue = CompanyRegistrationConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize, @RequestParam(value = "sortBy", required = false ,defaultValue = CompanyRegistrationConstant.DEFAULT_SEARCH_SORT_BY_VALUE) String sortBy, @RequestParam(value = "direction", required = false, defaultValue = CompanyRegistrationConstant.DEFAULT_SEARCH_SORT_DIRECTION) Sort.Direction direction) {
+    public ResponseEntity<?> getAllCompanyRegistrationOfJobFair(@PathVariable String jobFairId, @RequestParam(value = "offset", defaultValue = CompanyRegistrationConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset, @RequestParam(value = "pageSize", defaultValue = CompanyRegistrationConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize, @RequestParam(value = "sortBy", required = false, defaultValue = CompanyRegistrationConstant.DEFAULT_SEARCH_SORT_BY_VALUE) String sortBy, @RequestParam(value = "direction", required = false, defaultValue = CompanyRegistrationConstant.DEFAULT_SEARCH_SORT_DIRECTION) Sort.Direction direction) {
         try {
             Page<CompanyRegistrationDTO> companyRegistrationDTOPage = companyRegistrationService.getCompanyRegistrationOfAJobFair(jobFairId, offset, pageSize, sortBy, direction);
             if (companyRegistrationDTOPage.isEmpty()) return ResponseEntity.notFound().build();

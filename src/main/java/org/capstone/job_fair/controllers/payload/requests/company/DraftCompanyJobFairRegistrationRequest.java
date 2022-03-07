@@ -40,15 +40,6 @@ public class DraftCompanyJobFairRegistrationRequest {
         @NotNull
         private String jobPositionId;
 
-        @XSSConstraint
-        @NotNull
-        @Size(min = DataConstraint.Company.MIN_DESCRIPTION_LENGTH, max = DataConstraint.Company.MAX_DESCRIPTION_LENGTH)
-        private String description;
-
-        @XSSConstraint
-        @NotNull
-        @Size(min = DataConstraint.Company.MIN_DESCRIPTION_LENGTH, max = DataConstraint.Company.MAX_DESCRIPTION_LENGTH)
-        private String requirements;
 
         @NumberFormat
         @NotNull
