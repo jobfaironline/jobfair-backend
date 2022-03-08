@@ -350,7 +350,7 @@ public class JobFairServiceImpl implements JobFairService {
 
     @Override
     public Page<AdminJobFairStatusDTO> getJobFairForAdmin(JobFairAdminStatus status, int offset, int pageSize) {
-        if (offset < DataConstraint.Application.OFFSET_MIN || pageSize < DataConstraint.Application.PAGE_SIZE_MIN)
+        if (offset < DataConstraint.Paging.OFFSET_MIN || pageSize < DataConstraint.Paging.PAGE_SIZE_MIN)
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.INVALID_PAGE_NUMBER));
         if (status == null) {
             return adminJobFairStatusRepository
