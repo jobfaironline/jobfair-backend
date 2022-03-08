@@ -50,6 +50,16 @@ public class JobFairEntity {
     private String rejectReason;
     @Column(name = "cancel_reason")
     private String cancelReason;
+    @Column(name = "thumbnail")
+    private String thumbnail;
+    @Column(name = "name")
+    private String name;
+    @Column(name = "estimate_participant")
+    private Integer estimateParticipant;
+    @Column(name = "target_company")
+    private String targetCompany;
+    @Column(name = "target_attendant")
+    private String targetAttendant;
 
 
     @Override

@@ -68,6 +68,11 @@ public class JobFairController {
                     .endTime(request.getEndTime())
                     .startTime(request.getStartTime())
                     .layoutId(request.getLayoutId())
+                    .thumbnail(request.getThumbnail())
+                    .name(request.getName())
+                    .estimateParticipant(request.getEstimateParticipant())
+                    .targetAttendant(request.getTargetAttendant())
+                    .targetCompany(request.getTargetCompany())
                     .build();
             jobFairService.draftJobFair(dto);
 
@@ -93,6 +98,11 @@ public class JobFairController {
                     .endTime(request.getEndTime())
                     .startTime(request.getStartTime())
                     .layoutId(request.getLayoutId())
+                    .thumbnail(request.getThumbnail())
+                    .name(request.getName())
+                    .estimateParticipant(request.getEstimateParticipant())
+                    .targetAttendant(request.getTargetAttendant())
+                    .targetCompany(request.getTargetCompany())
                     .build();
             jobFairService.updateJobFairDraft(dto);
 

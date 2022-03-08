@@ -5,6 +5,7 @@ import org.capstone.job_fair.constants.DataConstraint;
 import org.capstone.job_fair.validators.XSSConstraint;
 import org.springframework.format.annotation.NumberFormat;
 
+import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -53,5 +54,24 @@ public class UpdateJobFairPlanDraftRequest {
     private String description;
 
     private String layoutId;
+
+    private String thumbnail;
+
+    @XSSConstraint
+    @Size(max = DataConstraint.JobFair.NAME_MAX_LENGTH)
+    private String name;
+
+    @NumberFormat
+    @Min(DataConstraint.JobFair.MIN_ESTIMATE_PARTICIPANT_NUM)
+    @Max(DataConstraint.JobFair.MAX_ESTIMATE_PARTICIPANT_NUM)
+    private Integer estimateParticipant;
+
+    @XSSConstraint
+    @Size(max = DataConstraint.JobFair.TARGET_COMPANY_MAX_LENGTH)
+    private String targetCompany;
+
+    @XSSConstraint
+    @Size(max = DataConstraint.JobFair.TARGET_ATTENDANT_MAX_LENGTH)
+    private String targetAttendant;
 
 }
