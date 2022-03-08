@@ -1,5 +1,6 @@
 package org.capstone.job_fair.models.dtos.company.job;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 import org.capstone.job_fair.models.dtos.company.CompanyDTO;
 import org.capstone.job_fair.models.dtos.company.SkillTagDTO;
@@ -26,6 +27,7 @@ public class JobPositionDTO implements Serializable {
     private Language language;
     private JobLevel level;
     private JobType jobType;
+    @JsonBackReference
     private CompanyDTO companyDTO;
     private List<SubCategoryDTO> subCategoryDTOs;
     private List<SkillTagDTO> skillTagDTOS;

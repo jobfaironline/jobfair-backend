@@ -182,6 +182,8 @@ public final class MessageConstant {
         public static final String COMPANY_MISMATCH = "job-position.error.company-mismatch";
         public static final String UPDATE_JOB_SUCCESSFULLY = "job-position.success.update";
         public static final String INVALID_PAGE_NUMBER = "job-position.error.invalid-page-number";
+        public static final String CSV_LINE_ERROR = "job-position.error.csv-line-error";
+        public static final String CSV_FILE_ERROR = "job-position.error.csv-file-error";
     }
 
     public static final class Skill {

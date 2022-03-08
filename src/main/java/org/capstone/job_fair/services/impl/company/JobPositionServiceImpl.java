@@ -1,8 +1,13 @@
 package org.capstone.job_fair.services.impl.company;
 
+import com.opencsv.bean.CsvToBean;
+import com.opencsv.bean.CsvToBeanBuilder;
 import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
+import org.capstone.job_fair.constants.CSVConstant;
 import org.capstone.job_fair.constants.DataConstraint;
 import org.capstone.job_fair.constants.MessageConstant;
+import org.capstone.job_fair.controllers.payload.requests.company.CreateJobPositionRequest;
 import org.capstone.job_fair.models.dtos.company.job.JobPositionDTO;
 import org.capstone.job_fair.models.entities.company.CompanyEntity;
 import org.capstone.job_fair.models.entities.company.job.JobPositionEntity;
@@ -21,7 +26,16 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BindException;
+import org.springframework.validation.Errors;
+import org.springframework.validation.Validator;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -40,6 +54,8 @@ public class JobPositionServiceImpl implements JobPositionService {
     private SkillTagRepository skillTagRepository;
     @Autowired
     private CompanyRepository companyRepository;
+    @Autowired
+    private Validator validator;
 
     private boolean isSubCategoryIdValid(int id) {
         return subCategoryRepository.existsById(id);
@@ -49,9 +65,13 @@ public class JobPositionServiceImpl implements JobPositionService {
         return skillTagRepository.existsById(id);
     }
 
+    private void createNewJobPositionPrivate(JobPositionDTO dto) {
+
+    }
+
     @Override
     @Transactional
-    public void createNewJobPosition(JobPositionDTO dto) {
+    public JobPositionDTO createNewJobPosition(JobPositionDTO dto) {
         if (dto.getSubCategoryDTOs() != null) {
             dto.getSubCategoryDTOs().forEach(subCategoryDTO -> {
                 if (!isSubCategoryIdValid(subCategoryDTO.getId())) {
@@ -71,7 +91,8 @@ public class JobPositionServiceImpl implements JobPositionService {
         }
 
         JobPositionEntity entity = mapper.toEntity(dto);
-        jobPositionRepository.save(entity);
+        entity = jobPositionRepository.save(entity);
+        return mapper.toDTO(entity);
     }
 
     @Override
@@ -134,6 +155,37 @@ public class JobPositionServiceImpl implements JobPositionService {
         if (jobLevelId != null) jobLevel.ordinal();
         Page<JobPositionEntity> jobPositionEntities = jobPositionRepository.findAllByCriteria(companyId, jobTypeId, jobLevelId, PageRequest.of(offset, pageSize).withSort(Sort.by(direction, sortBy)));
         return jobPositionEntities.map(entity -> mapper.toDTO(entity));
+    }
+
+    @SneakyThrows
+    @Override
+    @Transactional
+    public List<JobPositionDTO> createNewJobPositionsFromCSVFile(MultipartFile file) {
+        List<JobPositionDTO> result = new ArrayList<>();
+        if (!CSVConstant.TYPE.equals(file.getContentType())){
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Job.CSV_FILE_ERROR));
+        }
+        Reader reader = new InputStreamReader(file.getInputStream());
+        CsvToBean<CreateJobPositionRequest> csvToBean = new CsvToBeanBuilder(reader)
+                .withType(CreateJobPositionRequest.class)
+                .withIgnoreLeadingWhiteSpace(true)
+                .build();
+        Iterator<CreateJobPositionRequest> jobsCSV = csvToBean.iterator();
+        int numberOfCreatedJob = 0;
+        while (jobsCSV.hasNext()) {
+            numberOfCreatedJob++;
+            CreateJobPositionRequest jobRequest = jobsCSV.next();
+            Errors errors = new BindException(jobRequest, CreateJobPositionRequest.class.getSimpleName());
+            validator.validate(jobRequest, errors);
+            if (errors.hasErrors()) {
+                String errorMessage = String.format(MessageUtil.getMessage(MessageConstant.Job.CSV_LINE_ERROR), numberOfCreatedJob);
+                throw new IllegalArgumentException(errorMessage);
+            }
+            JobPositionDTO jobPositionDTO = mapper.toDTO(jobRequest);
+            jobPositionDTO = createNewJobPosition(jobPositionDTO);
+            result.add(jobPositionDTO);
+        }
+        return result;
     }
 
 
