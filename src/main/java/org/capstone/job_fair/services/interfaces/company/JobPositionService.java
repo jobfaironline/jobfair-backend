@@ -6,8 +6,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 public interface JobPositionService {
-    void createNewJobPosition(JobPositionDTO dto);
+    JobPositionDTO createNewJobPosition(JobPositionDTO dto);
 
     JobPositionDTO updateJobPosition(JobPositionDTO dto, String companyId);
 
@@ -15,6 +17,6 @@ public interface JobPositionService {
 
     Page<JobPositionDTO> getAllJobPositionOfCompany(String companyId, Integer jobTypeId, JobLevel jobLevelId, int pageSize, int offset, String sortBy, Sort.Direction direction);
 
-    void createNewJobPositionsFromCSVFile(MultipartFile file);
+    List<JobPositionDTO> createNewJobPositionsFromCSVFile(MultipartFile file);
 
 }

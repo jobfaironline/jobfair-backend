@@ -4,6 +4,7 @@ import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
+import org.capstone.job_fair.constants.CSVConstant;
 import org.capstone.job_fair.constants.DataConstraint;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.controllers.payload.requests.company.CreateJobPositionRequest;
@@ -32,7 +33,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -68,7 +71,7 @@ public class JobPositionServiceImpl implements JobPositionService {
 
     @Override
     @Transactional
-    public void createNewJobPosition(JobPositionDTO dto) {
+    public JobPositionDTO createNewJobPosition(JobPositionDTO dto) {
         if (dto.getSubCategoryDTOs() != null) {
             dto.getSubCategoryDTOs().forEach(subCategoryDTO -> {
                 if (!isSubCategoryIdValid(subCategoryDTO.getId())) {
@@ -88,7 +91,8 @@ public class JobPositionServiceImpl implements JobPositionService {
         }
 
         JobPositionEntity entity = mapper.toEntity(dto);
-        jobPositionRepository.save(entity);
+        entity = jobPositionRepository.save(entity);
+        return mapper.toDTO(entity);
     }
 
     @Override
@@ -156,30 +160,32 @@ public class JobPositionServiceImpl implements JobPositionService {
     @SneakyThrows
     @Override
     @Transactional
-    public void createNewJobPositionsFromCSVFile(MultipartFile file) {
-        String TYPE = "text/csv";
-        boolean isCSV = TYPE.equals(file.getContentType());
-        if (isCSV) {
-            Reader reader = new InputStreamReader(file.getInputStream());
-            CsvToBean<CreateJobPositionRequest> csvToBean = new CsvToBeanBuilder(reader)
-                    .withType(CreateJobPositionRequest.class)
-                    .withIgnoreLeadingWhiteSpace(true)
-                    .build();
-            Iterator<CreateJobPositionRequest> jobsCSV = csvToBean.iterator();
-            int numberOfCreatedJob = 0;
-            while (jobsCSV.hasNext()) {
-                numberOfCreatedJob++;
-                CreateJobPositionRequest jobRequest = jobsCSV.next();
-                Errors errors = new BindException(jobRequest, CreateJobPositionRequest.class.getSimpleName());
-                validator.validate(jobRequest, errors);
-                if (errors.hasErrors()) {
-                    String errorMessage = String.format(MessageUtil.getMessage(MessageConstant.Job.CSV_ERROR), numberOfCreatedJob);
-                    throw new IllegalArgumentException(errorMessage);
-                }
-                JobPositionDTO jobPositionDTO = mapper.toDTO(jobRequest);
-                createNewJobPosition(jobPositionDTO);
-            }
+    public List<JobPositionDTO> createNewJobPositionsFromCSVFile(MultipartFile file) {
+        List<JobPositionDTO> result = new ArrayList<>();
+        if (!CSVConstant.TYPE.equals(file.getContentType())){
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Job.CSV_FILE_ERROR));
         }
+        Reader reader = new InputStreamReader(file.getInputStream());
+        CsvToBean<CreateJobPositionRequest> csvToBean = new CsvToBeanBuilder(reader)
+                .withType(CreateJobPositionRequest.class)
+                .withIgnoreLeadingWhiteSpace(true)
+                .build();
+        Iterator<CreateJobPositionRequest> jobsCSV = csvToBean.iterator();
+        int numberOfCreatedJob = 0;
+        while (jobsCSV.hasNext()) {
+            numberOfCreatedJob++;
+            CreateJobPositionRequest jobRequest = jobsCSV.next();
+            Errors errors = new BindException(jobRequest, CreateJobPositionRequest.class.getSimpleName());
+            validator.validate(jobRequest, errors);
+            if (errors.hasErrors()) {
+                String errorMessage = String.format(MessageUtil.getMessage(MessageConstant.Job.CSV_LINE_ERROR), numberOfCreatedJob);
+                throw new IllegalArgumentException(errorMessage);
+            }
+            JobPositionDTO jobPositionDTO = mapper.toDTO(jobRequest);
+            jobPositionDTO = createNewJobPosition(jobPositionDTO);
+            result.add(jobPositionDTO);
+        }
+        return result;
     }
 
 

@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -104,11 +105,11 @@ public class JobController {
         return ResponseEntity.ok(jobPositions);
     }
 
-    @PostMapping(ApiEndPoint.Job.MULTIPLE_JOB_POSITIONS)
+    @PostMapping(ApiEndPoint.Job.CREAT_JOB_POSITION_UPLOAD_CSV)
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE)")
     public ResponseEntity<?> createMultipleJobPositionFromCSVFile(@RequestParam("file") MultipartFile file) throws IOException {
-        jobPositionService.createNewJobPositionsFromCSVFile(file);
-        return ResponseEntity.ok().build();
+        List<JobPositionDTO> result =  jobPositionService.createNewJobPositionsFromCSVFile(file);
+        return ResponseEntity.ok(result);
     }
 }
 
