@@ -41,4 +41,14 @@ public class JobFairDTO implements Serializable {
     private String cancelReason;
 
     private String rejectReason;
+
+    private String thumbnail;
+
+    private String name;
+
+    private Integer estimateParticipant;
+
+    private String targetCompany;
+
+    private String targetAttendant;
 }

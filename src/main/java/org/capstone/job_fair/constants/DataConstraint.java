@@ -35,6 +35,12 @@ public final class DataConstraint {
         public static final int MESSAGE_MAX_LENGTH = 500;
         public static final int COMPANY_REASON_CANCEL_JOB_FAIR_REGISTRATION_MAX_LENGTH = 1000;
         public static final int COMPANY_REASON_CANCEL_JOB_FAIR_REGISTRATION_MIN_LENGTH = 1;
+        public static final int NAME_MAX_LENGTH = 100;
+        public static final int MIN_ESTIMATE_PARTICIPANT_NUM = 0;
+        public static final int MAX_ESTIMATE_PARTICIPANT_NUM = 1_000_000;
+        public static final int TARGET_COMPANY_MAX_LENGTH = 500;
+        public static final int TARGET_ATTENDANT_MAX_LENGTH = 500;
+
 
     }
 
