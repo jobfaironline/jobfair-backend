@@ -104,15 +104,12 @@ public class JobFairServiceImpl implements JobFairService {
     }
 
     @Override
-    public List<JobFairDTO> getAllJobFairPlanOfCurrentAccount() {
-        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext()
-                .getAuthentication().getPrincipal();
-        String id = userDetails.getId();
-        List<JobFairEntity> entities = jobFairRepository.findAllByCreatorId(id);
-        if (entities.isEmpty()) return null;
-        return entities.stream()
-                .map(jobFairEntity -> jobFairMapper.toJobFairDTO(jobFairEntity))
-                .collect(Collectors.toList());
+    public Page<JobFairDTO> getJobFairPlanByCreatorIdAndStatus(String creatorId, JobFairPlanStatus status, int offset, int pageSize) {
+        if (Objects.isNull(status)){
+            return jobFairRepository.findAllByCreatorId(creatorId, PageRequest.of(offset, pageSize)).map(jobFairMapper::toJobFairDTO);
+        }
+        return jobFairRepository.findAllByCreatorIdAndStatus(creatorId, status, PageRequest.of(offset, pageSize))
+                .map(jobFairMapper::toJobFairDTO);
     }
 
     private JobFairEntity getValidatedJobFair(String jobFairId, JobFairPlanStatus status) {

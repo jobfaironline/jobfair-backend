@@ -12,7 +12,6 @@ import java.util.Optional;
 
 @Repository
 public interface JobFairRepository extends JpaRepository<JobFairEntity, String> {
-    List<JobFairEntity> findAllByCreatorId(String id);
 
     Optional<JobFairEntity> findById(String id);
 
@@ -25,4 +24,8 @@ public interface JobFairRepository extends JpaRepository<JobFairEntity, String> 
     Page<JobFairEntity> findByStatus(JobFairPlanStatus status, Pageable pageable);
 
     Page<JobFairEntity> findAllByStatusNot(JobFairPlanStatus status, Pageable pageable);
+
+    Page<JobFairEntity> findAllByCreatorIdAndStatus(String creatorId, JobFairPlanStatus status, Pageable pageable);
+
+    Page<JobFairEntity> findAllByCreatorId(String creatorId, Pageable pageable);
 }
