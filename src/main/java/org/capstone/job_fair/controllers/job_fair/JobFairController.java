@@ -115,12 +115,14 @@ public class JobFairController {
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).STAFF)")
     @GetMapping(ApiEndPoint.JobFair.GET_OWN_PLAN)
-    public ResponseEntity<?> getAllJobFairPlanOfEmployee() {
-        try {
-            return new ResponseEntity<>(jobFairService.getAllJobFairPlanOfCurrentAccount(), HttpStatus.OK);
-        } catch (IllegalArgumentException ex) {
-            return GenericResponse.build(ex.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<?> getAllJobFairPlanOfEmployee(
+            @RequestParam(value = "offset", defaultValue = ApplicationConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset,
+            @RequestParam(value = "pageSize", defaultValue = ApplicationConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize,
+            @RequestParam(value = "status", required = false) JobFairPlanStatus status
+    ) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Page<JobFairDTO> result = jobFairService.getJobFairPlanByCreatorIdAndStatus(userDetails.getId(), status, offset, pageSize);
+        return ResponseEntity.ok(result);
     }
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).STAFF)")
