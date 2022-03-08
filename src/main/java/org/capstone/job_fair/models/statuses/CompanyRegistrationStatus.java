@@ -1,5 +1,5 @@
 package org.capstone.job_fair.models.statuses;
 
 public enum CompanyRegistrationStatus {
-    DRAFT, DELETED, PENDING, CANCEL, APPROVE, REJECT
+    DRAFT, DELETED, PENDING, CANCEL, APPROVE, REJECT, REQUEST_CHANGE
 }

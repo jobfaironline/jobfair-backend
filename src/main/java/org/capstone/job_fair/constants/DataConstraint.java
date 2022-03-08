@@ -43,7 +43,7 @@ public final class DataConstraint {
         }
 
         public static final int MESSAGE_MIN_LENGTH = 1;
-        public static final int MESSAGE_MAX_LENGTH = 500;
+        public static final int MESSAGE_MAX_LENGTH = 1000;
         public static final int OFFSET_MIN = 0;
         public static final int PAGE_SIZE_MIN = 0;
     }

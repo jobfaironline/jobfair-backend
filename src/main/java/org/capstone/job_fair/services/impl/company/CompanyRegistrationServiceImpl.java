@@ -276,12 +276,13 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
         if (!companyRegistrationOpt.isPresent()) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyRegistration.NOT_FOUND));
         }
-        if (status != CompanyRegistrationStatus.REJECT && status != CompanyRegistrationStatus.APPROVE) {
+        if (status != CompanyRegistrationStatus.REJECT && status != CompanyRegistrationStatus.APPROVE && status != CompanyRegistrationStatus.REQUEST_CHANGE) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyRegistration.INVALID_STATUS_WHEN_EVALUATE));
         }
-        if (status == CompanyRegistrationStatus.REJECT && message == null) {
+        if ((status == CompanyRegistrationStatus.REJECT || status == CompanyRegistrationStatus.REQUEST_CHANGE)  && message == null) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyRegistration.REJECT_MISSING_REASON));
         }
+
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         CompanyRegistrationEntity entity = companyRegistrationOpt.get();
         if (entity.getStatus() != CompanyRegistrationStatus.PENDING) {
@@ -289,7 +290,7 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
         }
 
         entity.setStatus(status);
-        if (status == CompanyRegistrationStatus.REJECT) entity.setRejectReason(message);
+        if (status == CompanyRegistrationStatus.REJECT || status == CompanyRegistrationStatus.REQUEST_CHANGE) entity.setAdminMessage(message);
         entity.setAuthorizerId(userDetails.getId());
         companyRegistrationRepository.save(entity);
     }

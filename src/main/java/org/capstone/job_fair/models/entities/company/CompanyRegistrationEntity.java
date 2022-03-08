@@ -1,7 +1,6 @@
 package org.capstone.job_fair.models.entities.company;
 
 import lombok.*;
-import org.capstone.job_fair.models.entities.attendant.cv.WorkHistoryEntity;
 import org.capstone.job_fair.models.entities.company.job.RegistrationJobPositionEntity;
 import org.capstone.job_fair.models.statuses.CompanyRegistrationStatus;
 import org.hibernate.Hibernate;
@@ -41,8 +40,8 @@ public class CompanyRegistrationEntity {
     @Column(name = "cancel_reason")
     private String cancelReason;
 
-    @Column(name = "reject_reason")
-    private String rejectReason;
+    @Column(name = "admin_message")
+    private String adminMessage;
 
     @Column(name = "authorizer_id")
     private String authorizerId;

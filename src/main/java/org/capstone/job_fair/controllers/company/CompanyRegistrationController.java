@@ -121,13 +121,9 @@ public class CompanyRegistrationController {
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).STAFF) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
     @PostMapping(ApiEndPoint.CompanyRegistration.EVALUATE)
     public ResponseEntity<?> evaluateCompanyRegistration(@Valid @RequestBody StaffEvaluateCompanyRegistrationRequest request) {
-        try {
-            companyRegistrationService.staffEvaluateCompanyRegistration(request.getCompanyRegistrationId(), request.getStatus(), request.getMessage());
-            return GenericResponse.build(MessageUtil.getMessage(MessageConstant.CompanyRegistration.EVALUATE_SUCCESSFULLY)
-                    , HttpStatus.OK);
-        } catch (IllegalArgumentException e) {
-            return GenericResponse.build(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+        companyRegistrationService.staffEvaluateCompanyRegistration(request.getCompanyRegistrationId(), request.getStatus(), request.getMessage());
+        return GenericResponse.build(MessageUtil.getMessage(MessageConstant.CompanyRegistration.EVALUATE_SUCCESSFULLY)
+                , HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
