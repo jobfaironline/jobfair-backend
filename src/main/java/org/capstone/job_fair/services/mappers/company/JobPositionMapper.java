@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -72,13 +73,13 @@ public abstract class JobPositionMapper {
     @Named("fromSubCategoryIdsOfCreateJobPositionRequest")
     public List<SubCategoryDTO> fromSubCategoryIdsOfCreateJobPositionRequest(List<Integer> subCategoryIds) {
         if (subCategoryIds == null) return null;
-        return subCategoryIds.stream().map(SubCategoryDTO::new).collect(Collectors.toList());
+        return subCategoryIds.stream().filter(Objects::nonNull).map(SubCategoryDTO::new).collect(Collectors.toList());
     }
 
     @Named("fromSkillTagIdsOfCreateJobPositionRequest")
     public List<SkillTagDTO> fromSkillTagIdsOfCreateJobPositionRequest(List<Integer> skillTagIds) {
         if (skillTagIds == null) return null;
-        return skillTagIds.stream().map(SkillTagDTO::new).collect(Collectors.toList());
+        return skillTagIds.stream().filter(Objects::nonNull).map(SkillTagDTO::new).collect(Collectors.toList());
     }
 
 
