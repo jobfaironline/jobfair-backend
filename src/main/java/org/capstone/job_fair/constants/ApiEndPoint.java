@@ -34,9 +34,10 @@ public final class ApiEndPoint {
         public static final String EVALUATE_JOB_FAIL_PLAN = JOB_FAIR_PLAN + "/evaluate";
         public static final String GET_APPROVE_JOB_FAIR_PLAN = JOB_FAIR_PLAN + "/approve";
         public static final String FOR_3D_MAP = JOB_FAIR_PLAN + "/for-3d-map";
-        public static final String AVALAIBLE_JOB_FAIR_FOR_REGISTRATION = JOB_FAIR_PLAN + "/available-register";
+        public static final String AVAILABLE_JOB_FAIR_FOR_REGISTRATION = JOB_FAIR_PLAN + "/available-register";
         public static final String COMPANY_END_POINT = JOB_FAIR_PLAN + "/company";
         public static final String ATTENDANT_END_POINT = JOB_FAIR_PLAN + "/attendant";
+        public static final String ADMIN_END_POINT = JOB_FAIR_PLAN + "/admin";
     }
 
     public static final class CompanyRegistration {

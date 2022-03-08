@@ -4,18 +4,22 @@ import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import org.capstone.job_fair.constants.DataConstraint;
 import org.capstone.job_fair.constants.JobFairConstant;
 import org.capstone.job_fair.constants.MessageConstant;
+import org.capstone.job_fair.models.dtos.job_fair.AdminJobFairStatusDTO;
 import org.capstone.job_fair.models.dtos.job_fair.AttendantJobFairStatusDTO;
 import org.capstone.job_fair.models.dtos.job_fair.CompanyJobFairStatusDTO;
 import org.capstone.job_fair.models.dtos.job_fair.JobFairDTO;
 import org.capstone.job_fair.models.entities.job_fair.JobFairEntity;
+import org.capstone.job_fair.models.statuses.JobFairAdminStatus;
 import org.capstone.job_fair.models.statuses.JobFairAttendantStatus;
 import org.capstone.job_fair.models.statuses.JobFairCompanyStatus;
 import org.capstone.job_fair.models.statuses.JobFairPlanStatus;
 import org.capstone.job_fair.repositories.account.AccountRepository;
+import org.capstone.job_fair.repositories.job_fair.AdminJobFairStatusRepository;
 import org.capstone.job_fair.repositories.job_fair.AttendantJobFairStatusRepository;
 import org.capstone.job_fair.repositories.job_fair.CompanyJobFairStatusRepository;
 import org.capstone.job_fair.repositories.job_fair.JobFairRepository;
 import org.capstone.job_fair.services.interfaces.job_fair.JobFairService;
+import org.capstone.job_fair.services.mappers.job_fair.AdminJobFairStatusMapper;
 import org.capstone.job_fair.services.mappers.job_fair.AttendantJobFairStatusMapper;
 import org.capstone.job_fair.services.mappers.job_fair.CompanyJobFairStatusMapper;
 import org.capstone.job_fair.services.mappers.job_fair.JobFairMapper;
@@ -51,7 +55,10 @@ public class JobFairServiceImpl implements JobFairService {
     private AttendantJobFairStatusRepository attendantJobFairStatusRepository;
     @Autowired
     private AttendantJobFairStatusMapper attendantJobFairStatusMapper;
-
+    @Autowired
+    private AdminJobFairStatusRepository adminJobFairStatusRepository;
+    @Autowired
+    private AdminJobFairStatusMapper adminJobFairStatusMapper;
 
 
     @Override
@@ -339,6 +346,20 @@ public class JobFairServiceImpl implements JobFairService {
         return attendantJobFairStatusRepository
                 .getByStatusAndAttendantId(status, attendantId, PageRequest.of(offset, pageSize))
                 .map(attendantJobFairStatusMapper::toDTO);
+    }
+
+    @Override
+    public Page<AdminJobFairStatusDTO> getJobFairForAdmin(JobFairAdminStatus status, int offset, int pageSize) {
+        if (offset < DataConstraint.Application.OFFSET_MIN || pageSize < DataConstraint.Application.PAGE_SIZE_MIN)
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.INVALID_PAGE_NUMBER));
+        if (status == null) {
+            return adminJobFairStatusRepository
+                    .findAll(PageRequest.of(offset, pageSize))
+                    .map(adminJobFairStatusMapper::toDTO);
+        }
+        return adminJobFairStatusRepository
+                .getByStatus(status, PageRequest.of(offset, pageSize))
+                .map(adminJobFairStatusMapper::toDTO);
     }
 
 }
