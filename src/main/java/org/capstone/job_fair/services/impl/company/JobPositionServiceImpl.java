@@ -1,8 +1,12 @@
 package org.capstone.job_fair.services.impl.company;
 
+import com.opencsv.bean.CsvToBean;
+import com.opencsv.bean.CsvToBeanBuilder;
 import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
 import org.capstone.job_fair.constants.DataConstraint;
 import org.capstone.job_fair.constants.MessageConstant;
+import org.capstone.job_fair.controllers.payload.requests.company.CreateJobPositionRequest;
 import org.capstone.job_fair.models.dtos.company.job.JobPositionDTO;
 import org.capstone.job_fair.models.entities.company.CompanyEntity;
 import org.capstone.job_fair.models.entities.company.job.JobPositionEntity;
@@ -21,7 +25,14 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BindException;
+import org.springframework.validation.Errors;
+import org.springframework.validation.Validator;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.util.Iterator;
 import java.util.Optional;
 
 @Service
@@ -40,6 +51,8 @@ public class JobPositionServiceImpl implements JobPositionService {
     private SkillTagRepository skillTagRepository;
     @Autowired
     private CompanyRepository companyRepository;
+    @Autowired
+    private Validator validator;
 
     private boolean isSubCategoryIdValid(int id) {
         return subCategoryRepository.existsById(id);
@@ -47,6 +60,10 @@ public class JobPositionServiceImpl implements JobPositionService {
 
     private boolean isSkillTagIdValid(int id) {
         return skillTagRepository.existsById(id);
+    }
+
+    private void createNewJobPositionPrivate(JobPositionDTO dto) {
+
     }
 
     @Override
@@ -134,6 +151,35 @@ public class JobPositionServiceImpl implements JobPositionService {
         if (jobLevelId != null) jobLevel.ordinal();
         Page<JobPositionEntity> jobPositionEntities = jobPositionRepository.findAllByCriteria(companyId, jobTypeId, jobLevelId, PageRequest.of(offset, pageSize).withSort(Sort.by(direction, sortBy)));
         return jobPositionEntities.map(entity -> mapper.toDTO(entity));
+    }
+
+    @SneakyThrows
+    @Override
+    @Transactional
+    public void createNewJobPositionsFromCSVFile(MultipartFile file) {
+        String TYPE = "text/csv";
+        boolean isCSV = TYPE.equals(file.getContentType());
+        if (isCSV) {
+            Reader reader = new InputStreamReader(file.getInputStream());
+            CsvToBean<CreateJobPositionRequest> csvToBean = new CsvToBeanBuilder(reader)
+                    .withType(CreateJobPositionRequest.class)
+                    .withIgnoreLeadingWhiteSpace(true)
+                    .build();
+            Iterator<CreateJobPositionRequest> jobsCSV = csvToBean.iterator();
+            int numberOfCreatedJob = 0;
+            while (jobsCSV.hasNext()) {
+                numberOfCreatedJob++;
+                CreateJobPositionRequest jobRequest = jobsCSV.next();
+                Errors errors = new BindException(jobRequest, CreateJobPositionRequest.class.getSimpleName());
+                validator.validate(jobRequest, errors);
+                if (errors.hasErrors()) {
+                    String errorMessage = String.format(MessageUtil.getMessage(MessageConstant.Job.CSV_ERROR), numberOfCreatedJob);
+                    throw new IllegalArgumentException(errorMessage);
+                }
+                JobPositionDTO jobPositionDTO = mapper.toDTO(jobRequest);
+                createNewJobPosition(jobPositionDTO);
+            }
+        }
     }
 
 

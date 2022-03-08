@@ -23,7 +23,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Optional;
 
 @RestController
@@ -37,6 +39,7 @@ public class JobController {
 
     @Autowired
     private CompanyEmployeeService companyEmployeeService;
+
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) ")
     @PostMapping(ApiEndPoint.Job.JOB_POSITION_ENDPOINT)
@@ -100,4 +103,12 @@ public class JobController {
         if (jobPositions.isEmpty()) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(jobPositions);
     }
+
+    @PostMapping(ApiEndPoint.Job.MULTIPLE_JOB_POSITIONS)
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE)")
+    public ResponseEntity<?> createMultipleJobPositionFromCSVFile(@RequestParam("file") MultipartFile file) throws IOException {
+        jobPositionService.createNewJobPositionsFromCSVFile(file);
+        return ResponseEntity.ok().build();
+    }
 }
+

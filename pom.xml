@@ -152,6 +152,13 @@
             <version>1.11</version>
         </dependency>
         <!-- End Agora dependencies -->
+        <!--Open CSV dependency-->
+        <dependency>
+            <groupId>com.opencsv</groupId>
+            <artifactId>opencsv</artifactId>
+            <version>5.5.2</version>
+        </dependency>
+        <!--End Open CSV dependency-->
     </dependencies>
 
     <packaging>jar</packaging>
