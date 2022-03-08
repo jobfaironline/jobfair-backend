@@ -14,9 +14,11 @@ import org.capstone.job_fair.controllers.payload.responses.JobFairForCompanyResp
 import org.capstone.job_fair.controllers.payload.responses.RenderJobFairParkResponse;
 import org.capstone.job_fair.models.dtos.company.CompanyBoothDTO;
 import org.capstone.job_fair.models.dtos.company.CompanyBoothLayoutDTO;
+import org.capstone.job_fair.models.dtos.job_fair.AdminJobFairStatusDTO;
 import org.capstone.job_fair.models.dtos.job_fair.AttendantJobFairStatusDTO;
 import org.capstone.job_fair.models.dtos.job_fair.JobFairDTO;
 import org.capstone.job_fair.models.dtos.job_fair.LayoutDTO;
+import org.capstone.job_fair.models.statuses.JobFairAdminStatus;
 import org.capstone.job_fair.models.statuses.JobFairAttendantStatus;
 import org.capstone.job_fair.models.statuses.JobFairCompanyStatus;
 import org.capstone.job_fair.models.statuses.JobFairPlanStatus;
@@ -172,7 +174,7 @@ public class JobFairController {
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
     @GetMapping(ApiEndPoint.JobFair.JOB_FAIR_PLAN)
-    public ResponseEntity<?> getAll(@RequestParam(value = "status", required = false) JobFairPlanStatus status, @RequestParam(value = "offset", defaultValue = JobFairConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset, @RequestParam(value = "pageSize", defaultValue = JobFairConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize, @RequestParam(value = "sortBy", required = false, defaultValue = JobFairConstant.DEFAULT_SEARCH_SORT_BY_VALUE) String sortBy, @RequestParam(value = "direction", required = false, defaultValue = JobFairConstant.DEFAULT_SEARCH_SORT_DIRECTION) Sort.Direction direction) {
+    public ResponseEntity<?> getAllJobFairPlan(@RequestParam(value = "status", required = false) JobFairPlanStatus status, @RequestParam(value = "offset", defaultValue = JobFairConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset, @RequestParam(value = "pageSize", defaultValue = JobFairConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize, @RequestParam(value = "sortBy", required = false, defaultValue = JobFairConstant.DEFAULT_SEARCH_SORT_BY_VALUE) String sortBy, @RequestParam(value = "direction", required = false, defaultValue = JobFairConstant.DEFAULT_SEARCH_SORT_DIRECTION) Sort.Direction direction) {
         Page<JobFairDTO> result = jobFairService.getAllForAdmin(status, offset, pageSize, sortBy, direction);
         if (result.isEmpty()) {
             return ResponseEntity.noContent().build();
@@ -240,7 +242,7 @@ public class JobFairController {
     }
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).STAFF)")
-    @GetMapping(ApiEndPoint.JobFair.AVALAIBLE_JOB_FAIR_FOR_REGISTRATION)
+    @GetMapping(ApiEndPoint.JobFair.AVAILABLE_JOB_FAIR_FOR_REGISTRATION)
     public ResponseEntity<?> getAllAvalaibleForRegistration(@RequestParam(value = "fromTime", required = false) String fromTime,
                                                             @RequestParam(value = "toTime", required = false) String toTime) {
         List<JobFairDTO> result = jobFairService.getAllAvailableForRegistration(fromTime, toTime);
@@ -251,6 +253,7 @@ public class JobFairController {
     }
 
     @GetMapping(ApiEndPoint.JobFair.COMPANY_END_POINT)
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE)")
     public ResponseEntity<?> getJobFairPlanOfCompany(
             @RequestParam(value = "offset", defaultValue = ApplicationConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset,
             @RequestParam(value = "pageSize", defaultValue = ApplicationConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize,
@@ -271,6 +274,7 @@ public class JobFairController {
     }
 
     @GetMapping(ApiEndPoint.JobFair.ATTENDANT_END_POINT)
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ATTENDANT)")
     public ResponseEntity<?> getJobFairForAttendant(
             @RequestParam(value = "offset", defaultValue = ApplicationConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset,
             @RequestParam(value = "pageSize", defaultValue = ApplicationConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize,
@@ -278,6 +282,17 @@ public class JobFairController {
     ) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Page<AttendantJobFairStatusDTO> data = jobFairService.getJobFairForAttendant(userDetails.getId(), status, offset, pageSize);
+        return ResponseEntity.ok(data);
+    }
+
+    @GetMapping(ApiEndPoint.JobFair.ADMIN_END_POINT)
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).STAFF)")
+    public ResponseEntity<?> getJobFairForAdmin(
+            @RequestParam(value = "offset", defaultValue = ApplicationConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset,
+            @RequestParam(value = "pageSize", defaultValue = ApplicationConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize,
+            @RequestParam(value = "filterStatus", required = false) JobFairAdminStatus status
+    ) {
+        Page<AdminJobFairStatusDTO> data = jobFairService.getJobFairForAdmin(status, offset, pageSize);
         return ResponseEntity.ok(data);
     }
 
