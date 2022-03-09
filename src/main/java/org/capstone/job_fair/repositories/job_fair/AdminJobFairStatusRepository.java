@@ -7,8 +7,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface AdminJobFairStatusRepository extends JpaRepository<AdminJobFairStatusEntity, String> {
 
-    Page<AdminJobFairStatusEntity> getByStatus(JobFairAdminStatus status, Pageable pageable);
+    Page<AdminJobFairStatusEntity> getByStatusIn(List<JobFairAdminStatus> status, Pageable pageable);
 }
