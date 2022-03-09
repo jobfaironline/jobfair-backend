@@ -305,7 +305,7 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
     public Page<CompanyRegistrationDTO> getCompanyRegistrationOfAJobFair(String jobFairId, int offset, int pageSize, String sortBy, Sort.Direction direction) {
         if (offset < DataConstraint.CompanyRegistration.OFFSET_MIN || pageSize < DataConstraint.CompanyRegistration.PAGE_SIZE_MIN)
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyRegistration.INVALID_PAGE_NUMBER));
-        Page<CompanyRegistrationEntity> companyRegistrationEntityPage = companyRegistrationRepository.findAllByJobFairId(jobFairId, PageRequest.of(offset, pageSize).withSort(Sort.by(direction, sortBy)));
+        Page<CompanyRegistrationEntity> companyRegistrationEntityPage = companyRegistrationRepository.findAllByJobFairIdAndStatusIn(jobFairId, Arrays.asList(CompanyRegistrationStatus.APPROVE, CompanyRegistrationStatus.PENDING, CompanyRegistrationStatus.REJECT, CompanyRegistrationStatus.REQUEST_CHANGE), PageRequest.of(offset, pageSize).withSort(Sort.by(direction, sortBy)));
         return companyRegistrationEntityPage.map(entity -> companyRegistrationMapper.toDTO(entity));
     }
 
