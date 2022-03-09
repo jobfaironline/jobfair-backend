@@ -17,7 +17,7 @@ import java.util.Optional;
 public interface JobFairService {
     void draftJobFair(JobFairDTO dto);
 
-    Page<JobFairDTO> getJobFairPlanByCreatorIdAndStatus (String creatorId, JobFairPlanStatus status, int offset, int pageSize);
+    Page<JobFairDTO> getJobFairPlanByCreatorIdAndStatus(String creatorId, JobFairPlanStatus status, int offset, int pageSize);
 
     void deleteJobFairDraft(String jobFairId);
 
@@ -43,7 +43,7 @@ public interface JobFairService {
 
     Page<AttendantJobFairStatusDTO> getJobFairForAttendant(String attendantId, JobFairAttendantStatus status, int offset, int pageSize);
 
-    Page<AdminJobFairStatusDTO> getJobFairForAdmin(JobFairAdminStatus status, int offset, int pageSize);
+    Page<AdminJobFairStatusDTO> getJobFairForAdmin(List<JobFairAdminStatus> statuses, int offset, int pageSize);
 
 
 }
