@@ -333,7 +333,7 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyRegistration.INVALID_PAGE_NUMBER));
         Page<CompanyRegistrationEntity> companyRegistrationEntities = null;
         if (statusList == null || statusList.isEmpty())
-            statusList = Arrays.asList(CompanyRegistrationStatus.APPROVE, CompanyRegistrationStatus.PENDING, CompanyRegistrationStatus.REJECT, CompanyRegistrationStatus.REQUEST_CHANGE);
+            statusList = Arrays.asList(CompanyRegistrationStatus.DRAFT, CompanyRegistrationStatus.APPROVE, CompanyRegistrationStatus.PENDING, CompanyRegistrationStatus.REJECT, CompanyRegistrationStatus.REQUEST_CHANGE);
         companyRegistrationEntities = companyRegistrationRepository.findAllByCreatorIdAndStatusIn(userId, statusList, PageRequest.of(offset, pageSize).withSort(Sort.by(direction, sortBy)));
         return companyRegistrationEntities.map(entity -> companyRegistrationMapper.toDTO(entity));
     }
