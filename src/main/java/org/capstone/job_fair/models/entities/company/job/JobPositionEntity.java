@@ -47,6 +47,10 @@ public class JobPositionEntity {
     private String description;
     @Column(name = "requirements")
     private String requirements;
+    @Column(name = "created_date")
+    private Long createdDate;
+    @Column(name = "last_updated_date")
+    private Long updateDate;
 
 
     @ManyToMany(fetch = FetchType.LAZY)
