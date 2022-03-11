@@ -12,6 +12,7 @@ import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
 import org.capstone.job_fair.models.dtos.company.CompanyRegistrationDTO;
 import org.capstone.job_fair.models.dtos.company.job.RegistrationJobPositionDTO;
+import org.capstone.job_fair.models.statuses.CompanyRegistrationStatus;
 import org.capstone.job_fair.services.interfaces.company.CompanyEmployeeService;
 import org.capstone.job_fair.services.interfaces.company.CompanyRegistrationService;
 import org.capstone.job_fair.utils.MessageUtil;
@@ -163,6 +164,18 @@ public class CompanyRegistrationController {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Optional<CompanyRegistrationDTO> optional = companyRegistrationService.getCompanyLatestApproveRegistrationByJobFairIdAndCompanyId(jobFairId, userDetails.getCompanyId());
         return optional.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    }
+
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).STAFF)")
+    @GetMapping(ApiEndPoint.CompanyRegistration.COMPANY_REGISTRATION_ENDPOINT)
+    public ResponseEntity<?> getAllCompanyRegistration(@RequestParam(value = "status", required = false) List<CompanyRegistrationStatus> statusList, @RequestParam(value = "offset", defaultValue = CompanyRegistrationConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset, @RequestParam(value = "pageSize", defaultValue = CompanyRegistrationConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize, @RequestParam(value = "sortBy", required = false, defaultValue = CompanyRegistrationConstant.DEFAULT_SEARCH_SORT_BY_VALUE) String sortBy, @RequestParam(value = "direction", required = false, defaultValue = CompanyRegistrationConstant.DEFAULT_SEARCH_SORT_DIRECTION) Sort.Direction direction) {
+        try {
+            Page<CompanyRegistrationDTO> companyRegistrationDTOPage = companyRegistrationService.getCompanyRegistration(statusList, offset, pageSize, sortBy, direction);
+            if (companyRegistrationDTOPage.isEmpty()) return ResponseEntity.noContent().build();
+            return new ResponseEntity<>(companyRegistrationDTOPage, HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return GenericResponse.build(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
 }

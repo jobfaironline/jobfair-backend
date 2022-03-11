@@ -279,7 +279,7 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
         if (status != CompanyRegistrationStatus.REJECT && status != CompanyRegistrationStatus.APPROVE && status != CompanyRegistrationStatus.REQUEST_CHANGE) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyRegistration.INVALID_STATUS_WHEN_EVALUATE));
         }
-        if ((status == CompanyRegistrationStatus.REJECT || status == CompanyRegistrationStatus.REQUEST_CHANGE)  && message == null) {
+        if ((status == CompanyRegistrationStatus.REJECT || status == CompanyRegistrationStatus.REQUEST_CHANGE) && message == null) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyRegistration.REJECT_MISSING_REASON));
         }
 
@@ -290,7 +290,8 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
         }
 
         entity.setStatus(status);
-        if (status == CompanyRegistrationStatus.REJECT || status == CompanyRegistrationStatus.REQUEST_CHANGE) entity.setAdminMessage(message);
+        if (status == CompanyRegistrationStatus.REJECT || status == CompanyRegistrationStatus.REQUEST_CHANGE)
+            entity.setAdminMessage(message);
         entity.setAuthorizerId(userDetails.getId());
         companyRegistrationRepository.save(entity);
     }
@@ -303,7 +304,7 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
 
     @Override
     public Page<CompanyRegistrationDTO> getCompanyRegistrationOfAJobFair(String jobFairId, int offset, int pageSize, String sortBy, Sort.Direction direction) {
-        if (offset < DataConstraint.CompanyRegistration.OFFSET_MIN || pageSize < DataConstraint.CompanyRegistration.PAGE_SIZE_MIN)
+        if (offset < DataConstraint.Paging.OFFSET_MIN || pageSize < DataConstraint.Paging.PAGE_SIZE_MIN)
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyRegistration.INVALID_PAGE_NUMBER));
         Page<CompanyRegistrationEntity> companyRegistrationEntityPage = companyRegistrationRepository.findAllByJobFairIdAndStatusIn(jobFairId, Arrays.asList(CompanyRegistrationStatus.APPROVE, CompanyRegistrationStatus.PENDING, CompanyRegistrationStatus.REJECT, CompanyRegistrationStatus.REQUEST_CHANGE), PageRequest.of(offset, pageSize).withSort(Sort.by(direction, sortBy)));
         return companyRegistrationEntityPage.map(entity -> companyRegistrationMapper.toDTO(entity));
@@ -320,5 +321,17 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
     @Override
     public Optional<CompanyRegistrationDTO> getById(String registrationId) {
         return companyRegistrationRepository.findById(registrationId).map(companyRegistrationMapper::toDTO);
+    }
+
+    @Override
+    public Page<CompanyRegistrationDTO> getCompanyRegistration(List<CompanyRegistrationStatus> statusList, int offset, int pageSize, String sortBy, Sort.Direction direction) {
+        Page<CompanyRegistrationEntity> companyRegistrationEntityPage = null;
+        if (offset < DataConstraint.Paging.OFFSET_MIN || pageSize < DataConstraint.Paging.PAGE_SIZE_MIN)
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyRegistration.INVALID_PAGE_NUMBER));
+        if (statusList == null || statusList.isEmpty())
+            companyRegistrationEntityPage = companyRegistrationRepository.findAllByStatusIn(Arrays.asList(CompanyRegistrationStatus.APPROVE, CompanyRegistrationStatus.PENDING, CompanyRegistrationStatus.REJECT, CompanyRegistrationStatus.REQUEST_CHANGE), PageRequest.of(offset, pageSize).withSort(Sort.by(direction, sortBy)));
+        else
+            companyRegistrationEntityPage = companyRegistrationRepository.findAllByStatusIn(statusList, PageRequest.of(offset, pageSize).withSort(Sort.by(direction, sortBy)));
+        return companyRegistrationEntityPage.map(entity -> companyRegistrationMapper.toDTO(entity));
     }
 }
