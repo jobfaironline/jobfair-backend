@@ -33,10 +33,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -89,7 +86,8 @@ public class JobPositionServiceImpl implements JobPositionService {
         if (companyService.getCountById(dto.getCompanyDTO().getId()) == 0) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Company.NOT_FOUND));
         }
-
+        long currentTime = new Date().getTime();
+        dto.setCreatedDate(currentTime);
         JobPositionEntity entity = mapper.toEntity(dto);
         entity = jobPositionRepository.save(entity);
         return mapper.toDTO(entity);
@@ -122,6 +120,8 @@ public class JobPositionServiceImpl implements JobPositionService {
                 }
             });
         }
+        long currentTime = new Date().getTime();
+        dto.setUpdateDate(currentTime);
         mapper.updateJobPositionEntity(dto, jobPositionEntity);
         jobPositionRepository.save(jobPositionEntity);
         return mapper.toDTO(jobPositionEntity);
@@ -162,7 +162,7 @@ public class JobPositionServiceImpl implements JobPositionService {
     @Transactional
     public List<JobPositionDTO> createNewJobPositionsFromCSVFile(MultipartFile file) {
         List<JobPositionDTO> result = new ArrayList<>();
-        if (!CSVConstant.TYPE.equals(file.getContentType())){
+        if (!CSVConstant.TYPE.equals(file.getContentType())) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Job.CSV_FILE_ERROR));
         }
         Reader reader = new InputStreamReader(file.getInputStream());

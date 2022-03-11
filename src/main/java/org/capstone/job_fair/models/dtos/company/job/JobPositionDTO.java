@@ -33,5 +33,8 @@ public class JobPositionDTO implements Serializable {
     private List<SkillTagDTO> skillTagDTOS;
     private String description;
     private String requirements;
+    private Long createdDate;
+    private Long updateDate;
+
 
 }
