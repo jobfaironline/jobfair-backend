@@ -122,9 +122,7 @@ public class JobPositionServiceImpl implements JobPositionService {
         }
         long currentTime = new Date().getTime();
         dto.setUpdateDate(currentTime);
-        System.out.println(dto);
         mapper.updateJobPositionEntity(dto, jobPositionEntity);
-        System.out.println(jobPositionEntity.getUpdateDate());
         jobPositionRepository.save(jobPositionEntity);
         return mapper.toDTO(jobPositionEntity);
     }
