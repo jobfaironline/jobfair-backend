@@ -2,7 +2,6 @@ package org.capstone.job_fair.models.dtos.company;
 
 import lombok.*;
 import org.capstone.job_fair.models.dtos.company.job.RegistrationJobPositionDTO;
-import org.capstone.job_fair.models.entities.company.job.RegistrationJobPositionEntity;
 import org.capstone.job_fair.models.statuses.CompanyRegistrationStatus;
 
 import java.io.Serializable;
@@ -27,5 +26,7 @@ public class CompanyRegistrationDTO implements Serializable {
     private String rejectReason;
     private String authorizerId;
     private List<RegistrationJobPositionDTO> registrationJobPositions;
+    private String creatorId;
+
 
 }

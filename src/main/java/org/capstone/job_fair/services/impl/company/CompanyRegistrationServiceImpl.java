@@ -101,11 +101,12 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
         //make sure the registration job position is unique
         validateUniqueJobPosition(jobPositions);
 
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         //Get company from user information in security context
-        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         CompanyEmployeeEntity companyEmployee = companyEmployeeRepository.findById(userDetails.getId()).get();
-
+        //Set creator
+        companyRegistrationDTO.setCreatorId(userDetails.getId());
         //Set company id to company registration dto
         companyRegistrationDTO.setCompanyId(companyEmployee.getCompany().getId());
         companyRegistrationDTO.setStatus(CompanyRegistrationStatus.DRAFT);
@@ -155,8 +156,8 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
     @Override
     @Transactional
     public void updateDraftCompanyRegistration(CompanyRegistrationDTO companyRegistrationDTO, List<RegistrationJobPositionDTO> jobPositions) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        //Create registration job position entity
 
         //Check job fair registration existence
         Optional<CompanyRegistrationEntity> companyRegistrationEntityOpt = companyRegistrationRepository.findById(companyRegistrationDTO.getId());
@@ -165,6 +166,9 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
         CompanyRegistrationEntity companyRegistrationEntity = companyRegistrationEntityOpt.get();
         if (!companyRegistrationEntity.getStatus().equals(CompanyRegistrationStatus.DRAFT))
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyRegistration.INVALID_STATUS_WHEN_UPDATE));
+        //Verify creator
+        if (!companyRegistrationEntity.getCreatorId().equals(userDetails.getId()))
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyRegistration.CREATOR_MISMATCH));
         //make sure the registration job position is unique
         validateUniqueJobPosition(jobPositions);
         //Create company registration entity
@@ -279,7 +283,7 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
         if (status != CompanyRegistrationStatus.REJECT && status != CompanyRegistrationStatus.APPROVE && status != CompanyRegistrationStatus.REQUEST_CHANGE) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyRegistration.INVALID_STATUS_WHEN_EVALUATE));
         }
-        if ((status == CompanyRegistrationStatus.REJECT || status == CompanyRegistrationStatus.REQUEST_CHANGE)  && message == null) {
+        if ((status == CompanyRegistrationStatus.REJECT || status == CompanyRegistrationStatus.REQUEST_CHANGE) && message == null) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyRegistration.REJECT_MISSING_REASON));
         }
 
@@ -290,7 +294,8 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
         }
 
         entity.setStatus(status);
-        if (status == CompanyRegistrationStatus.REJECT || status == CompanyRegistrationStatus.REQUEST_CHANGE) entity.setAdminMessage(message);
+        if (status == CompanyRegistrationStatus.REJECT || status == CompanyRegistrationStatus.REQUEST_CHANGE)
+            entity.setAdminMessage(message);
         entity.setAuthorizerId(userDetails.getId());
         companyRegistrationRepository.save(entity);
     }
@@ -321,4 +326,16 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
     public Optional<CompanyRegistrationDTO> getById(String registrationId) {
         return companyRegistrationRepository.findById(registrationId).map(companyRegistrationMapper::toDTO);
     }
+
+    @Override
+    public Page<CompanyRegistrationDTO> getCompanyRegistrationByUserId(String userId, List<CompanyRegistrationStatus> statusList, int offset, int pageSize, String sortBy, Sort.Direction direction) {
+        if (offset < DataConstraint.Paging.OFFSET_MIN || pageSize < DataConstraint.Paging.PAGE_SIZE_MIN)
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyRegistration.INVALID_PAGE_NUMBER));
+        Page<CompanyRegistrationEntity> companyRegistrationEntities = null;
+        if (statusList == null || statusList.isEmpty())
+            statusList = Arrays.asList(CompanyRegistrationStatus.APPROVE, CompanyRegistrationStatus.PENDING, CompanyRegistrationStatus.REJECT, CompanyRegistrationStatus.REQUEST_CHANGE);
+        companyRegistrationEntities = companyRegistrationRepository.findAllByCreatorIdAndStatusIn(userId, statusList, PageRequest.of(offset, pageSize).withSort(Sort.by(direction, sortBy)));
+        return companyRegistrationEntities.map(entity -> companyRegistrationMapper.toDTO(entity));
+    }
+
 }

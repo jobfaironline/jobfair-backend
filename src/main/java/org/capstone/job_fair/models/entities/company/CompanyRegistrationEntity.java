@@ -46,6 +46,9 @@ public class CompanyRegistrationEntity {
     @Column(name = "authorizer_id")
     private String authorizerId;
 
+    @Column(name = "creator_id")
+    private String creatorId;
+
     @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
     @JoinColumn(name = "company_registration_id", referencedColumnName = "id")
     private List<RegistrationJobPositionEntity> registrationJobPositions;

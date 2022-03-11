@@ -285,6 +285,7 @@ public final class MessageConstant {
         public static final String INVALID_STATUS_WHEN_UPDATE = "company-registration.error.invalid-status-when-update";
         public static final String UPDATE_COMPANY_REGISTRATION_DRAF_SUCCESSFULLY = "company-registration.success.update-company-registration-draft";
         public static final String INVALID_PAGE_NUMBER = "company-registration.error.invalid-page-number";
+        public static final String CREATOR_MISMATCH = "company-registration.error.creator-mismatch";
 
 
     }
