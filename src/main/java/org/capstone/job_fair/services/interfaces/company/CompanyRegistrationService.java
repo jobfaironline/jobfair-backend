@@ -1,5 +1,6 @@
 package org.capstone.job_fair.services.interfaces.company;
 
+import org.capstone.job_fair.controllers.payload.responses.CompanyRegistrationResponse;
 import org.capstone.job_fair.models.dtos.company.CompanyRegistrationDTO;
 import org.capstone.job_fair.models.dtos.company.job.RegistrationJobPositionDTO;
 import org.capstone.job_fair.models.statuses.CompanyRegistrationStatus;
@@ -31,4 +32,6 @@ public interface CompanyRegistrationService {
     Page<CompanyRegistrationDTO> getCompanyRegistrationByUserId(String userId, List<CompanyRegistrationStatus> statusList, int offset, int pageSize, String sortBy, Sort.Direction direction);
 
     Page<CompanyRegistrationDTO> getCompanyRegistrationByCompanyId(String companyId, List<CompanyRegistrationStatus> statusList, int offset, int pageSize, String sortBy, Sort.Direction direction);
+
+    Page<CompanyRegistrationResponse> getAllAdmin(String companyName, String jobfairName, int offset, int pageSize, String sortBy, Sort.Direction direction);
 }

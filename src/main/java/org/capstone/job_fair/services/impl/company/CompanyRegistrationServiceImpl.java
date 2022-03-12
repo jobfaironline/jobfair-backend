@@ -3,9 +3,11 @@ package org.capstone.job_fair.services.impl.company;
 import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import org.capstone.job_fair.constants.DataConstraint;
 import org.capstone.job_fair.constants.MessageConstant;
+import org.capstone.job_fair.controllers.payload.responses.CompanyRegistrationResponse;
 import org.capstone.job_fair.models.dtos.company.CompanyRegistrationDTO;
 import org.capstone.job_fair.models.dtos.company.job.RegistrationJobPositionDTO;
 import org.capstone.job_fair.models.entities.company.CompanyEmployeeEntity;
+import org.capstone.job_fair.models.entities.company.CompanyEntity;
 import org.capstone.job_fair.models.entities.company.CompanyRegistrationEntity;
 import org.capstone.job_fair.models.entities.company.job.JobPositionEntity;
 import org.capstone.job_fair.models.entities.company.job.RegistrationJobPositionEntity;
@@ -14,6 +16,7 @@ import org.capstone.job_fair.models.statuses.CompanyRegistrationStatus;
 import org.capstone.job_fair.models.statuses.JobFairPlanStatus;
 import org.capstone.job_fair.repositories.company.CompanyEmployeeRepository;
 import org.capstone.job_fair.repositories.company.CompanyRegistrationRepository;
+import org.capstone.job_fair.repositories.company.CompanyRepository;
 import org.capstone.job_fair.repositories.company.job.JobPositionRepository;
 import org.capstone.job_fair.repositories.company.job.RegistrationJobPositionRepository;
 import org.capstone.job_fair.repositories.job_fair.JobFairRepository;
@@ -56,6 +59,10 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
 
     @Autowired
     private CompanyRegistrationMapper companyRegistrationMapper;
+
+    @Autowired
+    private CompanyRepository companyRepository;
+
 
     private void validateJobFair(JobFairEntity entity, Long currentTime) {
         if (entity.getCompanyRegisterStartTime() > currentTime || entity.getCompanyRegisterEndTime() < currentTime) {
@@ -348,6 +355,34 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
             statusList = Arrays.asList(CompanyRegistrationStatus.DRAFT, CompanyRegistrationStatus.APPROVE, CompanyRegistrationStatus.PENDING, CompanyRegistrationStatus.REJECT, CompanyRegistrationStatus.REQUEST_CHANGE);
         Page<CompanyRegistrationEntity> companyRegistrationEntities = companyRegistrationRepository.findAllByCompanyIdAndStatusIn(companyId, statusList, PageRequest.of(offset, pageSize).withSort(Sort.by(direction, sortBy)));
         return companyRegistrationEntities.map(entity -> companyRegistrationMapper.toDTO(entity));
+    }
+
+    @Override
+    public Page<CompanyRegistrationResponse> getAllAdmin(String companyName, String jobfairName, int offset, int pageSize, String sortBy, Sort.Direction direction) {
+
+        validatePaging(pageSize, offset);
+
+        List<CompanyEntity> companyEntities = null;
+        if (companyName != null) companyEntities = companyRepository.findAllByNameContains(companyName);
+        else companyEntities = companyRepository.findAll();
+        Map<String, String> companyNameMap = companyEntities.stream().collect(Collectors.toMap(CompanyEntity::getId, companyEntity -> companyEntity.getName()));
+
+        List<JobFairEntity> jobFairEntities = null;
+        if (jobfairName != null) jobFairEntities = jobFairRepository.findAllByNameContains(jobfairName);
+        else jobFairEntities = jobFairRepository.findAll();
+        Map<String, String> jobfairNameMap = jobFairEntities.stream().collect(Collectors.toMap(JobFairEntity::getId, jobFairEntity -> jobFairEntity.getName()));
+
+        List<String> companyId = companyNameMap.keySet().stream().collect(Collectors.toList());
+        List<String> jobFairId = jobfairNameMap.keySet().stream().collect(Collectors.toList());
+
+        Page<CompanyRegistrationEntity> companyRegistrationEntities = companyRegistrationRepository.findAllByCompanyIdInAndJobFairIdIn(companyId, jobFairId, PageRequest.of(offset, pageSize).withSort(Sort.by(direction, sortBy)));
+
+        Page<CompanyRegistrationResponse> companyRegistrationResponsePage = companyRegistrationEntities.map(entity -> companyRegistrationMapper.toCompanyRegistrationResponse(entity));
+
+        companyRegistrationResponsePage.stream().forEach(companyRegistrationResponse -> companyRegistrationResponse.setCompanyName(companyNameMap.get(companyRegistrationResponse.getCompanyId())));
+        companyRegistrationResponsePage.stream().forEach(companyRegistrationResponse -> companyRegistrationResponse.setJobfairName(jobfairNameMap.get(companyRegistrationResponse.getJobFairId())));
+
+        return companyRegistrationResponsePage;
     }
 
 
