@@ -53,6 +53,7 @@ public final class ApiEndPoint {
         public static final String GET_ALL_COMPANY_REGISTRATION_OF_JOB_FAIR = COMPANY_REGISTRATION_ENDPOINT + "/getAllRegistrationsOfJobFair";
         public static final String GET_LATEST_APPROVE = COMPANY_REGISTRATION_ENDPOINT + "/latest-approve";
         public static final String GET_ALL_OWN = COMPANY_REGISTRATION_ENDPOINT + "/get-all-own";
+        public static final String GET_ALL_OF_COMPANY = COMPANY_REGISTRATION_ENDPOINT + "/get-all-of-company";
 
     }
 

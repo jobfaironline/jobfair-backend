@@ -29,4 +29,6 @@ public interface CompanyRegistrationService {
     Optional<CompanyRegistrationDTO> getById(String registrationId);
 
     Page<CompanyRegistrationDTO> getCompanyRegistrationByUserId(String userId, List<CompanyRegistrationStatus> statusList, int offset, int pageSize, String sortBy, Sort.Direction direction);
+
+    Page<CompanyRegistrationDTO> getCompanyRegistrationByCompanyId(String companyId, List<CompanyRegistrationStatus> statusList, int offset, int pageSize, String sortBy, Sort.Direction direction);
 }
