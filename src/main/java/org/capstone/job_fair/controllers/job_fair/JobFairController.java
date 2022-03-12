@@ -182,6 +182,13 @@ public class JobFairController {
         return ResponseEntity.ok(result);
     }
 
+    @GetMapping(ApiEndPoint.JobFair.JOB_FAIR_PLAN + "/{id}")
+    public ResponseEntity<?> getJobFairPlanById(@PathVariable("id") String id) {
+        Optional<JobFairDTO> jobFairDTOOptional = jobFairService.getJobFairByID(id);
+        if (!jobFairDTOOptional.isPresent()) return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(jobFairDTOOptional);
+    }
+
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
     @PostMapping(ApiEndPoint.JobFair.EVALUATE_JOB_FAIL_PLAN)
     public ResponseEntity<?> evaluate(@RequestBody @Valid AdminEvaluateJobFairRequest request) {
