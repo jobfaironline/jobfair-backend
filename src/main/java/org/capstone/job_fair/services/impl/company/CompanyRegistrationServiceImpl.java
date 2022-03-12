@@ -3,11 +3,11 @@ package org.capstone.job_fair.services.impl.company;
 import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import org.capstone.job_fair.constants.DataConstraint;
 import org.capstone.job_fair.constants.MessageConstant;
-import org.capstone.job_fair.controllers.payload.responses.CompanyRegistrationResponse;
+import org.capstone.job_fair.models.dtos.company.CompanyRegistrationAdminDTO;
 import org.capstone.job_fair.models.dtos.company.CompanyRegistrationDTO;
 import org.capstone.job_fair.models.dtos.company.job.RegistrationJobPositionDTO;
 import org.capstone.job_fair.models.entities.company.CompanyEmployeeEntity;
-import org.capstone.job_fair.models.entities.company.CompanyEntity;
+import org.capstone.job_fair.models.entities.company.CompanyRegistrationAdminEntity;
 import org.capstone.job_fair.models.entities.company.CompanyRegistrationEntity;
 import org.capstone.job_fair.models.entities.company.job.JobPositionEntity;
 import org.capstone.job_fair.models.entities.company.job.RegistrationJobPositionEntity;
@@ -15,6 +15,7 @@ import org.capstone.job_fair.models.entities.job_fair.JobFairEntity;
 import org.capstone.job_fair.models.statuses.CompanyRegistrationStatus;
 import org.capstone.job_fair.models.statuses.JobFairPlanStatus;
 import org.capstone.job_fair.repositories.company.CompanyEmployeeRepository;
+import org.capstone.job_fair.repositories.company.CompanyRegistrationAdminRepository;
 import org.capstone.job_fair.repositories.company.CompanyRegistrationRepository;
 import org.capstone.job_fair.repositories.company.CompanyRepository;
 import org.capstone.job_fair.repositories.company.job.JobPositionRepository;
@@ -62,6 +63,9 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
 
     @Autowired
     private CompanyRepository companyRepository;
+
+    @Autowired
+    private CompanyRegistrationAdminRepository companyRegistrationAdminRepository;
 
 
     private void validateJobFair(JobFairEntity entity, Long currentTime) {
@@ -358,31 +362,26 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
     }
 
     @Override
-    public Page<CompanyRegistrationResponse> getAllAdmin(String companyName, String jobfairName, int offset, int pageSize, String sortBy, Sort.Direction direction) {
+    public Page<CompanyRegistrationAdminDTO> getAllJobFairForAdmin(String companyName, String jobfairName, List<CompanyRegistrationStatus> statusList, int offset, int pageSize, String sortBy, Sort.Direction direction) {
 
         validatePaging(pageSize, offset);
+        if (statusList.contains(CompanyRegistrationStatus.DRAFT))
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyRegistration.INVALID_SEARCH_STATUS));
+        if (statusList == null || statusList.isEmpty())
+            statusList = Arrays.asList(CompanyRegistrationStatus.DELETED, CompanyRegistrationStatus.PENDING, CompanyRegistrationStatus.CANCEL, CompanyRegistrationStatus.APPROVE, CompanyRegistrationStatus.REJECT, CompanyRegistrationStatus.REQUEST_CHANGE);
+        String statusListString = "";
+        for (CompanyRegistrationStatus status : statusList) {
+            statusListString += Integer.toString(status.ordinal()) + ",";
+        }
+        System.out.println("list: " + statusListString);
+        if (companyName == null) companyName = "%%";
+        else companyName = "%" + companyName + "%";
+        if (jobfairName == null) jobfairName = "%%";
+        else jobfairName = "%" + jobfairName + "%";
+        Page<CompanyRegistrationAdminEntity> companyRegistrationAdminEntities = companyRegistrationAdminRepository.findAllByCompanyNameAndJobFairNameAndStatusIn(companyName, jobfairName, statusListString, sortBy, direction.name(), PageRequest.of(offset, pageSize));
 
-        List<CompanyEntity> companyEntities = null;
-        if (companyName != null) companyEntities = companyRepository.findAllByNameContains(companyName);
-        else companyEntities = companyRepository.findAll();
-        Map<String, String> companyNameMap = companyEntities.stream().collect(Collectors.toMap(CompanyEntity::getId, companyEntity -> companyEntity.getName()));
+        return companyRegistrationAdminEntities.map(entity -> companyRegistrationMapper.companyRegistrationAdminDTO(entity));
 
-        List<JobFairEntity> jobFairEntities = null;
-        if (jobfairName != null) jobFairEntities = jobFairRepository.findAllByNameContains(jobfairName);
-        else jobFairEntities = jobFairRepository.findAll();
-        Map<String, String> jobfairNameMap = jobFairEntities.stream().collect(Collectors.toMap(JobFairEntity::getId, jobFairEntity -> jobFairEntity.getName()));
-
-        List<String> companyId = companyNameMap.keySet().stream().collect(Collectors.toList());
-        List<String> jobFairId = jobfairNameMap.keySet().stream().collect(Collectors.toList());
-
-        Page<CompanyRegistrationEntity> companyRegistrationEntities = companyRegistrationRepository.findAllByCompanyIdInAndJobFairIdIn(companyId, jobFairId, PageRequest.of(offset, pageSize).withSort(Sort.by(direction, sortBy)));
-
-        Page<CompanyRegistrationResponse> companyRegistrationResponsePage = companyRegistrationEntities.map(entity -> companyRegistrationMapper.toCompanyRegistrationResponse(entity));
-
-        companyRegistrationResponsePage.stream().forEach(companyRegistrationResponse -> companyRegistrationResponse.setCompanyName(companyNameMap.get(companyRegistrationResponse.getCompanyId())));
-        companyRegistrationResponsePage.stream().forEach(companyRegistrationResponse -> companyRegistrationResponse.setJobfairName(jobfairNameMap.get(companyRegistrationResponse.getJobFairId())));
-
-        return companyRegistrationResponsePage;
     }
 
 
