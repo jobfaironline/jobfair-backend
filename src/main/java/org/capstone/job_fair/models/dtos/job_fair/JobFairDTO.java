@@ -51,4 +51,8 @@ public class JobFairDTO implements Serializable {
     private String targetCompany;
 
     private String targetAttendant;
+
+    private Long createTime;
+
+    private Long updateTime;
 }
