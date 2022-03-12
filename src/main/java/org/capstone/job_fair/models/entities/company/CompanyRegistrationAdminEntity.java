@@ -49,10 +49,10 @@ public class CompanyRegistrationAdminEntity {
     @Column(name = "creatorId")
     private String creatorId;
 
-    @Column(name = "jobFairId", insertable = false, updatable = false)
+    @Column(name = "jobFairName", insertable = false, updatable = false)
     private String companyName;
 
-    @Column(name = "companyId", insertable = false, updatable = false)
+    @Column(name = "companyName", insertable = false, updatable = false)
     private String jobfairName;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
