@@ -121,8 +121,8 @@ public class JobFairController {
             @RequestParam(value = "offset", defaultValue = JobFairConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset,
             @RequestParam(value = "pageSize", defaultValue = JobFairConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize,
             @RequestParam(value = "status", required = false) JobFairPlanStatus status,
-            @RequestParam(value = "sortBy", defaultValue = JobFairConstant.DEFAULT_SEARCH_SORT_BY_VALUE) String sortBy,
-            @RequestParam(value = "direction", defaultValue = JobFairConstant.DEFAULT_SEARCH_SORT_DIRECTION) Sort.Direction direction
+            @RequestParam(value = "sortBy", defaultValue = JobFairConstant.DEFAULT_SEARCH_SORT_BY_VALUE, required = false) String sortBy,
+            @RequestParam(value = "direction", defaultValue = JobFairConstant.DEFAULT_SEARCH_SORT_DIRECTION, required = false) Sort.Direction direction
     ) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Page<JobFairDTO> result = jobFairService.getJobFairPlanByCreatorIdAndStatus(userDetails.getId(), status, offset, pageSize, sortBy, direction);
@@ -270,8 +270,8 @@ public class JobFairController {
     public ResponseEntity<?> getJobFairPlanOfCompany(
             @RequestParam(value = "offset", defaultValue = ApplicationConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset,
             @RequestParam(value = "pageSize", defaultValue = ApplicationConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize,
-            @RequestParam(value = "sortBy", defaultValue = JobFairConstant.DEFAULT_SEARCH_SORT_BY_VALUE) String sortBy,
-            @RequestParam(value = "direction", defaultValue = JobFairConstant.DEFAULT_SEARCH_SORT_DIRECTION) Sort.Direction direction,
+            @RequestParam(value = "sortBy", defaultValue = JobFairConstant.DEFAULT_SEARCH_SORT_BY_VALUE, required = false) String sortBy,
+            @RequestParam(value = "direction", defaultValue = JobFairConstant.DEFAULT_SEARCH_SORT_DIRECTION, required = false) Sort.Direction direction,
             @RequestParam(value = "filterStatus", required = false) JobFairCompanyStatus status
     ) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -293,8 +293,8 @@ public class JobFairController {
     public ResponseEntity<?> getJobFairForAttendant(
             @RequestParam(value = "offset", defaultValue = ApplicationConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset,
             @RequestParam(value = "pageSize", defaultValue = ApplicationConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize,
-            @RequestParam(value = "sortBy", defaultValue = JobFairConstant.DEFAULT_SEARCH_SORT_BY_VALUE) String sortBy,
-            @RequestParam(value = "direction", defaultValue = JobFairConstant.DEFAULT_SEARCH_SORT_DIRECTION) Sort.Direction direction,
+            @RequestParam(value = "sortBy", defaultValue = JobFairConstant.DEFAULT_SEARCH_SORT_BY_VALUE, required = false) String sortBy,
+            @RequestParam(value = "direction", defaultValue = JobFairConstant.DEFAULT_SEARCH_SORT_DIRECTION, required = false) Sort.Direction direction,
             @RequestParam(value = "filterStatus", required = false) JobFairAttendantStatus status
     ) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -308,8 +308,8 @@ public class JobFairController {
             @RequestParam(value = "offset", defaultValue = ApplicationConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset,
             @RequestParam(value = "pageSize", defaultValue = ApplicationConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize,
             @RequestParam(value = "filterStatus", required = false) List<JobFairAdminStatus> statuses,
-            @RequestParam(value = "sortBy", defaultValue = JobFairConstant.DEFAULT_SEARCH_SORT_BY_VALUE) String sortBy,
-            @RequestParam(value = "direction", defaultValue = JobFairConstant.DEFAULT_SEARCH_SORT_DIRECTION) Sort.Direction direction
+            @RequestParam(value = "sortBy", defaultValue = JobFairConstant.DEFAULT_SEARCH_SORT_BY_VALUE, required = false) String sortBy,
+            @RequestParam(value = "direction", defaultValue = JobFairConstant.DEFAULT_SEARCH_SORT_DIRECTION, required = false) Sort.Direction direction
     ) {
         Page<AdminJobFairStatusDTO> data = jobFairService.getJobFairForAdmin(statuses, offset, pageSize, sortBy, direction);
         return ResponseEntity.ok(data);
