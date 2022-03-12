@@ -80,6 +80,11 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
         }
     }
 
+    private void validatePaging(int pageSize, int offset) {
+        if (offset < DataConstraint.Paging.OFFSET_MIN || pageSize < DataConstraint.Paging.PAGE_SIZE_MIN)
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyRegistration.INVALID_PAGE_NUMBER));
+    }
+
     @Override
     @Transactional
     public CompanyRegistrationDTO createDraftCompanyRegistration(CompanyRegistrationDTO companyRegistrationDTO, List<RegistrationJobPositionDTO> jobPositions) {
@@ -308,8 +313,7 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
 
     @Override
     public Page<CompanyRegistrationDTO> getCompanyRegistrationOfAJobFair(String jobFairId, int offset, int pageSize, String sortBy, Sort.Direction direction) {
-        if (offset < DataConstraint.CompanyRegistration.OFFSET_MIN || pageSize < DataConstraint.CompanyRegistration.PAGE_SIZE_MIN)
-            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyRegistration.INVALID_PAGE_NUMBER));
+        validatePaging(pageSize, offset);
         Page<CompanyRegistrationEntity> companyRegistrationEntityPage = companyRegistrationRepository.findAllByJobFairIdAndStatusIn(jobFairId, Arrays.asList(CompanyRegistrationStatus.APPROVE, CompanyRegistrationStatus.PENDING, CompanyRegistrationStatus.REJECT, CompanyRegistrationStatus.REQUEST_CHANGE), PageRequest.of(offset, pageSize).withSort(Sort.by(direction, sortBy)));
         return companyRegistrationEntityPage.map(entity -> companyRegistrationMapper.toDTO(entity));
     }
@@ -329,13 +333,22 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
 
     @Override
     public Page<CompanyRegistrationDTO> getCompanyRegistrationByUserId(String userId, List<CompanyRegistrationStatus> statusList, int offset, int pageSize, String sortBy, Sort.Direction direction) {
-        if (offset < DataConstraint.Paging.OFFSET_MIN || pageSize < DataConstraint.Paging.PAGE_SIZE_MIN)
-            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyRegistration.INVALID_PAGE_NUMBER));
+        validatePaging(pageSize, offset);
         Page<CompanyRegistrationEntity> companyRegistrationEntities = null;
         if (statusList == null || statusList.isEmpty())
             statusList = Arrays.asList(CompanyRegistrationStatus.DRAFT, CompanyRegistrationStatus.APPROVE, CompanyRegistrationStatus.PENDING, CompanyRegistrationStatus.REJECT, CompanyRegistrationStatus.REQUEST_CHANGE);
         companyRegistrationEntities = companyRegistrationRepository.findAllByCreatorIdAndStatusIn(userId, statusList, PageRequest.of(offset, pageSize).withSort(Sort.by(direction, sortBy)));
         return companyRegistrationEntities.map(entity -> companyRegistrationMapper.toDTO(entity));
     }
+
+    @Override
+    public Page<CompanyRegistrationDTO> getCompanyRegistrationByCompanyId(String companyId, List<CompanyRegistrationStatus> statusList, int offset, int pageSize, String sortBy, Sort.Direction direction) {
+        validatePaging(pageSize, offset);
+        if (statusList == null || statusList.isEmpty())
+            statusList = Arrays.asList(CompanyRegistrationStatus.DRAFT, CompanyRegistrationStatus.APPROVE, CompanyRegistrationStatus.PENDING, CompanyRegistrationStatus.REJECT, CompanyRegistrationStatus.REQUEST_CHANGE);
+        Page<CompanyRegistrationEntity> companyRegistrationEntities = companyRegistrationRepository.findAllByCompanyIdAndStatusIn(companyId, statusList, PageRequest.of(offset, pageSize).withSort(Sort.by(direction, sortBy)));
+        return companyRegistrationEntities.map(entity -> companyRegistrationMapper.toDTO(entity));
+    }
+
 
 }
