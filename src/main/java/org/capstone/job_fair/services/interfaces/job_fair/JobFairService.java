@@ -39,9 +39,9 @@ public interface JobFairService {
 
     List<JobFairDTO> getAllAvailableForRegistration(String fromTime, String toTime);
 
-    Page<CompanyJobFairStatusDTO> getJobFairForCompany(String companyId, JobFairCompanyStatus status, int offset, int pageSize, String sortBy, Sort.Direction direction);
+    Page<CompanyJobFairStatusDTO> getJobFairForCompany(String companyId, List<JobFairCompanyStatus> status, int offset, int pageSize);
 
-    Page<AttendantJobFairStatusDTO> getJobFairForAttendant(String attendantId, JobFairAttendantStatus status, int offset, int pageSize, String sortBy, Sort.Direction direction);
+    Page<AttendantJobFairStatusDTO> getJobFairForAttendant(String attendantId, List<JobFairAttendantStatus> status, int offset, int pageSize);
 
     Page<AdminJobFairStatusDTO> getJobFairForAdmin(List<JobFairAdminStatus> statuses, int offset, int pageSize);
 

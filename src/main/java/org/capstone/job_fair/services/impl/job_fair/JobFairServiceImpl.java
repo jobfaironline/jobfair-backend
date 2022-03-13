@@ -32,10 +32,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -318,31 +315,30 @@ public class JobFairServiceImpl implements JobFairService {
     }
 
     @Override
-    public Page<CompanyJobFairStatusDTO> getJobFairForCompany(String companyId, JobFairCompanyStatus status, int offset, int pageSize, String sortBy, Sort.Direction direction) {
+    public Page<CompanyJobFairStatusDTO> getJobFairForCompany(String companyId, List<JobFairCompanyStatus> statusList, int offset, int pageSize) {
         if (offset < DataConstraint.Application.OFFSET_MIN || pageSize < DataConstraint.Application.PAGE_SIZE_MIN)
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.INVALID_PAGE_NUMBER));
-        if (status == null) {
-            return companyJobFairStatusRepository
-                    .getAllByCompanyId(companyId, PageRequest.of(offset, pageSize).withSort(direction, sortBy))
-                    .map(companyJobFairStatusMapper::toDTO);
+        if (statusList == null || statusList.isEmpty()) {
+            statusList = Arrays.asList(JobFairCompanyStatus.UNAVAILABLE, JobFairCompanyStatus.REGISTRABLE, JobFairCompanyStatus.SUBMITTED,
+                    JobFairCompanyStatus.APPROVE, JobFairCompanyStatus.REJECT, JobFairCompanyStatus.CHOOSE_BOOTH, JobFairCompanyStatus.DECORATE_BOOTH,
+                    JobFairCompanyStatus.HAPPENING, JobFairCompanyStatus.CLOSED, JobFairCompanyStatus.ATTENDED, JobFairCompanyStatus.REQUEST_CHANGE);
         }
         return companyJobFairStatusRepository
-                .getByStatusAndCompanyId(status, companyId, PageRequest.of(offset, pageSize).withSort(direction, sortBy))
+                .getByStatusInAndCompanyId(statusList, companyId, PageRequest.of(offset, pageSize))
                 .map(companyJobFairStatusMapper::toDTO);
 
     }
 
     @Override
-    public Page<AttendantJobFairStatusDTO> getJobFairForAttendant(String attendantId, JobFairAttendantStatus status, int offset, int pageSize, String sortBy, Sort.Direction direction) {
+    public Page<AttendantJobFairStatusDTO> getJobFairForAttendant(String attendantId, List<JobFairAttendantStatus> statusList, int offset, int pageSize) {
         if (offset < DataConstraint.Application.OFFSET_MIN || pageSize < DataConstraint.Application.PAGE_SIZE_MIN)
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.INVALID_PAGE_NUMBER));
-        if (status == null) {
-            return attendantJobFairStatusRepository
-                    .getAllByAttendantId(attendantId, PageRequest.of(offset, pageSize).withSort(direction, sortBy))
-                    .map(attendantJobFairStatusMapper::toDTO);
+        if (statusList == null || statusList.isEmpty()) {
+            statusList = Arrays.asList(JobFairAttendantStatus.UNAVAILABLE, JobFairAttendantStatus.REGISTRABLE, JobFairAttendantStatus.REGISTERED,
+                    JobFairAttendantStatus.HAPPENING, JobFairAttendantStatus.CLOSED, JobFairAttendantStatus.ATTENDED);
         }
         return attendantJobFairStatusRepository
-                .getByStatusAndAttendantId(status, attendantId, PageRequest.of(offset, pageSize).withSort(direction, sortBy))
+                .getByStatusInAndAttendantId(statusList, attendantId, PageRequest.of(offset, pageSize))
                 .map(attendantJobFairStatusMapper::toDTO);
     }
 

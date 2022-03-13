@@ -270,13 +270,11 @@ public class JobFairController {
     public ResponseEntity<?> getJobFairPlanOfCompany(
             @RequestParam(value = "offset", defaultValue = ApplicationConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset,
             @RequestParam(value = "pageSize", defaultValue = ApplicationConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize,
-            @RequestParam(value = "sortBy", defaultValue = JobFairConstant.DEFAULT_SEARCH_SORT_BY_VALUE, required = false) String sortBy,
-            @RequestParam(value = "direction", defaultValue = JobFairConstant.DEFAULT_SEARCH_SORT_DIRECTION, required = false) Sort.Direction direction,
-            @RequestParam(value = "filterStatus", required = false) JobFairCompanyStatus status
+            @RequestParam(value = "filterStatus", required = false) List<JobFairCompanyStatus> statusList
     ) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Page<JobFairForCompanyResponse> data = jobFairService
-                .getJobFairForCompany(userDetails.getCompanyId(), status, offset, pageSize, sortBy, direction)
+                .getJobFairForCompany(userDetails.getCompanyId(), statusList, offset, pageSize)
                 .map(dto -> {
                     JobFairForCompanyResponse response = new JobFairForCompanyResponse();
                     response.setId(dto.getJobFair().getId());
@@ -293,12 +291,10 @@ public class JobFairController {
     public ResponseEntity<?> getJobFairForAttendant(
             @RequestParam(value = "offset", defaultValue = ApplicationConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset,
             @RequestParam(value = "pageSize", defaultValue = ApplicationConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize,
-            @RequestParam(value = "sortBy", defaultValue = JobFairConstant.DEFAULT_SEARCH_SORT_BY_VALUE, required = false) String sortBy,
-            @RequestParam(value = "direction", defaultValue = JobFairConstant.DEFAULT_SEARCH_SORT_DIRECTION, required = false) Sort.Direction direction,
-            @RequestParam(value = "filterStatus", required = false) JobFairAttendantStatus status
+            @RequestParam(value = "filterStatus", required = false) List<JobFairAttendantStatus> statusList
     ) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Page<AttendantJobFairStatusDTO> data = jobFairService.getJobFairForAttendant(userDetails.getId(), status, offset, pageSize, sortBy, direction);
+        Page<AttendantJobFairStatusDTO> data = jobFairService.getJobFairForAttendant(userDetails.getId(), statusList, offset, pageSize);
         return ResponseEntity.ok(data);
     }
 
