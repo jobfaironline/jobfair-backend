@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.NamedNativeQuery;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -27,5 +27,7 @@ public interface CompanyRepository extends JpaRepository<CompanyEntity, String> 
             "            id = (SELECT company_registration_id FROM `order` WHERE\n" +
             "                id = (SELECT order_id FROM company_booth WHERE id = :id)))", nativeQuery = true)
     Optional<String> findCompanyIdByCompanyBoothID(@Param("id") String companyBoothId);
+
+    List<CompanyEntity> findAllByNameContains(String name);
 
 }

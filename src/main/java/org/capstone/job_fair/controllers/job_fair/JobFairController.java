@@ -118,12 +118,14 @@ public class JobFairController {
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).STAFF)")
     @GetMapping(ApiEndPoint.JobFair.GET_OWN_PLAN)
     public ResponseEntity<?> getAllJobFairPlanOfEmployee(
-            @RequestParam(value = "offset", defaultValue = ApplicationConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset,
-            @RequestParam(value = "pageSize", defaultValue = ApplicationConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize,
-            @RequestParam(value = "status", required = false) JobFairPlanStatus status
+            @RequestParam(value = "offset", defaultValue = JobFairConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset,
+            @RequestParam(value = "pageSize", defaultValue = JobFairConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize,
+            @RequestParam(value = "status", required = false) JobFairPlanStatus status,
+            @RequestParam(value = "sortBy", defaultValue = JobFairConstant.DEFAULT_SEARCH_SORT_BY_VALUE, required = false) String sortBy,
+            @RequestParam(value = "direction", defaultValue = JobFairConstant.DEFAULT_SEARCH_SORT_DIRECTION, required = false) Sort.Direction direction
     ) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Page<JobFairDTO> result = jobFairService.getJobFairPlanByCreatorIdAndStatus(userDetails.getId(), status, offset, pageSize);
+        Page<JobFairDTO> result = jobFairService.getJobFairPlanByCreatorIdAndStatus(userDetails.getId(), status, offset, pageSize, sortBy, direction);
         return ResponseEntity.ok(result);
     }
 
@@ -174,12 +176,23 @@ public class JobFairController {
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
     @GetMapping(ApiEndPoint.JobFair.JOB_FAIR_PLAN)
-    public ResponseEntity<?> getAllJobFairPlan(@RequestParam(value = "status", required = false) JobFairPlanStatus status, @RequestParam(value = "offset", defaultValue = JobFairConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset, @RequestParam(value = "pageSize", defaultValue = JobFairConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize, @RequestParam(value = "sortBy", required = false, defaultValue = JobFairConstant.DEFAULT_SEARCH_SORT_BY_VALUE) String sortBy, @RequestParam(value = "direction", required = false, defaultValue = JobFairConstant.DEFAULT_SEARCH_SORT_DIRECTION) Sort.Direction direction) {
+    public ResponseEntity<?> getAllJobFairPlan(@RequestParam(value = "status", required = false) JobFairPlanStatus status,
+                                               @RequestParam(value = "offset", defaultValue = JobFairConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset,
+                                               @RequestParam(value = "pageSize", defaultValue = JobFairConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize,
+                                               @RequestParam(value = "sortBy", required = false, defaultValue = JobFairConstant.DEFAULT_SEARCH_SORT_BY_VALUE) String sortBy,
+                                               @RequestParam(value = "direction", required = false, defaultValue = JobFairConstant.DEFAULT_SEARCH_SORT_DIRECTION) Sort.Direction direction) {
         Page<JobFairDTO> result = jobFairService.getAllForAdmin(status, offset, pageSize, sortBy, direction);
         if (result.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok(result);
+    }
+
+    @GetMapping(ApiEndPoint.JobFair.JOB_FAIR_PLAN + "/{id}")
+    public ResponseEntity<?> getJobFairPlanById(@PathVariable("id") String id) {
+        Optional<JobFairDTO> jobFairDTOOptional = jobFairService.getJobFairByID(id);
+        if (!jobFairDTOOptional.isPresent()) return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(jobFairDTOOptional);
     }
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
@@ -257,11 +270,11 @@ public class JobFairController {
     public ResponseEntity<?> getJobFairPlanOfCompany(
             @RequestParam(value = "offset", defaultValue = ApplicationConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset,
             @RequestParam(value = "pageSize", defaultValue = ApplicationConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize,
-            @RequestParam(value = "filterStatus", required = false) JobFairCompanyStatus status
+            @RequestParam(value = "filterStatus", required = false) List<JobFairCompanyStatus> statusList
     ) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Page<JobFairForCompanyResponse> data = jobFairService
-                .getJobFairForCompany(userDetails.getCompanyId(), status, offset, pageSize)
+                .getJobFairForCompany(userDetails.getCompanyId(), statusList, offset, pageSize)
                 .map(dto -> {
                     JobFairForCompanyResponse response = new JobFairForCompanyResponse();
                     response.setId(dto.getJobFair().getId());
@@ -278,10 +291,10 @@ public class JobFairController {
     public ResponseEntity<?> getJobFairForAttendant(
             @RequestParam(value = "offset", defaultValue = ApplicationConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset,
             @RequestParam(value = "pageSize", defaultValue = ApplicationConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize,
-            @RequestParam(value = "filterStatus", required = false) JobFairAttendantStatus status
+            @RequestParam(value = "filterStatus", required = false) List<JobFairAttendantStatus> statusList
     ) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Page<AttendantJobFairStatusDTO> data = jobFairService.getJobFairForAttendant(userDetails.getId(), status, offset, pageSize);
+        Page<AttendantJobFairStatusDTO> data = jobFairService.getJobFairForAttendant(userDetails.getId(), statusList, offset, pageSize);
         return ResponseEntity.ok(data);
     }
 

@@ -49,6 +49,10 @@ public class AccountEntity {
     @Column(name = "middlename", length = 100)
     private String middlename;
 
+    @Column(name = "create_time")
+    private Long createTime;
+
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "role_id", nullable = false)
     private RoleEntity role;

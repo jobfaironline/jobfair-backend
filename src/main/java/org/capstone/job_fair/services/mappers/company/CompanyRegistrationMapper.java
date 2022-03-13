@@ -1,6 +1,8 @@
 package org.capstone.job_fair.services.mappers.company;
 
+import org.capstone.job_fair.models.dtos.company.CompanyRegistrationAdminDTO;
 import org.capstone.job_fair.models.dtos.company.CompanyRegistrationDTO;
+import org.capstone.job_fair.models.entities.company.CompanyRegistrationAdminEntity;
 import org.capstone.job_fair.models.entities.company.CompanyRegistrationEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -17,4 +19,7 @@ public abstract class CompanyRegistrationMapper {
 
     @Mapping(target = "createDate", ignore = true)
     public abstract void updateCompanyRegistrationEntityFromDTO(@MappingTarget CompanyRegistrationEntity entity, CompanyRegistrationDTO dto);
+
+    public abstract CompanyRegistrationAdminDTO companyRegistrationAdminDTO(CompanyRegistrationAdminEntity entity);
+
 }

@@ -5,6 +5,7 @@ import org.capstone.job_fair.models.statuses.CompanyRegistrationStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -22,6 +23,13 @@ public interface CompanyRegistrationRepository extends JpaRepository<CompanyRegi
 
     Page<CompanyRegistrationEntity> findAllByStatusIn(List<CompanyRegistrationStatus> status, Pageable pageable);
 
+    Page<CompanyRegistrationEntity> findAllByCreatorIdAndStatusIn(String creatorId, List<CompanyRegistrationStatus> statusList, Pageable pageable);
+
     List<CompanyRegistrationEntity> findAllByJobFairIdAndCompanyIdAndStatus(String jobFairId, String companyId, CompanyRegistrationStatus status);
+
+    Page<CompanyRegistrationEntity> findAllByCompanyIdAndStatusIn(String companyId, List<CompanyRegistrationStatus> statusList, Pageable pageable);
+
+    Page<CompanyRegistrationEntity> findAllByCompanyIdInAndJobFairIdIn(List<String> companyId, List<String> jobfairId, Pageable pageable);
+
 
 }

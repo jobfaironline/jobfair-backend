@@ -7,10 +7,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface CompanyJobFairStatusRepository extends JpaRepository<CompanyJobFairStatusEntity, String> {
 
     Page<CompanyJobFairStatusEntity> getAllByCompanyId(String companyId, Pageable pageable);
 
-    Page<CompanyJobFairStatusEntity> getByStatusAndCompanyId(JobFairCompanyStatus status, String companyId, Pageable pageable);
+    Page<CompanyJobFairStatusEntity> getByStatusInAndCompanyId(List<JobFairCompanyStatus> status, String companyId, Pageable pageable);
 }

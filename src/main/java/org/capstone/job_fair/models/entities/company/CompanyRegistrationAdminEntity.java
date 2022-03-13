@@ -17,37 +17,43 @@ import java.util.Objects;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "company_registration", schema = "dbo")
-public class CompanyRegistrationEntity {
+public class CompanyRegistrationAdminEntity {
     @Id
     @Column(name = "id", nullable = false, length = 36)
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "org.hibernate.id.UUIDGenerator")
     private String id;
 
-    @Column(name = "create_date")
+    @Column(name = "createDate")
     private Long createDate;
     @Column(name = "description")
     private String description;
-    @Column(name = "job_fair_id")
+    @Column(name = "jobFairId")
     private String jobFairId;
-    @Column(name = "company_id")
+    @Column(name = "companyId")
     private String companyId;
 
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.ORDINAL)
     private CompanyRegistrationStatus status;
 
-    @Column(name = "cancel_reason")
+    @Column(name = "cancelReason")
     private String cancelReason;
 
-    @Column(name = "admin_message")
+    @Column(name = "adminMessage")
     private String adminMessage;
 
-    @Column(name = "authorizer_id")
+    @Column(name = "authorizerId")
     private String authorizerId;
 
-    @Column(name = "creator_id")
+    @Column(name = "creatorId")
     private String creatorId;
+
+    @Column(name = "jobFairName", insertable = false, updatable = false)
+    private String companyName;
+
+    @Column(name = "companyName", insertable = false, updatable = false)
+    private String jobfairName;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
     @JoinColumn(name = "company_registration_id", referencedColumnName = "id")
@@ -57,7 +63,7 @@ public class CompanyRegistrationEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        CompanyRegistrationEntity that = (CompanyRegistrationEntity) o;
+        CompanyRegistrationAdminEntity that = (CompanyRegistrationAdminEntity) o;
         return id != null && Objects.equals(id, that.getId());
     }
 
