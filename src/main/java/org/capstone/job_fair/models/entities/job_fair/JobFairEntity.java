@@ -60,6 +60,10 @@ public class JobFairEntity {
     private String targetCompany;
     @Column(name = "target_attendant")
     private String targetAttendant;
+    @Column(name = "created_time")
+    private Long createTime;
+    @Column(name = "updated_time")
+    private Long updateTime;
 
 
     @Override

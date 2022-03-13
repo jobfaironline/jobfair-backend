@@ -22,10 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -55,6 +52,7 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
     @Transactional
     public CompanyEmployeeDTO createNewCompanyManagerAccount(CompanyEmployeeDTO dto) {
         dto.getAccount().setRole(Role.COMPANY_MANAGER);
+        dto.getAccount().setCreateTime(new Date().getTime());
         CompanyEmployeeEntity entity = mapper.toEntity(dto);
 
         AccountEntity accountEntity = entity.getAccount();
@@ -90,6 +88,7 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
         dto.getAccount().setRole(Role.COMPANY_EMPLOYEE);
         dto.getAccount().setStatus(AccountStatus.REGISTERED);
         dto.getAccount().setProfileImageUrl(AccountConstant.DEFAULT_PROFILE_IMAGE_URL);
+        dto.getAccount().setCreateTime(new Date().getTime());
 
         CompanyEmployeeEntity entity = mapper.toEntity(dto);
         String hashPassword = encoder.encode(password);
