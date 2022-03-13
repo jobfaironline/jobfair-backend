@@ -373,7 +373,6 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
         for (CompanyRegistrationStatus status : statusList) {
             statusListString += Integer.toString(status.ordinal()) + ",";
         }
-        System.out.println("list: " + statusListString);
         if (companyName == null) companyName = "%%";
         else companyName = "%" + companyName + "%";
         if (jobfairName == null) jobfairName = "%%";
