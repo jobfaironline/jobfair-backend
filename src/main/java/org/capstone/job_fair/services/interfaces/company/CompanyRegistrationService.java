@@ -25,6 +25,8 @@ public interface CompanyRegistrationService {
 
     Page<CompanyRegistrationDTO> getCompanyRegistrationOfAJobFair(String jobFairId, int offset, int pageSize, String sortBy, Sort.Direction direction);
 
+    Page<CompanyRegistrationDTO> getCompanyRegistration(List<CompanyRegistrationStatus> statusList, int offset, int pageSize, String sortBy, Sort.Direction direction);
+
     Optional<CompanyRegistrationDTO> getCompanyLatestApproveRegistrationByJobFairIdAndCompanyId(String jobFairId, String companyId);
 
     Optional<CompanyRegistrationDTO> getById(String registrationId);
