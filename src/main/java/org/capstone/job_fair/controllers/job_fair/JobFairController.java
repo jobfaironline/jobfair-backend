@@ -307,11 +307,9 @@ public class JobFairController {
     public ResponseEntity<?> getJobFairForAdmin(
             @RequestParam(value = "offset", defaultValue = ApplicationConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset,
             @RequestParam(value = "pageSize", defaultValue = ApplicationConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize,
-            @RequestParam(value = "filterStatus", required = false) List<JobFairAdminStatus> statuses,
-            @RequestParam(value = "sortBy", defaultValue = JobFairConstant.DEFAULT_SEARCH_SORT_BY_VALUE, required = false) String sortBy,
-            @RequestParam(value = "direction", defaultValue = JobFairConstant.DEFAULT_SEARCH_SORT_DIRECTION, required = false) Sort.Direction direction
+            @RequestParam(value = "filterStatus", required = false) List<JobFairAdminStatus> statuses
     ) {
-        Page<AdminJobFairStatusDTO> data = jobFairService.getJobFairForAdmin(statuses, offset, pageSize, sortBy, direction);
+        Page<AdminJobFairStatusDTO> data = jobFairService.getJobFairForAdmin(statuses, offset, pageSize);
         return ResponseEntity.ok(data);
     }
 

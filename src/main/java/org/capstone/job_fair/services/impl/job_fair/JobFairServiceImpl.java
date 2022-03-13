@@ -347,16 +347,16 @@ public class JobFairServiceImpl implements JobFairService {
     }
 
     @Override
-    public Page<AdminJobFairStatusDTO> getJobFairForAdmin(List<JobFairAdminStatus> statuses, int offset, int pageSize, String sortBy, Sort.Direction direction) {
+    public Page<AdminJobFairStatusDTO> getJobFairForAdmin(List<JobFairAdminStatus> statuses, int offset, int pageSize) {
         if (offset < DataConstraint.Paging.OFFSET_MIN || pageSize < DataConstraint.Paging.PAGE_SIZE_MIN)
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.INVALID_PAGE_NUMBER));
-        if (statuses.isEmpty() || statuses == null) {
+        if (statuses == null || statuses.isEmpty()) {
             return adminJobFairStatusRepository
-                    .findAll(PageRequest.of(offset, pageSize).withSort(direction, sortBy))
+                    .findAll(PageRequest.of(offset, pageSize))
                     .map(adminJobFairStatusMapper::toDTO);
         }
         return adminJobFairStatusRepository
-                .getByStatusIn(statuses, PageRequest.of(offset, pageSize).withSort(direction, sortBy))
+                .getByStatusIn(statuses, PageRequest.of(offset, pageSize))
                 .map(adminJobFairStatusMapper::toDTO);
     }
 

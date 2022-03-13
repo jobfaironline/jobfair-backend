@@ -43,7 +43,7 @@ public interface JobFairService {
 
     Page<AttendantJobFairStatusDTO> getJobFairForAttendant(String attendantId, JobFairAttendantStatus status, int offset, int pageSize, String sortBy, Sort.Direction direction);
 
-    Page<AdminJobFairStatusDTO> getJobFairForAdmin(List<JobFairAdminStatus> statuses, int offset, int pageSize, String sortBy, Sort.Direction direction);
+    Page<AdminJobFairStatusDTO> getJobFairForAdmin(List<JobFairAdminStatus> statuses, int offset, int pageSize);
 
 
 }
