@@ -149,7 +149,11 @@ public class CompanyRegistrationController {
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).STAFF)")
     @GetMapping(ApiEndPoint.CompanyRegistration.GET_ALL_COMPANY_REGISTRATION_OF_JOB_FAIR + "/{jobFairId}")
-    public ResponseEntity<?> getAllCompanyRegistrationOfJobFair(@PathVariable String jobFairId, @RequestParam(value = "offset", defaultValue = CompanyRegistrationConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset, @RequestParam(value = "pageSize", defaultValue = CompanyRegistrationConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize, @RequestParam(value = "sortBy", required = false, defaultValue = CompanyRegistrationConstant.DEFAULT_SEARCH_SORT_BY_VALUE) String sortBy, @RequestParam(value = "direction", required = false, defaultValue = CompanyRegistrationConstant.DEFAULT_SEARCH_SORT_DIRECTION) Sort.Direction direction) {
+    public ResponseEntity<?> getAllCompanyRegistrationOfJobFair(@PathVariable String jobFairId,
+                                                                @RequestParam(value = "offset", defaultValue = CompanyRegistrationConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset,
+                                                                @RequestParam(value = "pageSize", defaultValue = CompanyRegistrationConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize,
+                                                                @RequestParam(value = "sortBy", required = false, defaultValue = CompanyRegistrationConstant.DEFAULT_SEARCH_SORT_BY_VALUE) String sortBy,
+                                                                @RequestParam(value = "direction", required = false, defaultValue = CompanyRegistrationConstant.DEFAULT_SEARCH_SORT_DIRECTION) Sort.Direction direction) {
         try {
             Page<CompanyRegistrationDTO> companyRegistrationDTOPage = companyRegistrationService.getCompanyRegistrationOfAJobFair(jobFairId, offset, pageSize, sortBy, direction);
             if (companyRegistrationDTOPage.isEmpty()) return ResponseEntity.notFound().build();
@@ -169,7 +173,11 @@ public class CompanyRegistrationController {
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
     @GetMapping(ApiEndPoint.CompanyRegistration.GET_ALL_OWN)
-    public ResponseEntity<?> getAllCompanyRegistrationByUserId(@RequestParam(value = "status", required = false) List<CompanyRegistrationStatus> statusList, @RequestParam(value = "offset", defaultValue = CompanyRegistrationConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset, @RequestParam(value = "pageSize", defaultValue = CompanyRegistrationConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize, @RequestParam(value = "sortBy", required = false, defaultValue = CompanyRegistrationConstant.DEFAULT_SEARCH_SORT_BY_VALUE) String sortBy, @RequestParam(value = "direction", required = false, defaultValue = CompanyRegistrationConstant.DEFAULT_SEARCH_SORT_DIRECTION) Sort.Direction direction) {
+    public ResponseEntity<?> getAllCompanyRegistrationByUserId(@RequestParam(value = "status", required = false) List<CompanyRegistrationStatus> statusList,
+                                                               @RequestParam(value = "offset", defaultValue = CompanyRegistrationConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset,
+                                                               @RequestParam(value = "pageSize", defaultValue = CompanyRegistrationConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize,
+                                                               @RequestParam(value = "sortBy", required = false, defaultValue = CompanyRegistrationConstant.DEFAULT_SEARCH_SORT_BY_VALUE) String sortBy,
+                                                               @RequestParam(value = "direction", required = false, defaultValue = CompanyRegistrationConstant.DEFAULT_SEARCH_SORT_DIRECTION) Sort.Direction direction) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String userId = userDetails.getId();
         Page<CompanyRegistrationDTO> companyRegistrationDTOPage = companyRegistrationService.getCompanyRegistrationByUserId(userId, statusList, offset, pageSize, sortBy, direction);
@@ -179,7 +187,12 @@ public class CompanyRegistrationController {
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
     @GetMapping(ApiEndPoint.CompanyRegistration.GET_ALL_OF_COMPANY)
-    public ResponseEntity<?> getAllCompanyRegistrationByCompany(@RequestParam(value = "status", required = false) List<CompanyRegistrationStatus> statusList, @RequestParam(value = "offset", defaultValue = CompanyRegistrationConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset, @RequestParam(value = "pageSize", defaultValue = CompanyRegistrationConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize, @RequestParam(value = "sortBy", required = false, defaultValue = CompanyRegistrationConstant.DEFAULT_SEARCH_SORT_BY_VALUE) String sortBy, @RequestParam(value = "direction", required = false, defaultValue = CompanyRegistrationConstant.DEFAULT_SEARCH_SORT_DIRECTION) Sort.Direction direction) {
+    public ResponseEntity<?> getAllCompanyRegistrationByCompany(@RequestParam(value = "status", required = false) List<CompanyRegistrationStatus> statusList,
+                                                                @RequestParam(value = "offset", defaultValue = CompanyRegistrationConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset,
+                                                                @RequestParam(value = "pageSize", defaultValue = CompanyRegistrationConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize,
+                                                                @RequestParam(value = "sortBy", required = false, defaultValue = CompanyRegistrationConstant.DEFAULT_SEARCH_SORT_BY_VALUE) String sortBy,
+                                                                @RequestParam(value = "direction", required = false, defaultValue = CompanyRegistrationConstant.DEFAULT_SEARCH_SORT_DIRECTION) Sort.Direction direction) {
+
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String companyId = userDetails.getCompanyId();
         Page<CompanyRegistrationDTO> companyRegistrationDTOPage = companyRegistrationService.getCompanyRegistrationByCompanyId(companyId, statusList, offset, pageSize, sortBy, direction);

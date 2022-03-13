@@ -19,6 +19,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -109,6 +110,8 @@ public class AttendantServiceImpl implements AttendantService {
         String hashPassword = encoder.encode(dto.getAccount().getPassword());
         dto.getAccount().setPassword(hashPassword);
         dto.getAccount().setProfileImageUrl(AccountConstant.DEFAULT_PROFILE_IMAGE_URL);
+        Long currentTime = new Date().getTime();
+        dto.getAccount().setCreateTime(currentTime);
 
         AttendantEntity attendantEntity = attendantMapper.toEntity(dto);
         attendantEntity.setAccountId(dto.getAccount().getId());

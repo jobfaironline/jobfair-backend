@@ -105,17 +105,17 @@ public class JobFairServiceImpl implements JobFairService {
             if (dto.getEndTime() - dto.getStartTime() > DataConstraint.JobFair.VALID_EVENT_TIME)
                 throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.INVALID_END_TIME));
         }
-
+        dto.setCreateTime(currentTime);
         JobFairEntity entity = jobFairMapper.toJobFairEntity(dto);
         jobFairRepository.save(entity);
     }
 
     @Override
-    public Page<JobFairDTO> getJobFairPlanByCreatorIdAndStatus(String creatorId, JobFairPlanStatus status, int offset, int pageSize) {
+    public Page<JobFairDTO> getJobFairPlanByCreatorIdAndStatus(String creatorId, JobFairPlanStatus status, int offset, int pageSize, String sortBy, Sort.Direction direction) {
         if (Objects.isNull(status)) {
             return jobFairRepository.findAllByCreatorId(creatorId, PageRequest.of(offset, pageSize)).map(jobFairMapper::toJobFairDTO);
         }
-        return jobFairRepository.findAllByCreatorIdAndStatus(creatorId, status, PageRequest.of(offset, pageSize))
+        return jobFairRepository.findAllByCreatorIdAndStatus(creatorId, status, PageRequest.of(offset, pageSize).withSort(direction, sortBy))
                 .map(jobFairMapper::toJobFairDTO);
     }
 
@@ -312,50 +312,51 @@ public class JobFairServiceImpl implements JobFairService {
                 throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.INVALID_END_TIME));
         }
 
+        dto.setUpdateTime(currentTime);
         jobFairMapper.updateFromDTO(jobFairEntity, dto);
         jobFairRepository.save(jobFairEntity);
     }
 
     @Override
-    public Page<CompanyJobFairStatusDTO> getJobFairForCompany(String companyId, JobFairCompanyStatus status, int offset, int pageSize) {
+    public Page<CompanyJobFairStatusDTO> getJobFairForCompany(String companyId, JobFairCompanyStatus status, int offset, int pageSize, String sortBy, Sort.Direction direction) {
         if (offset < DataConstraint.Application.OFFSET_MIN || pageSize < DataConstraint.Application.PAGE_SIZE_MIN)
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.INVALID_PAGE_NUMBER));
         if (status == null) {
             return companyJobFairStatusRepository
-                    .getAllByCompanyId(companyId, PageRequest.of(offset, pageSize))
+                    .getAllByCompanyId(companyId, PageRequest.of(offset, pageSize).withSort(direction, sortBy))
                     .map(companyJobFairStatusMapper::toDTO);
         }
         return companyJobFairStatusRepository
-                .getByStatusAndCompanyId(status, companyId, PageRequest.of(offset, pageSize))
+                .getByStatusAndCompanyId(status, companyId, PageRequest.of(offset, pageSize).withSort(direction, sortBy))
                 .map(companyJobFairStatusMapper::toDTO);
 
     }
 
     @Override
-    public Page<AttendantJobFairStatusDTO> getJobFairForAttendant(String attendantId, JobFairAttendantStatus status, int offset, int pageSize) {
+    public Page<AttendantJobFairStatusDTO> getJobFairForAttendant(String attendantId, JobFairAttendantStatus status, int offset, int pageSize, String sortBy, Sort.Direction direction) {
         if (offset < DataConstraint.Application.OFFSET_MIN || pageSize < DataConstraint.Application.PAGE_SIZE_MIN)
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.INVALID_PAGE_NUMBER));
         if (status == null) {
             return attendantJobFairStatusRepository
-                    .getAllByAttendantId(attendantId, PageRequest.of(offset, pageSize))
+                    .getAllByAttendantId(attendantId, PageRequest.of(offset, pageSize).withSort(direction, sortBy))
                     .map(attendantJobFairStatusMapper::toDTO);
         }
         return attendantJobFairStatusRepository
-                .getByStatusAndAttendantId(status, attendantId, PageRequest.of(offset, pageSize))
+                .getByStatusAndAttendantId(status, attendantId, PageRequest.of(offset, pageSize).withSort(direction, sortBy))
                 .map(attendantJobFairStatusMapper::toDTO);
     }
 
     @Override
-    public Page<AdminJobFairStatusDTO> getJobFairForAdmin(List<JobFairAdminStatus> statuses, int offset, int pageSize) {
+    public Page<AdminJobFairStatusDTO> getJobFairForAdmin(List<JobFairAdminStatus> statuses, int offset, int pageSize, String sortBy, Sort.Direction direction) {
         if (offset < DataConstraint.Paging.OFFSET_MIN || pageSize < DataConstraint.Paging.PAGE_SIZE_MIN)
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.INVALID_PAGE_NUMBER));
         if (statuses.isEmpty() || statuses == null) {
             return adminJobFairStatusRepository
-                    .findAll(PageRequest.of(offset, pageSize))
+                    .findAll(PageRequest.of(offset, pageSize).withSort(direction, sortBy))
                     .map(adminJobFairStatusMapper::toDTO);
         }
         return adminJobFairStatusRepository
-                .getByStatusIn(statuses, PageRequest.of(offset, pageSize))
+                .getByStatusIn(statuses, PageRequest.of(offset, pageSize).withSort(direction, sortBy))
                 .map(adminJobFairStatusMapper::toDTO);
     }
 
