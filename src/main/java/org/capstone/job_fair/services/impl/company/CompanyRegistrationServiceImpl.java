@@ -3,9 +3,11 @@ package org.capstone.job_fair.services.impl.company;
 import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import org.capstone.job_fair.constants.DataConstraint;
 import org.capstone.job_fair.constants.MessageConstant;
+import org.capstone.job_fair.models.dtos.company.CompanyRegistrationAdminDTO;
 import org.capstone.job_fair.models.dtos.company.CompanyRegistrationDTO;
 import org.capstone.job_fair.models.dtos.company.job.RegistrationJobPositionDTO;
 import org.capstone.job_fair.models.entities.company.CompanyEmployeeEntity;
+import org.capstone.job_fair.models.entities.company.CompanyRegistrationAdminEntity;
 import org.capstone.job_fair.models.entities.company.CompanyRegistrationEntity;
 import org.capstone.job_fair.models.entities.company.job.JobPositionEntity;
 import org.capstone.job_fair.models.entities.company.job.RegistrationJobPositionEntity;
@@ -13,7 +15,9 @@ import org.capstone.job_fair.models.entities.job_fair.JobFairEntity;
 import org.capstone.job_fair.models.statuses.CompanyRegistrationStatus;
 import org.capstone.job_fair.models.statuses.JobFairPlanStatus;
 import org.capstone.job_fair.repositories.company.CompanyEmployeeRepository;
+import org.capstone.job_fair.repositories.company.CompanyRegistrationAdminRepository;
 import org.capstone.job_fair.repositories.company.CompanyRegistrationRepository;
+import org.capstone.job_fair.repositories.company.CompanyRepository;
 import org.capstone.job_fair.repositories.company.job.JobPositionRepository;
 import org.capstone.job_fair.repositories.company.job.RegistrationJobPositionRepository;
 import org.capstone.job_fair.repositories.job_fair.JobFairRepository;
@@ -56,6 +60,13 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
 
     @Autowired
     private CompanyRegistrationMapper companyRegistrationMapper;
+
+    @Autowired
+    private CompanyRepository companyRepository;
+
+    @Autowired
+    private CompanyRegistrationAdminRepository companyRegistrationAdminRepository;
+
 
     private void validateJobFair(JobFairEntity entity, Long currentTime) {
         if (entity.getCompanyRegisterStartTime() > currentTime || entity.getCompanyRegisterEndTime() < currentTime) {
@@ -348,6 +359,28 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
             statusList = Arrays.asList(CompanyRegistrationStatus.DRAFT, CompanyRegistrationStatus.APPROVE, CompanyRegistrationStatus.PENDING, CompanyRegistrationStatus.REJECT, CompanyRegistrationStatus.REQUEST_CHANGE);
         Page<CompanyRegistrationEntity> companyRegistrationEntities = companyRegistrationRepository.findAllByCompanyIdAndStatusIn(companyId, statusList, PageRequest.of(offset, pageSize).withSort(Sort.by(direction, sortBy)));
         return companyRegistrationEntities.map(entity -> companyRegistrationMapper.toDTO(entity));
+    }
+
+    @Override
+    public Page<CompanyRegistrationAdminDTO> getAllJobFairForAdmin(String companyName, String jobfairName, List<CompanyRegistrationStatus> statusList, int offset, int pageSize, String sortBy, Sort.Direction direction) {
+
+        validatePaging(pageSize, offset);
+        if (statusList.contains(CompanyRegistrationStatus.DRAFT))
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyRegistration.INVALID_SEARCH_STATUS));
+        if (statusList == null || statusList.isEmpty())
+            statusList = Arrays.asList(CompanyRegistrationStatus.DELETED, CompanyRegistrationStatus.PENDING, CompanyRegistrationStatus.CANCEL, CompanyRegistrationStatus.APPROVE, CompanyRegistrationStatus.REJECT, CompanyRegistrationStatus.REQUEST_CHANGE);
+        String statusListString = "";
+        for (CompanyRegistrationStatus status : statusList) {
+            statusListString += Integer.toString(status.ordinal()) + ",";
+        }
+        if (companyName == null) companyName = "%%";
+        else companyName = "%" + companyName + "%";
+        if (jobfairName == null) jobfairName = "%%";
+        else jobfairName = "%" + jobfairName + "%";
+        Page<CompanyRegistrationAdminEntity> companyRegistrationAdminEntities = companyRegistrationAdminRepository.findAllByCompanyNameAndJobFairNameAndStatusIn(companyName, jobfairName, statusListString, sortBy, direction.name(), PageRequest.of(offset, pageSize));
+
+        return companyRegistrationAdminEntities.map(entity -> companyRegistrationMapper.companyRegistrationAdminDTO(entity));
+
     }
 
 

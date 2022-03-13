@@ -14,7 +14,7 @@ import java.util.List;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Setter
 @Getter
-public class CompanyRegistrationDTO implements Serializable {
+public class CompanyRegistrationAdminDTO implements Serializable {
     @EqualsAndHashCode.Include
     private String id;
     private long createDate;
@@ -27,4 +27,6 @@ public class CompanyRegistrationDTO implements Serializable {
     private String authorizerId;
     private List<RegistrationJobPositionDTO> registrationJobPositions;
     private String creatorId;
+    private String companyName;
+    private String jobfairName;
 }

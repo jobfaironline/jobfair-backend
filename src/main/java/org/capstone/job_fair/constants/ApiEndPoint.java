@@ -54,6 +54,7 @@ public final class ApiEndPoint {
         public static final String GET_LATEST_APPROVE = COMPANY_REGISTRATION_ENDPOINT + "/latest-approve";
         public static final String GET_ALL_OWN = COMPANY_REGISTRATION_ENDPOINT + "/get-all-own";
         public static final String GET_ALL_OF_COMPANY = COMPANY_REGISTRATION_ENDPOINT + "/get-all-of-company";
+        public static final String GET_ALL_ADMIN = COMPANY_REGISTRATION_ENDPOINT + "/get-all-admin";
 
     }
 
