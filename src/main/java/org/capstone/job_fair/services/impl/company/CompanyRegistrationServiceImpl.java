@@ -244,7 +244,7 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyRegistration.COMPANY_MISMATCH));
         }
         //check for pending registration
-        companyRegistrationRepository.findByCompanyIdAndStatus(companyId, CompanyRegistrationStatus.PENDING).ifPresent((entity) -> {
+        companyRegistrationRepository.findByCompanyIdAndJobFairIdAndStatus(companyId, registrationEntity.getJobFairId(), CompanyRegistrationStatus.PENDING).ifPresent((entity) -> {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyRegistration.EXISTED_PENDING_REGISTRATION));
         });
 

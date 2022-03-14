@@ -13,7 +13,7 @@ import java.util.Optional;
 
 @Repository
 public interface CompanyRegistrationRepository extends JpaRepository<CompanyRegistrationEntity, String> {
-    Optional<CompanyRegistrationEntity> findByCompanyIdAndStatus(String companyId, CompanyRegistrationStatus status);
+    Optional<CompanyRegistrationEntity> findByCompanyIdAndJobFairIdAndStatus(String companyId, String jobFairId, CompanyRegistrationStatus status);
 
     List<CompanyRegistrationEntity> findAllByJobFairIdAndCompanyId(String jobFairId, String companyId);
 
