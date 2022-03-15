@@ -10,14 +10,10 @@ import org.capstone.job_fair.controllers.payload.requests.job_fair.CancelJobFair
 import org.capstone.job_fair.controllers.payload.requests.job_fair.DraftJobFairPlanRequest;
 import org.capstone.job_fair.controllers.payload.requests.job_fair.UpdateJobFairPlanDraftRequest;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
-import org.capstone.job_fair.controllers.payload.responses.JobFairForCompanyResponse;
 import org.capstone.job_fair.controllers.payload.responses.RenderJobFairParkResponse;
 import org.capstone.job_fair.models.dtos.company.CompanyBoothDTO;
 import org.capstone.job_fair.models.dtos.company.CompanyBoothLayoutDTO;
-import org.capstone.job_fair.models.dtos.job_fair.AdminJobFairStatusDTO;
-import org.capstone.job_fair.models.dtos.job_fair.AttendantJobFairStatusDTO;
-import org.capstone.job_fair.models.dtos.job_fair.JobFairDTO;
-import org.capstone.job_fair.models.dtos.job_fair.LayoutDTO;
+import org.capstone.job_fair.models.dtos.job_fair.*;
 import org.capstone.job_fair.models.statuses.JobFairAdminStatus;
 import org.capstone.job_fair.models.statuses.JobFairAttendantStatus;
 import org.capstone.job_fair.models.statuses.JobFairCompanyStatus;
@@ -273,16 +269,7 @@ public class JobFairController {
             @RequestParam(value = "filterStatus", required = false) List<JobFairCompanyStatus> statusList
     ) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Page<JobFairForCompanyResponse> data = jobFairService
-                .getJobFairForCompany(userDetails.getCompanyId(), statusList, offset, pageSize)
-                .map(dto -> {
-                    JobFairForCompanyResponse response = new JobFairForCompanyResponse();
-                    response.setId(dto.getJobFair().getId());
-                    response.setStatus(dto.getStatus());
-                    response.setDescription(dto.getJobFair().getDescription());
-
-                    return response;
-                });
+        Page<CompanyJobFairStatusDTO> data = jobFairService.getJobFairForCompany(userDetails.getCompanyId(), statusList, offset, pageSize);
         return ResponseEntity.ok(data);
     }
 
