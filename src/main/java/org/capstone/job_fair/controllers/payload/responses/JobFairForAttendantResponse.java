@@ -3,12 +3,12 @@ package org.capstone.job_fair.controllers.payload.responses;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.capstone.job_fair.models.statuses.JobFairCompanyStatus;
+import org.capstone.job_fair.models.statuses.JobFairAttendantStatus;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class JobFairForCompanyResponse {
+public class JobFairForAttendantResponse {
     private String id;
 
     private Long companyRegisterStartTime;
@@ -29,7 +29,7 @@ public class JobFairForCompanyResponse {
 
     private String layoutId;
 
-    private JobFairCompanyStatus status;
+    private JobFairAttendantStatus status;
 
     private String creatorId;
 

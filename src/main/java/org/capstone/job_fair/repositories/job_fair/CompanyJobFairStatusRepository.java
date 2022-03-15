@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface CompanyJobFairStatusRepository extends JpaRepository<CompanyJobFairStatusEntity, String> {
@@ -15,4 +16,6 @@ public interface CompanyJobFairStatusRepository extends JpaRepository<CompanyJob
     Page<CompanyJobFairStatusEntity> getAllByCompanyId(String companyId, Pageable pageable);
 
     Page<CompanyJobFairStatusEntity> getByStatusInAndCompanyId(List<JobFairCompanyStatus> status, String companyId, Pageable pageable);
+
+    Optional<CompanyJobFairStatusEntity> getByCompanyIdAndJobFairId(String companyId, String jobfairId);
 }

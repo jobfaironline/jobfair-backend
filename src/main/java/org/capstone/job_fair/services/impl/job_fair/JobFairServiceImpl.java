@@ -8,6 +8,9 @@ import org.capstone.job_fair.models.dtos.job_fair.AdminJobFairStatusDTO;
 import org.capstone.job_fair.models.dtos.job_fair.AttendantJobFairStatusDTO;
 import org.capstone.job_fair.models.dtos.job_fair.CompanyJobFairStatusDTO;
 import org.capstone.job_fair.models.dtos.job_fair.JobFairDTO;
+import org.capstone.job_fair.models.entities.job_fair.AdminJobFairStatusEntity;
+import org.capstone.job_fair.models.entities.job_fair.AttendantJobFairStatusEntity;
+import org.capstone.job_fair.models.entities.job_fair.CompanyJobFairStatusEntity;
 import org.capstone.job_fair.models.entities.job_fair.JobFairEntity;
 import org.capstone.job_fair.models.statuses.JobFairAdminStatus;
 import org.capstone.job_fair.models.statuses.JobFairAttendantStatus;
@@ -57,6 +60,11 @@ public class JobFairServiceImpl implements JobFairService {
     @Autowired
     private AdminJobFairStatusMapper adminJobFairStatusMapper;
 
+
+    private void validatePaging(int pageSize, int offset) {
+        if (offset < DataConstraint.Application.OFFSET_MIN || pageSize < DataConstraint.Application.PAGE_SIZE_MIN)
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.INVALID_PAGE_NUMBER));
+    }
 
     @Override
     @Transactional
@@ -316,8 +324,7 @@ public class JobFairServiceImpl implements JobFairService {
 
     @Override
     public Page<CompanyJobFairStatusDTO> getJobFairForCompany(String companyId, List<JobFairCompanyStatus> statusList, int offset, int pageSize) {
-        if (offset < DataConstraint.Application.OFFSET_MIN || pageSize < DataConstraint.Application.PAGE_SIZE_MIN)
-            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.INVALID_PAGE_NUMBER));
+        validatePaging(pageSize, offset);
         if (statusList == null || statusList.isEmpty()) {
             statusList = Arrays.asList(JobFairCompanyStatus.UNAVAILABLE, JobFairCompanyStatus.REGISTRABLE, JobFairCompanyStatus.SUBMITTED,
                     JobFairCompanyStatus.APPROVE, JobFairCompanyStatus.REJECT, JobFairCompanyStatus.CHOOSE_BOOTH, JobFairCompanyStatus.DECORATE_BOOTH,
@@ -330,9 +337,29 @@ public class JobFairServiceImpl implements JobFairService {
     }
 
     @Override
+    public Optional<CompanyJobFairStatusDTO> getJobFairForCompanyByJobFairId(String companyId, String jobfairId) {
+        Optional<CompanyJobFairStatusEntity> companyJobFairStatusEntityOptional = companyJobFairStatusRepository.getByCompanyIdAndJobFairId(companyId, jobfairId);
+        if (!companyJobFairStatusEntityOptional.isPresent()) return null;
+        return companyJobFairStatusEntityOptional.map(companyJobFairStatusEntity -> companyJobFairStatusMapper.toDTO(companyJobFairStatusEntity));
+    }
+
+    @Override
+    public Optional<AttendantJobFairStatusDTO> getJobFairForAttendantByJobFairId(String attendantId, String jobfairId) {
+        Optional<AttendantJobFairStatusEntity> attendantJobFairStatusEntityOptional = attendantJobFairStatusRepository.getByAttendantIdAndJobFairId(attendantId, jobfairId);
+        if (!attendantJobFairStatusEntityOptional.isPresent()) return null;
+        return attendantJobFairStatusEntityOptional.map(attendantJobFairStatusEntity -> attendantJobFairStatusMapper.toDTO(attendantJobFairStatusEntity));
+    }
+
+    @Override
+    public Optional<AdminJobFairStatusDTO> getJobFairForAdminByJobFairId(String jobfairId) {
+        Optional<AdminJobFairStatusEntity> adminJobFairStatusEntityOptional = adminJobFairStatusRepository.getByJobFairId(jobfairId);
+        if (!adminJobFairStatusEntityOptional.isPresent()) return null;
+        return adminJobFairStatusEntityOptional.map(adminJobFairStatusEntity -> adminJobFairStatusMapper.toDTO(adminJobFairStatusEntity));
+    }
+
+    @Override
     public Page<AttendantJobFairStatusDTO> getJobFairForAttendant(String attendantId, List<JobFairAttendantStatus> statusList, int offset, int pageSize) {
-        if (offset < DataConstraint.Application.OFFSET_MIN || pageSize < DataConstraint.Application.PAGE_SIZE_MIN)
-            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.INVALID_PAGE_NUMBER));
+        validatePaging(pageSize, offset);
         if (statusList == null || statusList.isEmpty()) {
             statusList = Arrays.asList(JobFairAttendantStatus.UNAVAILABLE, JobFairAttendantStatus.REGISTRABLE, JobFairAttendantStatus.REGISTERED,
                     JobFairAttendantStatus.HAPPENING, JobFairAttendantStatus.CLOSED, JobFairAttendantStatus.ATTENDED);
@@ -344,8 +371,7 @@ public class JobFairServiceImpl implements JobFairService {
 
     @Override
     public Page<AdminJobFairStatusDTO> getJobFairForAdmin(List<JobFairAdminStatus> statuses, int offset, int pageSize) {
-        if (offset < DataConstraint.Paging.OFFSET_MIN || pageSize < DataConstraint.Paging.PAGE_SIZE_MIN)
-            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.INVALID_PAGE_NUMBER));
+        validatePaging(pageSize, offset);
         if (statuses == null || statuses.isEmpty()) {
             return adminJobFairStatusRepository
                     .findAll(PageRequest.of(offset, pageSize))
