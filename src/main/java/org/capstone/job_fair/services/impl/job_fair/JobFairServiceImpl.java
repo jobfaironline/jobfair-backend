@@ -337,24 +337,24 @@ public class JobFairServiceImpl implements JobFairService {
     }
 
     @Override
-    public CompanyJobFairStatusDTO getJobFairForCompanyById(String companyId, String jobfairId) {
+    public Optional<CompanyJobFairStatusDTO> getJobFairForCompanyByJobFairId(String companyId, String jobfairId) {
         Optional<CompanyJobFairStatusEntity> companyJobFairStatusEntityOptional = companyJobFairStatusRepository.getByCompanyIdAndJobFairId(companyId, jobfairId);
         if (!companyJobFairStatusEntityOptional.isPresent()) return null;
-        return companyJobFairStatusMapper.toDTO(companyJobFairStatusEntityOptional.get());
+        return companyJobFairStatusEntityOptional.map(companyJobFairStatusEntity -> companyJobFairStatusMapper.toDTO(companyJobFairStatusEntity));
     }
 
     @Override
-    public AttendantJobFairStatusDTO getJobFairForAttendantById(String attendantId, String jobfairId) {
+    public Optional<AttendantJobFairStatusDTO> getJobFairForAttendantByJobFairId(String attendantId, String jobfairId) {
         Optional<AttendantJobFairStatusEntity> attendantJobFairStatusEntityOptional = attendantJobFairStatusRepository.getByAttendantIdAndJobFairId(attendantId, jobfairId);
         if (!attendantJobFairStatusEntityOptional.isPresent()) return null;
-        return attendantJobFairStatusMapper.toDTO(attendantJobFairStatusEntityOptional.get());
+        return attendantJobFairStatusEntityOptional.map(attendantJobFairStatusEntity -> attendantJobFairStatusMapper.toDTO(attendantJobFairStatusEntity));
     }
 
     @Override
-    public AdminJobFairStatusDTO getJobFairForAdminById(String jobfairId) {
+    public Optional<AdminJobFairStatusDTO> getJobFairForAdminByJobFairId(String jobfairId) {
         Optional<AdminJobFairStatusEntity> adminJobFairStatusEntityOptional = adminJobFairStatusRepository.getByJobFairId(jobfairId);
         if (!adminJobFairStatusEntityOptional.isPresent()) return null;
-        return adminJobFairStatusMapper.toDTO(adminJobFairStatusEntityOptional.get());
+        return adminJobFairStatusEntityOptional.map(adminJobFairStatusEntity -> adminJobFairStatusMapper.toDTO(adminJobFairStatusEntity));
     }
 
     @Override

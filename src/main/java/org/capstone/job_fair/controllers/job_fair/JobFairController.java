@@ -287,10 +287,11 @@ public class JobFairController {
 
     @GetMapping(ApiEndPoint.JobFair.COMPANY_END_POINT + "/{id}")
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE)")
-    public ResponseEntity<?> getJobFairPlanOfCompanyById(@PathVariable("id") String id) {
+    public ResponseEntity<?> getJobFairPlanOfCompanyByJobFairId(@PathVariable("id") String id) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        CompanyJobFairStatusDTO companyJobFairStatusDTO = jobFairService.getJobFairForCompanyById(userDetails.getCompanyId(), id);
-        if (companyJobFairStatusDTO == null) return ResponseEntity.noContent().build();
+        Optional<CompanyJobFairStatusDTO> companyJobFairStatusDTOOptional = jobFairService.getJobFairForCompanyByJobFairId(userDetails.getCompanyId(), id);
+        if (!companyJobFairStatusDTOOptional.isPresent()) return ResponseEntity.noContent().build();
+        CompanyJobFairStatusDTO companyJobFairStatusDTO = companyJobFairStatusDTOOptional.get();
         JobFairForCompanyResponse jobFairForCompanyResponse = companyJobFairStatusMapper.toJobFairForCompanyResponse(companyJobFairStatusDTO.getJobFair());
         jobFairForCompanyResponse.setStatus(companyJobFairStatusDTO.getStatus());
         return ResponseEntity.ok(jobFairForCompanyResponse);
@@ -311,11 +312,11 @@ public class JobFairController {
 
     @GetMapping(ApiEndPoint.JobFair.ATTENDANT_END_POINT + "/{id}")
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ATTENDANT)")
-    public ResponseEntity<?> getJobFairPlanOfAttendantById(@PathVariable("id") String id) {
+    public ResponseEntity<?> getJobFairPlanOfAttendantByJobFairId(@PathVariable("id") String id) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        AttendantJobFairStatusDTO attendantJobFairStatusDTO = jobFairService.getJobFairForAttendantById(userDetails.getId(), id);
-        if (attendantJobFairStatusDTO == null) return ResponseEntity.noContent().build();
-
+        Optional<AttendantJobFairStatusDTO> attendantJobFairStatusDTOOptional = jobFairService.getJobFairForAttendantByJobFairId(userDetails.getId(), id);
+        if (!attendantJobFairStatusDTOOptional.isPresent()) return ResponseEntity.noContent().build();
+        AttendantJobFairStatusDTO attendantJobFairStatusDTO = attendantJobFairStatusDTOOptional.get();
         JobFairForAttendantResponse jobFairForAttendantResponse = attendantJobFairStatusMapper.toJobFairForAttendantResponse(attendantJobFairStatusDTO.getJobFair());
         jobFairForAttendantResponse.setStatus(attendantJobFairStatusDTO.getStatus());
         return ResponseEntity.ok(jobFairForAttendantResponse);
@@ -335,10 +336,10 @@ public class JobFairController {
 
     @GetMapping(ApiEndPoint.JobFair.ADMIN_END_POINT + "/{id}")
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
-    public ResponseEntity<?> getJobFairPlanOfAdminById(@PathVariable("id") String id) {
-        AdminJobFairStatusDTO adminJobFairStatusDTO = jobFairService.getJobFairForAdminById(id);
-        if (adminJobFairStatusDTO == null) return ResponseEntity.noContent().build();
-
+    public ResponseEntity<?> getJobFairPlanOfAdminByJobFairId(@PathVariable("id") String id) {
+        Optional<AdminJobFairStatusDTO> adminJobFairStatusDTOOptional = jobFairService.getJobFairForAdminByJobFairId(id);
+        if (!adminJobFairStatusDTOOptional.isPresent()) return ResponseEntity.noContent().build();
+        AdminJobFairStatusDTO adminJobFairStatusDTO = adminJobFairStatusDTOOptional.get();
         JobFairForAdminResponse jobFairForAdminResponse = adminJobFairStatusMapper.toJobFairForAdminResponse(adminJobFairStatusDTO.getJobFair());
         jobFairForAdminResponse.setStatus(adminJobFairStatusDTO.getStatus());
         return ResponseEntity.ok(jobFairForAdminResponse);
