@@ -41,6 +41,12 @@ public interface JobFairService {
 
     Page<CompanyJobFairStatusDTO> getJobFairForCompany(String companyId, List<JobFairCompanyStatus> status, int offset, int pageSize);
 
+    CompanyJobFairStatusDTO getJobFairForCompanyById(String companyId, String jobfairId);
+
+    AttendantJobFairStatusDTO getJobFairForAttendantById(String attendantId, String jobfairId);
+
+    AdminJobFairStatusDTO getJobFairForAdminById(String jobfairId);
+
     Page<AttendantJobFairStatusDTO> getJobFairForAttendant(String attendantId, List<JobFairAttendantStatus> status, int offset, int pageSize);
 
     Page<AdminJobFairStatusDTO> getJobFairForAdmin(List<JobFairAdminStatus> statuses, int offset, int pageSize);

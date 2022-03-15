@@ -9,8 +9,7 @@ import org.capstone.job_fair.controllers.payload.requests.job_fair.AdminEvaluate
 import org.capstone.job_fair.controllers.payload.requests.job_fair.CancelJobFairRequest;
 import org.capstone.job_fair.controllers.payload.requests.job_fair.DraftJobFairPlanRequest;
 import org.capstone.job_fair.controllers.payload.requests.job_fair.UpdateJobFairPlanDraftRequest;
-import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
-import org.capstone.job_fair.controllers.payload.responses.RenderJobFairParkResponse;
+import org.capstone.job_fair.controllers.payload.responses.*;
 import org.capstone.job_fair.models.dtos.company.CompanyBoothDTO;
 import org.capstone.job_fair.models.dtos.company.CompanyBoothLayoutDTO;
 import org.capstone.job_fair.models.dtos.job_fair.*;
@@ -22,6 +21,9 @@ import org.capstone.job_fair.services.interfaces.company.CompanyBoothLayoutServi
 import org.capstone.job_fair.services.interfaces.company.CompanyBoothService;
 import org.capstone.job_fair.services.interfaces.job_fair.JobFairService;
 import org.capstone.job_fair.services.interfaces.job_fair.LayoutService;
+import org.capstone.job_fair.services.mappers.job_fair.AdminJobFairStatusMapper;
+import org.capstone.job_fair.services.mappers.job_fair.AttendantJobFairStatusMapper;
+import org.capstone.job_fair.services.mappers.job_fair.CompanyJobFairStatusMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -51,6 +53,16 @@ public class JobFairController {
 
     @Autowired
     private LayoutService layoutService;
+
+    @Autowired
+    private CompanyJobFairStatusMapper companyJobFairStatusMapper;
+
+    @Autowired
+    private AttendantJobFairStatusMapper attendantJobFairStatusMapper;
+
+    @Autowired
+    private AdminJobFairStatusMapper adminJobFairStatusMapper;
+
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).STAFF)")
     @PostMapping(ApiEndPoint.JobFair.JOB_FAIR_PLAN)
@@ -273,6 +285,18 @@ public class JobFairController {
         return ResponseEntity.ok(data);
     }
 
+    @GetMapping(ApiEndPoint.JobFair.COMPANY_END_POINT + "/{id}")
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE)")
+    public ResponseEntity<?> getJobFairPlanOfCompanyById(@PathVariable("id") String id) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        CompanyJobFairStatusDTO companyJobFairStatusDTO = jobFairService.getJobFairForCompanyById(userDetails.getCompanyId(), id);
+        if (companyJobFairStatusDTO == null) return ResponseEntity.noContent().build();
+        JobFairForCompanyResponse jobFairForCompanyResponse = companyJobFairStatusMapper.toJobFairForCompanyResponse(companyJobFairStatusDTO.getJobFair());
+        jobFairForCompanyResponse.setStatus(companyJobFairStatusDTO.getStatus());
+        return ResponseEntity.ok(jobFairForCompanyResponse);
+    }
+
+
     @GetMapping(ApiEndPoint.JobFair.ATTENDANT_END_POINT)
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ATTENDANT)")
     public ResponseEntity<?> getJobFairForAttendant(
@@ -285,6 +309,19 @@ public class JobFairController {
         return ResponseEntity.ok(data);
     }
 
+    @GetMapping(ApiEndPoint.JobFair.ATTENDANT_END_POINT + "/{id}")
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ATTENDANT)")
+    public ResponseEntity<?> getJobFairPlanOfAttendantById(@PathVariable("id") String id) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        AttendantJobFairStatusDTO attendantJobFairStatusDTO = jobFairService.getJobFairForAttendantById(userDetails.getId(), id);
+        if (attendantJobFairStatusDTO == null) return ResponseEntity.noContent().build();
+
+        JobFairForAttendantResponse jobFairForAttendantResponse = attendantJobFairStatusMapper.toJobFairForAttendantResponse(attendantJobFairStatusDTO.getJobFair());
+        jobFairForAttendantResponse.setStatus(attendantJobFairStatusDTO.getStatus());
+        return ResponseEntity.ok(jobFairForAttendantResponse);
+    }
+
+
     @GetMapping(ApiEndPoint.JobFair.ADMIN_END_POINT)
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).STAFF)")
     public ResponseEntity<?> getJobFairForAdmin(
@@ -294,6 +331,17 @@ public class JobFairController {
     ) {
         Page<AdminJobFairStatusDTO> data = jobFairService.getJobFairForAdmin(statuses, offset, pageSize);
         return ResponseEntity.ok(data);
+    }
+
+    @GetMapping(ApiEndPoint.JobFair.ADMIN_END_POINT + "/{id}")
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
+    public ResponseEntity<?> getJobFairPlanOfAdminById(@PathVariable("id") String id) {
+        AdminJobFairStatusDTO adminJobFairStatusDTO = jobFairService.getJobFairForAdminById(id);
+        if (adminJobFairStatusDTO == null) return ResponseEntity.noContent().build();
+
+        JobFairForAdminResponse jobFairForAdminResponse = adminJobFairStatusMapper.toJobFairForAdminResponse(adminJobFairStatusDTO.getJobFair());
+        jobFairForAdminResponse.setStatus(adminJobFairStatusDTO.getStatus());
+        return ResponseEntity.ok(jobFairForAdminResponse);
     }
 
 
