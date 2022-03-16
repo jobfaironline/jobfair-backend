@@ -160,7 +160,7 @@ public class JobPositionServiceImpl implements JobPositionService {
     @SneakyThrows
     @Override
     @Transactional
-    public List<JobPositionDTO> createNewJobPositionsFromCSVFile(MultipartFile file) {
+    public List<JobPositionDTO> createNewJobPositionsFromCSVFile(MultipartFile file, String companyId) {
         List<JobPositionDTO> result = new ArrayList<>();
         if (!CSVConstant.TYPE.equals(file.getContentType())) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Job.CSV_FILE_ERROR));
@@ -175,6 +175,7 @@ public class JobPositionServiceImpl implements JobPositionService {
         while (jobsCSV.hasNext()) {
             numberOfCreatedJob++;
             CreateJobPositionRequest jobRequest = jobsCSV.next();
+            jobRequest.setCompanyId(companyId);
             Errors errors = new BindException(jobRequest, CreateJobPositionRequest.class.getSimpleName());
             validator.validate(jobRequest, errors);
             if (errors.hasErrors()) {
