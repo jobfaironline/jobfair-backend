@@ -323,7 +323,7 @@ public class JobFairServiceImpl implements JobFairService {
     }
 
     @Override
-    public Page<CompanyJobFairStatusDTO> getJobFairForCompany(String companyId, String jobFairName, List<JobFairCompanyStatus> statusList, int offset, int pageSize) {
+    public Page<CompanyJobFairStatusDTO> getJobFairForCompany(String companyId, String jobFairName, List<JobFairCompanyStatus> statusList, int offset, int pageSize, String sortBy, Sort.Direction direction) {
         validatePaging(pageSize, offset);
         if (statusList == null || statusList.isEmpty()) {
             statusList = Arrays.asList(JobFairCompanyStatus.UNAVAILABLE, JobFairCompanyStatus.REGISTRABLE, JobFairCompanyStatus.SUBMITTED,
@@ -331,7 +331,7 @@ public class JobFairServiceImpl implements JobFairService {
                     JobFairCompanyStatus.HAPPENING, JobFairCompanyStatus.CLOSED, JobFairCompanyStatus.ATTENDED, JobFairCompanyStatus.REQUEST_CHANGE);
         }
         return companyJobFairStatusRepository
-                .getByStatusInAndCompanyIdAndJobFairNameContaining(statusList, companyId, jobFairName, PageRequest.of(offset, pageSize))
+                .getByStatusInAndCompanyIdAndJobFairNameContaining(statusList, companyId, jobFairName, PageRequest.of(offset, pageSize).withSort(direction, sortBy))
                 .map(companyJobFairStatusMapper::toDTO);
 
     }
@@ -358,20 +358,20 @@ public class JobFairServiceImpl implements JobFairService {
     }
 
     @Override
-    public Page<AttendantJobFairStatusDTO> getJobFairForAttendant(String attendantId, String jobFairName, List<JobFairAttendantStatus> statusList, int offset, int pageSize) {
+    public Page<AttendantJobFairStatusDTO> getJobFairForAttendant(String attendantId, String jobFairName, List<JobFairAttendantStatus> statusList, int offset, int pageSize, String sortBy, Sort.Direction direction) {
         validatePaging(pageSize, offset);
         if (statusList == null || statusList.isEmpty()) {
             statusList = Arrays.asList(JobFairAttendantStatus.UNAVAILABLE, JobFairAttendantStatus.REGISTRABLE, JobFairAttendantStatus.REGISTERED,
                     JobFairAttendantStatus.HAPPENING, JobFairAttendantStatus.CLOSED, JobFairAttendantStatus.ATTENDED);
         }
         return attendantJobFairStatusRepository
-                .getByStatusInAndAttendantIdAndJobFairNameContaining(statusList, attendantId, jobFairName, PageRequest.of(offset, pageSize))
+                .getByStatusInAndAttendantIdAndJobFairNameContaining(statusList, attendantId, jobFairName, PageRequest.of(offset, pageSize).withSort(direction, sortBy))
                 .map(attendantJobFairStatusMapper::toDTO);
 
     }
 
     @Override
-    public Page<AdminJobFairStatusDTO> getJobFairForAdmin(List<JobFairAdminStatus> statuses, String jobFairName, int offset, int pageSize) {
+    public Page<AdminJobFairStatusDTO> getJobFairForAdmin(List<JobFairAdminStatus> statuses, String jobFairName, int offset, int pageSize, String sortBy, Sort.Direction direction) {
         validatePaging(pageSize, offset);
         if (statuses == null || statuses.isEmpty()) {
             statuses = Arrays.asList(JobFairAdminStatus.NOT_YET,
@@ -384,7 +384,7 @@ public class JobFairServiceImpl implements JobFairService {
                     JobFairAdminStatus.PROCESSING);
         }
         return adminJobFairStatusRepository
-                .getByStatusInAndJobFairNameContaining(statuses, jobFairName, PageRequest.of(offset, pageSize))
+                .getByStatusInAndJobFairNameContaining(statuses, jobFairName, PageRequest.of(offset, pageSize).withSort(direction, sortBy))
                 .map(adminJobFairStatusMapper::toDTO);
     }
 

@@ -17,9 +17,6 @@ public interface AttendantJobFairStatusRepository extends JpaRepository<Attendan
 
     Page<AttendantJobFairStatusEntity> getByStatusInAndAttendantId(List<JobFairAttendantStatus> status, String attendantId, Pageable pageable);
 
-
-    @Query("select a from AttendantJobFairStatusEntity a " +
-            "where a.status in ?1 and a.attendantId = ?2 and a.jobFair.name like concat('%', ?3, '%')")
     Page<AttendantJobFairStatusEntity> getByStatusInAndAttendantIdAndJobFairNameContaining(List<JobFairAttendantStatus> status, String attendantId, String JobFairName, Pageable pageable);
 
     Optional<AttendantJobFairStatusEntity> getByAttendantIdAndJobFairId(String attendantId, String jobFairId);
