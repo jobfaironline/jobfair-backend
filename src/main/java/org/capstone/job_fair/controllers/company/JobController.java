@@ -108,7 +108,9 @@ public class JobController {
     @PostMapping(ApiEndPoint.Job.CREAT_JOB_POSITION_UPLOAD_CSV)
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE)")
     public ResponseEntity<?> createMultipleJobPositionFromCSVFile(@RequestParam("file") MultipartFile file) throws IOException {
-        List<JobPositionDTO> result =  jobPositionService.createNewJobPositionsFromCSVFile(file);
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String companyId = userDetails.getCompanyId();
+        List<JobPositionDTO> result =  jobPositionService.createNewJobPositionsFromCSVFile(file, companyId);
         return ResponseEntity.ok(result);
     }
 }
