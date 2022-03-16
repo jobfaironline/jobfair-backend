@@ -98,10 +98,11 @@ public class JobController {
                                                             @RequestParam(value = "offset", defaultValue = JobPositionConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset,
                                                             @RequestParam(value = "pageSize", required = false, defaultValue = JobPositionConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize,
                                                             @RequestParam(value = "sortBy", required = false, defaultValue = JobPositionConstant.DEFAULT_SEARCH_SORT_BY_VALUE) String sortBy,
-                                                            @RequestParam(value = "direction", required = false, defaultValue = JobPositionConstant.DEFAULT_SEARCH_SORT_DIRECTION) Sort.Direction direction) {
+                                                            @RequestParam(value = "direction", required = false, defaultValue = JobPositionConstant.DEFAULT_SEARCH_SORT_DIRECTION) Sort.Direction direction,
+                                                            @RequestParam(value = "jobTitle", required = false) @XSSConstraint String jobTitle) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String companyId = userDetails.getCompanyId();
-        Page<JobPositionDTO> jobPositions = jobPositionService.getAllJobPositionOfCompany(companyId, jobTypeId, jobLevel, pageSize, offset, sortBy, direction);
+        Page<JobPositionDTO> jobPositions = jobPositionService.getAllJobPositionOfCompany(companyId, jobTypeId, jobLevel, jobTitle, pageSize, offset, sortBy, direction);
         if (jobPositions.isEmpty()) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(jobPositions);
     }
@@ -111,7 +112,7 @@ public class JobController {
     public ResponseEntity<?> createMultipleJobPositionFromCSVFile(@RequestParam("file") MultipartFile file) throws IOException {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String companyId = userDetails.getCompanyId();
-        List<JobPositionDTO> result =  jobPositionService.createNewJobPositionsFromCSVFile(file, companyId);
+        List<JobPositionDTO> result = jobPositionService.createNewJobPositionsFromCSVFile(file, companyId);
         return ResponseEntity.ok(result);
     }
 }
