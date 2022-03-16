@@ -31,7 +31,7 @@ public interface JobFairService {
 
     void adminEvaluateJobFair(String jobFairId, JobFairPlanStatus status, String message);
 
-    Page<JobFairDTO> getAllForAdmin(JobFairPlanStatus status, int offset, int pageSize, String sortBy, Sort.Direction direction);
+    Page<JobFairDTO> getAllForAdmin(JobFairPlanStatus status, String jobFairName, int offset, int pageSize, String sortBy, Sort.Direction direction);
 
     List<JobFairDTO> getAllJobFairByStatus(JobFairPlanStatus jobFairPlanStatus);
 
@@ -39,7 +39,7 @@ public interface JobFairService {
 
     List<JobFairDTO> getAllAvailableForRegistration(String fromTime, String toTime);
 
-    Page<CompanyJobFairStatusDTO> getJobFairForCompany(String companyId, List<JobFairCompanyStatus> status, int offset, int pageSize);
+    Page<CompanyJobFairStatusDTO> getJobFairForCompany(String companyId, String jobFairName, List<JobFairCompanyStatus> status, int offset, int pageSize);
 
     Optional<CompanyJobFairStatusDTO> getJobFairForCompanyByJobFairId(String companyId, String jobfairId);
 
@@ -48,9 +48,9 @@ public interface JobFairService {
 
     Optional<AdminJobFairStatusDTO> getJobFairForAdminByJobFairId(String jobfairId);
 
-    Page<AttendantJobFairStatusDTO> getJobFairForAttendant(String attendantId, List<JobFairAttendantStatus> status, int offset, int pageSize);
+    Page<AttendantJobFairStatusDTO> getJobFairForAttendant(String attendantId, String jobFairName, List<JobFairAttendantStatus> status, int offset, int pageSize);
 
-    Page<AdminJobFairStatusDTO> getJobFairForAdmin(List<JobFairAdminStatus> statuses, int offset, int pageSize);
+    Page<AdminJobFairStatusDTO> getJobFairForAdmin(List<JobFairAdminStatus> statuses, String jobFairName, int offset, int pageSize);
 
 
 }

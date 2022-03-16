@@ -25,6 +25,7 @@ import org.capstone.job_fair.services.mappers.job_fair.AdminJobFairStatusMapper;
 import org.capstone.job_fair.services.mappers.job_fair.AttendantJobFairStatusMapper;
 import org.capstone.job_fair.services.mappers.job_fair.CompanyJobFairStatusMapper;
 import org.capstone.job_fair.utils.MessageUtil;
+import org.capstone.job_fair.validators.XSSConstraint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
@@ -188,8 +189,10 @@ public class JobFairController {
                                                @RequestParam(value = "offset", defaultValue = JobFairConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset,
                                                @RequestParam(value = "pageSize", defaultValue = JobFairConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize,
                                                @RequestParam(value = "sortBy", required = false, defaultValue = JobFairConstant.DEFAULT_SEARCH_SORT_BY_VALUE) String sortBy,
-                                               @RequestParam(value = "direction", required = false, defaultValue = JobFairConstant.DEFAULT_SEARCH_SORT_DIRECTION) Sort.Direction direction) {
-        Page<JobFairDTO> result = jobFairService.getAllForAdmin(status, offset, pageSize, sortBy, direction);
+                                               @RequestParam(value = "direction", required = false, defaultValue = JobFairConstant.DEFAULT_SEARCH_SORT_DIRECTION) Sort.Direction direction,
+                                               @RequestParam(value = "jobFairName", required = false, defaultValue = JobFairConstant.DEFAULT_JOBFAIR_NAME) @XSSConstraint String jobFairName
+    ) {
+        Page<JobFairDTO> result = jobFairService.getAllForAdmin(status, jobFairName, offset, pageSize, sortBy, direction);
         if (result.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
@@ -278,10 +281,11 @@ public class JobFairController {
     public ResponseEntity<?> getJobFairPlanOfCompany(
             @RequestParam(value = "offset", defaultValue = ApplicationConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset,
             @RequestParam(value = "pageSize", defaultValue = ApplicationConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize,
-            @RequestParam(value = "filterStatus", required = false) List<JobFairCompanyStatus> statusList
+            @RequestParam(value = "filterStatus", required = false) List<JobFairCompanyStatus> statusList,
+            @RequestParam(value = "jobFairName", required = false, defaultValue = JobFairConstant.DEFAULT_JOBFAIR_NAME) @XSSConstraint String jobFairName
     ) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Page<CompanyJobFairStatusDTO> data = jobFairService.getJobFairForCompany(userDetails.getCompanyId(), statusList, offset, pageSize);
+        Page<CompanyJobFairStatusDTO> data = jobFairService.getJobFairForCompany(userDetails.getCompanyId(), jobFairName, statusList, offset, pageSize);
         return ResponseEntity.ok(data);
     }
 
@@ -303,10 +307,11 @@ public class JobFairController {
     public ResponseEntity<?> getJobFairForAttendant(
             @RequestParam(value = "offset", defaultValue = ApplicationConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset,
             @RequestParam(value = "pageSize", defaultValue = ApplicationConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize,
-            @RequestParam(value = "filterStatus", required = false) List<JobFairAttendantStatus> statusList
+            @RequestParam(value = "filterStatus", required = false) List<JobFairAttendantStatus> statusList,
+            @RequestParam(value = "jobFairName", required = false, defaultValue = JobFairConstant.DEFAULT_JOBFAIR_NAME) @XSSConstraint String jobFairName
     ) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Page<AttendantJobFairStatusDTO> data = jobFairService.getJobFairForAttendant(userDetails.getId(), statusList, offset, pageSize);
+        Page<AttendantJobFairStatusDTO> data = jobFairService.getJobFairForAttendant(userDetails.getId(), jobFairName, statusList, offset, pageSize);
         return ResponseEntity.ok(data);
     }
 
@@ -328,9 +333,10 @@ public class JobFairController {
     public ResponseEntity<?> getJobFairForAdmin(
             @RequestParam(value = "offset", defaultValue = ApplicationConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset,
             @RequestParam(value = "pageSize", defaultValue = ApplicationConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize,
-            @RequestParam(value = "filterStatus", required = false) List<JobFairAdminStatus> statuses
+            @RequestParam(value = "filterStatus", required = false) List<JobFairAdminStatus> statuses,
+            @RequestParam(value = "jobFairName", required = false, defaultValue = JobFairConstant.DEFAULT_JOBFAIR_NAME) @XSSConstraint String jobFairName
     ) {
-        Page<AdminJobFairStatusDTO> data = jobFairService.getJobFairForAdmin(statuses, offset, pageSize);
+        Page<AdminJobFairStatusDTO> data = jobFairService.getJobFairForAdmin(statuses, jobFairName, offset, pageSize);
         return ResponseEntity.ok(data);
     }
 

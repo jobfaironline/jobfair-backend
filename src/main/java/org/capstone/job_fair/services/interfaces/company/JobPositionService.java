@@ -15,7 +15,7 @@ public interface JobPositionService {
 
     void deleteJobPosition(String jobPositionId, String companyId);
 
-    Page<JobPositionDTO> getAllJobPositionOfCompany(String companyId, Integer jobTypeId, JobLevel jobLevelId, int pageSize, int offset, String sortBy, Sort.Direction direction);
+    Page<JobPositionDTO> getAllJobPositionOfCompany(String companyId, Integer jobTypeId, JobLevel jobLevelId, String jobTitle, int pageSize, int offset, String sortBy, Sort.Direction direction);
 
     List<JobPositionDTO> createNewJobPositionsFromCSVFile(MultipartFile file, String companyId);
 

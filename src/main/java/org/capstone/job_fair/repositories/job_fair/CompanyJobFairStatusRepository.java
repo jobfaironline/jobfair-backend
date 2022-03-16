@@ -17,5 +17,7 @@ public interface CompanyJobFairStatusRepository extends JpaRepository<CompanyJob
 
     Page<CompanyJobFairStatusEntity> getByStatusInAndCompanyId(List<JobFairCompanyStatus> status, String companyId, Pageable pageable);
 
+    Page<CompanyJobFairStatusEntity> getByStatusInAndCompanyIdAndJobFairNameContaining(List<JobFairCompanyStatus> status, String companyId, String JobFairName, Pageable pageable);
+
     Optional<CompanyJobFairStatusEntity> getByCompanyIdAndJobFairId(String companyId, String jobfairId);
 }
