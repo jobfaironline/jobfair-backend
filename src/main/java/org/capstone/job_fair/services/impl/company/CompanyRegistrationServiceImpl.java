@@ -384,16 +384,24 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
     }
 
 
-
     @Override
     public Page<CompanyRegistrationDTO> getCompanyRegistration(List<CompanyRegistrationStatus> statusList, int offset, int pageSize, String sortBy, Sort.Direction direction) {
         Page<CompanyRegistrationEntity> companyRegistrationEntityPage = null;
         if (offset < DataConstraint.Paging.OFFSET_MIN || pageSize < DataConstraint.Paging.PAGE_SIZE_MIN)
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyRegistration.INVALID_PAGE_NUMBER));
         if (statusList == null || statusList.isEmpty())
-            companyRegistrationEntityPage = companyRegistrationRepository.findAllByStatusIn(Arrays.asList(CompanyRegistrationStatus.APPROVE, CompanyRegistrationStatus.PENDING, CompanyRegistrationStatus.REJECT, CompanyRegistrationStatus.REQUEST_CHANGE), PageRequest.of(offset, pageSize).withSort(Sort.by(direction, sortBy)));
+            companyRegistrationEntityPage = companyRegistrationRepository.findAllByStatusIn(Arrays.asList(CompanyRegistrationStatus.APPROVE, CompanyRegistrationStatus.REJECT, CompanyRegistrationStatus.REQUEST_CHANGE), PageRequest.of(offset, pageSize).withSort(Sort.by(direction, sortBy)));
         else
             companyRegistrationEntityPage = companyRegistrationRepository.findAllByStatusIn(statusList, PageRequest.of(offset, pageSize).withSort(Sort.by(direction, sortBy)));
         return companyRegistrationEntityPage.map(entity -> companyRegistrationMapper.toDTO(entity));
     }
+
+    @Override
+    public Optional<CompanyRegistrationDTO> getCompanyLatestCompanyRegistrationByJobFairIdAndCompanyId(String jobFairId, String companyId) {
+        List<CompanyRegistrationStatus> statusList = Arrays.asList(CompanyRegistrationStatus.APPROVE, CompanyRegistrationStatus.REJECT, CompanyRegistrationStatus.REQUEST_CHANGE);
+        Optional<CompanyRegistrationEntity> companyRegistrationEntityOptional = companyRegistrationRepository.findFirstByJobFairIdAndCompanyIdAndStatusInOrderByCreateDateDesc(jobFairId, companyId, statusList);
+        if (!companyRegistrationEntityOptional.isPresent()) return Optional.empty();
+        return companyRegistrationEntityOptional.map(entity -> companyRegistrationMapper.toDTO(entity));
+    }
+
 }

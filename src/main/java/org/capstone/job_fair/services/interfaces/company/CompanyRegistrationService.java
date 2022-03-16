@@ -36,4 +36,6 @@ public interface CompanyRegistrationService {
     Page<CompanyRegistrationDTO> getCompanyRegistrationByCompanyId(String companyId, List<CompanyRegistrationStatus> statusList, int offset, int pageSize, String sortBy, Sort.Direction direction);
 
     Page<CompanyRegistrationAdminDTO> getAllJobFairForAdmin(String companyName, String jobfairName, List<CompanyRegistrationStatus> statusList, int offset, int pageSize, String sortBy, Sort.Direction direction);
+
+    Optional<CompanyRegistrationDTO> getCompanyLatestCompanyRegistrationByJobFairIdAndCompanyId(String jobFairId, String companyId);
 }
