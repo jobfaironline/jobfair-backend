@@ -52,7 +52,6 @@ public class CreateJobPositionRequest {
     @CsvBindByName(column = "locationId")
     private String locationId;
     @NotNull
-    @CsvBindByName(column = "companyId")
     private String companyId;
     @NotNull
     @Valid

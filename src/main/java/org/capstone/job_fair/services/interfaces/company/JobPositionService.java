@@ -17,6 +17,6 @@ public interface JobPositionService {
 
     Page<JobPositionDTO> getAllJobPositionOfCompany(String companyId, Integer jobTypeId, JobLevel jobLevelId, int pageSize, int offset, String sortBy, Sort.Direction direction);
 
-    List<JobPositionDTO> createNewJobPositionsFromCSVFile(MultipartFile file);
+    List<JobPositionDTO> createNewJobPositionsFromCSVFile(MultipartFile file, String companyId);
 
 }
