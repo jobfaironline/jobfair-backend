@@ -172,6 +172,15 @@ public class CompanyRegistrationController {
     }
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
+    @GetMapping(ApiEndPoint.CompanyRegistration.GET_LATEST + "/{jobFairId}")
+    public ResponseEntity<?> getLastedCompanyRegistrationByJobFairId(@PathVariable String jobFairId) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Optional<CompanyRegistrationDTO> optional = companyRegistrationService.getCompanyLatestCompanyRegistrationByJobFairIdAndCompanyId(jobFairId, userDetails.getCompanyId());
+        return optional.map(ResponseEntity::ok).orElse(ResponseEntity.noContent().build());
+    }
+
+
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
     @GetMapping(ApiEndPoint.CompanyRegistration.GET_ALL_OWN)
     public ResponseEntity<?> getAllCompanyRegistrationByUserId(@RequestParam(value = "status", required = false) List<CompanyRegistrationStatus> statusList,
                                                                @RequestParam(value = "offset", defaultValue = CompanyRegistrationConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset,
