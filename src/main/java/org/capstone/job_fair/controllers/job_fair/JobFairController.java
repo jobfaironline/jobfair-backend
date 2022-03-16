@@ -282,10 +282,12 @@ public class JobFairController {
             @RequestParam(value = "offset", defaultValue = ApplicationConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset,
             @RequestParam(value = "pageSize", defaultValue = ApplicationConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize,
             @RequestParam(value = "filterStatus", required = false) List<JobFairCompanyStatus> statusList,
-            @RequestParam(value = "jobFairName", required = false, defaultValue = JobFairConstant.DEFAULT_JOBFAIR_NAME) @XSSConstraint String jobFairName
+            @RequestParam(value = "jobFairName", required = false, defaultValue = JobFairConstant.DEFAULT_JOBFAIR_NAME) @XSSConstraint String jobFairName,
+            @RequestParam(value = "sortBy", required = false, defaultValue = JobFairConstant.JOB_FAIR_PROPERTY + "." + JobFairConstant.DEFAULT_SEARCH_SORT_BY_VALUE) String sortBy,
+            @RequestParam(value = "direction", required = false, defaultValue = JobFairConstant.DEFAULT_SEARCH_SORT_DIRECTION) Sort.Direction direction
     ) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Page<CompanyJobFairStatusDTO> data = jobFairService.getJobFairForCompany(userDetails.getCompanyId(), jobFairName, statusList, offset, pageSize);
+        Page<CompanyJobFairStatusDTO> data = jobFairService.getJobFairForCompany(userDetails.getCompanyId(), jobFairName, statusList, offset, pageSize, sortBy, direction);
         return ResponseEntity.ok(data);
     }
 
@@ -308,10 +310,12 @@ public class JobFairController {
             @RequestParam(value = "offset", defaultValue = ApplicationConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset,
             @RequestParam(value = "pageSize", defaultValue = ApplicationConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize,
             @RequestParam(value = "filterStatus", required = false) List<JobFairAttendantStatus> statusList,
-            @RequestParam(value = "jobFairName", required = false, defaultValue = JobFairConstant.DEFAULT_JOBFAIR_NAME) @XSSConstraint String jobFairName
+            @RequestParam(value = "jobFairName", required = false, defaultValue = JobFairConstant.DEFAULT_JOBFAIR_NAME) @XSSConstraint String jobFairName,
+            @RequestParam(value = "sortBy", required = false, defaultValue = JobFairConstant.JOB_FAIR_PROPERTY + "." + JobFairConstant.DEFAULT_SEARCH_SORT_BY_VALUE) String sortBy,
+            @RequestParam(value = "direction", required = false, defaultValue = JobFairConstant.DEFAULT_SEARCH_SORT_DIRECTION) Sort.Direction direction
     ) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Page<AttendantJobFairStatusDTO> data = jobFairService.getJobFairForAttendant(userDetails.getId(), jobFairName, statusList, offset, pageSize);
+        Page<AttendantJobFairStatusDTO> data = jobFairService.getJobFairForAttendant(userDetails.getId(), jobFairName, statusList, offset, pageSize, sortBy, direction);
         return ResponseEntity.ok(data);
     }
 
@@ -334,9 +338,11 @@ public class JobFairController {
             @RequestParam(value = "offset", defaultValue = ApplicationConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset,
             @RequestParam(value = "pageSize", defaultValue = ApplicationConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize,
             @RequestParam(value = "filterStatus", required = false) List<JobFairAdminStatus> statuses,
-            @RequestParam(value = "jobFairName", required = false, defaultValue = JobFairConstant.DEFAULT_JOBFAIR_NAME) @XSSConstraint String jobFairName
+            @RequestParam(value = "jobFairName", required = false, defaultValue = JobFairConstant.DEFAULT_JOBFAIR_NAME) @XSSConstraint String jobFairName,
+            @RequestParam(value = "sortBy", required = false, defaultValue = JobFairConstant.JOB_FAIR_PROPERTY + "." + JobFairConstant.DEFAULT_SEARCH_SORT_BY_VALUE) String sortBy,
+            @RequestParam(value = "direction", required = false, defaultValue = JobFairConstant.DEFAULT_SEARCH_SORT_DIRECTION) Sort.Direction direction
     ) {
-        Page<AdminJobFairStatusDTO> data = jobFairService.getJobFairForAdmin(statuses, jobFairName, offset, pageSize);
+        Page<AdminJobFairStatusDTO> data = jobFairService.getJobFairForAdmin(statuses, jobFairName, offset, pageSize, sortBy, direction);
         return ResponseEntity.ok(data);
     }
 
