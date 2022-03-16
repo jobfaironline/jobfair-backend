@@ -89,7 +89,8 @@ public class AuthController {
                     refreshToken,
                     isEmployeeFirstTime,
                     userDetails.getId(),
-                    companyId
+                    companyId,
+                    userDetails.getFullname()
             );
             return new ResponseEntity<>(response, HttpStatus.OK);
         }

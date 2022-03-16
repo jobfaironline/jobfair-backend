@@ -18,4 +18,5 @@ public class LoginResponse {
     private boolean isEmployeeFirstTime;
     private String userId;
     private String companyId;
+    private String fullName;
 }
