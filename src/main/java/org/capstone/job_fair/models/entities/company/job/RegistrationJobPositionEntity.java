@@ -79,7 +79,7 @@ public class RegistrationJobPositionEntity {
     @Column(name = "location_id")
     private String locationId;
 
-    @Column(name="job_position_id")
+    @Column(name="origin_job_position_id")
     private String originJobPosition;
 
     @Override
