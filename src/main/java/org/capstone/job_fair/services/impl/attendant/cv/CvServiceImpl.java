@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -43,5 +44,10 @@ public class CvServiceImpl implements CvService {
                 .stream()
                 .map(cvMapper::toDTO)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<CvDTO> getById(String id) {
+        return cvRepository.findById(id).map(cvMapper::toDTO);
     }
 }

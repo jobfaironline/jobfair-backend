@@ -2,23 +2,23 @@ package org.capstone.job_fair.controllers.attendant.cv;
 
 import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import org.capstone.job_fair.constants.ApiEndPoint;
+import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.controllers.payload.requests.attendant.DraftCvRequest;
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
 import org.capstone.job_fair.models.dtos.attendant.AttendantDTO;
 import org.capstone.job_fair.models.dtos.attendant.cv.CvDTO;
 import org.capstone.job_fair.services.interfaces.attendant.cv.CvService;
 import org.capstone.job_fair.services.mappers.attendant.cv.CvMapper;
+import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class CvController {
@@ -55,6 +55,22 @@ public class CvController {
         }
         return ResponseEntity.ok(result);
     }
+
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ATTENDANT)")
+    @GetMapping(ApiEndPoint.Cv.CV + "/{id}")
+    public ResponseEntity<?> getById(@PathVariable String id) {
+        Optional<CvDTO> result = cvService.getById(id);
+        if (!result.isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+        CvDTO dto = result.get();
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (!dto.getAttendant().getAccount().getId().equals(userDetails.getId())) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Attendant.ATTENDANT_MISMATCH));
+        }
+        return ResponseEntity.ok(dto);
+    }
+
 
 }
 
