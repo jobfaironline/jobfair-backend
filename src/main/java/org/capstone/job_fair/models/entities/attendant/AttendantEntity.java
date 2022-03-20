@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
-import org.capstone.job_fair.models.entities.attendant.cv.*;
+import org.capstone.job_fair.models.entities.attendant.profile.*;
 import org.capstone.job_fair.models.enums.JobLevel;
 import org.capstone.job_fair.models.enums.Marital;
 import org.hibernate.Hibernate;
