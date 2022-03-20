@@ -3,7 +3,7 @@ package org.capstone.job_fair.models.dtos.attendant.cv;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 import org.capstone.job_fair.models.dtos.company.job.RegistrationJobPositionDTO;
-import org.capstone.job_fair.models.enums.Application;
+import org.capstone.job_fair.models.enums.ApplicationStatus;
 
 @Data
 @AllArgsConstructor
@@ -17,7 +17,7 @@ public class ApplicationDTO {
     private Long createDate;
     @JsonBackReference
     private CvDTO cvDTO;
-    private Application status;
+    private ApplicationStatus status;
     @JsonBackReference
     private RegistrationJobPositionDTO registrationJobPositionDTO;
 }

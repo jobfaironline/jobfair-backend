@@ -2,9 +2,9 @@ package org.capstone.job_fair.services.impl.attendant.cv;
 
 import org.capstone.job_fair.constants.DataConstraint;
 import org.capstone.job_fair.constants.MessageConstant;
-import org.capstone.job_fair.controllers.payload.responses.ApplicationForCompanyResponse;
 import org.capstone.job_fair.models.dtos.attendant.cv.ApplicationDTO;
-import org.capstone.job_fair.models.enums.Application;
+import org.capstone.job_fair.models.entities.attendant.cv.ApplicationEntity;
+import org.capstone.job_fair.models.enums.ApplicationStatus;
 import org.capstone.job_fair.repositories.attendant.cv.ApplicationRepository;
 import org.capstone.job_fair.repositories.company.job.RegistrationJobPositionRepository;
 import org.capstone.job_fair.services.interfaces.account.AccountService;
@@ -18,6 +18,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -45,6 +46,25 @@ public class ApplicationServiceImpl implements ApplicationService {
         return regisJobPosRepository.countById(registrationId) != 0;
     }
 
+    private void validatePaging(int pageSize, int offset) {
+        if (offset < DataConstraint.Paging.OFFSET_MIN || pageSize < DataConstraint.Paging.PAGE_SIZE_MIN)
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.INVALID_PAGE_NUMBER));
+    }
+
+
+    private String applicationForCompanySortByMapper(String sortBy) {
+        switch (sortBy) {
+            case "appliedDate":
+                return "createDate";
+            case "jobPositionTitle":
+                return "registrationJobPosition.title";
+            case "jobFairName":
+                return "registrationJobPosition.companyRegistration.jobFairEntity.name";
+            default:
+                throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.UNSUPPORTED_SORT_VALUE_FOR_APPLICATION_FOR_COMPANY_ERROR));
+        }
+    }
+
     @Override
     public ApplicationDTO createNewApplication(ApplicationDTO dto) {
 
@@ -52,7 +72,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public Page<ApplicationDTO> getAllApplicationsOfAttendantByCriteria(String attendantId, Application status, long fromTime, long toTime, int offset, int pageSize, String field) {
+    public Page<ApplicationDTO> getAllApplicationsOfAttendantByCriteria(String attendantId, ApplicationStatus status, long fromTime, long toTime, int offset, int pageSize, String field) {
 
         if (fromTime > toTime)
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.INALID_TIME));
@@ -63,18 +83,42 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public Page<ApplicationForCompanyResponse> getApplicationOfCompanyByJobPositionIdAndStatus(String companyId, String jobPositionId, List<Application> statusList, int pageSize, int offset, String sortBy, Sort.Direction direction) {
-        return null;
+    public Page<ApplicationEntity> getApplicationOfCompanyByJobPositionIdAndStatus(String companyId, String jobPositionId, List<ApplicationStatus> statusList, int pageSize, int offset, String sortBy, Sort.Direction direction) {
+        validatePaging(pageSize, offset);
+        sortBy = applicationForCompanySortByMapper(sortBy);
+        if (statusList == null || statusList.isEmpty()) {
+            statusList = Arrays.asList(ApplicationStatus.FINISHED, ApplicationStatus.PENDING, ApplicationStatus.CANCEL, ApplicationStatus.APPROVE, ApplicationStatus.REJECT);
+        }
+        Page<ApplicationEntity> applicationEntityPage = applicationRepository.findAllApplicationOfCompanyByJobPositionIdAndStatusIn
+                (companyId, jobPositionId, statusList, PageRequest.of(offset, pageSize).withSort(direction, sortBy));
+        return applicationEntityPage;
     }
 
     @Override
-    public Page<ApplicationForCompanyResponse> getApplicationOfCompanyByJobFairIdAndStatus(String companyId, String jobFairId, List<Application> statusList, int pageSize, int offset) {
+    public Page<ApplicationEntity> getApplicationOfCompanyByJobFairIdAndStatus(String companyId, String jobFairId, List<ApplicationStatus> statusList, int pageSize, int offset, String sortBy, Sort.Direction direction) {
+        validatePaging(pageSize, offset);
+        sortBy = applicationForCompanySortByMapper(sortBy);
+        if (statusList == null || statusList.isEmpty()) {
+            statusList = Arrays.asList(ApplicationStatus.FINISHED, ApplicationStatus.PENDING, ApplicationStatus.CANCEL, ApplicationStatus.APPROVE, ApplicationStatus.REJECT);
+        }
 
-        return null;
+        Page<ApplicationEntity> applicationEntityPage = applicationRepository.findAllApplicationOfCompanyByJobFairIdAndStatusIn
+                (companyId, jobFairId, statusList, PageRequest.of(offset, pageSize).withSort(direction, sortBy));
+        return applicationEntityPage;
     }
 
     @Override
-    public Page<ApplicationForCompanyResponse> getApplicationOfCompanyByJobFairNameAndJobPositionNameAndStatus(String companyId, String jobFairName, String jobPositionName, List<Application> statusList, int pageSize, int offset, String sortBy, Sort.Direction direction) {
-        return null;
+    public Page<ApplicationEntity> getApplicationOfCompanyByJobFairNameAndJobPositionNameAndStatus(String companyId, String jobFairName, String jobPositionName, List<ApplicationStatus> statusList, int pageSize, int offset, String sortBy, Sort.Direction direction) {
+        validatePaging(pageSize, offset);
+        sortBy = applicationForCompanySortByMapper(sortBy);
+
+        if (statusList == null || statusList.isEmpty()) {
+            statusList = Arrays.asList(ApplicationStatus.FINISHED, ApplicationStatus.PENDING, ApplicationStatus.CANCEL, ApplicationStatus.APPROVE, ApplicationStatus.REJECT);
+        }
+
+        Page<ApplicationEntity> applicationEntityPage = applicationRepository.
+                findAllApplicationOfCompanyByJobPositionTitleLikeAndJobFairNameLikeAndStatusIn
+                        (companyId, jobPositionName, jobFairName, statusList, PageRequest.of(offset, pageSize).withSort(direction, sortBy));
+        return applicationEntityPage;
     }
 }

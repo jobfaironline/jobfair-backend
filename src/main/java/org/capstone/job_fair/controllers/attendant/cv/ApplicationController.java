@@ -5,11 +5,12 @@ import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.ApplicationConstant;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.controllers.payload.requests.account.cv.CreateApplicationRequest;
-import org.capstone.job_fair.controllers.payload.responses.ApplicationForCompanyResponse;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.dtos.attendant.cv.ApplicationDTO;
-import org.capstone.job_fair.models.enums.Application;
+import org.capstone.job_fair.models.entities.attendant.cv.ApplicationEntity;
+import org.capstone.job_fair.models.enums.ApplicationStatus;
 import org.capstone.job_fair.services.interfaces.attendant.ApplicationService;
+import org.capstone.job_fair.services.mappers.attendant.cv.ApplicationMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -29,18 +30,21 @@ public class ApplicationController {
     @Autowired
     private ApplicationService applicationService;
 
+    @Autowired
+    private ApplicationMapper applicationMapper;
+
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ATTENDANT)")
     @PostMapping(ApiEndPoint.Application.APPLICATION_ENDPOINT)
     public ResponseEntity create(@Validated @RequestBody CreateApplicationRequest request) {
-        return null;
+        return ResponseEntity.badRequest().build();
     }
 
 
     @GetMapping(ApiEndPoint.Application.APPLICATION_ENDPOINT)
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ATTENDANT)")
     public ResponseEntity<?> getAllApplicationsOfCompanyByCriteria(
-            @RequestParam(value = "status", defaultValue = ApplicationConstant.DEFAULT_SEARCH_STATUS_VALUE) Application status,
+            @RequestParam(value = "status", defaultValue = ApplicationConstant.DEFAULT_SEARCH_STATUS_VALUE) ApplicationStatus status,
             @RequestParam(value = "fromTime", defaultValue = ApplicationConstant.DEFAULT_SEARCH_FROM_TIME_VALUE) long fromTime,
             @RequestParam(value = "toTime", defaultValue = ApplicationConstant.DEFAULT_SEARCH_TO_TIME_VALUE) long toTime,
             @RequestParam(value = "offset", defaultValue = ApplicationConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset,
@@ -53,9 +57,9 @@ public class ApplicationController {
 
 
     @GetMapping(ApiEndPoint.Application.GET_APPLICATION_FOR_COMPANY_BY_CRITERIA)
-    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ATTENDANT)")
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) OR hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE)")
     public ResponseEntity<?> getAllApplicationForACompanyByCriteria(
-            @RequestParam(value = "status", defaultValue = ApplicationConstant.DEFAULT_SEARCH_STATUS_VALUE) List<Application> statusList,
+            @RequestParam(value = "status", required = false) List<ApplicationStatus> statusList,
 
             @RequestParam(value = "jobPositionName", required = false, defaultValue = ApplicationConstant.DEFAULT_JOB_POSITION_SEARCH_NAME) String jobPositionName,
             @RequestParam(value = "jobFairName", required = false, defaultValue = ApplicationConstant.DEFAULT_JOB_FAIR_SEARCH_NAME) String jobFairName,
@@ -66,13 +70,13 @@ public class ApplicationController {
 
             @RequestParam(value = "offset", defaultValue = ApplicationConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset,
             @RequestParam(value = "pageSize", defaultValue = ApplicationConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize,
-            @RequestParam(value = "sortBy", defaultValue = ApplicationConstant.DEFAULT_SEARCH_SORT_BY_VALUE) String sortBy,
+            @RequestParam(value = "sortBy", defaultValue = ApplicationConstant.DEFAULT_SEARCH_SORT_BY_VALUE_OF_APPLICATION_FOR_COMPANY) String sortBy,
             @RequestParam(value = "direction", required = false, defaultValue = ApplicationConstant.DEFAULT_SORT_DIRECTION) Sort.Direction direction) {
 
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String companyId = userDetails.getCompanyId();
 
-        Page<ApplicationForCompanyResponse> applicationForCompanyResponses = null;
+        Page<ApplicationEntity> applicationForCompanyResponses = null;
 
         if (jobPositionId != null && jobFairId != null) {
             return GenericResponse.build(MessageUtil.getMessage(MessageConstant.Application.JOB_POSITION_ID_AND_JOBFAIR_ID_BOTH_PRESENT_ERROR), HttpStatus.BAD_REQUEST);
@@ -82,13 +86,15 @@ public class ApplicationController {
                     getApplicationOfCompanyByJobPositionIdAndStatus(companyId, jobPositionId, statusList, pageSize, offset, sortBy, direction);
         if (jobFairId != null)
             applicationForCompanyResponses = applicationService.
-                    getApplicationOfCompanyByJobFairIdAndStatus(companyId, jobFairId, statusList, pageSize, offset);
+                    getApplicationOfCompanyByJobFairIdAndStatus(companyId, jobFairId, statusList, pageSize, offset, sortBy, direction);
 
         applicationForCompanyResponses = applicationService.
                 getApplicationOfCompanyByJobFairNameAndJobPositionNameAndStatus(companyId, jobFairName, jobPositionName, statusList, pageSize, offset, sortBy, direction);
 
         if (applicationForCompanyResponses.isEmpty()) return ResponseEntity.noContent().build();
-        return ResponseEntity.ok(applicationForCompanyResponses);
+
+        return ResponseEntity.ok(applicationForCompanyResponses.
+                map(entity -> applicationMapper.toApplicationForCompanyResponse(entity)));
     }
 
 

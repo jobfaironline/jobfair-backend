@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.capstone.job_fair.models.entities.company.job.RegistrationJobPositionEntity;
-import org.capstone.job_fair.models.enums.Application;
+import org.capstone.job_fair.models.enums.ApplicationStatus;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -33,7 +33,7 @@ public class ApplicationEntity {
 
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.ORDINAL)
-    private Application status;
+    private ApplicationStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cv_id")
