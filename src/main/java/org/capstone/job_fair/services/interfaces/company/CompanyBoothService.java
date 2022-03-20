@@ -9,4 +9,6 @@ public interface CompanyBoothService {
     Optional<CompanyBoothDTO> getCompanyBoothByJobFairIdAndBoothId(String jobFairId, String boothId);
 
     List<CompanyBoothDTO> getCompanyBoothByJobFairIdAndCompanyId(String jobFairId, String companyId);
+
+    Optional<CompanyBoothDTO> getById(String boothId);
 }
