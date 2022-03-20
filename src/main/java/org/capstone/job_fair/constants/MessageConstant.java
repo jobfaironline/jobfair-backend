@@ -337,6 +337,9 @@ public final class MessageConstant {
         public static final String JOB_POSITION_ID_AND_JOBFAIR_ID_BOTH_PRESENT_ERROR = "application.error.job-position-id-and-job-fair-id-both-present";
         public static final String UNSUPPORTED_SORT_VALUE_FOR_APPLICATION_FOR_COMPANY_ERROR = "application.error.unsupported-sort-value-for-application-for-company";
         public static final String CV_NOT_FOUND = "application.error.cv-not-found";
+        public static final String APPLICATION_NOT_FOUND = "application.error.not-found";
+        public static final String INVALID_EVALUATE_STATUS = "application.error.invalid-evaluate-status";
+        public static final String EVALUATE_MESSAGE_IS_EMPTY = "application.error.empty-evaluate-message";
     }
 
     public static final class Order {

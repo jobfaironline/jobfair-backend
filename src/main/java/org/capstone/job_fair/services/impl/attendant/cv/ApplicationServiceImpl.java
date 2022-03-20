@@ -140,4 +140,24 @@ public class ApplicationServiceImpl implements ApplicationService {
                         (companyId, jobPositionName, jobFairName, statusList, PageRequest.of(offset, pageSize).withSort(direction, sortBy));
         return applicationEntityPage;
     }
+
+    @Override
+    @Transactional
+    public void evaluateApplication(ApplicationDTO dto) {
+        String id = dto.getId();
+        String companyId = dto.getRegistrationJobPositionDTO().getCompanyRegistration().getCompanyId();
+        Optional<ApplicationEntity> applicationEntityOptional =
+                applicationRepository.findByIdAndRegistrationJobPositionCompanyRegistrationCompanyId(id, companyId);
+        if (!applicationEntityOptional.isPresent()) throw new
+                IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.APPLICATION_NOT_FOUND));
+        ApplicationEntity applicationEntity = applicationEntityOptional.get();
+        if (applicationEntity.getStatus().equals(ApplicationStatus.PENDING))
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.INVALID_EVALUATE_STATUS));
+        if (dto.getStatus().equals(ApplicationStatus.APPROVE) && dto.getStatus().equals(ApplicationStatus.REJECT))
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.INVALID_EVALUATE_STATUS));
+        if (dto.getStatus().equals(ApplicationStatus.REJECT) && (dto.getEvaluateMessage() == null || dto.getEvaluateMessage().isEmpty()))
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.EVALUATE_MESSAGE_IS_EMPTY));
+        applicationMapper.updateFromDTO(applicationEntity, dto);
+        applicationRepository.save(applicationEntity);
+    }
 }

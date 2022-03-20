@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ApplicationRepository extends JpaRepository<ApplicationEntity, String> {
@@ -41,4 +42,5 @@ public interface ApplicationRepository extends JpaRepository<ApplicationEntity, 
                                                                                                            @Param("statusList") List<ApplicationStatus> applicationStatusList,
                                                                                                            Pageable pageable);
 
+    Optional<ApplicationEntity> findByIdAndRegistrationJobPositionCompanyRegistrationCompanyId(String id, String companyId);
 }

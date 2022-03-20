@@ -5,11 +5,13 @@ import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.ApplicationConstant;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.controllers.payload.requests.account.cv.CreateApplicationRequest;
+import org.capstone.job_fair.controllers.payload.requests.attendant.cv.EvaluateApplicationRequest;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
 import org.capstone.job_fair.models.dtos.attendant.AttendantDTO;
 import org.capstone.job_fair.models.dtos.attendant.cv.ApplicationDTO;
 import org.capstone.job_fair.models.dtos.attendant.cv.CvDTO;
+import org.capstone.job_fair.models.dtos.company.CompanyRegistrationDTO;
 import org.capstone.job_fair.models.dtos.company.job.RegistrationJobPositionDTO;
 import org.capstone.job_fair.models.entities.attendant.cv.ApplicationEntity;
 import org.capstone.job_fair.models.enums.ApplicationStatus;
@@ -134,6 +136,31 @@ public class ApplicationController {
 
         return ResponseEntity.ok(applicationForCompanyResponses.
                 map(entity -> applicationMapper.toApplicationForCompanyResponse(entity)));
+    }
+
+    @PostMapping(ApiEndPoint.Application.EVALUTATE + "/{applicationId}")
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) OR hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE)")
+    public ResponseEntity<?> evaluateApplication(@PathVariable("applicationId") String applicationId, @Validated EvaluateApplicationRequest request) {
+
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        ApplicationDTO dto = new ApplicationDTO();
+        dto.setId(applicationId);
+        AccountDTO authorizer = new AccountDTO();
+        dto.setAuthorizer(authorizer);
+        dto.getAuthorizer().setId(userDetails.getId());
+        dto.setEvaluateMessage(request.getEvaluateMessage());
+        dto.setStatus(request.getStatus());
+        dto.setEvaluateDate(new Date().getTime());
+        RegistrationJobPositionDTO registrationJobPositionDTO = new RegistrationJobPositionDTO();
+        CompanyRegistrationDTO companyRegistrationDTO = new CompanyRegistrationDTO();
+        companyRegistrationDTO.setCompanyId(userDetails.getCompanyId());
+        registrationJobPositionDTO.setCompanyRegistration(companyRegistrationDTO);
+        dto.setRegistrationJobPositionDTO(registrationJobPositionDTO);
+
+        applicationService.evaluateApplication(dto);
+
+        return ResponseEntity.ok().build();
+
     }
 
 
