@@ -86,8 +86,6 @@ public class ApplicationServiceImpl implements ApplicationService {
         ApplicationEntity entity = applicationMapper.toEntity(dto);
         ApplicationEntity resultEntity = applicationRepository.save(entity);
 
-        System.out.println("Entity: " + resultEntity.getCv().getAttendant());
-
         ApplicationDTO result = applicationMapper.toDTO(resultEntity);
         return result;
     }

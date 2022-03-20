@@ -71,7 +71,6 @@ public class ApplicationController {
             dto.setStatus(ApplicationStatus.DRAFT);
             dto.setCvDTO(cvDTO);
             dto.setRegistrationJobPositionDTO(regisDTO);
-            System.out.println("DTO: " + dto);
             //call create method
             ApplicationDTO result = applicationService.createNewApplication(dto);
             return ResponseEntity.status(HttpStatus.CREATED).body(result);
