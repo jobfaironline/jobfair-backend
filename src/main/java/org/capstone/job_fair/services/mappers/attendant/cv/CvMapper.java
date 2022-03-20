@@ -12,6 +12,7 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
                 CvSkillMapper.class, CvWorkHistoryMapper.class, CvActivityMapper.class},
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public abstract class CvMapper {
+
     public abstract CvDTO toDTO(CvEntity entity);
 
     public abstract CvEntity toEntity(CvDTO dto);

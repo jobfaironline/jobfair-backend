@@ -6,15 +6,23 @@ import org.capstone.job_fair.models.dtos.attendant.cv.ApplicationDTO;
 import org.capstone.job_fair.models.entities.attendant.cv.ApplicationEntity;
 import org.capstone.job_fair.models.entities.attendant.cv.CvEntity;
 import org.capstone.job_fair.services.mappers.attendant.AttendantMapper;
+import org.capstone.job_fair.services.mappers.company.RegistrationJobPositionMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
-@Mapper(componentModel = "spring", uses = {AttendantMapper.class}, nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+@Mapper(componentModel = "spring", uses = {AttendantMapper.class, CvMapper.class, RegistrationJobPositionMapper.class}, nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public abstract class ApplicationMapper {
 
+    @Mapping(source = "registrationJobPosition", target = "registrationJobPositionDTO")
+    @Mapping(source = "cv", target = "cvDTO")
     public abstract ApplicationDTO toDTO(ApplicationEntity entity);
+
+    @Mapping(target = "registrationJobPosition", source = "registrationJobPositionDTO")
+    @Mapping(target = "cv", source = "cvDTO")
+    public abstract ApplicationEntity toEntity(ApplicationDTO dto);
+
 
     @Mapping(target = "candidateName", source = "cv", qualifiedByName = "toCandidateName")
     @Mapping(target = "appliedDate", source = "createDate")

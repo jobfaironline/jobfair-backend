@@ -7,6 +7,8 @@ import java.util.Optional;
 
 public interface CvService {
     CvDTO draftCv(CvDTO dto);
+
     List<CvDTO> getAllByAttendantId(String attendantId);
+
     Optional<CvDTO> getByIdAndAttendantId(String id, String attendantId);
 }

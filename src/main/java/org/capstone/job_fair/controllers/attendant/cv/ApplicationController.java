@@ -6,7 +6,11 @@ import org.capstone.job_fair.constants.ApplicationConstant;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.controllers.payload.requests.account.cv.CreateApplicationRequest;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
+import org.capstone.job_fair.models.dtos.account.AccountDTO;
+import org.capstone.job_fair.models.dtos.attendant.AttendantDTO;
 import org.capstone.job_fair.models.dtos.attendant.cv.ApplicationDTO;
+import org.capstone.job_fair.models.dtos.attendant.cv.CvDTO;
+import org.capstone.job_fair.models.dtos.company.job.RegistrationJobPositionDTO;
 import org.capstone.job_fair.models.entities.attendant.cv.ApplicationEntity;
 import org.capstone.job_fair.models.enums.ApplicationStatus;
 import org.capstone.job_fair.services.interfaces.attendant.ApplicationService;
@@ -18,11 +22,14 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @RestController
 public class ApplicationController {
@@ -37,7 +44,39 @@ public class ApplicationController {
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ATTENDANT)")
     @PostMapping(ApiEndPoint.Application.APPLICATION_ENDPOINT)
     public ResponseEntity create(@Validated @RequestBody CreateApplicationRequest request) {
-        return ResponseEntity.badRequest().build();
+        try {
+            //get accountId from Jwt
+            SecurityContext securityContext = SecurityContextHolder.getContext();
+            UserDetailsImpl user = (UserDetailsImpl) securityContext.getAuthentication().getPrincipal();
+            String accountId = user.getId();
+
+            //call applicationDTO and cvDTO
+            ApplicationDTO dto = new ApplicationDTO();
+            CvDTO cvDTO = new CvDTO();
+
+            cvDTO.setId(request.getCvId());
+
+            AttendantDTO attendantDTO = new AttendantDTO();
+            AccountDTO accountDTO = new AccountDTO();
+            accountDTO.setId(accountId);
+
+            attendantDTO.setAccount(accountDTO);
+            cvDTO.setAttendant(attendantDTO);
+            //call registrationJobPositionDTO + setId from request
+            RegistrationJobPositionDTO regisDTO = new RegistrationJobPositionDTO();
+            regisDTO.setId(request.getRegistrationJobPositionId());
+            //set summary, create date, status, attendantDTO, registrationJobPositionDTO for ApplicationDTO
+            dto.setSummary(request.getSummary());
+            dto.setCreateDate(new Date().getTime());
+            dto.setStatus(ApplicationStatus.DRAFT);
+            dto.setCvDTO(cvDTO);
+            dto.setRegistrationJobPositionDTO(regisDTO);
+            //call create method
+            ApplicationDTO result = applicationService.createNewApplication(dto);
+            return ResponseEntity.status(HttpStatus.CREATED).body(result);
+        } catch (NoSuchElementException | IllegalArgumentException ex) {
+            return GenericResponse.build(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
 
