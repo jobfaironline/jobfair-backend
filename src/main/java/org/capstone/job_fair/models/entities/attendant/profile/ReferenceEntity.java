@@ -1,7 +1,6 @@
-package org.capstone.job_fair.models.entities.attendant.cv;
+package org.capstone.job_fair.models.entities.attendant.profile;
 
 import lombok.*;
-import org.capstone.job_fair.models.entities.attendant.profile.CertificationEntity;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -14,37 +13,30 @@ import java.util.Objects;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "cv_reference", schema = "dbo", catalog = "")
-public class CvReferenceEntity {
+@Table(name = "reference", schema = "dbo")
+public class ReferenceEntity {
+
     @Id
     @Column(name = "id")
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "org.hibernate.id.UUIDGenerator")
     private String id;
-    @Basic
-    @Column(name = "full_name")
+    @Column(name = "full_name", length = 100)
     private String fullName;
-    @Basic
-    @Column(name = "position")
+    @Column(name = "position", length = 100)
     private String position;
-    @Basic
-    @Column(name = "company")
+    @Column(name = "company", length = 1000)
     private String company;
-    @Basic
-    @Column(name = "email")
+    @Column(name = "email", length = 322)
     private String email;
-    @Basic
     @Column(name = "phone_number")
     private String phoneNumber;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cv_id")
-    private CvEntity cv;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        CertificationEntity that = (CertificationEntity) o;
+        ReferenceEntity that = (ReferenceEntity) o;
         return id != null && Objects.equals(id, that.getId());
     }
 

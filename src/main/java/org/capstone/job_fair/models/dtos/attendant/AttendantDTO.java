@@ -2,7 +2,7 @@ package org.capstone.job_fair.models.dtos.attendant;
 
 import lombok.*;
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
-import org.capstone.job_fair.models.dtos.attendant.cv.*;
+import org.capstone.job_fair.models.dtos.attendant.profile.*;
 import org.capstone.job_fair.models.enums.JobLevel;
 import org.capstone.job_fair.models.enums.Marital;
 

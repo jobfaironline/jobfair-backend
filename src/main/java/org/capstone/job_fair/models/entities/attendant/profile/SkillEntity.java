@@ -1,4 +1,4 @@
-package org.capstone.job_fair.models.entities.attendant.cv;
+package org.capstone.job_fair.models.entities.attendant.profile;
 
 import lombok.*;
 import org.hibernate.Hibernate;
@@ -7,39 +7,33 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import java.util.Objects;
 
-
 @Entity
 @Getter
 @Setter
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "certification", schema = "dbo")
-public class CertificationEntity {
+@Table(name = "skill", schema = "dbo")
+public class SkillEntity {
     @Id
-    @Column(name = "id")
+    @Column(name = "id", nullable = false, length = 36)
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "org.hibernate.id.UUIDGenerator")
     private String id;
-
-    @Column(name = "name")
+    @Basic
+    @Column(name = "name", length = 100)
     private String name;
 
-    @Column(name = "institution")
-    private String institution;
-
-    @Column(name = "year")
-    private Integer year;
-
-    @Column(name = "certification_link")
-    private String certificationLink;
+    @Basic
+    @Column(name = "proficiency")
+    private Integer proficiency;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        CertificationEntity that = (CertificationEntity) o;
-        return id != null && Objects.equals(id, that.getId());
+        SkillEntity entity = (SkillEntity) o;
+        return id != null && Objects.equals(id, entity.getId());
     }
 
     @Override
