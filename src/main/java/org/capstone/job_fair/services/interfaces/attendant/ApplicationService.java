@@ -15,7 +15,7 @@ public interface ApplicationService {
 
     Page<ApplicationForCompanyResponse> getApplicationOfCompanyByJobPositionIdAndStatus(String companyId, String jobPositionId, List<Application> statusList, int pageSize, int offset, String sortBy, Sort.Direction direction);
 
-    Page<ApplicationForCompanyResponse> getApplicationOfCompanyByJobFairIdAndStatus(String companyId, String jobFairId, List<Application> statusList, int pageSize, int offset);
+    Page<ApplicationForCompanyResponse> getApplicationOfCompanyByJobFairIdAndStatus(String companyId, String jobFairId, List<Application> statusList, int pageSize, int offset, String sortBy, Sort.Direction direction);
 
     Page<ApplicationForCompanyResponse> getApplicationOfCompanyByJobFairNameAndJobPositionNameAndStatus(String companyId, String jobFairName, String jobPositionName, List<Application> statusList, int pageSize, int offset, String sortBy, Sort.Direction direction);
 }

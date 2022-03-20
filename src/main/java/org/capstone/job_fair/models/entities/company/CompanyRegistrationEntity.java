@@ -2,6 +2,7 @@ package org.capstone.job_fair.models.entities.company;
 
 import lombok.*;
 import org.capstone.job_fair.models.entities.company.job.RegistrationJobPositionEntity;
+import org.capstone.job_fair.models.entities.job_fair.JobFairEntity;
 import org.capstone.job_fair.models.statuses.CompanyRegistrationStatus;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.GenericGenerator;
@@ -32,7 +33,9 @@ public class CompanyRegistrationEntity {
     private String jobFairId;
     @Column(name = "company_id")
     private String companyId;
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "job_fair_id", updatable = false, insertable = false)
+    private JobFairEntity jobFairEntity;
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.ORDINAL)
     private CompanyRegistrationStatus status;
