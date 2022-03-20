@@ -47,7 +47,7 @@ public class CvServiceImpl implements CvService {
     }
 
     @Override
-    public Optional<CvDTO> getById(String id) {
-        return cvRepository.findById(id).map(cvMapper::toDTO);
+    public Optional<CvDTO> getByIdAndAttendantId(String id, String attendantId) {
+        return cvRepository.findByIdAndAttendantAccountId(id, attendantId).map(cvMapper::toDTO);
     }
 }

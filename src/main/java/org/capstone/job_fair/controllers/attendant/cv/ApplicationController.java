@@ -43,7 +43,7 @@ public class ApplicationController {
 
     @GetMapping(ApiEndPoint.Application.APPLICATION_ENDPOINT)
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ATTENDANT)")
-    public ResponseEntity<?> getAllApplicationsOfCompanyByCriteria(
+    public ResponseEntity<?> getAllApplicationsForAttendant(
             @RequestParam(value = "status", defaultValue = ApplicationConstant.DEFAULT_SEARCH_STATUS_VALUE) ApplicationStatus status,
             @RequestParam(value = "fromTime", defaultValue = ApplicationConstant.DEFAULT_SEARCH_FROM_TIME_VALUE) long fromTime,
             @RequestParam(value = "toTime", defaultValue = ApplicationConstant.DEFAULT_SEARCH_TO_TIME_VALUE) long toTime,

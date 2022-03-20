@@ -59,16 +59,12 @@ public class CvController {
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ATTENDANT)")
     @GetMapping(ApiEndPoint.Cv.CV + "/{id}")
     public ResponseEntity<?> getById(@PathVariable String id) {
-        Optional<CvDTO> result = cvService.getById(id);
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Optional<CvDTO> result = cvService.getByIdAndAttendantId(id, userDetails.getId());
         if (!result.isPresent()) {
             return ResponseEntity.notFound().build();
         }
-        CvDTO dto = result.get();
-        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (!dto.getAttendant().getAccount().getId().equals(userDetails.getId())) {
-            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Attendant.ATTENDANT_MISMATCH));
-        }
-        return ResponseEntity.ok(dto);
+        return ResponseEntity.ok(result.get());
     }
 
 
