@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ApplicationRepository extends JpaRepository<ApplicationEntity, String> {
-    Page<ApplicationEntity> findAllByCreateDateBetweenAndStatusAndAttendantAccountId(long fromDate, long toDate, Application status, String id, Pageable pageable);
+
+    Page<ApplicationEntity> findAllByCreateDateBetweenAndStatusAndCvAttendantAccountId(long fromDate, long toDate, Application status, String id, Pageable pageable);
 
 }

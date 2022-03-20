@@ -7,10 +7,7 @@ import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.controllers.payload.requests.account.cv.CreateApplicationRequest;
 import org.capstone.job_fair.controllers.payload.responses.ApplicationForCompanyResponse;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
-import org.capstone.job_fair.models.dtos.account.AccountDTO;
-import org.capstone.job_fair.models.dtos.attendant.AttendantDTO;
 import org.capstone.job_fair.models.dtos.attendant.cv.ApplicationDTO;
-import org.capstone.job_fair.models.dtos.company.job.RegistrationJobPositionDTO;
 import org.capstone.job_fair.models.enums.Application;
 import org.capstone.job_fair.services.interfaces.attendant.ApplicationService;
 import org.capstone.job_fair.utils.MessageUtil;
@@ -20,14 +17,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @RestController
 public class ApplicationController {
@@ -39,34 +33,7 @@ public class ApplicationController {
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ATTENDANT)")
     @PostMapping(ApiEndPoint.Application.APPLICATION_ENDPOINT)
     public ResponseEntity create(@Validated @RequestBody CreateApplicationRequest request) {
-        try {
-
-            //get accountId from Jwt
-            SecurityContext securityContext = SecurityContextHolder.getContext();
-            UserDetailsImpl user = (UserDetailsImpl) securityContext.getAuthentication().getPrincipal();
-            String accountId = user.getId();
-            //call applicationDTO and accountDTO
-            ApplicationDTO dto = new ApplicationDTO();
-            AccountDTO accountDTO = new AccountDTO();
-            //set accountDTO for attendantDTO
-            accountDTO.setId(accountId);
-            AttendantDTO attendantDTO = new AttendantDTO();
-            attendantDTO.setAccount(accountDTO);
-            //call registrationJobPositionDTO + setId from request
-            RegistrationJobPositionDTO regisDTO = new RegistrationJobPositionDTO();
-            regisDTO.setId(request.getRegistrationJobPositionId());
-            //set summary, create date, status, attendantDTO, registrationJobPositionDTO for ApplicationDTO
-            dto.setSummary(request.getSummary());
-            dto.setCreateDate(new Date().getTime());
-            dto.setStatus(Application.DRAFT);
-            dto.setAttendantDTO(attendantDTO);
-            dto.setRegistrationJobPositionDTO(regisDTO);
-            //call create method
-            ApplicationDTO result = applicationService.createNewApplication(dto);
-            return ResponseEntity.status(HttpStatus.CREATED).body(result);
-        } catch (NoSuchElementException | IllegalArgumentException ex) {
-            return GenericResponse.build(ex.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+        return null;
     }
 
 
@@ -85,7 +52,7 @@ public class ApplicationController {
     }
 
 
-    @GetMapping(ApiEndPoint.Application.APPLICATION_ENDPOINT)
+    @GetMapping(ApiEndPoint.Application.GET_APPLICATION_FOR_COMPANY_BY_CRITERIA)
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ATTENDANT)")
     public ResponseEntity<?> getAllApplicationForACompanyByCriteria(
             @RequestParam(value = "status", defaultValue = ApplicationConstant.DEFAULT_SEARCH_STATUS_VALUE) List<Application> statusList,
