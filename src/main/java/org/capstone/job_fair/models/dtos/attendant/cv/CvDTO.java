@@ -1,5 +1,6 @@
 package org.capstone.job_fair.models.dtos.attendant.cv;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,6 +17,7 @@ import java.util.List;
 @ToString
 public class CvDTO implements Serializable {
     private String id;
+    @JsonBackReference
     private AttendantDTO attendant;
     private String email;
     private String phone;

@@ -9,11 +9,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @Transactional(readOnly = true)
 public class CvServiceImpl implements CvService {
     @Autowired
-    private CvRepository repository;
+    private CvRepository cvRepository;
 
     @Autowired
     private CvMapper cvMapper;
@@ -30,7 +33,15 @@ public class CvServiceImpl implements CvService {
         entity.getWorkHistories().forEach(history -> history.setCv(entity));
         entity.getSkills().forEach(skill -> skill.setCv(entity));
 
-        CvEntity newEntity = repository.save(cvMapper.toEntity(dto));
+        CvEntity newEntity = cvRepository.save(cvMapper.toEntity(dto));
         return cvMapper.toDTO(newEntity);
+    }
+
+    @Override
+    public List<CvDTO> getAllByAttendantId(String attendantId) {
+        return cvRepository.findByAttendantAccountId(attendantId)
+                .stream()
+                .map(cvMapper::toDTO)
+                .collect(Collectors.toList());
     }
 }
