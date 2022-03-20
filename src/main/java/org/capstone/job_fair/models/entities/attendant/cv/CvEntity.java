@@ -3,19 +3,20 @@ package org.capstone.job_fair.models.entities.attendant.cv;
 import lombok.*;
 import org.capstone.job_fair.models.entities.attendant.AttendantEntity;
 import org.capstone.job_fair.models.entities.attendant.profile.CertificationEntity;
+import org.capstone.job_fair.models.enums.JobLevel;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
 @Getter
 @Setter
-@ToString
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "cv", schema = "dbo", catalog = "")
+@Table(name = "cv", schema = "dbo")
 public class CvEntity {
     @Id
     @Column(name = "id")
@@ -36,10 +37,36 @@ public class CvEntity {
     private Integer yearOfExp;
     @Basic
     @Column(name = "job_level")
-    private Integer jobLevel;
+    @Enumerated(EnumType.ORDINAL)
+    private JobLevel jobLevel;
     @Basic
-    @Column(name = "title")
-    private String title;
+    @Column(name = "job_title")
+    private String jobTitle;
+
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
+    @JoinColumn(name = "cv_id", referencedColumnName = "id")
+    private List<CvSkillEntity> skills;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
+    @JoinColumn(name = "cv_id", referencedColumnName = "id")
+    private List<CvWorkHistoryEntity> workHistories;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
+    @JoinColumn(name = "cv_id", referencedColumnName = "id")
+    private List<CvEducationEntity> educations;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
+    @JoinColumn(name = "cv_id", referencedColumnName = "id")
+    private List<CvCertificationEntity> certifications;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
+    @JoinColumn(name = "cv_id", referencedColumnName = "id")
+    private List<CvReferenceEntity> references;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
+    @JoinColumn(name = "cv_id", referencedColumnName = "id")
+    private List<CvActivityEntity> activities;
 
     @Override
     public boolean equals(Object o) {
