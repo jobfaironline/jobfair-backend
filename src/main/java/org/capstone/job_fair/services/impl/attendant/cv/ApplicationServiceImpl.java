@@ -3,12 +3,14 @@ package org.capstone.job_fair.services.impl.attendant.cv;
 import org.capstone.job_fair.constants.DataConstraint;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.models.dtos.attendant.cv.ApplicationDTO;
+import org.capstone.job_fair.models.dtos.attendant.cv.CvDTO;
 import org.capstone.job_fair.models.entities.attendant.cv.ApplicationEntity;
 import org.capstone.job_fair.models.enums.ApplicationStatus;
 import org.capstone.job_fair.repositories.attendant.cv.ApplicationRepository;
 import org.capstone.job_fair.repositories.company.job.RegistrationJobPositionRepository;
 import org.capstone.job_fair.services.interfaces.account.AccountService;
 import org.capstone.job_fair.services.interfaces.attendant.ApplicationService;
+import org.capstone.job_fair.services.interfaces.attendant.cv.CvService;
 import org.capstone.job_fair.services.mappers.attendant.cv.ApplicationMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -37,9 +40,13 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Autowired
     private ApplicationMapper applicationMapper;
 
+    @Autowired
+    private CvService cvService;
 
-    private boolean isAccountExist(String accountId) {
-        return accountService.getCountActiveAccountById(accountId) != 0;
+
+    private boolean isCvExist(String cvId, String attendantId) {
+        Optional<CvDTO> cvDTOOptional = cvService.getByIdAndAttendantId(cvId, attendantId);
+        return cvDTOOptional.isPresent();
     }
 
     private boolean isJobPositionExist(String registrationId) {
@@ -66,9 +73,23 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
+    @Transactional
     public ApplicationDTO createNewApplication(ApplicationDTO dto) {
+        //if attendantId not exist, throw error
+        if (!isCvExist(dto.getCvDTO().getId(), dto.getCvDTO().getAttendant().getAccount().getId())) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.CV_NOT_FOUND));
+        }
+        //if registration job position id not exist, throw  error
+        if (!isJobPositionExist(dto.getRegistrationJobPositionDTO().getId())) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.NOT_FOUND_REGISTRATION_JOB_POSITION));
+        }
+        ApplicationEntity entity = applicationMapper.toEntity(dto);
+        ApplicationEntity resultEntity = applicationRepository.save(entity);
 
-        return null;
+        System.out.println("Entity: " + resultEntity.getCv().getAttendant());
+
+        ApplicationDTO result = applicationMapper.toDTO(resultEntity);
+        return result;
     }
 
     @Override

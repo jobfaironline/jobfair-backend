@@ -53,27 +53,32 @@ public abstract class RegistrationJobPositionMapper {
 
     @Named("toJobPositionDTOSkillTag")
     public List<SkillTagDTO> toJobPositionDTOSkillTag(Set<SkillTagEntity> skillTags) {
+        if (skillTags == null) return null;
         return skillTags.stream().map(skillTagMapper::toDTO).collect(Collectors.toList());
     }
 
     @Named("toJobPositionDTOSubCategory")
     public List<SubCategoryDTO> toJobPositionDTOSubCategory(Set<SubCategoryEntity> categories) {
+        if (categories == null) return null;
         return categories.stream().map(subCategoryMapper::toDTO).collect(Collectors.toList());
     }
 
 
     @Named("toJobPositionDTOJobType")
     public JobType toJobPositionDTOJobType(JobTypeEntity entity) {
+        if (entity == null) return null;
         return JobType.values()[entity.getId()];
     }
 
     @Named("toJobPositionDTOJobLevel")
     public JobLevel toJobPositionJobLevel(JobLevelEntity entity) {
+        if (entity == null) return null;
         return JobLevel.values()[entity.getId()];
     }
 
     @Named("toJobPositionDTOLanguage")
     public Language toJobPositionDTOLanguage(LanguageEntity entity) {
+        if (entity == null) return null;
         return Arrays.stream(Language.values()).filter(language -> language.getCode().equals(entity.getId())).findFirst().orElse(null);
     }
 

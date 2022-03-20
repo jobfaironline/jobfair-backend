@@ -50,4 +50,5 @@ public class CvServiceImpl implements CvService {
     public Optional<CvDTO> getByIdAndAttendantId(String id, String attendantId) {
         return cvRepository.findByIdAndAttendantAccountId(id, attendantId).map(cvMapper::toDTO);
     }
+
 }

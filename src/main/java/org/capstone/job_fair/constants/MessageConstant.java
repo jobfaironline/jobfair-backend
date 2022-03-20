@@ -336,6 +336,7 @@ public final class MessageConstant {
         public static final String INVALID_PAGE_NUMBER = "application.error.invalid-page-number";
         public static final String JOB_POSITION_ID_AND_JOBFAIR_ID_BOTH_PRESENT_ERROR = "application.error.job-position-id-and-job-fair-id-both-present";
         public static final String UNSUPPORTED_SORT_VALUE_FOR_APPLICATION_FOR_COMPANY_ERROR = "application.error.unsupported-sort-value-for-application-for-company";
+        public static final String CV_NOT_FOUND = "application.error.cv-not-found";
     }
 
     public static final class Order {
@@ -359,8 +360,8 @@ public final class MessageConstant {
         public static final String ALREADY_HAS_BOOTH = "booth-purchase.error.already-buy-booth";
     }
 
-    public static final class Cv{
-        private Cv(){
+    public static final class Cv {
+        private Cv() {
         }
     }
 
