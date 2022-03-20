@@ -1,4 +1,4 @@
-package org.capstone.job_fair.models.entities.attendant.cv;
+package org.capstone.job_fair.models.entities.attendant.profile;
 
 import lombok.*;
 import org.hibernate.Hibernate;

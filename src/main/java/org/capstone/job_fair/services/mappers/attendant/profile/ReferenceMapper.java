@@ -1,8 +1,8 @@
-package org.capstone.job_fair.services.mappers.attendant;
+package org.capstone.job_fair.services.mappers.attendant.profile;
 
 import org.capstone.job_fair.controllers.payload.requests.attendant.UpdateAttendantRequest;
-import org.capstone.job_fair.models.dtos.attendant.cv.ReferenceDTO;
-import org.capstone.job_fair.models.entities.attendant.cv.ReferenceEntity;
+import org.capstone.job_fair.models.dtos.attendant.profile.ReferenceDTO;
+import org.capstone.job_fair.models.entities.attendant.profile.ReferenceEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;

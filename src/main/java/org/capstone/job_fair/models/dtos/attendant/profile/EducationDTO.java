@@ -1,4 +1,4 @@
-package org.capstone.job_fair.models.dtos.attendant.cv;
+package org.capstone.job_fair.models.dtos.attendant.profile;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

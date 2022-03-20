@@ -1,4 +1,4 @@
-package org.capstone.job_fair.models.dtos.attendant.cv;
+package org.capstone.job_fair.models.dtos.attendant.profile;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,8 +9,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class SkillDTO {
+public class CertificationDTO {
     private String id;
     private String name;
-    private Integer proficiency;
+    private String institution;
+    private Integer year;
+    private String certificationLink;
 }

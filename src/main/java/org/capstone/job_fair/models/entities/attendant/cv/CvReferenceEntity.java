@@ -1,6 +1,7 @@
 package org.capstone.job_fair.models.entities.attendant.cv;
 
 import lombok.*;
+import org.capstone.job_fair.models.entities.attendant.profile.CertificationEntity;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.GenericGenerator;
 
