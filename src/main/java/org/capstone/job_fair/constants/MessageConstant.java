@@ -334,6 +334,7 @@ public final class MessageConstant {
         public static final String INALID_TIME = "application.error.invalid-time";
         public static final String INVALID_PAGE_NUMBER = "application.error.invalid-page-number";
         public static final String JOB_POSITION_ID_AND_JOBFAIR_ID_BOTH_PRESENT_ERROR = "application.error.job-position-id-and-job-fair-id-both-present";
+        public static final String UNSUPPORTED_SORT_VALUE_FOR_APPLICATION_FOR_COMPANY_ERROR = "application.error.unsupported-sort-value-for-application-for-company";
     }
 
     public static final class Order {

@@ -13,7 +13,6 @@ public class ApplicationForCompanyResponse {
     Long appliedDate;
     String jobPositionTitle;
     String jobFairName;
-    String applicationId;
     String jobFairId;
     String jobPositionId;
 }
