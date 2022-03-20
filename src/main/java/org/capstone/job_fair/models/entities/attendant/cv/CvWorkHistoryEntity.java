@@ -8,10 +8,9 @@ import javax.persistence.*;
 @Entity
 @Getter
 @Setter
-@ToString
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "cv_work_history", schema = "dbo", catalog = "")
+@Table(name = "cv_work_history", schema = "dbo")
 public class CvWorkHistoryEntity {
     @Id
     @Column(name = "id")
@@ -32,7 +31,7 @@ public class CvWorkHistoryEntity {
     private Long toDate;
     @Basic
     @Column(name = "is_current_job")
-    private Byte isCurrentJob;
+    private Boolean isCurrentJob;
     @Basic
     @Column(name = "description")
     private String description;

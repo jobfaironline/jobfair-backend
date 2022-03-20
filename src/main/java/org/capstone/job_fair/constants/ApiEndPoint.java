@@ -195,4 +195,11 @@ public final class ApiEndPoint {
 
         public static final String COMPANY_BOOTH = ROOT_ENDPOINT + VERSION + "/company-booth";
     }
+
+    public static final class Cv {
+        private Cv() {
+        }
+
+        public static final String CV = ROOT_ENDPOINT + VERSION + "/cv";
+    }
 }

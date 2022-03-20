@@ -3,6 +3,7 @@ package org.capstone.job_fair.models.dtos.attendant.cv;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.capstone.job_fair.models.enums.Qualification;
 
 import java.io.Serializable;
 
@@ -16,7 +17,6 @@ public class CvEducationDTO implements Serializable {
     private Long fromDate;
     private Long toDate;
     private String achievement;
-    private CvDTO cv;
-    private Integer qualificationId;
+
 
 }

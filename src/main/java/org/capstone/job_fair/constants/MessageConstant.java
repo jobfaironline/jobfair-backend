@@ -114,6 +114,7 @@ public final class MessageConstant {
         public static final String UPDATE_PROFILE_SUCCESSFULLY = "attendant.success.update-profile";
         public static final String UPDATE_PROFILE_FAILED = "attendant.error.update-profile";
         public static final String REGISTER_SUCCESSFULLY = "attendant.success.create";
+        public static final String ATTENDANT_MISMATCH = "attendant.error.mismatch";
     }
 
     public static final class Company {
@@ -356,6 +357,11 @@ public final class MessageConstant {
         }
 
         public static final String ALREADY_HAS_BOOTH = "booth-purchase.error.already-buy-booth";
+    }
+
+    public static final class Cv{
+        private Cv(){
+        }
     }
 
 }

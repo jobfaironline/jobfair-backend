@@ -17,6 +17,6 @@ public class CvActivityDTO implements Serializable {
     private String organization;
     private Long fromDate;
     private Long toDate;
-    private Long isCurrentActivity;
+    private Boolean isCurrentActivity;
     private String description;
 }

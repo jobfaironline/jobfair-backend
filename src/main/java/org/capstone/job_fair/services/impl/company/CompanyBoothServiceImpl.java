@@ -44,4 +44,9 @@ public class CompanyBoothServiceImpl implements CompanyBoothService {
                 .map(companyBoothMapper::toDTO)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public Optional<CompanyBoothDTO> getById(String boothId) {
+        return companyBoothRepository.findById(boothId).map(companyBoothMapper::toDTO);
+    }
 }
