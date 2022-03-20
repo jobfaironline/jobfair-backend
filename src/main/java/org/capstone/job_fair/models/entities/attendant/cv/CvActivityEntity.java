@@ -33,9 +33,12 @@ public class CvActivityEntity {
     @Column(name = "to_date")
     private Long toDate;
     @Column(name = "is_current_activity")
-    private Long isCurrentActivity;
+    private Boolean isCurrentActivity;
     @Column(name = "description", length = 5000)
     private String description;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cv_id")
+    private CvEntity cv;
 
 
     @Override

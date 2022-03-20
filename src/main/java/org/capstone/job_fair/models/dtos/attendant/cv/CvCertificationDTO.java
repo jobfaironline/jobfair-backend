@@ -16,5 +16,5 @@ public class CvCertificationDTO implements Serializable {
     private String institution;
     private Integer year;
     private String certificationLink;
-    private CvDTO cv;
+
 }

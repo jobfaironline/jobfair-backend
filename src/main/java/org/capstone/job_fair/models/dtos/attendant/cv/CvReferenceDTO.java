@@ -16,6 +16,5 @@ public class CvReferenceDTO implements Serializable {
     private String company;
     private String email;
     private String phoneNumber;
-    private CvDTO cv;
 
 }

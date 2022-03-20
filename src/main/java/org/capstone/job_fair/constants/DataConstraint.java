@@ -246,5 +246,13 @@ public final class DataConstraint {
         public static final int PAGE_SIZE_MIN = 0;
     }
 
+    public static final class Cv{
+        private Cv(){
+        }
+        public static final int JOB_TITTLE_LENGTH = 100;
+        public static final int YEAR_OF_EXPERIENCE_MIN = 0;
+        public static final int YEAR_OF_EXPERIENCE_MAX = 70;
+    }
+
 
 }

@@ -15,7 +15,6 @@ public class CvWorkHistoryDTO implements Serializable {
     private String company;
     private Long fromDate;
     private Long toDate;
-    private Byte isCurrentJob;
+    private Boolean isCurrentJob;
     private String description;
-    private CvDTO cv;
 }

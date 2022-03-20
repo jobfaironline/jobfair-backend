@@ -3,6 +3,7 @@ package org.capstone.job_fair.models.dtos.attendant.cv;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.capstone.job_fair.models.dtos.attendant.AttendantDTO;
 import org.capstone.job_fair.models.enums.JobLevel;
 
@@ -12,6 +13,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class CvDTO implements Serializable {
     private String id;
     private AttendantDTO attendant;
