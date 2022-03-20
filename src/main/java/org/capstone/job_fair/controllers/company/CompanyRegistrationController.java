@@ -55,6 +55,7 @@ public class CompanyRegistrationController {
                 registrationJobPositionDTO.setMinSalary(jobPosition.getMinSalary());
                 registrationJobPositionDTO.setMaxSalary(jobPosition.getMaxSalary());
                 registrationJobPositionDTO.setNumOfPosition(jobPosition.getNumOfPosition());
+                registrationJobPositionDTO.setOriginJobPosition(jobPosition.getJobPositionId());
 
                 jobPositionDTOS.add(registrationJobPositionDTO);
             }
@@ -84,7 +85,7 @@ public class CompanyRegistrationController {
                 registrationJobPositionDTO.setMinSalary(jobPosition.getMinSalary());
                 registrationJobPositionDTO.setMaxSalary(jobPosition.getMaxSalary());
                 registrationJobPositionDTO.setNumOfPosition(jobPosition.getNumOfPosition());
-
+                registrationJobPositionDTO.setOriginJobPosition(jobPosition.getJobPositionId());
                 jobPositionDTOS.add(registrationJobPositionDTO);
             }
         }

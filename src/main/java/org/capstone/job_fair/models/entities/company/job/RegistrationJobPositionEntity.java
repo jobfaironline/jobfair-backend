@@ -79,6 +79,9 @@ public class RegistrationJobPositionEntity {
     @Column(name = "location_id")
     private String locationId;
 
+    @Column(name="origin_job_position_id")
+    private String originJobPosition;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

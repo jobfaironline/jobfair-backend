@@ -35,4 +35,5 @@ public class RegistrationJobPositionDTO implements Serializable {
     private List<SubCategoryDTO> subCategoryDTOs;
     private List<SkillTagDTO> skillTagDTOS;
     private String locationId;
+    private String originJobPosition;
 }
