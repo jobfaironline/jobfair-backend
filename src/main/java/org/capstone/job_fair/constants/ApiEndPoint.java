@@ -160,6 +160,7 @@ public final class ApiEndPoint {
         }
 
         public static final String APPLICATION_ENDPOINT = ROOT_ENDPOINT + VERSION + "/applications";
+        public static final String GET_APPLICATION_FOR_COMPANY_BY_CRITERIA = APPLICATION_ENDPOINT + "/company";
     }
 
     public static final class CompanyBoothLayout {
