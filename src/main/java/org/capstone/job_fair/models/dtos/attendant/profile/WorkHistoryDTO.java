@@ -1,4 +1,4 @@
-package org.capstone.job_fair.models.dtos.attendant.cv;
+package org.capstone.job_fair.models.dtos.attendant.profile;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,13 +9,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ActivityDTO {
+public class WorkHistoryDTO {
     private String id;
-    private String name;
-    private String functionTitle;
-    private String organization;
+    private String position;
+    private String company;
     private Long fromDate;
     private Long toDate;
-    private Boolean isCurrentActivity;
+    private Boolean isCurrentJob;
     private String description;
 }
