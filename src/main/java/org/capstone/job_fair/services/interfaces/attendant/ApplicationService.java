@@ -12,7 +12,6 @@ import java.util.Optional;
 public interface ApplicationService {
     ApplicationDTO createNewApplication(ApplicationDTO dto);
 
-    Page<ApplicationDTO> getAllApplicationsOfAttendantByCriteria(String attendantId, ApplicationStatus status, long fromTime, long toTime, int offset, int pageSize, String field);
 
     Page<ApplicationEntity> getApplicationOfCompanyByJobPositionIdAndStatus(String companyId, String jobPositionId, List<ApplicationStatus> statusList, int pageSize, int offset, String sortBy, Sort.Direction direction);
 
@@ -23,4 +22,6 @@ public interface ApplicationService {
     Optional<ApplicationEntity> getApplicationWithGeneralDataByIdOfCompany(String companyId, String applicationId);
 
     void evaluateApplication(ApplicationDTO dto);
+
+    Page<ApplicationEntity> getAllApplicationsOfAttendantByCriteria(String userId, String jobFairName, String jobPositionName, List<ApplicationStatus> statusList, Long fromTime, Long toTime, int offset, int pageSize, String sortBy, Sort.Direction direction);
 }

@@ -5,8 +5,8 @@ public final class ApplicationConstant {
     }
 
     public static final String DEFAULT_SEARCH_STATUS_VALUE = "DRAFT";
-    public static final String DEFAULT_SEARCH_FROM_TIME_VALUE = "1";
-    public static final String DEFAULT_SEARCH_TO_TIME_VALUE = "1";
+    public static final String DEFAULT_SEARCH_FROM_TIME_VALUE = "953589328000";
+    public static final String DEFAULT_SEARCH_TO_TIME_VALUE = "2499890128000";
     public static final String DEFAULT_SEARCH_OFFSET_VALUE = "0";
     public static final String DEFAULT_SEARCH_PAGE_SIZE_VALUE = "10";
     public static final String DEFAULT_SEARCH_SORT_BY_VALUE = "createDate";

@@ -91,13 +91,13 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public Page<ApplicationDTO> getAllApplicationsOfAttendantByCriteria(String attendantId, ApplicationStatus status, long fromTime, long toTime, int offset, int pageSize, String field) {
-
+    public Page<ApplicationEntity> getAllApplicationsOfAttendantByCriteria(String userId, String jobFairName, String jobPositionName, List<ApplicationStatus> statusList, Long fromTime, Long toTime, int offset, int pageSize, String sortBy, Sort.Direction direction) {
+        validatePaging(pageSize, offset);
+        if (statusList == null || statusList.isEmpty())
+            statusList = Arrays.asList(ApplicationStatus.FINISHED, ApplicationStatus.DRAFT, ApplicationStatus.DELETED, ApplicationStatus.PENDING, ApplicationStatus.CANCEL, ApplicationStatus.APPROVE, ApplicationStatus.REJECT);
         if (fromTime > toTime)
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.INALID_TIME));
-        if (offset < DataConstraint.Application.OFFSET_MIN || pageSize < DataConstraint.Application.PAGE_SIZE_MIN)
-            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.INVALID_PAGE_NUMBER));
-        return applicationRepository.findAllByCreateDateBetweenAndStatusAndCvAttendantAccountId(fromTime, toTime, status, attendantId, PageRequest.of(offset, pageSize).withSort(Sort.by(field))).map(entity -> applicationMapper.toDTO(entity));
+        return applicationRepository.findAllApplicationOfAttendantByCriteria(userId, fromTime, toTime, statusList, jobPositionName, jobFairName, PageRequest.of(offset, pageSize).withSort(direction, sortBy));
 
     }
 
