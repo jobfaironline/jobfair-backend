@@ -59,4 +59,6 @@ public interface ApplicationRepository extends JpaRepository<ApplicationEntity, 
                                                                                                            Pageable pageable);
 
     Optional<ApplicationEntity> findByIdAndRegistrationJobPositionCompanyRegistrationCompanyId(String applicationId, String companyId);
+
+    List<ApplicationEntity> findByCvIdAndRegistrationJobPositionIdAndStatusIn(String cv, String jobPositionId, List<ApplicationStatus> status);
 }

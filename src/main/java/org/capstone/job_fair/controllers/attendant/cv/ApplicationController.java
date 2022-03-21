@@ -46,8 +46,8 @@ public class ApplicationController {
 
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ATTENDANT)")
-    @PostMapping(ApiEndPoint.Application.APPLICATION_ENDPOINT)
-    public ResponseEntity create(@Validated @RequestBody CreateApplicationRequest request) {
+    @PostMapping(ApiEndPoint.Application.DRAFT_APPLICATION)
+    public ResponseEntity draft(@Validated @RequestBody CreateApplicationRequest request) {
         try {
             //get accountId from Jwt
             SecurityContext securityContext = SecurityContextHolder.getContext();
@@ -81,6 +81,15 @@ public class ApplicationController {
         } catch (NoSuchElementException | IllegalArgumentException ex) {
             return GenericResponse.build(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ATTENDANT)")
+    @PostMapping(ApiEndPoint.Application.SUBMIT_APPLICATION + "/{id}")
+    public ResponseEntity<?> submitApplication(@PathVariable("id") String applicationId) {
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        UserDetailsImpl user = (UserDetailsImpl) securityContext.getAuthentication().getPrincipal();
+        applicationService.submitApplication(applicationId, user.getId());
+        return ResponseEntity.ok().build();
     }
 
 

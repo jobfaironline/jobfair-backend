@@ -340,6 +340,7 @@ public final class MessageConstant {
         public static final String APPLICATION_NOT_FOUND = "application.error.not-found";
         public static final String INVALID_EVALUATE_STATUS = "application.error.invalid-evaluate-status";
         public static final String EVALUATE_MESSAGE_IS_EMPTY = "application.error.empty-evaluate-message";
+        public static final String ALREADY_APPLY_CV = "application.error.already-apply-cv";
     }
 
     public static final class Order {

@@ -104,6 +104,31 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
+    @Transactional
+    public void submitApplication(String applicationId, String userId) {
+        Optional<ApplicationEntity> entityOptional = applicationRepository.findById(applicationId);
+        if (!entityOptional.isPresent()) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.APPLICATION_NOT_FOUND));
+        }
+        ApplicationEntity entity = entityOptional.get();
+        if (!entity.getCv().getAttendant().getAccount().getId().equals(userId)) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Attendant.ATTENDANT_MISMATCH));
+        }
+
+        List<ApplicationEntity> result = applicationRepository.findByCvIdAndRegistrationJobPositionIdAndStatusIn(
+                entity.getCv().getId(),
+                entity.getRegistrationJobPosition().getId(),
+                Arrays.asList(ApplicationStatus.APPROVE, ApplicationStatus.PENDING, ApplicationStatus.REJECT));
+
+        if (!result.isEmpty()) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.ALREADY_APPLY_CV));
+        }
+
+        entity.setStatus(ApplicationStatus.PENDING);
+        applicationRepository.save(entity);
+    }
+
+    @Override
     public Page<ApplicationEntity> getApplicationOfCompanyByJobPositionIdAndStatus(String companyId, String jobPositionId, List<ApplicationStatus> statusList, int pageSize, int offset, String sortBy, Sort.Direction direction) {
         validatePaging(pageSize, offset);
         sortBy = applicationForCompanySortByMapper(sortBy);
