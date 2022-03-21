@@ -87,14 +87,14 @@ public class ApplicationController {
     @GetMapping(ApiEndPoint.Application.GET_APPLICATION_FOR_COMPANY_BY_CRITERIA)
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) OR hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE)")
     public ResponseEntity<?> getAllApplicationForACompanyByCriteria(@RequestParam(value = "status", required = false) List<ApplicationStatus> statusList,
-
-                                                                    @RequestParam(value = "jobPositionName", required = false, defaultValue = ApplicationConstant.DEFAULT_JOB_POSITION_SEARCH_NAME) String jobPositionName, @RequestParam(value = "jobFairName", required = false, defaultValue = ApplicationConstant.DEFAULT_JOB_FAIR_SEARCH_NAME) String jobFairName,
-
+                                                                    @RequestParam(value = "jobPositionName", required = false, defaultValue = ApplicationConstant.DEFAULT_JOB_POSITION_SEARCH_NAME) String jobPositionName,
+                                                                    @RequestParam(value = "jobFairName", required = false, defaultValue = ApplicationConstant.DEFAULT_JOB_FAIR_SEARCH_NAME) String jobFairName,
                                                                     @RequestParam(value = "jobPositionId", required = false) String jobPositionId,
-
                                                                     @RequestParam(value = "jobFairId", required = false) String jobFairId,
-
-                                                                    @RequestParam(value = "offset", defaultValue = ApplicationConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset, @RequestParam(value = "pageSize", defaultValue = ApplicationConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize, @RequestParam(value = "sortBy", defaultValue = ApplicationConstant.DEFAULT_SEARCH_SORT_BY_VALUE_OF_APPLICATION_FOR_COMPANY) String sortBy, @RequestParam(value = "direction", required = false, defaultValue = ApplicationConstant.DEFAULT_SORT_DIRECTION) Sort.Direction direction) {
+                                                                    @RequestParam(value = "offset", defaultValue = ApplicationConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset,
+                                                                    @RequestParam(value = "pageSize", defaultValue = ApplicationConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize,
+                                                                    @RequestParam(value = "sortBy", defaultValue = ApplicationConstant.DEFAULT_SEARCH_SORT_BY_VALUE_OF_APPLICATION_FOR_COMPANY) String sortBy,
+                                                                    @RequestParam(value = "direction", required = false, defaultValue = ApplicationConstant.DEFAULT_SORT_DIRECTION) Sort.Direction direction) {
 
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String companyId = userDetails.getCompanyId();
@@ -108,8 +108,8 @@ public class ApplicationController {
             applicationForCompanyResponses = applicationService.getApplicationOfCompanyByJobPositionIdAndStatus(companyId, jobPositionId, statusList, pageSize, offset, sortBy, direction);
         if (jobFairId != null)
             applicationForCompanyResponses = applicationService.getApplicationOfCompanyByJobFairIdAndStatus(companyId, jobFairId, statusList, pageSize, offset, sortBy, direction);
-
-        applicationForCompanyResponses = applicationService.getApplicationOfCompanyByJobFairNameAndJobPositionNameAndStatus(companyId, jobFairName, jobPositionName, statusList, pageSize, offset, sortBy, direction);
+        if (jobFairId == null && jobPositionId == null)
+            applicationForCompanyResponses = applicationService.getApplicationOfCompanyByJobFairNameAndJobPositionNameAndStatus(companyId, jobFairName, jobPositionName, statusList, pageSize, offset, sortBy, direction);
 
         if (applicationForCompanyResponses.isEmpty()) return ResponseEntity.noContent().build();
 
