@@ -15,7 +15,23 @@ import java.util.Optional;
 @Repository
 public interface ApplicationRepository extends JpaRepository<ApplicationEntity, String> {
 
+    @Query("select a from ApplicationEntity a " +
+            "where a.createDate between ?1 and ?2 and a.status = ?3 and a.cv.attendant.accountId = ?4")
     Page<ApplicationEntity> findAllByCreateDateBetweenAndStatusAndCvAttendantAccountId(long fromDate, long toDate, ApplicationStatus status, String id, Pageable pageable);
+
+    @Query("select a from ApplicationEntity a " +
+            "where a.cv.attendant.accountId = :accountId and " +
+            "a.createDate between :fromDate and :toDate and " +
+            "a.status in :statusList and " +
+            "a.registrationJobPosition.title like concat('%',:jobPositionName,'%') and " +
+            "a.registrationJobPosition.companyRegistration.jobFairEntity.name like concat('%',:jobFairName,'%')")
+    Page<ApplicationEntity> findAllApplicationOfAttendantByCriteria(@Param("accountId") String acocuntId,
+                                                                    @Param("fromDate") Long fromDate,
+                                                                    @Param("toDate") Long toDate,
+                                                                    @Param("statusList") List<ApplicationStatus> statusList,
+                                                                    @Param("jobPositionName") String jobPositionName,
+                                                                    @Param("jobFairName") String jobFairName,
+                                                                    Pageable pageable);
 
     @Query("select a from ApplicationEntity a " +
             "where a.registrationJobPosition.companyRegistration.companyId = :companyId " +
