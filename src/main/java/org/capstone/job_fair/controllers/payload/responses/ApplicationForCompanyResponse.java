@@ -3,6 +3,7 @@ package org.capstone.job_fair.controllers.payload.responses;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.capstone.job_fair.models.enums.ApplicationStatus;
 
 @Data
 @NoArgsConstructor
@@ -15,4 +16,5 @@ public class ApplicationForCompanyResponse {
     String jobFairName;
     String jobFairId;
     String jobPositionId;
+    ApplicationStatus status;
 }
