@@ -17,8 +17,11 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 public class EvaluateApplicationRequest {
     @NotNull
-    public ApplicationStatus status;
+    private String applicationId;
+    @NotNull
+    private ApplicationStatus status;
     @XSSConstraint
     @Size(min = DataConstraint.Application.EVALUATE_MESSAGE_MIN_LENGTH, max = DataConstraint.Application.EVALUATE_MESSAGE_MAX_LENGTH)
-    public String evaluateMessage;
+    private String evaluateMessage;
+
 }
