@@ -142,6 +142,13 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
+    public Optional<ApplicationEntity> getApplicationWithGeneralDataByIdOfCompany(String companyId, String applicationId) {
+        Optional<ApplicationEntity> applicationEntityOptional = applicationRepository.findByIdAndRegistrationJobPositionCompanyRegistrationCompanyId(applicationId, companyId);
+        if (!applicationEntityOptional.isPresent()) return Optional.empty();
+        return applicationEntityOptional;
+    }
+
+    @Override
     @Transactional
     public void evaluateApplication(ApplicationDTO dto) {
         String id = dto.getId();

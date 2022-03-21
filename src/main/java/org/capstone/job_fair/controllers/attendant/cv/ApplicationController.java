@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @RestController
 public class ApplicationController {
@@ -138,6 +139,15 @@ public class ApplicationController {
                 map(entity -> applicationMapper.toApplicationForCompanyResponse(entity)));
     }
 
+    @GetMapping(ApiEndPoint.Application.GET_APPLICATION_GENERAL_DATA + "/{applicationId}")
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) OR hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE)")
+    public ResponseEntity<?> getApplicationWithGeneralDataByIdOfCompany(@PathVariable("applicationId") String applicationId) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String companyId = userDetails.getCompanyId();
+        Optional<ApplicationEntity> applicationEntityOptional = applicationService.getApplicationWithGeneralDataByIdOfCompany(companyId, applicationId);
+        if (!applicationEntityOptional.isPresent()) return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(applicationMapper.toApplicationWithGenralDataOfApplicantResponse(applicationEntityOptional.get()));
+    }
     @PostMapping(ApiEndPoint.Application.EVALUTATE + "/{applicationId}")
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) OR hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE)")
     public ResponseEntity<?> evaluateApplication(@PathVariable("applicationId") String applicationId, @Validated EvaluateApplicationRequest request) {
