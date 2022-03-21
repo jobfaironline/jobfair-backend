@@ -108,8 +108,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         if (statusList == null || statusList.isEmpty()) {
             statusList = Arrays.asList(ApplicationStatus.FINISHED, ApplicationStatus.PENDING, ApplicationStatus.CANCEL, ApplicationStatus.APPROVE, ApplicationStatus.REJECT);
         }
-        Page<ApplicationEntity> applicationEntityPage = applicationRepository.findAllApplicationOfCompanyByJobPositionIdAndStatusIn
-                (companyId, jobPositionId, statusList, PageRequest.of(offset, pageSize).withSort(direction, sortBy));
+        Page<ApplicationEntity> applicationEntityPage = applicationRepository.findAllApplicationOfCompanyByJobPositionIdAndStatusIn(companyId, jobPositionId, statusList, PageRequest.of(offset, pageSize).withSort(direction, sortBy));
         return applicationEntityPage;
     }
 
@@ -121,8 +120,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             statusList = Arrays.asList(ApplicationStatus.FINISHED, ApplicationStatus.PENDING, ApplicationStatus.CANCEL, ApplicationStatus.APPROVE, ApplicationStatus.REJECT);
         }
 
-        Page<ApplicationEntity> applicationEntityPage = applicationRepository.findAllApplicationOfCompanyByJobFairIdAndStatusIn
-                (companyId, jobFairId, statusList, PageRequest.of(offset, pageSize).withSort(direction, sortBy));
+        Page<ApplicationEntity> applicationEntityPage = applicationRepository.findAllApplicationOfCompanyByJobFairIdAndStatusIn(companyId, jobFairId, statusList, PageRequest.of(offset, pageSize).withSort(direction, sortBy));
         return applicationEntityPage;
     }
 
@@ -135,9 +133,14 @@ public class ApplicationServiceImpl implements ApplicationService {
             statusList = Arrays.asList(ApplicationStatus.FINISHED, ApplicationStatus.PENDING, ApplicationStatus.CANCEL, ApplicationStatus.APPROVE, ApplicationStatus.REJECT);
         }
 
-        Page<ApplicationEntity> applicationEntityPage = applicationRepository.
-                findAllApplicationOfCompanyByJobPositionTitleLikeAndJobFairNameLikeAndStatusIn
-                        (companyId, jobPositionName, jobFairName, statusList, PageRequest.of(offset, pageSize).withSort(direction, sortBy));
+        Page<ApplicationEntity> applicationEntityPage = applicationRepository.findAllApplicationOfCompanyByJobPositionTitleLikeAndJobFairNameLikeAndStatusIn(companyId, jobPositionName, jobFairName, statusList, PageRequest.of(offset, pageSize).withSort(direction, sortBy));
         return applicationEntityPage;
+    }
+
+    @Override
+    public Optional<ApplicationEntity> getApplicationWithGeneralDataByIdOfCompany(String companyId, String applicationId) {
+        Optional<ApplicationEntity> applicationEntityOptional = applicationRepository.findByIdAndRegistrationJobPositionCompanyRegistrationCompanyId(applicationId, companyId);
+        if (!applicationEntityOptional.isPresent()) return Optional.empty();
+        return applicationEntityOptional;
     }
 }
