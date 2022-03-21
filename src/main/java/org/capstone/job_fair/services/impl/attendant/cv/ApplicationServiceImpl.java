@@ -67,6 +67,8 @@ public class ApplicationServiceImpl implements ApplicationService {
                 return "registrationJobPosition.title";
             case "jobFairName":
                 return "registrationJobPosition.companyRegistration.jobFairEntity.name";
+            case "evaluateDate":
+                return "evaluateDate";
             default:
                 throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.UNSUPPORTED_SORT_VALUE_FOR_APPLICATION_FOR_COMPANY_ERROR));
         }

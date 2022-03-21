@@ -17,4 +17,5 @@ public class ApplicationForCompanyResponse {
     String jobFairId;
     String jobPositionId;
     ApplicationStatus status;
+    Long evaluateDate;
 }
