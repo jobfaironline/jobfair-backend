@@ -126,13 +126,13 @@ public class ApplicationController {
         return ResponseEntity.ok(applicationMapper.toApplicationWithGenralDataOfApplicantResponse(applicationEntityOptional.get()));
     }
 
-    @PostMapping(ApiEndPoint.Application.EVALUTATE + "/{applicationId}")
+    @PostMapping(ApiEndPoint.Application.EVALUTATE)
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) OR hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE)")
-    public ResponseEntity<?> evaluateApplication(@PathVariable("applicationId") String applicationId, @Validated EvaluateApplicationRequest request) {
+    public ResponseEntity<?> evaluateApplication(@RequestBody @Validated EvaluateApplicationRequest request) {
 
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         ApplicationDTO dto = new ApplicationDTO();
-        dto.setId(applicationId);
+        dto.setId(request.getApplicationId());
         AccountDTO authorizer = new AccountDTO();
         dto.setAuthorizer(authorizer);
         dto.getAuthorizer().setId(userDetails.getId());

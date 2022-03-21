@@ -158,9 +158,9 @@ public class ApplicationServiceImpl implements ApplicationService {
         if (!applicationEntityOptional.isPresent()) throw new
                 IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.APPLICATION_NOT_FOUND));
         ApplicationEntity applicationEntity = applicationEntityOptional.get();
-        if (applicationEntity.getStatus().equals(ApplicationStatus.PENDING))
+        if (!applicationEntity.getStatus().equals(ApplicationStatus.PENDING))
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.INVALID_EVALUATE_STATUS));
-        if (dto.getStatus().equals(ApplicationStatus.APPROVE) && dto.getStatus().equals(ApplicationStatus.REJECT))
+        if (!dto.getStatus().equals(ApplicationStatus.APPROVE) && !dto.getStatus().equals(ApplicationStatus.REJECT))
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.INVALID_EVALUATE_STATUS));
         if (dto.getStatus().equals(ApplicationStatus.REJECT) && (dto.getEvaluateMessage() == null || dto.getEvaluateMessage().isEmpty()))
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.EVALUATE_MESSAGE_IS_EMPTY));
