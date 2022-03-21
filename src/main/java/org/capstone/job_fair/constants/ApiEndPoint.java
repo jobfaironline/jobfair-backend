@@ -163,6 +163,8 @@ public final class ApiEndPoint {
         public static final String GET_APPLICATION_FOR_COMPANY_BY_CRITERIA = APPLICATION_ENDPOINT + "/company";
         public static final String EVALUTATE = APPLICATION_ENDPOINT + "/evaluate";
         public static final String GET_APPLICATION_GENERAL_DATA = APPLICATION_ENDPOINT + "/company-general";
+        public static final String SUBMIT_APPLICATION = APPLICATION_ENDPOINT + "/submit";
+        public static final String DRAFT_APPLICATION = APPLICATION_ENDPOINT + "/draft";
 
     }
 
