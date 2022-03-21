@@ -108,7 +108,8 @@ public class ApplicationServiceImpl implements ApplicationService {
         if (statusList == null || statusList.isEmpty()) {
             statusList = Arrays.asList(ApplicationStatus.FINISHED, ApplicationStatus.PENDING, ApplicationStatus.CANCEL, ApplicationStatus.APPROVE, ApplicationStatus.REJECT);
         }
-        Page<ApplicationEntity> applicationEntityPage = applicationRepository.findAllApplicationOfCompanyByJobPositionIdAndStatusIn(companyId, jobPositionId, statusList, PageRequest.of(offset, pageSize).withSort(direction, sortBy));
+        Page<ApplicationEntity> applicationEntityPage = applicationRepository.findAllApplicationOfCompanyByJobPositionIdAndStatusIn
+                (companyId, jobPositionId, statusList, PageRequest.of(offset, pageSize).withSort(direction, sortBy));
         return applicationEntityPage;
     }
 
@@ -120,7 +121,8 @@ public class ApplicationServiceImpl implements ApplicationService {
             statusList = Arrays.asList(ApplicationStatus.FINISHED, ApplicationStatus.PENDING, ApplicationStatus.CANCEL, ApplicationStatus.APPROVE, ApplicationStatus.REJECT);
         }
 
-        Page<ApplicationEntity> applicationEntityPage = applicationRepository.findAllApplicationOfCompanyByJobFairIdAndStatusIn(companyId, jobFairId, statusList, PageRequest.of(offset, pageSize).withSort(direction, sortBy));
+        Page<ApplicationEntity> applicationEntityPage = applicationRepository.findAllApplicationOfCompanyByJobFairIdAndStatusIn
+                (companyId, jobFairId, statusList, PageRequest.of(offset, pageSize).withSort(direction, sortBy));
         return applicationEntityPage;
     }
 
@@ -133,7 +135,9 @@ public class ApplicationServiceImpl implements ApplicationService {
             statusList = Arrays.asList(ApplicationStatus.FINISHED, ApplicationStatus.PENDING, ApplicationStatus.CANCEL, ApplicationStatus.APPROVE, ApplicationStatus.REJECT);
         }
 
-        Page<ApplicationEntity> applicationEntityPage = applicationRepository.findAllApplicationOfCompanyByJobPositionTitleLikeAndJobFairNameLikeAndStatusIn(companyId, jobPositionName, jobFairName, statusList, PageRequest.of(offset, pageSize).withSort(direction, sortBy));
+        Page<ApplicationEntity> applicationEntityPage = applicationRepository.
+                findAllApplicationOfCompanyByJobPositionTitleLikeAndJobFairNameLikeAndStatusIn
+                        (companyId, jobPositionName, jobFairName, statusList, PageRequest.of(offset, pageSize).withSort(direction, sortBy));
         return applicationEntityPage;
     }
 
@@ -142,5 +146,25 @@ public class ApplicationServiceImpl implements ApplicationService {
         Optional<ApplicationEntity> applicationEntityOptional = applicationRepository.findByIdAndRegistrationJobPositionCompanyRegistrationCompanyId(applicationId, companyId);
         if (!applicationEntityOptional.isPresent()) return Optional.empty();
         return applicationEntityOptional;
+    }
+
+    @Override
+    @Transactional
+    public void evaluateApplication(ApplicationDTO dto) {
+        String id = dto.getId();
+        String companyId = dto.getRegistrationJobPositionDTO().getCompanyRegistration().getCompanyId();
+        Optional<ApplicationEntity> applicationEntityOptional =
+                applicationRepository.findByIdAndRegistrationJobPositionCompanyRegistrationCompanyId(id, companyId);
+        if (!applicationEntityOptional.isPresent()) throw new
+                IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.APPLICATION_NOT_FOUND));
+        ApplicationEntity applicationEntity = applicationEntityOptional.get();
+        if (applicationEntity.getStatus().equals(ApplicationStatus.PENDING))
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.INVALID_EVALUATE_STATUS));
+        if (dto.getStatus().equals(ApplicationStatus.APPROVE) && dto.getStatus().equals(ApplicationStatus.REJECT))
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.INVALID_EVALUATE_STATUS));
+        if (dto.getStatus().equals(ApplicationStatus.REJECT) && (dto.getEvaluateMessage() == null || dto.getEvaluateMessage().isEmpty()))
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.EVALUATE_MESSAGE_IS_EMPTY));
+        applicationMapper.updateFromDTO(applicationEntity, dto);
+        applicationRepository.save(applicationEntity);
     }
 }

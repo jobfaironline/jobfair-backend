@@ -6,14 +6,12 @@ import org.capstone.job_fair.controllers.payload.responses.ApplicationWithGenral
 import org.capstone.job_fair.models.dtos.attendant.cv.ApplicationDTO;
 import org.capstone.job_fair.models.entities.attendant.cv.ApplicationEntity;
 import org.capstone.job_fair.models.entities.attendant.cv.CvEntity;
+import org.capstone.job_fair.services.mappers.account.AccountMapper;
 import org.capstone.job_fair.services.mappers.attendant.AttendantMapper;
 import org.capstone.job_fair.services.mappers.company.RegistrationJobPositionMapper;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.Named;
-import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.mapstruct.*;
 
-@Mapper(componentModel = "spring", uses = {AttendantMapper.class, CvMapper.class, RegistrationJobPositionMapper.class}, nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+@Mapper(componentModel = "spring", uses = {AccountMapper.class, AttendantMapper.class, CvMapper.class, RegistrationJobPositionMapper.class}, nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public abstract class ApplicationMapper {
 
     @Mapping(source = "registrationJobPosition", target = "registrationJobPositionDTO")
@@ -23,6 +21,8 @@ public abstract class ApplicationMapper {
     @Mapping(target = "registrationJobPosition", source = "registrationJobPositionDTO")
     @Mapping(target = "cv", source = "cvDTO")
     public abstract ApplicationEntity toEntity(ApplicationDTO dto);
+
+    public abstract void updateFromDTO(@MappingTarget ApplicationEntity entity, ApplicationDTO dto);
 
 
     @Mapping(target = "candidateName", source = "cv", qualifiedByName = "toCandidateName")

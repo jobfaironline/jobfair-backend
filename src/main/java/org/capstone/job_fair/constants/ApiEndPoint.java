@@ -161,6 +161,7 @@ public final class ApiEndPoint {
 
         public static final String APPLICATION_ENDPOINT = ROOT_ENDPOINT + VERSION + "/applications";
         public static final String GET_APPLICATION_FOR_COMPANY_BY_CRITERIA = APPLICATION_ENDPOINT + "/company";
+        public static final String EVALUTATE = APPLICATION_ENDPOINT + "/evaluate";
         public static final String GET_APPLICATION_GENERAL_DATA = APPLICATION_ENDPOINT + "/company-general";
 
     }
@@ -173,6 +174,7 @@ public final class ApiEndPoint {
         public static final String LATEST_VERSION = COMPANY_BOOTH_LAYOUT + "/latest";
         public static final String VIDEO_LAYOUT_WITH_FILE = COMPANY_BOOTH_LAYOUT + "/videos/file";
         public static final String VIDEO_LAYOUT_WITH_URL = COMPANY_BOOTH_LAYOUT + "/videos/url";
+
 
     }
 

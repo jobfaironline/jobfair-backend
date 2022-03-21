@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.capstone.job_fair.models.entities.account.AccountEntity;
 import org.capstone.job_fair.models.entities.company.job.RegistrationJobPositionEntity;
 import org.capstone.job_fair.models.enums.ApplicationStatus;
 import org.hibernate.Hibernate;
@@ -42,6 +43,16 @@ public class ApplicationEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "registration_job_position_id")
     private RegistrationJobPositionEntity registrationJobPosition;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "authorizer_id")
+    private AccountEntity authorizer;
+
+    @Column(name = "evaluate_message")
+    private String evaluateMessage;
+
+    @Column(name = "evaluate_date")
+    private Long evaluateDate;
 
     @Override
     public boolean equals(Object o) {
