@@ -365,10 +365,10 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
     public Page<CompanyRegistrationAdminDTO> getAllJobFairForAdmin(String companyName, String jobfairName, List<CompanyRegistrationStatus> statusList, int offset, int pageSize, String sortBy, Sort.Direction direction) {
 
         validatePaging(pageSize, offset);
-        if (statusList.contains(CompanyRegistrationStatus.DRAFT))
-            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyRegistration.INVALID_SEARCH_STATUS));
         if (statusList == null || statusList.isEmpty())
             statusList = Arrays.asList(CompanyRegistrationStatus.DELETED, CompanyRegistrationStatus.PENDING, CompanyRegistrationStatus.CANCEL, CompanyRegistrationStatus.APPROVE, CompanyRegistrationStatus.REJECT, CompanyRegistrationStatus.REQUEST_CHANGE);
+        if (statusList.contains(CompanyRegistrationStatus.DRAFT))
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyRegistration.INVALID_SEARCH_STATUS));
         String statusListString = "";
         for (CompanyRegistrationStatus status : statusList) {
             statusListString += Integer.toString(status.ordinal()) + ",";
