@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.capstone.job_fair.models.dtos.attendant.cv.CvSkillDTO;
+import org.capstone.job_fair.models.enums.ApplicationStatus;
 import org.capstone.job_fair.models.enums.JobLevel;
 
 import java.util.List;
@@ -20,6 +21,7 @@ public class ApplicationWithGenralDataOfApplicantResponse {
     String jobFairId;
     String jobPositionId;
     String applicationSummary;
+    ApplicationStatus status;
 
     String candidateName;
     Integer candidateYearOfExp;
