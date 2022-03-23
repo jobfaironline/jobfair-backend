@@ -46,6 +46,11 @@ public abstract class ApplicationMapper {
     @Mapping(target = "candidateJobLevel", source = "cv.jobLevel")
     @Mapping(target = "candidateJobTitle", source = "cv.jobTitle")
     @Mapping(target = "candidateSkills", source = "cv.skills")
+    @Mapping(target = "candidateActivities", source = "cv.activities")
+    @Mapping(target = "candidateCertifications", source = "cv.certifications")
+    @Mapping(target = "candidateEducation", source = "cv.educations")
+    @Mapping(target = "candidateReferences", source = "cv.references")
+    @Mapping(target = "candidateWorkHistories", source = "cv.workHistories")
     @Mapping(target = "status", source="status")
     public abstract ApplicationWithGenralDataOfApplicantResponse toApplicationWithGenralDataOfApplicantResponse(ApplicationEntity entity);
 

@@ -3,7 +3,7 @@ package org.capstone.job_fair.controllers.payload.responses;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.capstone.job_fair.models.dtos.attendant.cv.CvSkillDTO;
+import org.capstone.job_fair.models.dtos.attendant.cv.*;
 import org.capstone.job_fair.models.enums.ApplicationStatus;
 import org.capstone.job_fair.models.enums.JobLevel;
 
@@ -28,4 +28,9 @@ public class ApplicationWithGenralDataOfApplicantResponse {
     JobLevel candidateJobLevel;
     String candidateJobTitle;
     List<CvSkillDTO> candidateSkills;
+    List<CvActivityDTO> candidateActivities;
+    List<CvCertificationDTO> candidateCertifications;
+    List<CvEducationDTO> candidateEducation;
+    List<CvReferenceDTO> candidateReferences;
+    List<CvWorkHistoryDTO> candidateWorkHistories;
 }
