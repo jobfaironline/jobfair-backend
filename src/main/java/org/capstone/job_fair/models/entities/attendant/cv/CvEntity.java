@@ -43,6 +43,8 @@ public class CvEntity {
     @Column(name = "job_title")
     private String jobTitle;
 
+    @Column(name = "name")
+    private String name;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
     @JoinColumn(name = "cv_id", referencedColumnName = "id")
