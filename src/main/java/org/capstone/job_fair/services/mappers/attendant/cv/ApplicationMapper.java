@@ -7,12 +7,14 @@ import org.capstone.job_fair.controllers.payload.responses.ApplicationWithGenral
 import org.capstone.job_fair.models.dtos.attendant.cv.ApplicationDTO;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
 import org.capstone.job_fair.models.entities.attendant.cv.ApplicationEntity;
+import org.capstone.job_fair.models.enums.Gender;
 import org.capstone.job_fair.services.mappers.account.AccountMapper;
 import org.capstone.job_fair.services.mappers.attendant.AttendantMapper;
+import org.capstone.job_fair.services.mappers.attendant.CountryMapper;
 import org.capstone.job_fair.services.mappers.company.RegistrationJobPositionMapper;
 import org.mapstruct.*;
 
-@Mapper(componentModel = "spring", uses = {AccountMapper.class, AttendantMapper.class, CvMapper.class, RegistrationJobPositionMapper.class}, nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+@Mapper(componentModel = "spring", uses = {AccountMapper.class, AttendantMapper.class, CvMapper.class, RegistrationJobPositionMapper.class, CountryMapper.class}, nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public abstract class ApplicationMapper {
 
     @Mapping(source = "registrationJobPosition", target = "registrationJobPositionDTO")
@@ -52,6 +54,9 @@ public abstract class ApplicationMapper {
     @Mapping(target = "candidateReferences", source = "cv.references")
     @Mapping(target = "candidateWorkHistories", source = "cv.workHistories")
     @Mapping(target = "status", source="status")
+    @Mapping(target = "gender", source="cv.attendant.account" , qualifiedByName = "toGender")
+    @Mapping(target = "imageUrl", source="cv.attendant.account.profileImageUrl")
+    @Mapping(target = "country", source="cv.attendant.country.name")
     public abstract ApplicationWithGenralDataOfApplicantResponse toApplicationWithGenralDataOfApplicantResponse(ApplicationEntity entity);
 
     @Mapping(target = "jobFairName", source = "registrationJobPosition.companyRegistration.jobFairEntity.name")
@@ -66,6 +71,12 @@ public abstract class ApplicationMapper {
         if (accountEntity == null) return null;
         return accountEntity.getFullname();
 
+    }
+
+    @Named("toGender")
+    public Gender toGender(AccountEntity accountEntity) {
+        if (accountEntity == null) return null;
+        return Gender.values()[accountEntity.getGender().getId()];
     }
 
 
