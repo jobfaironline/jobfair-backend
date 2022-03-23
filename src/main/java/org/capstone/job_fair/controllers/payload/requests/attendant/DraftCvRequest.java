@@ -40,6 +40,10 @@ public class DraftCvRequest {
     @Size(min = DataConstraint.Attendant.JOB_TITLE_MIN_LENGTH, max = DataConstraint.Attendant.JOB_TITLE_MAX_LENGTH)
     private String jobTitle;
 
+    @XSSConstraint
+    @Size(min = DataConstraint.Cv.MIN_NAME_LENGTH, max = DataConstraint.Cv.MAX_NAME_LENGTH)
+    private String name;
+
     @Valid
     private List<DraftCvRequest.Skills> skills;
 

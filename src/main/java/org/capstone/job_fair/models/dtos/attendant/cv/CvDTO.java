@@ -24,6 +24,7 @@ public class CvDTO implements Serializable {
     private Integer yearOfExp;
     private JobLevel jobLevel;
     private String jobTitle;
+    private String name;
     private List<CvSkillDTO> skills;
     private List<CvWorkHistoryDTO> workHistories;
     private List<CvEducationDTO> educations;

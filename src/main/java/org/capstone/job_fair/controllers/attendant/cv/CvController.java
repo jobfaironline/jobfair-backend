@@ -2,14 +2,12 @@ package org.capstone.job_fair.controllers.attendant.cv;
 
 import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import org.capstone.job_fair.constants.ApiEndPoint;
-import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.controllers.payload.requests.attendant.DraftCvRequest;
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
 import org.capstone.job_fair.models.dtos.attendant.AttendantDTO;
 import org.capstone.job_fair.models.dtos.attendant.cv.CvDTO;
 import org.capstone.job_fair.services.interfaces.attendant.cv.CvService;
 import org.capstone.job_fair.services.mappers.attendant.cv.CvMapper;
-import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
