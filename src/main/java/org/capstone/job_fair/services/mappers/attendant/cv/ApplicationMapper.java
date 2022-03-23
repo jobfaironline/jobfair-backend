@@ -57,6 +57,7 @@ public abstract class ApplicationMapper {
     @Mapping(target = "gender", source="cv.attendant.account" , qualifiedByName = "toGender")
     @Mapping(target = "imageUrl", source="cv.attendant.account.profileImageUrl")
     @Mapping(target = "country", source="cv.attendant.country.name")
+    @Mapping(target = "dob", source="cv.attendant.dob")
     public abstract ApplicationWithGenralDataOfApplicantResponse toApplicationWithGenralDataOfApplicantResponse(ApplicationEntity entity);
 
     @Mapping(target = "jobFairName", source = "registrationJobPosition.companyRegistration.jobFairEntity.name")

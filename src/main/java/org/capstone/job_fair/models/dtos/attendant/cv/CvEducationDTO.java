@@ -17,6 +17,7 @@ public class CvEducationDTO implements Serializable {
     private Long fromDate;
     private Long toDate;
     private String achievement;
+    private Qualification qualificationId;
 
 
 }

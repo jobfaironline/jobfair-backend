@@ -38,5 +38,6 @@ public class ApplicationWithGenralDataOfApplicantResponse {
     Gender gender;
     String imageUrl;
     String country;
+    Long dob;
 
 }
