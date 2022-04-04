@@ -24,7 +24,7 @@ public interface ApplicationRepository extends JpaRepository<ApplicationEntity, 
             "a.createDate between :fromDate and :toDate and " +
             "a.status in :statusList and " +
             "a.boothJobPosition.title like concat('%',:jobPositionName,'%') and " +
-            "a.boothJobPosition.companyRegistration.jobFairEntity.name like concat('%',:jobFairName,'%')")
+            "a.boothJobPosition.jobFairBooth.jobFair.name like concat('%',:jobFairName,'%')")
     Page<ApplicationEntity> findAllApplicationOfAttendantByCriteria(@Param("accountId") String acocuntId,
                                                                     @Param("fromDate") Long fromDate,
                                                                     @Param("toDate") Long toDate,
@@ -34,7 +34,7 @@ public interface ApplicationRepository extends JpaRepository<ApplicationEntity, 
                                                                     Pageable pageable);
 
     @Query("select a from ApplicationEntity a " +
-            "where a.boothJobPosition.companyRegistration.companyId = :companyId " +
+            "where a.boothJobPosition.jobFairBooth.jobFair.company.id = :companyId " +
             "and a.boothJobPosition.id = :jobPositionId and a.status in :statusList")
     Page<ApplicationEntity> findAllApplicationOfCompanyByJobPositionIdAndStatusIn(@Param("companyId") String companyId,
                                                                                   @Param("jobPositionId") String jobPositionId,
@@ -42,23 +42,26 @@ public interface ApplicationRepository extends JpaRepository<ApplicationEntity, 
                                                                                   Pageable pageable);
 
     @Query("select a from ApplicationEntity a " +
-            "where a.boothJobPosition.companyRegistration.companyId = :companyId " +
-            "and a.boothJobPosition.companyRegistration.jobFairId = :jobFairId and a.status in :statusList")
+            "where a.boothJobPosition.jobFairBooth.jobFair.company.id  = :companyId " +
+            "and a.boothJobPosition.jobFairBooth.jobFair.id = :jobFairId and a.status in :statusList")
     Page<ApplicationEntity> findAllApplicationOfCompanyByJobFairIdAndStatusIn(@Param("companyId") String companyId,
                                                                               @Param("jobFairId") String jobFairId,
                                                                               @Param("statusList") List<ApplicationStatus> applicationStatusList,
                                                                               Pageable pageable);
 
     @Query("select a from ApplicationEntity a " +
-            "where a.boothJobPosition.companyRegistration.companyId = :companyId and a.boothJobPosition.title like concat('%', :jobTitle, '%') " +
-            "and a.boothJobPosition.companyRegistration.jobFairEntity.name like concat('%', :jobFairName, '%') and a.status in :statusList")
+            "where a.boothJobPosition.jobFairBooth.jobFair.company.id = :companyId and a.boothJobPosition.title like concat('%', :jobTitle, '%') " +
+            "and a.boothJobPosition.jobFairBooth.jobFair.name like concat('%', :jobFairName, '%') and a.status in :statusList")
     Page<ApplicationEntity> findAllApplicationOfCompanyByJobPositionTitleLikeAndJobFairNameLikeAndStatusIn(@Param("companyId") String companyId,
                                                                                                            @Param("jobTitle") String jobTitle,
                                                                                                            @Param("jobFairName") String jobFairName,
                                                                                                            @Param("statusList") List<ApplicationStatus> applicationStatusList,
                                                                                                            Pageable pageable);
 
-    Optional<ApplicationEntity> findByIdAndRegistrationJobPositionCompanyRegistrationCompanyId(String applicationId, String companyId);
 
-    List<ApplicationEntity> findByCvIdAndRegistrationJobPositionIdAndStatusIn(String cv, String jobPositionId, List<ApplicationStatus> status);
+    @Query("select a from ApplicationEntity a where a.id = :applicationId and a.boothJobPosition.jobFairBooth.jobFair.company.id = :companyId")
+    Optional<ApplicationEntity> findByIdAndCompanyId(@Param("applicationId") String applicationId,
+                                                     @Param("companyId") String companyId);
+
+    List<ApplicationEntity> findByCvIdAndBoothJobPositionIdAndStatusIn(String cv, String jobPositionId, List<ApplicationStatus> status);
 }

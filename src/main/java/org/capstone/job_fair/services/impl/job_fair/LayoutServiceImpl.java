@@ -114,7 +114,6 @@ public class LayoutServiceImpl implements LayoutService {
                             layoutBoothEntity.setName(nodeModel.getName().replaceAll("([._\\-])", ""));
                             layoutBoothEntity.setLayout(layoutEntity);
                             layoutBoothEntity.setStatus(BoothStatus.NORMAL);
-                            layoutBoothEntity.setPrice(0.0);
 
                             //get position
                             //https://github.com/KhronosGroup/glTF-Tutorials/blob/master/gltfTutorial/gltfTutorial_004_ScenesNodes.md
@@ -140,7 +139,7 @@ public class LayoutServiceImpl implements LayoutService {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.JOB_FAIR_NOT_FOUND));
         }
         JobFairEntity jobFairEntity = jobFairEntityOpt.get();
-        return layoutRepository.findById(jobFairEntity.getLayoutId()).map(layoutMapper::toDTO);
+        return layoutRepository.findById(jobFairEntity.getJobFairBoothList().get(0).getBooth().getLayout().getId()).map(layoutMapper::toDTO);
     }
 
     @Override
@@ -150,7 +149,7 @@ public class LayoutServiceImpl implements LayoutService {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.JOB_FAIR_NOT_FOUND));
         }
         JobFairEntity jobFairEntity = jobFairEntityOpt.get();
-        Optional<LayoutEntity> layoutOpt = layoutRepository.findById(jobFairEntity.getLayoutId());
+        Optional<LayoutEntity> layoutOpt = layoutRepository.findById(jobFairEntity.getJobFairBoothList().get(0).getBooth().getLayout().getId());
         if (!layoutOpt.isPresent()) return Optional.empty();
         //check for which booth is available
         LayoutDTO layoutDTO = layoutMapper.toDTO(layoutOpt.get());

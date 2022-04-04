@@ -10,11 +10,6 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
         uses = {CompanyMapper.class}
 )
 public abstract class MediaEntityMapper {
-
-    @Mapping(source = "companyDTO", target = "company")
-
     public abstract CompanyMediaEntity toEntity(CompanyMediaDTO dto);
-
-    @Mapping(source = "company", target = "companyDTO")
     public abstract CompanyMediaDTO toDTO(CompanyMediaEntity entity);
 }

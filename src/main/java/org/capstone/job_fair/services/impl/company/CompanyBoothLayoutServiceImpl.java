@@ -49,7 +49,7 @@ public class CompanyBoothLayoutServiceImpl implements CompanyBoothLayoutService 
     @Override
     public List<JobFairBoothLayoutDTO> getLayoutsByCompanyBoothId(String companyBoothId) {
         return companyBoothLayoutRepository
-                .findByCompanyBoothId(companyBoothId)
+                .findByJobFairBoothId(companyBoothId)
                 .stream()
                 .map(boothLayoutMapper::toDTO)
                 .collect(Collectors.toList());
@@ -58,7 +58,7 @@ public class CompanyBoothLayoutServiceImpl implements CompanyBoothLayoutService 
     @Override
     public Optional<JobFairBoothLayoutDTO> getLatestVersionByCompanyBoothId(String companyBoothId) {
         return companyBoothLayoutRepository
-                .findTopByCompanyBoothIdOrderByVersionDesc(companyBoothId)
+                .findTopByJobFairBoothIdOrderByVersionDesc(companyBoothId)
                 .map(boothLayoutMapper::toDTO);
     }
 
@@ -77,7 +77,7 @@ public class CompanyBoothLayoutServiceImpl implements CompanyBoothLayoutService 
         }
 
         Optional<JobFairBoothLayoutEntity> latestVersionOpt =
-                companyBoothLayoutRepository.findTopByCompanyBoothIdOrderByVersionDesc(dto.getCompanyBooth().getId());
+                    companyBoothLayoutRepository.findTopByJobFairBoothIdOrderByVersionDesc(dto.getJobFairBooth().getId());
         int version = latestVersionOpt.map(jobFairBoothLayoutEntity -> jobFairBoothLayoutEntity.getVersion() + 1).orElse(0);
 
 
@@ -96,7 +96,7 @@ public class CompanyBoothLayoutServiceImpl implements CompanyBoothLayoutService 
     @Transactional
     @Override
     public JobFairBoothLayoutVideoDTO createNewVideoWithFile(JobFairBoothLayoutVideoDTO dto){
-        Optional<JobFairBoothLayoutEntity> layoutOpt = companyBoothLayoutRepository.findById(dto.getCompanyBoothLayoutId());
+        Optional<JobFairBoothLayoutEntity> layoutOpt = companyBoothLayoutRepository.findById(dto.getJobFairBoothLayoutId());
         if (!layoutOpt.isPresent()){
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Layout.NOT_FOUND));
         }
@@ -113,7 +113,7 @@ public class CompanyBoothLayoutServiceImpl implements CompanyBoothLayoutService 
     @Override
     @Transactional
     public JobFairBoothLayoutVideoDTO createNewVideoWithUrl(JobFairBoothLayoutVideoDTO dto) {
-        Optional<JobFairBoothLayoutEntity> layoutOpt = companyBoothLayoutRepository.findById(dto.getCompanyBoothLayoutId());
+        Optional<JobFairBoothLayoutEntity> layoutOpt = companyBoothLayoutRepository.findById(dto.getJobFairBoothLayoutId());
         if (!layoutOpt.isPresent()){
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Layout.NOT_FOUND));
         }

@@ -148,9 +148,6 @@ public class ApplicationController {
         dto.setStatus(request.getStatus());
         dto.setEvaluateDate(new Date().getTime());
         BoothJobPositionDTO boothJobPositionDTO = new BoothJobPositionDTO();
-        CompanyRegistrationDTO companyRegistrationDTO = new CompanyRegistrationDTO();
-        companyRegistrationDTO.setCompanyId(userDetails.getCompanyId());
-        boothJobPositionDTO.setCompanyRegistration(companyRegistrationDTO);
         dto.setBoothJobPositionDTO(boothJobPositionDTO);
 
         applicationService.evaluateApplication(dto);

@@ -96,7 +96,7 @@ public class CompanyBoothLayoutController {
         JobFairBoothLayoutDTO dto = new JobFairBoothLayoutDTO();
         JobFairBoothDTO jobFairBoothDTO = new JobFairBoothDTO();
         jobFairBoothDTO.setId(companyBoothId);
-        dto.setCompanyBooth(jobFairBoothDTO);
+        dto.setJobFairBooth(jobFairBoothDTO);
         dto = companyBoothLayoutService.createNew(dto, file);
 
         try {
@@ -115,7 +115,7 @@ public class CompanyBoothLayoutController {
     public ResponseEntity<?> createNewVideoForLayoutWithFile(@RequestParam("layoutId") String layoutId,
                                                      @RequestParam("itemName") String itemName,
                                                      @RequestParam("file") MultipartFile file ){
-        JobFairBoothLayoutVideoDTO dto = JobFairBoothLayoutVideoDTO.builder().itemName(itemName).companyBoothLayoutId(layoutId).build();
+        JobFairBoothLayoutVideoDTO dto = JobFairBoothLayoutVideoDTO.builder().itemName(itemName).jobFairBoothLayoutId(layoutId).build();
         dto = companyBoothLayoutService.createNewVideoWithFile(dto);
         try {
             fileStorageService.store(file.getBytes(), AWSConstant.COMPANY_BOOTH_LAYOUT_VIDEO_FOLDER + "/" + dto.getId()).exceptionally(throwable -> {
@@ -134,7 +134,7 @@ public class CompanyBoothLayoutController {
                                                             @RequestParam("url") String url){
         JobFairBoothLayoutVideoDTO dto = JobFairBoothLayoutVideoDTO.builder()
                 .itemName(itemName)
-                .companyBoothLayoutId(layoutId)
+                .jobFairBoothLayoutId(layoutId)
                 .url(url)
                 .build();
 

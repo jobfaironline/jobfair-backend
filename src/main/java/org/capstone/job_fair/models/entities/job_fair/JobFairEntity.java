@@ -2,11 +2,13 @@ package org.capstone.job_fair.models.entities.job_fair;
 
 import lombok.*;
 import org.capstone.job_fair.models.entities.company.CompanyEntity;
+import org.capstone.job_fair.models.entities.company.JobFairBoothEntity;
 import org.capstone.job_fair.models.statuses.JobFairPlanStatus;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -49,6 +51,10 @@ public class JobFairEntity {
     @ManyToOne
     @JoinColumn(name = "company_id")
     private CompanyEntity company;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "job_fair_id", referencedColumnName = "id")
+    private List<JobFairBoothEntity> jobFairBoothList;
 
     @Override
     public boolean equals(Object o) {

@@ -10,7 +10,8 @@ import java.util.Optional;
 @Repository
 public interface CompanyBoothLayoutRepository extends JpaRepository<JobFairBoothLayoutEntity, String> {
 
-    List<JobFairBoothLayoutEntity> findByCompanyBoothId(String companyBoothId);
+    List<JobFairBoothLayoutEntity> findByJobFairBoothId(String companyBoothId);
 
-    Optional<JobFairBoothLayoutEntity> findTopByCompanyBoothIdOrderByVersionDesc(String companyBoothId);
+
+    Optional<JobFairBoothLayoutEntity> findTopByJobFairBoothIdOrderByVersionDesc(String companyBoothId);
 }

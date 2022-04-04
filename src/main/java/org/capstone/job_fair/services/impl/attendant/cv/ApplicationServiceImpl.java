@@ -115,7 +115,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Attendant.ATTENDANT_MISMATCH));
         }
 
-        List<ApplicationEntity> result = applicationRepository.findByCvIdAndRegistrationJobPositionIdAndStatusIn(
+        List<ApplicationEntity> result = applicationRepository.findByCvIdAndBoothJobPositionIdAndStatusIn(
                 entity.getCv().getId(),
                 entity.getBoothJobPosition().getId(),
                 Arrays.asList(ApplicationStatus.APPROVE, ApplicationStatus.PENDING, ApplicationStatus.REJECT));
@@ -170,7 +170,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     public Optional<ApplicationEntity> getApplicationWithGeneralDataByIdOfCompany(String companyId, String applicationId) {
-        Optional<ApplicationEntity> applicationEntityOptional = applicationRepository.findByIdAndRegistrationJobPositionCompanyRegistrationCompanyId(applicationId, companyId);
+        Optional<ApplicationEntity> applicationEntityOptional = applicationRepository.findByIdAndCompanyId(applicationId, companyId);
         if (!applicationEntityOptional.isPresent()) return Optional.empty();
         return applicationEntityOptional;
     }
@@ -179,9 +179,9 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Transactional
     public void evaluateApplication(ApplicationDTO dto) {
         String id = dto.getId();
-        String companyId = dto.getBoothJobPositionDTO().getCompanyRegistration().getCompanyId();
+        String companyId = dto.getBoothJobPositionDTO().getJobFairBooth().getJobFair().getCompany().getId();
         Optional<ApplicationEntity> applicationEntityOptional =
-                applicationRepository.findByIdAndRegistrationJobPositionCompanyRegistrationCompanyId(id, companyId);
+                applicationRepository.findByIdAndCompanyId(id, companyId);
         if (!applicationEntityOptional.isPresent()) throw new
                 IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.APPLICATION_NOT_FOUND));
         ApplicationEntity applicationEntity = applicationEntityOptional.get();
