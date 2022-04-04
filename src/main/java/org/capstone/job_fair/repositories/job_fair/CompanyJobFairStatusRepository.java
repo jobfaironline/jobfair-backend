@@ -1,6 +1,5 @@
 package org.capstone.job_fair.repositories.job_fair;
 
-import org.capstone.job_fair.models.entities.job_fair.CompanyJobFairStatusEntity;
 import org.capstone.job_fair.models.statuses.JobFairCompanyStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

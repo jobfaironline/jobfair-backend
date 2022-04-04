@@ -2,8 +2,6 @@ package org.capstone.job_fair.services.mappers.company;
 
 import org.capstone.job_fair.models.dtos.company.CompanyRegistrationAdminDTO;
 import org.capstone.job_fair.models.dtos.company.CompanyRegistrationDTO;
-import org.capstone.job_fair.models.entities.company.CompanyRegistrationAdminEntity;
-import org.capstone.job_fair.models.entities.company.CompanyRegistrationEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;

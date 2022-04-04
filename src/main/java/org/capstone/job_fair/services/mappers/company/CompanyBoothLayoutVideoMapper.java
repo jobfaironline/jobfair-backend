@@ -1,7 +1,7 @@
 package org.capstone.job_fair.services.mappers.company;
 
 import org.capstone.job_fair.models.dtos.company.CompanyBoothLayoutVideoDTO;
-import org.capstone.job_fair.models.entities.company.CompanyBoothLayoutVideoEntity;
+import org.capstone.job_fair.models.entities.company.JobFairBoothLayoutVideoEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
@@ -9,7 +9,7 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
 )
 public abstract class CompanyBoothLayoutVideoMapper {
-    public abstract CompanyBoothLayoutVideoEntity toEntity(CompanyBoothLayoutVideoDTO dto);
+    public abstract JobFairBoothLayoutVideoEntity toEntity(CompanyBoothLayoutVideoDTO dto);
 
-    public abstract CompanyBoothLayoutVideoDTO toDTO(CompanyBoothLayoutVideoEntity entity);
+    public abstract CompanyBoothLayoutVideoDTO toDTO(JobFairBoothLayoutVideoEntity entity);
 }

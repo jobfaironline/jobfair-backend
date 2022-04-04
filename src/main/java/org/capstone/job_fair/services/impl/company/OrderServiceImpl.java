@@ -2,8 +2,6 @@ package org.capstone.job_fair.services.impl.company;
 
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.models.dtos.company.OrderDTO;
-import org.capstone.job_fair.models.entities.company.CompanyRegistrationEntity;
-import org.capstone.job_fair.models.entities.company.OrderEntity;
 import org.capstone.job_fair.models.statuses.OrderStatus;
 import org.capstone.job_fair.repositories.company.OrderRepository;
 import org.capstone.job_fair.services.interfaces.company.OrderService;

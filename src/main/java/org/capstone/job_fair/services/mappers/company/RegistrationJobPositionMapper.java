@@ -8,7 +8,7 @@ import org.capstone.job_fair.models.entities.attendant.LanguageEntity;
 import org.capstone.job_fair.models.entities.company.SkillTagEntity;
 import org.capstone.job_fair.models.entities.company.SubCategoryEntity;
 import org.capstone.job_fair.models.entities.company.job.JobTypeEntity;
-import org.capstone.job_fair.models.entities.company.job.RegistrationJobPositionEntity;
+import org.capstone.job_fair.models.entities.company.job.BoothJobPositionEntity;
 import org.capstone.job_fair.models.enums.JobLevel;
 import org.capstone.job_fair.models.enums.JobType;
 import org.capstone.job_fair.models.enums.Language;
@@ -41,7 +41,7 @@ public abstract class RegistrationJobPositionMapper {
     @Mapping(target = "subCategoryDTOs", source = "categories", qualifiedByName = "toJobPositionDTOSubCategory")
     @Mapping(target = "skillTagDTOS", source = "skillTagEntities", qualifiedByName = "toJobPositionDTOSkillTag")
     @Mapping(target = "companyRegistration", ignore = true)
-    public abstract RegistrationJobPositionDTO toDTO(RegistrationJobPositionEntity entity);
+    public abstract RegistrationJobPositionDTO toDTO(BoothJobPositionEntity entity);
 
     @Mapping(target = "language", qualifiedByName = "toJobPositionEntityLanguage")
     @Mapping(target = "jobLevel", qualifiedByName = "toJobPositionEntityJobLevel")
@@ -49,7 +49,7 @@ public abstract class RegistrationJobPositionMapper {
     @Mapping(target = "categories", source = "subCategoryDTOs", qualifiedByName = "toJobPositionEntitySubCategory")
     @Mapping(target = "skillTagEntities", source = "skillTagDTOS", qualifiedByName = "toJobPositionEntitySkillTag")
     @Mapping(target = "companyRegistration", ignore = true)
-    public abstract RegistrationJobPositionEntity toEntity(RegistrationJobPositionDTO jobPositionDTO);
+    public abstract BoothJobPositionEntity toEntity(RegistrationJobPositionDTO jobPositionDTO);
 
     @Named("toJobPositionDTOSkillTag")
     public List<SkillTagDTO> toJobPositionDTOSkillTag(Set<SkillTagEntity> skillTags) {

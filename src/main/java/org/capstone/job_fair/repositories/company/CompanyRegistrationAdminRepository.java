@@ -1,6 +1,5 @@
 package org.capstone.job_fair.repositories.company;
 
-import org.capstone.job_fair.models.entities.company.CompanyRegistrationAdminEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

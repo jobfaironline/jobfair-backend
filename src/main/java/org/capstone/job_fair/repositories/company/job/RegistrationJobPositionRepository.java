@@ -1,11 +1,11 @@
 package org.capstone.job_fair.repositories.company.job;
 
-import org.capstone.job_fair.models.entities.company.job.RegistrationJobPositionEntity;
+import org.capstone.job_fair.models.entities.company.job.BoothJobPositionEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface RegistrationJobPositionRepository extends JpaRepository<RegistrationJobPositionEntity, String> {
+public interface RegistrationJobPositionRepository extends JpaRepository<BoothJobPositionEntity, String> {
 
     Integer countById(String id);
 }

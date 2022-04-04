@@ -1,6 +1,7 @@
 package org.capstone.job_fair.models.entities.job_fair;
 
 import lombok.*;
+import org.capstone.job_fair.models.entities.company.CompanyEntity;
 import org.capstone.job_fair.models.statuses.JobFairPlanStatus;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.GenericGenerator;
@@ -22,49 +23,32 @@ public class JobFairEntity {
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "org.hibernate.id.UUIDGenerator")
     private String id;
-    @Column(name = "company_register_start_time")
-    private Long companyRegisterStartTime;
-    @Column(name = "company_register_end_time")
-    private Long companyRegisterEndTime;
-    @Column(name = "company_buy_booth_start_time")
-    private Long companyBuyBoothStartTime;
-    @Column(name = "company_buy_booth_end_time")
-    private Long companyBuyBoothEndTime;
-    @Column(name = "attendant_register_start_time")
-    private Long attendantRegisterStartTime;
-    @Column(name = "start_time")
-    private Long startTime;
-    @Column(name = "end_time")
-    private Long endTime;
-    @Column(name = "description")
-    private String description;
-    @Column(name = "layout_id")
-    private String layoutId;
-    @Column(name = "status")
-    private JobFairPlanStatus status;
-    @Column(name = "creator_id")
-    private String creatorId;
-    @Column(name = "authorizer_id")
-    private String authorizerId;
-    @Column(name = "reject_reason")
-    private String rejectReason;
-    @Column(name = "cancel_reason")
-    private String cancelReason;
-    @Column(name = "thumbnail")
-    private String thumbnail;
-    @Column(name = "name")
-    private String name;
-    @Column(name = "estimate_participant")
-    private Integer estimateParticipant;
-    @Column(name = "target_company")
-    private String targetCompany;
-    @Column(name = "target_attendant")
-    private String targetAttendant;
-    @Column(name = "created_time")
+    @Column(name = "create_time")
     private Long createTime;
-    @Column(name = "updated_time")
-    private Long updateTime;
-
+    @Column(name = "decorate_start_time")
+    private Long decorateStartTime;
+    @Column(name = "decorate_end_time")
+    private Long decorateEndTime;
+    @Column(name = "public_start_time")
+    private Long publicStartTime;
+    @Column(name = "public_end_time")
+    private Long publicEndTime;
+    @Column(name = "name", length = 100)
+    private String name;
+    @Column(name = "description", length = 500)
+    private String description;
+    @Column(name = "target_attendant", length = 100)
+    private String targetAttendant;
+    @Column(name = "thumbnail_url", length = 2048)
+    private String thumbnailUrl;
+    @Column(name = "status")
+    @Enumerated(EnumType.ORDINAL)
+    private JobFairPlanStatus status;
+    @Column(name = "cancel_reason", length = 500)
+    private String cancelReason;
+    @ManyToOne
+    @JoinColumn(name = "company_id")
+    private CompanyEntity company;
 
     @Override
     public boolean equals(Object o) {

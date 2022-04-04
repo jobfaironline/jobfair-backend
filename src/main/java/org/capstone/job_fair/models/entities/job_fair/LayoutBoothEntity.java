@@ -12,19 +12,17 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name = "booth", schema = "dbo")
+@Table(name = "layout_booth", schema = "dbo")
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter
 @Getter
-public class BoothEntity {
+public class LayoutBoothEntity {
     @Id
     @Column(name = "id", nullable = false, length = 36)
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "org.hibernate.id.UUIDGenerator")
     private String id;
-    @Column(name = "price")
-    private Double price;
     @Column(name = "status")
     @Enumerated(EnumType.ORDINAL)
     private BoothStatus status;
@@ -44,7 +42,7 @@ public class BoothEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        BoothEntity that = (BoothEntity) o;
+        LayoutBoothEntity that = (LayoutBoothEntity) o;
         return id != null && Objects.equals(id, that.getId());
     }
 

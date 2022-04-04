@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.capstone.job_fair.models.entities.job_fair.JobFairEntity;
+import org.capstone.job_fair.models.entities.job_fair.LayoutBoothEntity;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -15,27 +17,28 @@ import java.util.Objects;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "company_booth_layout_video", schema = "dbo")
-public class CompanyBoothLayoutVideoEntity {
+@Table(name = "job_fair_booth", schema = "dbo")
+public class JobFairBoothEntity {
+
     @Id
     @Column(name = "id", nullable = false, length = 36)
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "org.hibernate.id.UUIDGenerator")
     private String id;
-    @Column(name = "url", nullable = false, length = 2048)
-    private String url;
-    @Column(name = "item_name", nullable = false, length = 100)
-    private String itemName;
-    @Column(name = "company_booth_layout_id", nullable = false, length = 36)
-    private String companyBoothLayoutId;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "job_fair_id")
+    private JobFairEntity jobFair;
 
-
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "booth_id")
+    private LayoutBoothEntity booth;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        CompanyBoothLayoutVideoEntity that = (CompanyBoothLayoutVideoEntity) o;
+        JobFairBoothEntity that = (JobFairBoothEntity) o;
         return id != null && Objects.equals(id, that.getId());
     }
 

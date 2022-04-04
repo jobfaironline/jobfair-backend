@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
-import org.capstone.job_fair.models.entities.company.job.RegistrationJobPositionEntity;
+import org.capstone.job_fair.models.entities.company.job.BoothJobPositionEntity;
 import org.capstone.job_fair.models.enums.ApplicationStatus;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.GenericGenerator;
@@ -42,7 +42,7 @@ public class ApplicationEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "registration_job_position_id")
-    private RegistrationJobPositionEntity registrationJobPosition;
+    private BoothJobPositionEntity registrationJobPosition;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "authorizer_id")

@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.Hibernate;
-import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -29,7 +28,7 @@ public class LayoutEntity {
     @Column(name = "description", length = 500)
     private String description;
     @OneToMany(mappedBy = "layout", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
-    private Set<BoothEntity> booths;
+    private Set<LayoutBoothEntity> booths;
 
 
     @Override

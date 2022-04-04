@@ -7,10 +7,8 @@ import org.capstone.job_fair.models.dtos.company.CompanyRegistrationAdminDTO;
 import org.capstone.job_fair.models.dtos.company.CompanyRegistrationDTO;
 import org.capstone.job_fair.models.dtos.company.job.RegistrationJobPositionDTO;
 import org.capstone.job_fair.models.entities.company.CompanyEmployeeEntity;
-import org.capstone.job_fair.models.entities.company.CompanyRegistrationAdminEntity;
-import org.capstone.job_fair.models.entities.company.CompanyRegistrationEntity;
 import org.capstone.job_fair.models.entities.company.job.JobPositionEntity;
-import org.capstone.job_fair.models.entities.company.job.RegistrationJobPositionEntity;
+import org.capstone.job_fair.models.entities.company.job.BoothJobPositionEntity;
 import org.capstone.job_fair.models.entities.job_fair.JobFairEntity;
 import org.capstone.job_fair.models.statuses.CompanyRegistrationStatus;
 import org.capstone.job_fair.models.statuses.JobFairPlanStatus;
@@ -144,7 +142,7 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
             validateRegistrationJobPosition(registrationJobPositionDTO);
 
 
-            RegistrationJobPositionEntity entity = registrationJobPositionMapper.toEntity(registrationJobPositionDTO);
+            BoothJobPositionEntity entity = registrationJobPositionMapper.toEntity(registrationJobPositionDTO);
 
             //Job position information
             entity.setTitle(jobPositionEntity.getTitle());
@@ -204,7 +202,7 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
                 throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Job.COMPANY_MISMATCH));
             validateRegistrationJobPosition(registrationJobPositionDTO);
 
-            RegistrationJobPositionEntity entity = registrationJobPositionMapper.toEntity(registrationJobPositionDTO);
+            BoothJobPositionEntity entity = registrationJobPositionMapper.toEntity(registrationJobPositionDTO);
 
             //Job position information
             entity.setTitle(jobPositionEntity.getTitle());

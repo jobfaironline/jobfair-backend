@@ -7,7 +7,7 @@ import org.capstone.job_fair.constants.GLBConstant;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.models.dtos.job_fair.BoothDTO;
 import org.capstone.job_fair.models.dtos.job_fair.LayoutDTO;
-import org.capstone.job_fair.models.entities.job_fair.BoothEntity;
+import org.capstone.job_fair.models.entities.job_fair.LayoutBoothEntity;
 import org.capstone.job_fair.models.entities.job_fair.JobFairEntity;
 import org.capstone.job_fair.models.entities.job_fair.LayoutEntity;
 import org.capstone.job_fair.models.statuses.BoothStatus;
@@ -105,27 +105,27 @@ public class LayoutServiceImpl implements LayoutService {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Layout.INVALID_GLB_FILE));
         }
         layoutEntity.getBooths().removeAll(layoutEntity.getBooths());
-        Set<BoothEntity> boothEntities =
+        Set<LayoutBoothEntity> boothEntities =
                 gltfModel.getNodeModels().stream()
                         .filter(nodeModel -> nodeModel.getName().startsWith(GLBConstant.BOOTH_NAME_PREFIX))
                         .map(nodeModel -> {
-                            BoothEntity boothEntity = new BoothEntity();
-                            boothEntity.setId(UUID.randomUUID().toString());
-                            boothEntity.setName(nodeModel.getName().replaceAll("([._\\-])", ""));
-                            boothEntity.setLayout(layoutEntity);
-                            boothEntity.setStatus(BoothStatus.NORMAL);
-                            boothEntity.setPrice(0.0);
+                            LayoutBoothEntity layoutBoothEntity = new LayoutBoothEntity();
+                            layoutBoothEntity.setId(UUID.randomUUID().toString());
+                            layoutBoothEntity.setName(nodeModel.getName().replaceAll("([._\\-])", ""));
+                            layoutBoothEntity.setLayout(layoutEntity);
+                            layoutBoothEntity.setStatus(BoothStatus.NORMAL);
+                            layoutBoothEntity.setPrice(0.0);
 
                             //get position
                             //https://github.com/KhronosGroup/glTF-Tutorials/blob/master/gltfTutorial/gltfTutorial_004_ScenesNodes.md
                             //see the matrix section
                             float[] result = new float[16];
                             nodeModel.computeGlobalTransform(result);
-                            boothEntity.setX(result[12]);
-                            boothEntity.setY(result[13]);
-                            boothEntity.setZ(result[14]);
+                            layoutBoothEntity.setX(result[12]);
+                            layoutBoothEntity.setY(result[13]);
+                            layoutBoothEntity.setZ(result[14]);
 
-                            return boothEntity;
+                            return layoutBoothEntity;
                         })
                         .collect(Collectors.toSet());
         layoutEntity.getBooths().addAll(boothEntities);
