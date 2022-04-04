@@ -41,8 +41,8 @@ public class ApplicationEntity {
     private CvEntity cv;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "registration_job_position_id")
-    private BoothJobPositionEntity registrationJobPosition;
+    @JoinColumn(name = "booth_job_position_id")
+    private BoothJobPositionEntity boothJobPosition;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "authorizer_id")

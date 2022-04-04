@@ -10,8 +10,8 @@ import org.capstone.job_fair.controllers.payload.requests.job_fair.CancelJobFair
 import org.capstone.job_fair.controllers.payload.requests.job_fair.DraftJobFairPlanRequest;
 import org.capstone.job_fair.controllers.payload.requests.job_fair.UpdateJobFairPlanDraftRequest;
 import org.capstone.job_fair.controllers.payload.responses.*;
-import org.capstone.job_fair.models.dtos.company.CompanyBoothDTO;
-import org.capstone.job_fair.models.dtos.company.CompanyBoothLayoutDTO;
+import org.capstone.job_fair.models.dtos.company.JobFairBoothDTO;
+import org.capstone.job_fair.models.dtos.company.JobFairBoothLayoutDTO;
 import org.capstone.job_fair.models.dtos.job_fair.*;
 import org.capstone.job_fair.models.statuses.JobFairAdminStatus;
 import org.capstone.job_fair.models.statuses.JobFairAttendantStatus;
@@ -243,16 +243,16 @@ public class JobFairController {
         response.setJobFairLayoutUrl(layoutDTO.getUrl());
 
         layoutDTO.getBooths().forEach(boothDTO -> {
-            Optional<CompanyBoothDTO> companyBoothOpt = companyBoothService.getCompanyBoothByJobFairIdAndBoothId(jobFairId, boothDTO.getId());
+            Optional<JobFairBoothDTO> companyBoothOpt = companyBoothService.getCompanyBoothByJobFairIdAndBoothId(jobFairId, boothDTO.getId());
             if (companyBoothOpt.isPresent()) {
-                CompanyBoothDTO companyBooth = companyBoothOpt.get();
+                JobFairBoothDTO companyBooth = companyBoothOpt.get();
 
                 RenderJobFairParkResponse.BoothData boothData = new RenderJobFairParkResponse.BoothData();
                 boothData.setPosition(boothDTO.getX(), boothDTO.getY(), boothDTO.getZ());
                 boothData.setSlotName(boothDTO.getName());
                 boothData.setCompanyBoothId(companyBooth.getId());
 
-                Optional<CompanyBoothLayoutDTO> layoutDTOOptional = companyBoothLayoutService.getLatestVersionByCompanyBoothId(companyBooth.getId());
+                Optional<JobFairBoothLayoutDTO> layoutDTOOptional = companyBoothLayoutService.getLatestVersionByCompanyBoothId(companyBooth.getId());
                 if (layoutDTOOptional.isPresent()) {
                     boothData.setBoothUrl(layoutDTOOptional.get().getUrl());
                     boothData.setCompanyBoothLayoutVideos(layoutDTOOptional.get().getCompanyBoothLayoutVideos());

@@ -3,9 +3,7 @@ package org.capstone.job_fair.services.impl.company;
 import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import org.capstone.job_fair.constants.DataConstraint;
 import org.capstone.job_fair.constants.MessageConstant;
-import org.capstone.job_fair.models.dtos.company.CompanyRegistrationAdminDTO;
-import org.capstone.job_fair.models.dtos.company.CompanyRegistrationDTO;
-import org.capstone.job_fair.models.dtos.company.job.RegistrationJobPositionDTO;
+import org.capstone.job_fair.models.dtos.company.job.BoothJobPositionDTO;
 import org.capstone.job_fair.models.entities.company.CompanyEmployeeEntity;
 import org.capstone.job_fair.models.entities.company.job.JobPositionEntity;
 import org.capstone.job_fair.models.entities.company.job.BoothJobPositionEntity;
@@ -72,18 +70,18 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
         }
     }
 
-    private void validateUniqueJobPosition(List<RegistrationJobPositionDTO> jobPositions) {
-        jobPositions.sort(Comparator.comparing(RegistrationJobPositionDTO::getId));
+    private void validateUniqueJobPosition(List<BoothJobPositionDTO> jobPositions) {
+        jobPositions.sort(Comparator.comparing(BoothJobPositionDTO::getId));
         for (int i = 0; i <= jobPositions.size() - 2; i++) {
-            RegistrationJobPositionDTO currentDTO = jobPositions.get(i);
-            RegistrationJobPositionDTO nextDTO = jobPositions.get(i + 1);
+            BoothJobPositionDTO currentDTO = jobPositions.get(i);
+            BoothJobPositionDTO nextDTO = jobPositions.get(i + 1);
             if (currentDTO.getId().equals(nextDTO.getId())) {
                 throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyRegistration.UNIQUE_JOB_POSITION_ERROR));
             }
         }
     }
 
-    private void validateRegistrationJobPosition(RegistrationJobPositionDTO dto) {
+    private void validateRegistrationJobPosition(BoothJobPositionDTO dto) {
         if (dto.getMinSalary() != null && dto.getMaxSalary() != null && dto.getMinSalary() > dto.getMaxSalary()) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyRegistration.MIN_MAX_SALARY_ERROR));
         }
@@ -96,7 +94,7 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
 
     @Override
     @Transactional
-    public CompanyRegistrationDTO createDraftCompanyRegistration(CompanyRegistrationDTO companyRegistrationDTO, List<RegistrationJobPositionDTO> jobPositions) {
+    public CompanyRegistrationDTO createDraftCompanyRegistration(CompanyRegistrationDTO companyRegistrationDTO, List<BoothJobPositionDTO> jobPositions) {
         CompanyRegistrationDTO companyRegistrationDTOReturn = null;
 
         //Create registration job position entity
@@ -129,9 +127,9 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
         companyRegistrationEntity.setCreateDate(currentTime);
         companyRegistrationDTOReturn = companyRegistrationMapper.toDTO(companyRegistrationRepository.save(companyRegistrationEntity));
 
-        for (RegistrationJobPositionDTO registrationJobPositionDTO : jobPositions) {
+        for (BoothJobPositionDTO boothJobPositionDTO : jobPositions) {
             //Get job position entity by job position id in request
-            Optional<JobPositionEntity> jobPositionOpt = jobPositionRepository.findById(registrationJobPositionDTO.getId());
+            Optional<JobPositionEntity> jobPositionOpt = jobPositionRepository.findById(boothJobPositionDTO.getId());
             //Check job position existence
             if (!jobPositionOpt.isPresent())
                 throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Job.JOB_POSITION_NOT_FOUND));
@@ -139,10 +137,10 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
             //Check if job position entity is belonged to company
             if (!jobPositionEntity.getCompany().getId().equals(companyRegistrationDTO.getCompanyId()))
                 throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Job.COMPANY_MISMATCH));
-            validateRegistrationJobPosition(registrationJobPositionDTO);
+            validateRegistrationJobPosition(boothJobPositionDTO);
 
 
-            BoothJobPositionEntity entity = registrationJobPositionMapper.toEntity(registrationJobPositionDTO);
+            BoothJobPositionEntity entity = registrationJobPositionMapper.toEntity(boothJobPositionDTO);
 
             //Job position information
             entity.setTitle(jobPositionEntity.getTitle());
@@ -169,7 +167,7 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
 
     @Override
     @Transactional
-    public void updateDraftCompanyRegistration(CompanyRegistrationDTO companyRegistrationDTO, List<RegistrationJobPositionDTO> jobPositions) {
+    public void updateDraftCompanyRegistration(CompanyRegistrationDTO companyRegistrationDTO, List<BoothJobPositionDTO> jobPositions) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
 
@@ -190,9 +188,9 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
         companyRegistrationRepository.save(companyRegistrationEntity);
 
 
-        for (RegistrationJobPositionDTO registrationJobPositionDTO : jobPositions) {
+        for (BoothJobPositionDTO boothJobPositionDTO : jobPositions) {
             //Get job position entity by job position id in request
-            Optional<JobPositionEntity> jobPositionOpt = jobPositionRepository.findById(registrationJobPositionDTO.getId());
+            Optional<JobPositionEntity> jobPositionOpt = jobPositionRepository.findById(boothJobPositionDTO.getId());
             //Check job position existence
             if (!jobPositionOpt.isPresent())
                 throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Job.JOB_POSITION_NOT_FOUND));
@@ -200,9 +198,9 @@ public class CompanyRegistrationServiceImpl implements CompanyRegistrationServic
             //Check if job position entity is belonged to company
             if (!jobPositionEntity.getCompany().getId().equals(companyRegistrationDTO.getCompanyId()))
                 throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Job.COMPANY_MISMATCH));
-            validateRegistrationJobPosition(registrationJobPositionDTO);
+            validateRegistrationJobPosition(boothJobPositionDTO);
 
-            BoothJobPositionEntity entity = registrationJobPositionMapper.toEntity(registrationJobPositionDTO);
+            BoothJobPositionEntity entity = registrationJobPositionMapper.toEntity(boothJobPositionDTO);
 
             //Job position information
             entity.setTitle(jobPositionEntity.getTitle());

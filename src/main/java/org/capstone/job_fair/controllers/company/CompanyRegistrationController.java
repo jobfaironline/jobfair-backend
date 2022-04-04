@@ -10,9 +10,7 @@ import org.capstone.job_fair.controllers.payload.requests.company.StaffEvaluateC
 import org.capstone.job_fair.controllers.payload.requests.company.UpdateCompanyJobFairRegistrationRequest;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
-import org.capstone.job_fair.models.dtos.company.CompanyRegistrationAdminDTO;
-import org.capstone.job_fair.models.dtos.company.CompanyRegistrationDTO;
-import org.capstone.job_fair.models.dtos.company.job.RegistrationJobPositionDTO;
+import org.capstone.job_fair.models.dtos.company.job.BoothJobPositionDTO;
 import org.capstone.job_fair.models.statuses.CompanyRegistrationStatus;
 import org.capstone.job_fair.services.interfaces.company.CompanyEmployeeService;
 import org.capstone.job_fair.services.interfaces.company.CompanyRegistrationService;
@@ -48,16 +46,16 @@ public class CompanyRegistrationController {
             companyRegistrationDTO.setJobFairId(request.getJobFairId());
             companyRegistrationDTO.setDescription(request.getDescription());
 
-            List<RegistrationJobPositionDTO> jobPositionDTOS = new ArrayList<>();
+            List<BoothJobPositionDTO> jobPositionDTOS = new ArrayList<>();
             for (DraftCompanyJobFairRegistrationRequest.JobPosition jobPosition : request.getJobPositions()) {
-                RegistrationJobPositionDTO registrationJobPositionDTO = new RegistrationJobPositionDTO();
-                registrationJobPositionDTO.setId(jobPosition.getJobPositionId());
-                registrationJobPositionDTO.setMinSalary(jobPosition.getMinSalary());
-                registrationJobPositionDTO.setMaxSalary(jobPosition.getMaxSalary());
-                registrationJobPositionDTO.setNumOfPosition(jobPosition.getNumOfPosition());
-                registrationJobPositionDTO.setOriginJobPosition(jobPosition.getJobPositionId());
+                BoothJobPositionDTO boothJobPositionDTO = new BoothJobPositionDTO();
+                boothJobPositionDTO.setId(jobPosition.getJobPositionId());
+                boothJobPositionDTO.setMinSalary(jobPosition.getMinSalary());
+                boothJobPositionDTO.setMaxSalary(jobPosition.getMaxSalary());
+                boothJobPositionDTO.setNumOfPosition(jobPosition.getNumOfPosition());
+                boothJobPositionDTO.setOriginJobPosition(jobPosition.getJobPositionId());
 
-                jobPositionDTOS.add(registrationJobPositionDTO);
+                jobPositionDTOS.add(boothJobPositionDTO);
             }
             String companyRegistrationId = companyRegistrationService.createDraftCompanyRegistration(companyRegistrationDTO, jobPositionDTOS).getId();
             Map<String, String> response = new HashMap<>();
@@ -77,16 +75,16 @@ public class CompanyRegistrationController {
         companyRegistrationDTO.setId(request.getJobFairRegistrationId());
         companyRegistrationDTO.setDescription(request.getDescription());
 
-        List<RegistrationJobPositionDTO> jobPositionDTOS = new ArrayList<>();
+        List<BoothJobPositionDTO> jobPositionDTOS = new ArrayList<>();
         if (!request.getJobPositions().isEmpty()) {
             for (UpdateCompanyJobFairRegistrationRequest.JobPosition jobPosition : request.getJobPositions()) {
-                RegistrationJobPositionDTO registrationJobPositionDTO = new RegistrationJobPositionDTO();
-                registrationJobPositionDTO.setId(jobPosition.getJobPositionId());
-                registrationJobPositionDTO.setMinSalary(jobPosition.getMinSalary());
-                registrationJobPositionDTO.setMaxSalary(jobPosition.getMaxSalary());
-                registrationJobPositionDTO.setNumOfPosition(jobPosition.getNumOfPosition());
-                registrationJobPositionDTO.setOriginJobPosition(jobPosition.getJobPositionId());
-                jobPositionDTOS.add(registrationJobPositionDTO);
+                BoothJobPositionDTO boothJobPositionDTO = new BoothJobPositionDTO();
+                boothJobPositionDTO.setId(jobPosition.getJobPositionId());
+                boothJobPositionDTO.setMinSalary(jobPosition.getMinSalary());
+                boothJobPositionDTO.setMaxSalary(jobPosition.getMaxSalary());
+                boothJobPositionDTO.setNumOfPosition(jobPosition.getNumOfPosition());
+                boothJobPositionDTO.setOriginJobPosition(jobPosition.getJobPositionId());
+                jobPositionDTOS.add(boothJobPositionDTO);
             }
         }
 

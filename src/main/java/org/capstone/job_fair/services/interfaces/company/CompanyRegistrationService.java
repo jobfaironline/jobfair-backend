@@ -1,8 +1,6 @@
 package org.capstone.job_fair.services.interfaces.company;
 
-import org.capstone.job_fair.models.dtos.company.CompanyRegistrationAdminDTO;
-import org.capstone.job_fair.models.dtos.company.CompanyRegistrationDTO;
-import org.capstone.job_fair.models.dtos.company.job.RegistrationJobPositionDTO;
+import org.capstone.job_fair.models.dtos.company.job.BoothJobPositionDTO;
 import org.capstone.job_fair.models.statuses.CompanyRegistrationStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
@@ -11,9 +9,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CompanyRegistrationService {
-    CompanyRegistrationDTO createDraftCompanyRegistration(CompanyRegistrationDTO companyRegistrationDTO, List<RegistrationJobPositionDTO> jobPositions);
+    CompanyRegistrationDTO createDraftCompanyRegistration(CompanyRegistrationDTO companyRegistrationDTO, List<BoothJobPositionDTO> jobPositions);
 
-    void updateDraftCompanyRegistration(CompanyRegistrationDTO companyRegistrationDTO, List<RegistrationJobPositionDTO> jobPositions);
+    void updateDraftCompanyRegistration(CompanyRegistrationDTO companyRegistrationDTO, List<BoothJobPositionDTO> jobPositions);
 
     void submitCompanyRegistration(String registrationId);
 

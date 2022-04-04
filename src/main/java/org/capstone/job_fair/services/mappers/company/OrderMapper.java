@@ -1,6 +1,5 @@
 package org.capstone.job_fair.services.mappers.company;
 
-import org.capstone.job_fair.models.dtos.company.OrderDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 

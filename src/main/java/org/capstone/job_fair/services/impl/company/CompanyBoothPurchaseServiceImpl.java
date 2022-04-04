@@ -1,8 +1,7 @@
 package org.capstone.job_fair.services.impl.company;
 
 import org.capstone.job_fair.constants.MessageConstant;
-import org.capstone.job_fair.models.dtos.company.CompanyBoothDTO;
-import org.capstone.job_fair.models.dtos.company.OrderDTO;
+import org.capstone.job_fair.models.dtos.company.JobFairBoothDTO;
 import org.capstone.job_fair.models.entities.company.JobFairBoothEntity;
 import org.capstone.job_fair.models.entities.job_fair.LayoutBoothEntity;
 import org.capstone.job_fair.repositories.company.CompanyBoothRepository;
@@ -44,7 +43,7 @@ public class CompanyBoothPurchaseServiceImpl implements CompanyBoothPurchaseServ
 
     @Override
     @Transactional
-    public CompanyBoothDTO purchaseBooth(String companyRegistrationId, String boothId) {
+    public JobFairBoothDTO purchaseBooth(String companyRegistrationId, String boothId) {
         Optional<LayoutBoothEntity> boothOpt = boothRepository.findById(boothId);
         if (!boothOpt.isPresent()){
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Booth.NOT_FOUND));

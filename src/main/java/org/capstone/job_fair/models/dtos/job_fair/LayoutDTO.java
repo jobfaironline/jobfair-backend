@@ -16,5 +16,5 @@ public class LayoutDTO implements Serializable {
     private String name;
     private String url;
     private String description;
-    private Set<BoothDTO> booths;
+    private Set<LayoutBoothDTO> booths;
 }

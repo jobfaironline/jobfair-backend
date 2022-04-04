@@ -1,8 +1,5 @@
 package org.capstone.job_fair.services.interfaces.job_fair;
 
-import org.capstone.job_fair.models.dtos.job_fair.AdminJobFairStatusDTO;
-import org.capstone.job_fair.models.dtos.job_fair.AttendantJobFairStatusDTO;
-import org.capstone.job_fair.models.dtos.job_fair.CompanyJobFairStatusDTO;
 import org.capstone.job_fair.models.dtos.job_fair.JobFairDTO;
 import org.capstone.job_fair.models.statuses.JobFairAdminStatus;
 import org.capstone.job_fair.models.statuses.JobFairAttendantStatus;

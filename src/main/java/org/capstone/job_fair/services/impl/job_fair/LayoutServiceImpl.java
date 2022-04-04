@@ -5,7 +5,7 @@ import lombok.SneakyThrows;
 import org.capstone.job_fair.constants.AWSConstant;
 import org.capstone.job_fair.constants.GLBConstant;
 import org.capstone.job_fair.constants.MessageConstant;
-import org.capstone.job_fair.models.dtos.job_fair.BoothDTO;
+import org.capstone.job_fair.models.dtos.job_fair.LayoutBoothDTO;
 import org.capstone.job_fair.models.dtos.job_fair.LayoutDTO;
 import org.capstone.job_fair.models.entities.job_fair.LayoutBoothEntity;
 import org.capstone.job_fair.models.entities.job_fair.JobFairEntity;
@@ -154,9 +154,9 @@ public class LayoutServiceImpl implements LayoutService {
         if (!layoutOpt.isPresent()) return Optional.empty();
         //check for which booth is available
         LayoutDTO layoutDTO = layoutMapper.toDTO(layoutOpt.get());
-        Set<BoothDTO> newBooths = layoutDTO.getBooths()
+        Set<LayoutBoothDTO> newBooths = layoutDTO.getBooths()
                 .stream()
-                .filter(boothDTO -> !companyBoothRepository.getCompanyBoothByJobFairIdAndBoothId(jobFairId, boothDTO.getId()).isPresent())
+                .filter(layoutBoothDTO -> !companyBoothRepository.getCompanyBoothByJobFairIdAndBoothId(jobFairId, layoutBoothDTO.getId()).isPresent())
                 .collect(Collectors.toSet());
         layoutDTO.setBooths(newBooths);
         return Optional.of(layoutDTO);

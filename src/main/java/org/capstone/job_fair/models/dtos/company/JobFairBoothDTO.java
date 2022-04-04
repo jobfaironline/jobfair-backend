@@ -1,7 +1,8 @@
 package org.capstone.job_fair.models.dtos.company;
 
 import lombok.*;
-import org.capstone.job_fair.models.dtos.job_fair.BoothDTO;
+import org.capstone.job_fair.models.dtos.job_fair.JobFairDTO;
+import org.capstone.job_fair.models.dtos.job_fair.LayoutBoothDTO;
 
 import java.io.Serializable;
 
@@ -10,10 +11,9 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Builder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class CompanyBoothDTO implements Serializable {
+public class JobFairBoothDTO implements Serializable {
     @EqualsAndHashCode.Include
     private String id;
-    private Double price;
-    private OrderDTO order;
-    private BoothDTO booth;
+    private JobFairDTO jobFair;
+    private LayoutBoothDTO layoutBoothDTO;
 }

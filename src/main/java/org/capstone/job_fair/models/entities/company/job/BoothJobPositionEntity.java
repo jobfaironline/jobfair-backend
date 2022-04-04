@@ -3,6 +3,7 @@ package org.capstone.job_fair.models.entities.company.job;
 import lombok.*;
 import org.capstone.job_fair.models.entities.attendant.JobLevelEntity;
 import org.capstone.job_fair.models.entities.attendant.LanguageEntity;
+import org.capstone.job_fair.models.entities.company.JobFairBoothEntity;
 import org.capstone.job_fair.models.entities.company.SkillTagEntity;
 import org.capstone.job_fair.models.entities.company.SubCategoryEntity;
 import org.hibernate.Hibernate;
@@ -77,6 +78,10 @@ public class BoothJobPositionEntity {
 
     @Column(name="origin_job_position_id")
     private String originJobPosition;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "job_fair_booth_id")
+    private JobFairBoothEntity jobFairBooth;
 
     @Override
     public boolean equals(Object o) {

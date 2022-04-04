@@ -23,8 +23,8 @@ public interface ApplicationRepository extends JpaRepository<ApplicationEntity, 
             "where a.cv.attendant.accountId = :accountId and " +
             "a.createDate between :fromDate and :toDate and " +
             "a.status in :statusList and " +
-            "a.registrationJobPosition.title like concat('%',:jobPositionName,'%') and " +
-            "a.registrationJobPosition.companyRegistration.jobFairEntity.name like concat('%',:jobFairName,'%')")
+            "a.boothJobPosition.title like concat('%',:jobPositionName,'%') and " +
+            "a.boothJobPosition.companyRegistration.jobFairEntity.name like concat('%',:jobFairName,'%')")
     Page<ApplicationEntity> findAllApplicationOfAttendantByCriteria(@Param("accountId") String acocuntId,
                                                                     @Param("fromDate") Long fromDate,
                                                                     @Param("toDate") Long toDate,
@@ -34,24 +34,24 @@ public interface ApplicationRepository extends JpaRepository<ApplicationEntity, 
                                                                     Pageable pageable);
 
     @Query("select a from ApplicationEntity a " +
-            "where a.registrationJobPosition.companyRegistration.companyId = :companyId " +
-            "and a.registrationJobPosition.id = :jobPositionId and a.status in :statusList")
+            "where a.boothJobPosition.companyRegistration.companyId = :companyId " +
+            "and a.boothJobPosition.id = :jobPositionId and a.status in :statusList")
     Page<ApplicationEntity> findAllApplicationOfCompanyByJobPositionIdAndStatusIn(@Param("companyId") String companyId,
                                                                                   @Param("jobPositionId") String jobPositionId,
                                                                                   @Param("statusList") List<ApplicationStatus> applicationStatusList,
                                                                                   Pageable pageable);
 
     @Query("select a from ApplicationEntity a " +
-            "where a.registrationJobPosition.companyRegistration.companyId = :companyId " +
-            "and a.registrationJobPosition.companyRegistration.jobFairId = :jobFairId and a.status in :statusList")
+            "where a.boothJobPosition.companyRegistration.companyId = :companyId " +
+            "and a.boothJobPosition.companyRegistration.jobFairId = :jobFairId and a.status in :statusList")
     Page<ApplicationEntity> findAllApplicationOfCompanyByJobFairIdAndStatusIn(@Param("companyId") String companyId,
                                                                               @Param("jobFairId") String jobFairId,
                                                                               @Param("statusList") List<ApplicationStatus> applicationStatusList,
                                                                               Pageable pageable);
 
     @Query("select a from ApplicationEntity a " +
-            "where a.registrationJobPosition.companyRegistration.companyId = :companyId and a.registrationJobPosition.title like concat('%', :jobTitle, '%') " +
-            "and a.registrationJobPosition.companyRegistration.jobFairEntity.name like concat('%', :jobFairName, '%') and a.status in :statusList")
+            "where a.boothJobPosition.companyRegistration.companyId = :companyId and a.boothJobPosition.title like concat('%', :jobTitle, '%') " +
+            "and a.boothJobPosition.companyRegistration.jobFairEntity.name like concat('%', :jobFairName, '%') and a.status in :statusList")
     Page<ApplicationEntity> findAllApplicationOfCompanyByJobPositionTitleLikeAndJobFairNameLikeAndStatusIn(@Param("companyId") String companyId,
                                                                                                            @Param("jobTitle") String jobTitle,
                                                                                                            @Param("jobFairName") String jobFairName,

@@ -2,7 +2,6 @@ package org.capstone.job_fair.services.mappers.job_fair;
 
 
 import org.capstone.job_fair.controllers.payload.responses.JobFairForAdminResponse;
-import org.capstone.job_fair.models.dtos.job_fair.AdminJobFairStatusDTO;
 import org.capstone.job_fair.models.dtos.job_fair.JobFairDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

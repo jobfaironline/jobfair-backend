@@ -25,8 +25,8 @@ public class JobFairBoothLayoutEntity {
     @Column(name = "create_date", nullable = false)
     private Long createDate;
     @ManyToOne
-    @JoinColumn(name = "company_booth_id")
-    private JobFairBoothEntity companyBooth;
+    @JoinColumn(name = "job_fair_booth_id")
+    private JobFairBoothEntity jobFairBooth;
     @Column(name = "url", nullable = false)
     private String url;
 

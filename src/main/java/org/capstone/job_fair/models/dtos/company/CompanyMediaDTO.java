@@ -8,13 +8,13 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class MediaDTO {
+public class CompanyMediaDTO {
     @EqualsAndHashCode.Include
     private String id;
     private String url;
-    private CompanyDTO companyDTO;
+    private CompanyDTO company;
 
-    public MediaDTO(String url) {
+    public CompanyMediaDTO(String url) {
         this.url = url;
     }
 }

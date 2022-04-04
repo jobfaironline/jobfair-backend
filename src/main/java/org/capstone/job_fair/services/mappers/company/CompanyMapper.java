@@ -113,9 +113,9 @@ public abstract class CompanyMapper {
 
 
     @Named("fromMediaUrlsOfCreateCompanyRequest")
-    public List<MediaDTO> fromMediaUrlsOfCreateCompanyRequest(List<String> mediaUrls) {
+    public List<CompanyMediaDTO> fromMediaUrlsOfCreateCompanyRequest(List<String> mediaUrls) {
         if (mediaUrls == null) return null;
-        return mediaUrls.stream().map(MediaDTO::new).collect(Collectors.toList());
+        return mediaUrls.stream().map(CompanyMediaDTO::new).collect(Collectors.toList());
     }
 
     @Named("fromBenefitsOfCreateCompanyRequest")
@@ -147,7 +147,7 @@ public abstract class CompanyMapper {
     }
 
     @Named("fromMediasOfCompanyEntity")
-    public List<MediaDTO> fromMediasOfCompanyEntity(List<CompanyMediaEntity> entities) {
+    public List<CompanyMediaDTO> fromMediasOfCompanyEntity(List<CompanyMediaEntity> entities) {
         if (entities == null) return null;
         return entities.stream().map(entity -> mediaMapper.toDTO(entity)).collect(Collectors.toList());
     }
@@ -171,7 +171,7 @@ public abstract class CompanyMapper {
     }
 
     @Named("fromMediaDTOsOfCompanyDTO")
-    public List<CompanyMediaEntity> fromMediaDTOsOfCompanyDTO(List<MediaDTO> dtos) {
+    public List<CompanyMediaEntity> fromMediaDTOsOfCompanyDTO(List<CompanyMediaDTO> dtos) {
         if (dtos == null) return null;
         return dtos.stream().map(dto -> mediaMapper.toEntity(dto)).collect(Collectors.toList());
     }

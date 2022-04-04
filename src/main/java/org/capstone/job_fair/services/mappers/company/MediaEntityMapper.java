@@ -1,6 +1,6 @@
 package org.capstone.job_fair.services.mappers.company;
 
-import org.capstone.job_fair.models.dtos.company.MediaDTO;
+import org.capstone.job_fair.models.dtos.company.CompanyMediaDTO;
 import org.capstone.job_fair.models.entities.company.CompanyMediaEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -13,8 +13,8 @@ public abstract class MediaEntityMapper {
 
     @Mapping(source = "companyDTO", target = "company")
 
-    public abstract CompanyMediaEntity toEntity(MediaDTO dto);
+    public abstract CompanyMediaEntity toEntity(CompanyMediaDTO dto);
 
     @Mapping(source = "company", target = "companyDTO")
-    public abstract MediaDTO toDTO(CompanyMediaEntity entity);
+    public abstract CompanyMediaDTO toDTO(CompanyMediaEntity entity);
 }

@@ -23,8 +23,8 @@ public class JobFairBoothLayoutVideoEntity {
     private String url;
     @Column(name = "item_name", nullable = false, length = 100)
     private String itemName;
-    @Column(name = "company_booth_layout_id", nullable = false, length = 36)
-    private String companyBoothLayoutId;
+    @Column(name = "job_fair_booth_layout_id", nullable = false, length = 36)
+    private String jobFairBoothLayoutId;
 
 
 
