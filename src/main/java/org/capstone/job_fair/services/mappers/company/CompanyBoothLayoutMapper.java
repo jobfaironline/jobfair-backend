@@ -1,8 +1,8 @@
 package org.capstone.job_fair.services.mappers.company;
 
 
-import org.capstone.job_fair.models.dtos.company.CompanyBoothLayoutDTO;
-import org.capstone.job_fair.models.entities.company.CompanyBoothLayoutEntity;
+import org.capstone.job_fair.models.dtos.company.JobFairBoothLayoutDTO;
+import org.capstone.job_fair.models.entities.company.JobFairBoothLayoutEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
@@ -11,8 +11,8 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
         uses = {CompanyBoothMapper.class, CompanyBoothLayoutVideoMapper.class}
 )
 public abstract class CompanyBoothLayoutMapper {
-    public abstract CompanyBoothLayoutEntity toEntity(CompanyBoothLayoutDTO dto);
+    public abstract JobFairBoothLayoutEntity toEntity(JobFairBoothLayoutDTO dto);
 
-    public abstract CompanyBoothLayoutDTO toDTO(CompanyBoothLayoutEntity entity);
+    public abstract JobFairBoothLayoutDTO toDTO(JobFairBoothLayoutEntity entity);
 
 }

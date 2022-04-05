@@ -2,7 +2,7 @@ package org.capstone.job_fair.controllers.company;
 
 import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import org.capstone.job_fair.constants.ApiEndPoint;
-import org.capstone.job_fair.models.dtos.company.CompanyBoothDTO;
+import org.capstone.job_fair.models.dtos.company.JobFairBoothDTO;
 import org.capstone.job_fair.services.interfaces.company.CompanyBoothService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -28,16 +28,16 @@ public class CompanyBoothController {
             @RequestParam(value = "jobFairId") String jobFairId
     ) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        List<CompanyBoothDTO> companyBoothDTOList = boothService.getCompanyBoothByJobFairIdAndCompanyId(jobFairId, userDetails.getCompanyId());
-        if (companyBoothDTOList.isEmpty()) {
+        List<JobFairBoothDTO> jobFairBoothDTOList = boothService.getCompanyBoothByJobFairIdAndCompanyId(jobFairId, userDetails.getCompanyId());
+        if (jobFairBoothDTOList.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
-        return ResponseEntity.ok(companyBoothDTOList);
+        return ResponseEntity.ok(jobFairBoothDTOList);
     }
 
     @GetMapping(ApiEndPoint.CompanyBooth.COMPANY_BOOTH + "/{companyBoothId}")
     public ResponseEntity<?> getCompanyBoothById(@PathVariable("companyBoothId") String companyBoothId) {
-        Optional<CompanyBoothDTO> result = boothService.getById(companyBoothId);
+        Optional<JobFairBoothDTO> result = boothService.getById(companyBoothId);
         if (!result.isPresent()) {
             return ResponseEntity.notFound().build();
         }

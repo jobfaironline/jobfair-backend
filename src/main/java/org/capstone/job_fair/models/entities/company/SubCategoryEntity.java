@@ -1,6 +1,9 @@
 package org.capstone.job_fair.models.entities.company;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
@@ -9,7 +12,6 @@ import java.util.Objects;
 @Entity
 @Setter
 @Getter
-@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "sub_category", schema = "dbo")

@@ -34,19 +34,19 @@ public abstract class CompanyMapper {
 
     @Mapping(target = "subCategories", source = "subCategoryDTOs", qualifiedByName = "fromSubCategoryDTOsOfCompanyDTO")
     @Mapping(target = "companyBenefits", source = "companyBenefitDTOS", qualifiedByName = "fromCompanyBenefitsOfCreateCompanyRequest")
-    @Mapping(target = "medias", source = "mediaDTOS", qualifiedByName = "fromMediaDTOsOfCompanyDTO")
+    @Mapping(target = "medias", source = "companyMediaDTOS", qualifiedByName = "fromMediaDTOsOfCompanyDTO")
     @Mapping(target = "companySize", source = "sizeId", qualifiedByName = "fromSizeIdOfCompanyDTO")
     public abstract CompanyEntity toEntity(CompanyDTO dto);
 
 
     @Mapping(target = "subCategoryDTOs", source = "subCategories", qualifiedByName = "fromSubCategoriesOfCompanyEntity")
     @Mapping(target = "companyBenefitDTOS", source = "companyBenefits", qualifiedByName = "fromCompanyBenefitsOfCompanyEntity")
-    @Mapping(target = "mediaDTOS", source = "medias", qualifiedByName = "fromMediasOfCompanyEntity")
+    @Mapping(target = "companyMediaDTOS", source = "medias", qualifiedByName = "fromMediasOfCompanyEntity")
     @Mapping(target = "sizeId", source = "companySize", qualifiedByName = "fromCompanySizeOfCompanyEntity")
     public abstract CompanyDTO toDTO(CompanyEntity entity);
 
     @Mapping(source = "url", target = "websiteUrl")
-    @Mapping(source = "mediaUrls", target = "mediaDTOS", qualifiedByName = "fromMediaUrlsOfCreateCompanyRequest")
+    @Mapping(source = "mediaUrls", target = "companyMediaDTOS", qualifiedByName = "fromMediaUrlsOfCreateCompanyRequest")
     @Mapping(source = "benefits", target = "companyBenefitDTOS", qualifiedByName = "fromBenefitsOfCreateCompanyRequest")
     @Mapping(source = "subCategoriesIds", target = "subCategoryDTOs", qualifiedByName = "fromSubCategoriesIdsOfCreateCompanyRequest")
     @Mapping(source = "taxId", target = "taxId")
@@ -57,7 +57,7 @@ public abstract class CompanyMapper {
     public abstract CompanyDTO toDTO(CreateCompanyRequest request);
 
     @Mapping(source = "url", target = "websiteUrl")
-    @Mapping(source = "mediaUrls", target = "mediaDTOS", qualifiedByName = "fromMediaUrlsOfCreateCompanyRequest")
+    @Mapping(source = "mediaUrls", target = "companyMediaDTOS", qualifiedByName = "fromMediaUrlsOfCreateCompanyRequest")
     @Mapping(source = "benefits", target = "companyBenefitDTOS", qualifiedByName = "fromBenefitsOfUpdateCompanyRequest")
     @Mapping(source = "subCategoriesIds", target = "subCategoryDTOs", qualifiedByName = "fromSubCategoriesIdsOfCreateCompanyRequest")
     @Mapping(source = "taxId", target = "taxId")
@@ -67,7 +67,7 @@ public abstract class CompanyMapper {
 
     @Mapping(target = "subCategories", source = "subCategoryDTOs", qualifiedByName = "updateSubCategoriesOfCompanyEntity")
     @Mapping(target = "companyBenefits", source = "companyBenefitDTOS", qualifiedByName = "updateCompanyBenefitsOfCompanyEntity")
-    @Mapping(target = "medias", source = "mediaDTOS", qualifiedByName = "fromMediaDTOsOfCompanyDTO")
+    @Mapping(target = "medias", source = "companyMediaDTOS", qualifiedByName = "fromMediaDTOsOfCompanyDTO")
     @Mapping(target = "companySize", source = "sizeId", qualifiedByName = "fromSizeIdOfCompanyDTO")
     public abstract void updateCompanyEntity(CompanyDTO dto, @MappingTarget CompanyEntity entity);
 
@@ -113,9 +113,9 @@ public abstract class CompanyMapper {
 
 
     @Named("fromMediaUrlsOfCreateCompanyRequest")
-    public List<MediaDTO> fromMediaUrlsOfCreateCompanyRequest(List<String> mediaUrls) {
+    public List<CompanyMediaDTO> fromMediaUrlsOfCreateCompanyRequest(List<String> mediaUrls) {
         if (mediaUrls == null) return null;
-        return mediaUrls.stream().map(MediaDTO::new).collect(Collectors.toList());
+        return mediaUrls.stream().map(CompanyMediaDTO::new).collect(Collectors.toList());
     }
 
     @Named("fromBenefitsOfCreateCompanyRequest")
@@ -147,7 +147,7 @@ public abstract class CompanyMapper {
     }
 
     @Named("fromMediasOfCompanyEntity")
-    public List<MediaDTO> fromMediasOfCompanyEntity(List<MediaEntity> entities) {
+    public List<CompanyMediaDTO> fromMediasOfCompanyEntity(List<CompanyMediaEntity> entities) {
         if (entities == null) return null;
         return entities.stream().map(entity -> mediaMapper.toDTO(entity)).collect(Collectors.toList());
     }
@@ -171,7 +171,7 @@ public abstract class CompanyMapper {
     }
 
     @Named("fromMediaDTOsOfCompanyDTO")
-    public List<MediaEntity> fromMediaDTOsOfCompanyDTO(List<MediaDTO> dtos) {
+    public List<CompanyMediaEntity> fromMediaDTOsOfCompanyDTO(List<CompanyMediaDTO> dtos) {
         if (dtos == null) return null;
         return dtos.stream().map(dto -> mediaMapper.toEntity(dto)).collect(Collectors.toList());
     }

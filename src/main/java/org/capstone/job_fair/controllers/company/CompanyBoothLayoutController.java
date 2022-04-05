@@ -6,9 +6,9 @@ import org.capstone.job_fair.constants.AWSConstant;
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
-import org.capstone.job_fair.models.dtos.company.CompanyBoothDTO;
-import org.capstone.job_fair.models.dtos.company.CompanyBoothLayoutDTO;
-import org.capstone.job_fair.models.dtos.company.CompanyBoothLayoutVideoDTO;
+import org.capstone.job_fair.models.dtos.company.JobFairBoothDTO;
+import org.capstone.job_fair.models.dtos.company.JobFairBoothLayoutDTO;
+import org.capstone.job_fair.models.dtos.company.JobFairBoothLayoutVideoDTO;
 import org.capstone.job_fair.services.interfaces.company.CompanyBoothLayoutService;
 import org.capstone.job_fair.services.interfaces.company.CompanyService;
 import org.capstone.job_fair.services.interfaces.util.FileStorageService;
@@ -58,7 +58,7 @@ public class CompanyBoothLayoutController {
             }
         }
 
-        List<CompanyBoothLayoutDTO> result = companyBoothLayoutService.getLayoutsByCompanyBoothId(companyBoothId);
+        List<JobFairBoothLayoutDTO> result = companyBoothLayoutService.getLayoutsByCompanyBoothId(companyBoothId);
         if (result.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
@@ -67,14 +67,14 @@ public class CompanyBoothLayoutController {
 
     @GetMapping(ApiEndPoint.CompanyBoothLayout.LATEST_VERSION)
     public ResponseEntity<?> getLatestVersionByCompanyBoothID(@RequestParam("companyBoothId") String companyBoothId) {
-        Optional<CompanyBoothLayoutDTO> result = companyBoothLayoutService.getLatestVersionByCompanyBoothId(companyBoothId);
+        Optional<JobFairBoothLayoutDTO> result = companyBoothLayoutService.getLatestVersionByCompanyBoothId(companyBoothId);
         return result.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping(ApiEndPoint.CompanyBoothLayout.COMPANY_BOOTH_LAYOUT + "/{id}")
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE)")
     public ResponseEntity<?> getById(@PathVariable("id") String id) {
-        Optional<CompanyBoothLayoutDTO> result = companyBoothLayoutService.getById(id);
+        Optional<JobFairBoothLayoutDTO> result = companyBoothLayoutService.getById(id);
         return result.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
@@ -93,10 +93,10 @@ public class CompanyBoothLayoutController {
             }
         }
 
-        CompanyBoothLayoutDTO dto = new CompanyBoothLayoutDTO();
-        CompanyBoothDTO companyBoothDTO = new CompanyBoothDTO();
-        companyBoothDTO.setId(companyBoothId);
-        dto.setCompanyBooth(companyBoothDTO);
+        JobFairBoothLayoutDTO dto = new JobFairBoothLayoutDTO();
+        JobFairBoothDTO jobFairBoothDTO = new JobFairBoothDTO();
+        jobFairBoothDTO.setId(companyBoothId);
+        dto.setJobFairBooth(jobFairBoothDTO);
         dto = companyBoothLayoutService.createNew(dto, file);
 
         try {
@@ -115,7 +115,7 @@ public class CompanyBoothLayoutController {
     public ResponseEntity<?> createNewVideoForLayoutWithFile(@RequestParam("layoutId") String layoutId,
                                                      @RequestParam("itemName") String itemName,
                                                      @RequestParam("file") MultipartFile file ){
-        CompanyBoothLayoutVideoDTO dto = CompanyBoothLayoutVideoDTO.builder().itemName(itemName).companyBoothLayoutId(layoutId).build();
+        JobFairBoothLayoutVideoDTO dto = JobFairBoothLayoutVideoDTO.builder().itemName(itemName).jobFairBoothLayoutId(layoutId).build();
         dto = companyBoothLayoutService.createNewVideoWithFile(dto);
         try {
             fileStorageService.store(file.getBytes(), AWSConstant.COMPANY_BOOTH_LAYOUT_VIDEO_FOLDER + "/" + dto.getId()).exceptionally(throwable -> {
@@ -132,9 +132,9 @@ public class CompanyBoothLayoutController {
     public ResponseEntity<?> createNewVideoForLayoutWithUrl(@RequestParam("layoutId") String layoutId,
                                                             @RequestParam("itemName") String itemName,
                                                             @RequestParam("url") String url){
-        CompanyBoothLayoutVideoDTO dto = CompanyBoothLayoutVideoDTO.builder()
+        JobFairBoothLayoutVideoDTO dto = JobFairBoothLayoutVideoDTO.builder()
                 .itemName(itemName)
-                .companyBoothLayoutId(layoutId)
+                .jobFairBoothLayoutId(layoutId)
                 .url(url)
                 .build();
 

@@ -18,7 +18,6 @@ public interface JobFairRepository extends JpaRepository<JobFairEntity, String> 
 
     List<JobFairEntity> findAllByStatus(JobFairPlanStatus status);
 
-    List<JobFairEntity> findAllByStatusAndCompanyRegisterStartTimeGreaterThanAndCompanyRegisterEndTimeLessThan(JobFairPlanStatus status, Long startTime, Long endTime);
 
     Page<JobFairEntity> findAll(Pageable pageable);
 
@@ -29,9 +28,6 @@ public interface JobFairRepository extends JpaRepository<JobFairEntity, String> 
 
     Page<JobFairEntity> findAllByStatusNot(JobFairPlanStatus status, Pageable pageable);
 
-    Page<JobFairEntity> findAllByCreatorIdAndStatus(String creatorId, JobFairPlanStatus status, Pageable pageable);
-
-    Page<JobFairEntity> findAllByCreatorId(String creatorId, Pageable pageable);
 
     List<JobFairEntity> findAllByNameContains(String name);
 

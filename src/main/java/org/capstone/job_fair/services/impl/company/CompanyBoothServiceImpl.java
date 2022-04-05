@@ -1,7 +1,7 @@
 package org.capstone.job_fair.services.impl.company;
 
 import org.capstone.job_fair.constants.MessageConstant;
-import org.capstone.job_fair.models.dtos.company.CompanyBoothDTO;
+import org.capstone.job_fair.models.dtos.company.JobFairBoothDTO;
 import org.capstone.job_fair.models.entities.job_fair.JobFairEntity;
 import org.capstone.job_fair.repositories.company.CompanyBoothRepository;
 import org.capstone.job_fair.repositories.job_fair.JobFairRepository;
@@ -29,12 +29,12 @@ public class CompanyBoothServiceImpl implements CompanyBoothService {
     private CompanyBoothMapper companyBoothMapper;
 
     @Override
-    public Optional<CompanyBoothDTO> getCompanyBoothByJobFairIdAndBoothId(String jobFairId, String boothId) {
+    public Optional<JobFairBoothDTO> getCompanyBoothByJobFairIdAndBoothId(String jobFairId, String boothId) {
         return companyBoothRepository.getCompanyBoothByJobFairIdAndBoothId(jobFairId, boothId).map(companyBoothMapper::toDTO);
     }
 
     @Override
-    public List<CompanyBoothDTO> getCompanyBoothByJobFairIdAndCompanyId(String jobFairId, String companyId) {
+    public List<JobFairBoothDTO> getCompanyBoothByJobFairIdAndCompanyId(String jobFairId, String companyId) {
         Optional<JobFairEntity> jobFairOpt = jobFairRepository.findById(jobFairId);
         if (!jobFairOpt.isPresent()){
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.JOB_FAIR_NOT_FOUND));
@@ -46,7 +46,7 @@ public class CompanyBoothServiceImpl implements CompanyBoothService {
     }
 
     @Override
-    public Optional<CompanyBoothDTO> getById(String boothId) {
+    public Optional<JobFairBoothDTO> getById(String boothId) {
         return companyBoothRepository.findById(boothId).map(companyBoothMapper::toDTO);
     }
 }

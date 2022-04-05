@@ -26,7 +26,7 @@ public class CompanyDTO {
     private Integer sizeId;
     private Set<SubCategoryDTO> subCategoryDTOs;
     private Set<CompanyBenefitDTO> companyBenefitDTOS;
-    private List<MediaDTO> mediaDTOS;
+    private List<CompanyMediaDTO> companyMediaDTOS;
     private String companyLogoURL;
     private String companyDescription;
 

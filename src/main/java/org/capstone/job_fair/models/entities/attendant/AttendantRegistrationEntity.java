@@ -1,10 +1,9 @@
 package org.capstone.job_fair.models.entities.attendant;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
-import org.capstone.job_fair.models.entities.account.GenderEntity;
+import lombok.Setter;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -12,10 +11,10 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@ToString
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
 @Table(name = "attendant_registration", schema = "dbo")
 public class AttendantRegistrationEntity {
 
@@ -36,7 +35,7 @@ public class AttendantRegistrationEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        GenderEntity that = (GenderEntity) o;
+        AttendantRegistrationEntity that = (AttendantRegistrationEntity) o;
         return id != null && Objects.equals(id, that.getId());
     }
 

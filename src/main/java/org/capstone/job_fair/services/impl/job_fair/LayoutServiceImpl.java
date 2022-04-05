@@ -5,9 +5,9 @@ import lombok.SneakyThrows;
 import org.capstone.job_fair.constants.AWSConstant;
 import org.capstone.job_fair.constants.GLBConstant;
 import org.capstone.job_fair.constants.MessageConstant;
-import org.capstone.job_fair.models.dtos.job_fair.BoothDTO;
+import org.capstone.job_fair.models.dtos.job_fair.LayoutBoothDTO;
 import org.capstone.job_fair.models.dtos.job_fair.LayoutDTO;
-import org.capstone.job_fair.models.entities.job_fair.BoothEntity;
+import org.capstone.job_fair.models.entities.job_fair.LayoutBoothEntity;
 import org.capstone.job_fair.models.entities.job_fair.JobFairEntity;
 import org.capstone.job_fair.models.entities.job_fair.LayoutEntity;
 import org.capstone.job_fair.models.statuses.BoothStatus;
@@ -105,27 +105,26 @@ public class LayoutServiceImpl implements LayoutService {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Layout.INVALID_GLB_FILE));
         }
         layoutEntity.getBooths().removeAll(layoutEntity.getBooths());
-        Set<BoothEntity> boothEntities =
+        Set<LayoutBoothEntity> boothEntities =
                 gltfModel.getNodeModels().stream()
                         .filter(nodeModel -> nodeModel.getName().startsWith(GLBConstant.BOOTH_NAME_PREFIX))
                         .map(nodeModel -> {
-                            BoothEntity boothEntity = new BoothEntity();
-                            boothEntity.setId(UUID.randomUUID().toString());
-                            boothEntity.setName(nodeModel.getName().replaceAll("([._\\-])", ""));
-                            boothEntity.setLayout(layoutEntity);
-                            boothEntity.setStatus(BoothStatus.NORMAL);
-                            boothEntity.setPrice(0.0);
+                            LayoutBoothEntity layoutBoothEntity = new LayoutBoothEntity();
+                            layoutBoothEntity.setId(UUID.randomUUID().toString());
+                            layoutBoothEntity.setName(nodeModel.getName().replaceAll("([._\\-])", ""));
+                            layoutBoothEntity.setLayout(layoutEntity);
+                            layoutBoothEntity.setStatus(BoothStatus.NORMAL);
 
                             //get position
                             //https://github.com/KhronosGroup/glTF-Tutorials/blob/master/gltfTutorial/gltfTutorial_004_ScenesNodes.md
                             //see the matrix section
                             float[] result = new float[16];
                             nodeModel.computeGlobalTransform(result);
-                            boothEntity.setX(result[12]);
-                            boothEntity.setY(result[13]);
-                            boothEntity.setZ(result[14]);
+                            layoutBoothEntity.setX(result[12]);
+                            layoutBoothEntity.setY(result[13]);
+                            layoutBoothEntity.setZ(result[14]);
 
-                            return boothEntity;
+                            return layoutBoothEntity;
                         })
                         .collect(Collectors.toSet());
         layoutEntity.getBooths().addAll(boothEntities);
@@ -140,7 +139,7 @@ public class LayoutServiceImpl implements LayoutService {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.JOB_FAIR_NOT_FOUND));
         }
         JobFairEntity jobFairEntity = jobFairEntityOpt.get();
-        return layoutRepository.findById(jobFairEntity.getLayoutId()).map(layoutMapper::toDTO);
+        return layoutRepository.findById(jobFairEntity.getJobFairBoothList().get(0).getBooth().getLayout().getId()).map(layoutMapper::toDTO);
     }
 
     @Override
@@ -150,13 +149,13 @@ public class LayoutServiceImpl implements LayoutService {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.JOB_FAIR_NOT_FOUND));
         }
         JobFairEntity jobFairEntity = jobFairEntityOpt.get();
-        Optional<LayoutEntity> layoutOpt = layoutRepository.findById(jobFairEntity.getLayoutId());
+        Optional<LayoutEntity> layoutOpt = layoutRepository.findById(jobFairEntity.getJobFairBoothList().get(0).getBooth().getLayout().getId());
         if (!layoutOpt.isPresent()) return Optional.empty();
         //check for which booth is available
         LayoutDTO layoutDTO = layoutMapper.toDTO(layoutOpt.get());
-        Set<BoothDTO> newBooths = layoutDTO.getBooths()
+        Set<LayoutBoothDTO> newBooths = layoutDTO.getBooths()
                 .stream()
-                .filter(boothDTO -> !companyBoothRepository.getCompanyBoothByJobFairIdAndBoothId(jobFairId, boothDTO.getId()).isPresent())
+                .filter(layoutBoothDTO -> !companyBoothRepository.getCompanyBoothByJobFairIdAndBoothId(jobFairId, layoutBoothDTO.getId()).isPresent())
                 .collect(Collectors.toSet());
         layoutDTO.setBooths(newBooths);
         return Optional.of(layoutDTO);

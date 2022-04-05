@@ -11,13 +11,13 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class CompanyBoothLayoutDTO implements Serializable {
+public class JobFairBoothLayoutDTO implements Serializable {
     @EqualsAndHashCode.Include
     private String id;
     private Integer version;
     private Long createDate;
     @JsonBackReference
-    private CompanyBoothDTO companyBooth;
+    private JobFairBoothDTO jobFairBooth;
     private String url;
-    List<CompanyBoothLayoutVideoDTO> companyBoothLayoutVideos;
+    List<JobFairBoothLayoutVideoDTO> companyBoothLayoutVideos;
 }

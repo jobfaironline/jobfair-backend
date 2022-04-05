@@ -7,9 +7,10 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class IndustryDTO {
+public class JobFairBoothLayoutVideoDTO {
     @EqualsAndHashCode.Include
     private String id;
-    private String name;
-    private String description;
+    private String url;
+    private String itemName;
+    private String jobFairBoothLayoutId;
 }

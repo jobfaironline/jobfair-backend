@@ -2,10 +2,10 @@ package org.capstone.job_fair.services.impl.company;
 
 import org.capstone.job_fair.constants.AWSConstant;
 import org.capstone.job_fair.constants.MessageConstant;
-import org.capstone.job_fair.models.dtos.company.CompanyBoothLayoutDTO;
-import org.capstone.job_fair.models.dtos.company.CompanyBoothLayoutVideoDTO;
-import org.capstone.job_fair.models.entities.company.CompanyBoothLayoutEntity;
-import org.capstone.job_fair.models.entities.company.CompanyBoothLayoutVideoEntity;
+import org.capstone.job_fair.models.dtos.company.JobFairBoothLayoutDTO;
+import org.capstone.job_fair.models.dtos.company.JobFairBoothLayoutVideoDTO;
+import org.capstone.job_fair.models.entities.company.JobFairBoothLayoutEntity;
+import org.capstone.job_fair.models.entities.company.JobFairBoothLayoutVideoEntity;
 import org.capstone.job_fair.repositories.company.CompanyBoothLayoutRepository;
 import org.capstone.job_fair.repositories.company.CompanyBoothLayoutVideoRepository;
 import org.capstone.job_fair.services.interfaces.company.CompanyBoothLayoutService;
@@ -47,42 +47,42 @@ public class CompanyBoothLayoutServiceImpl implements CompanyBoothLayoutService 
     private AwsUtil awsUtil;
 
     @Override
-    public List<CompanyBoothLayoutDTO> getLayoutsByCompanyBoothId(String companyBoothId) {
+    public List<JobFairBoothLayoutDTO> getLayoutsByCompanyBoothId(String companyBoothId) {
         return companyBoothLayoutRepository
-                .findByCompanyBoothId(companyBoothId)
+                .findByJobFairBoothId(companyBoothId)
                 .stream()
                 .map(boothLayoutMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public Optional<CompanyBoothLayoutDTO> getLatestVersionByCompanyBoothId(String companyBoothId) {
+    public Optional<JobFairBoothLayoutDTO> getLatestVersionByCompanyBoothId(String companyBoothId) {
         return companyBoothLayoutRepository
-                .findTopByCompanyBoothIdOrderByVersionDesc(companyBoothId)
+                .findTopByJobFairBoothIdOrderByVersionDesc(companyBoothId)
                 .map(boothLayoutMapper::toDTO);
     }
 
     @Override
-    public Optional<CompanyBoothLayoutDTO> getById(String id) {
+    public Optional<JobFairBoothLayoutDTO> getById(String id) {
         return companyBoothLayoutRepository.findById(id).map(boothLayoutMapper::toDTO);
     }
 
     @Override
     @Transactional
-    public CompanyBoothLayoutDTO createNew(CompanyBoothLayoutDTO dto, MultipartFile file) {
+    public JobFairBoothLayoutDTO createNew(JobFairBoothLayoutDTO dto, MultipartFile file) {
         try {
             GLTFUtil.parseAndValidateModel(file);
         } catch (IOException | UndeclaredThrowableException e) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Layout.INVALID_GLB_FILE));
         }
 
-        Optional<CompanyBoothLayoutEntity> latestVersionOpt =
-                companyBoothLayoutRepository.findTopByCompanyBoothIdOrderByVersionDesc(dto.getCompanyBooth().getId());
-        int version = latestVersionOpt.map(companyBoothLayoutEntity -> companyBoothLayoutEntity.getVersion() + 1).orElse(0);
+        Optional<JobFairBoothLayoutEntity> latestVersionOpt =
+                    companyBoothLayoutRepository.findTopByJobFairBoothIdOrderByVersionDesc(dto.getJobFairBooth().getId());
+        int version = latestVersionOpt.map(jobFairBoothLayoutEntity -> jobFairBoothLayoutEntity.getVersion() + 1).orElse(0);
 
 
 
-        CompanyBoothLayoutEntity entity = boothLayoutMapper.toEntity(dto);
+        JobFairBoothLayoutEntity entity = boothLayoutMapper.toEntity(dto);
         String id = UUID.randomUUID().toString();
         String url = awsUtil.generateAwsS3AccessString(AWSConstant.COMPANY_BOOTH_LAYOUT_FOLDER, id);
         entity.setId(id);
@@ -95,13 +95,13 @@ public class CompanyBoothLayoutServiceImpl implements CompanyBoothLayoutService 
 
     @Transactional
     @Override
-    public CompanyBoothLayoutVideoDTO createNewVideoWithFile(CompanyBoothLayoutVideoDTO dto){
-        Optional<CompanyBoothLayoutEntity> layoutOpt = companyBoothLayoutRepository.findById(dto.getCompanyBoothLayoutId());
+    public JobFairBoothLayoutVideoDTO createNewVideoWithFile(JobFairBoothLayoutVideoDTO dto){
+        Optional<JobFairBoothLayoutEntity> layoutOpt = companyBoothLayoutRepository.findById(dto.getJobFairBoothLayoutId());
         if (!layoutOpt.isPresent()){
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Layout.NOT_FOUND));
         }
 
-        CompanyBoothLayoutVideoEntity entity = companyBoothLayoutVideoMapper.toEntity(dto);
+        JobFairBoothLayoutVideoEntity entity = companyBoothLayoutVideoMapper.toEntity(dto);
         String id = UUID.randomUUID().toString();
         String url = awsUtil.generateAwsS3AccessString(AWSConstant.COMPANY_BOOTH_LAYOUT_VIDEO_FOLDER, id);
         entity.setId(id);
@@ -112,12 +112,12 @@ public class CompanyBoothLayoutServiceImpl implements CompanyBoothLayoutService 
 
     @Override
     @Transactional
-    public CompanyBoothLayoutVideoDTO createNewVideoWithUrl(CompanyBoothLayoutVideoDTO dto) {
-        Optional<CompanyBoothLayoutEntity> layoutOpt = companyBoothLayoutRepository.findById(dto.getCompanyBoothLayoutId());
+    public JobFairBoothLayoutVideoDTO createNewVideoWithUrl(JobFairBoothLayoutVideoDTO dto) {
+        Optional<JobFairBoothLayoutEntity> layoutOpt = companyBoothLayoutRepository.findById(dto.getJobFairBoothLayoutId());
         if (!layoutOpt.isPresent()){
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Layout.NOT_FOUND));
         }
-        CompanyBoothLayoutVideoEntity entity = companyBoothLayoutVideoMapper.toEntity(dto);
+        JobFairBoothLayoutVideoEntity entity = companyBoothLayoutVideoMapper.toEntity(dto);
         String id = UUID.randomUUID().toString();
         entity.setId(id);
         entity = companyBoothLayoutVideoRepository.save(entity);

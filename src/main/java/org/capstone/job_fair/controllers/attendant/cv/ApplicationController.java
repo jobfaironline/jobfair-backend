@@ -11,8 +11,7 @@ import org.capstone.job_fair.models.dtos.account.AccountDTO;
 import org.capstone.job_fair.models.dtos.attendant.AttendantDTO;
 import org.capstone.job_fair.models.dtos.attendant.cv.ApplicationDTO;
 import org.capstone.job_fair.models.dtos.attendant.cv.CvDTO;
-import org.capstone.job_fair.models.dtos.company.CompanyRegistrationDTO;
-import org.capstone.job_fair.models.dtos.company.job.RegistrationJobPositionDTO;
+import org.capstone.job_fair.models.dtos.company.job.BoothJobPositionDTO;
 import org.capstone.job_fair.models.entities.attendant.cv.ApplicationEntity;
 import org.capstone.job_fair.models.enums.ApplicationStatus;
 import org.capstone.job_fair.services.interfaces.attendant.ApplicationService;
@@ -67,14 +66,14 @@ public class ApplicationController {
             attendantDTO.setAccount(accountDTO);
             cvDTO.setAttendant(attendantDTO);
             //call registrationJobPositionDTO + setId from request
-            RegistrationJobPositionDTO regisDTO = new RegistrationJobPositionDTO();
+            BoothJobPositionDTO regisDTO = new BoothJobPositionDTO();
             regisDTO.setId(request.getRegistrationJobPositionId());
             //set summary, create date, status, attendantDTO, registrationJobPositionDTO for ApplicationDTO
             dto.setSummary(request.getSummary());
             dto.setCreateDate(new Date().getTime());
             dto.setStatus(ApplicationStatus.DRAFT);
             dto.setCvDTO(cvDTO);
-            dto.setRegistrationJobPositionDTO(regisDTO);
+            dto.setBoothJobPositionDTO(regisDTO);
             //call create method
             ApplicationDTO result = applicationService.createNewApplication(dto);
             return ResponseEntity.status(HttpStatus.CREATED).body(result);
@@ -148,11 +147,8 @@ public class ApplicationController {
         dto.setEvaluateMessage(request.getEvaluateMessage());
         dto.setStatus(request.getStatus());
         dto.setEvaluateDate(new Date().getTime());
-        RegistrationJobPositionDTO registrationJobPositionDTO = new RegistrationJobPositionDTO();
-        CompanyRegistrationDTO companyRegistrationDTO = new CompanyRegistrationDTO();
-        companyRegistrationDTO.setCompanyId(userDetails.getCompanyId());
-        registrationJobPositionDTO.setCompanyRegistration(companyRegistrationDTO);
-        dto.setRegistrationJobPositionDTO(registrationJobPositionDTO);
+        BoothJobPositionDTO boothJobPositionDTO = new BoothJobPositionDTO();
+        dto.setBoothJobPositionDTO(boothJobPositionDTO);
 
         applicationService.evaluateApplication(dto);
 

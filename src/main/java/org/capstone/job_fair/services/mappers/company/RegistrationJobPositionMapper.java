@@ -2,13 +2,13 @@ package org.capstone.job_fair.services.mappers.company;
 
 import org.capstone.job_fair.models.dtos.company.SkillTagDTO;
 import org.capstone.job_fair.models.dtos.company.SubCategoryDTO;
-import org.capstone.job_fair.models.dtos.company.job.RegistrationJobPositionDTO;
+import org.capstone.job_fair.models.dtos.company.job.BoothJobPositionDTO;
 import org.capstone.job_fair.models.entities.attendant.JobLevelEntity;
 import org.capstone.job_fair.models.entities.attendant.LanguageEntity;
 import org.capstone.job_fair.models.entities.company.SkillTagEntity;
 import org.capstone.job_fair.models.entities.company.SubCategoryEntity;
 import org.capstone.job_fair.models.entities.company.job.JobTypeEntity;
-import org.capstone.job_fair.models.entities.company.job.RegistrationJobPositionEntity;
+import org.capstone.job_fair.models.entities.company.job.BoothJobPositionEntity;
 import org.capstone.job_fair.models.enums.JobLevel;
 import org.capstone.job_fair.models.enums.JobType;
 import org.capstone.job_fair.models.enums.Language;
@@ -25,7 +25,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
-        uses = {SubCategoryMapper.class, CompanyRegistrationMapper.class})
+        uses = {SubCategoryMapper.class})
 public abstract class RegistrationJobPositionMapper {
 
     @Autowired
@@ -40,16 +40,14 @@ public abstract class RegistrationJobPositionMapper {
     @Mapping(target = "jobType", source = "jobTypeEntity", qualifiedByName = "toJobPositionDTOJobType")
     @Mapping(target = "subCategoryDTOs", source = "categories", qualifiedByName = "toJobPositionDTOSubCategory")
     @Mapping(target = "skillTagDTOS", source = "skillTagEntities", qualifiedByName = "toJobPositionDTOSkillTag")
-    @Mapping(target = "companyRegistration", ignore = true)
-    public abstract RegistrationJobPositionDTO toDTO(RegistrationJobPositionEntity entity);
+    public abstract BoothJobPositionDTO toDTO(BoothJobPositionEntity entity);
 
     @Mapping(target = "language", qualifiedByName = "toJobPositionEntityLanguage")
     @Mapping(target = "jobLevel", qualifiedByName = "toJobPositionEntityJobLevel")
     @Mapping(target = "jobTypeEntity", source = "jobType", qualifiedByName = "toJobPositionEntityJobType")
     @Mapping(target = "categories", source = "subCategoryDTOs", qualifiedByName = "toJobPositionEntitySubCategory")
     @Mapping(target = "skillTagEntities", source = "skillTagDTOS", qualifiedByName = "toJobPositionEntitySkillTag")
-    @Mapping(target = "companyRegistration", ignore = true)
-    public abstract RegistrationJobPositionEntity toEntity(RegistrationJobPositionDTO jobPositionDTO);
+    public abstract BoothJobPositionEntity toEntity(BoothJobPositionDTO jobPositionDTO);
 
     @Named("toJobPositionDTOSkillTag")
     public List<SkillTagDTO> toJobPositionDTOSkillTag(Set<SkillTagEntity> skillTags) {

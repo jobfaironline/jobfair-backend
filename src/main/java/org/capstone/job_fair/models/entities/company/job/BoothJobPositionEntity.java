@@ -3,7 +3,7 @@ package org.capstone.job_fair.models.entities.company.job;
 import lombok.*;
 import org.capstone.job_fair.models.entities.attendant.JobLevelEntity;
 import org.capstone.job_fair.models.entities.attendant.LanguageEntity;
-import org.capstone.job_fair.models.entities.company.CompanyRegistrationEntity;
+import org.capstone.job_fair.models.entities.company.JobFairBoothEntity;
 import org.capstone.job_fair.models.entities.company.SkillTagEntity;
 import org.capstone.job_fair.models.entities.company.SubCategoryEntity;
 import org.hibernate.Hibernate;
@@ -18,8 +18,8 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "registration_job_position", schema = "dbo")
-public class RegistrationJobPositionEntity {
+@Table(name = "booth_job_position", schema = "dbo")
+public class BoothJobPositionEntity {
     @Id
     @Column(name = "id", nullable = false, length = 36)
     @GeneratedValue(generator = "uuid")
@@ -40,13 +40,10 @@ public class RegistrationJobPositionEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "job_type_id")
     private JobTypeEntity jobTypeEntity;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "company_registration_id")
-    private CompanyRegistrationEntity companyRegistration;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
     @JoinTable(
-            name = "registration_job_category",
+            name = "booth_job_category",
             joinColumns = @JoinColumn(name = "registration_job_position_id"),
             inverseJoinColumns = @JoinColumn(name = "sub_category_id")
     )
@@ -55,7 +52,7 @@ public class RegistrationJobPositionEntity {
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
     @JoinTable(
-            name = "registration_job_skill_tag",
+            name = "booth_job_skill_tag",
             joinColumns = @JoinColumn(name = "registration_job_position_id"),
             inverseJoinColumns = @JoinColumn(name = "skill_tag_id"))
     @ToString.Exclude
@@ -82,11 +79,15 @@ public class RegistrationJobPositionEntity {
     @Column(name="origin_job_position_id")
     private String originJobPosition;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "job_fair_booth_id")
+    private JobFairBoothEntity jobFairBooth;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        RegistrationJobPositionEntity that = (RegistrationJobPositionEntity) o;
+        BoothJobPositionEntity that = (BoothJobPositionEntity) o;
         return id != null && Objects.equals(id, that.getId());
     }
 

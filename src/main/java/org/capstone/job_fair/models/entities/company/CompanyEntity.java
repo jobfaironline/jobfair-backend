@@ -52,7 +52,7 @@ public class CompanyEntity {
     private CompanySizeEntity companySize;
     @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
     @JsonManagedReference
-    private List<MediaEntity> medias;
+    private List<CompanyMediaEntity> medias;
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "company_category",

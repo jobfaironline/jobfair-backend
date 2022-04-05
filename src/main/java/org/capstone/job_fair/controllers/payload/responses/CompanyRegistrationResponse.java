@@ -3,7 +3,7 @@ package org.capstone.job_fair.controllers.payload.responses;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.capstone.job_fair.models.dtos.company.job.RegistrationJobPositionDTO;
+import org.capstone.job_fair.models.dtos.company.job.BoothJobPositionDTO;
 import org.capstone.job_fair.models.statuses.CompanyRegistrationStatus;
 
 import java.util.List;
@@ -21,7 +21,7 @@ public class CompanyRegistrationResponse {
     private String cancelReason;
     private String rejectReason;
     private String authorizerId;
-    private List<RegistrationJobPositionDTO> registrationJobPositions;
+    private List<BoothJobPositionDTO> registrationJobPositions;
     private String creatorId;
     private String companyName;
     private String jobfairName;

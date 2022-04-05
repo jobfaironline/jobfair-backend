@@ -82,7 +82,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.CV_NOT_FOUND));
         }
         //if registration job position id not exist, throw  error
-        if (!isJobPositionExist(dto.getRegistrationJobPositionDTO().getId())) {
+        if (!isJobPositionExist(dto.getBoothJobPositionDTO().getId())) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.NOT_FOUND_REGISTRATION_JOB_POSITION));
         }
         ApplicationEntity entity = applicationMapper.toEntity(dto);
@@ -115,9 +115,9 @@ public class ApplicationServiceImpl implements ApplicationService {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Attendant.ATTENDANT_MISMATCH));
         }
 
-        List<ApplicationEntity> result = applicationRepository.findByCvIdAndRegistrationJobPositionIdAndStatusIn(
+        List<ApplicationEntity> result = applicationRepository.findByCvIdAndBoothJobPositionIdAndStatusIn(
                 entity.getCv().getId(),
-                entity.getRegistrationJobPosition().getId(),
+                entity.getBoothJobPosition().getId(),
                 Arrays.asList(ApplicationStatus.APPROVE, ApplicationStatus.PENDING, ApplicationStatus.REJECT));
 
         if (!result.isEmpty()) {
@@ -170,7 +170,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     public Optional<ApplicationEntity> getApplicationWithGeneralDataByIdOfCompany(String companyId, String applicationId) {
-        Optional<ApplicationEntity> applicationEntityOptional = applicationRepository.findByIdAndRegistrationJobPositionCompanyRegistrationCompanyId(applicationId, companyId);
+        Optional<ApplicationEntity> applicationEntityOptional = applicationRepository.findByIdAndCompanyId(applicationId, companyId);
         if (!applicationEntityOptional.isPresent()) return Optional.empty();
         return applicationEntityOptional;
     }
@@ -179,9 +179,9 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Transactional
     public void evaluateApplication(ApplicationDTO dto) {
         String id = dto.getId();
-        String companyId = dto.getRegistrationJobPositionDTO().getCompanyRegistration().getCompanyId();
+        String companyId = dto.getBoothJobPositionDTO().getJobFairBooth().getJobFair().getCompany().getId();
         Optional<ApplicationEntity> applicationEntityOptional =
-                applicationRepository.findByIdAndRegistrationJobPositionCompanyRegistrationCompanyId(id, companyId);
+                applicationRepository.findByIdAndCompanyId(id, companyId);
         if (!applicationEntityOptional.isPresent()) throw new
                 IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.APPLICATION_NOT_FOUND));
         ApplicationEntity applicationEntity = applicationEntityOptional.get();
