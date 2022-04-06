@@ -2,6 +2,7 @@ package org.capstone.job_fair.controllers.job_fair;
 
 import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import org.capstone.job_fair.constants.ApiEndPoint;
+import org.capstone.job_fair.constants.JobFairConstant;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.controllers.payload.requests.job_fair.DraftJobFairRequest;
 import org.capstone.job_fair.controllers.payload.requests.job_fair.UpdateJobFairRequest;
@@ -19,6 +20,9 @@ import org.capstone.job_fair.services.interfaces.job_fair.LayoutService;
 import org.capstone.job_fair.services.mappers.job_fair.JobFairMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -116,5 +120,20 @@ public class JobFairController {
         JobFairDTO jobFairDTO = jobFairService.deleteJobFair(id, userDetails.getCompanyId());
         return ResponseEntity.ok(jobFairDTO);
     }
+
+    @GetMapping(ApiEndPoint.JobFair.JOB_FAIR)
+    public ResponseEntity<?> getJobFair(
+            @RequestParam(value = "offset", defaultValue = JobFairConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset,
+            @RequestParam(value = "pageSize", defaultValue = JobFairConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize,
+            @RequestParam(value = "sortBy", defaultValue = JobFairConstant.DEFAULT_SEARCH_SORT_BY_VALUE) String sortBy,
+            @RequestParam(value = "direction", required = false, defaultValue = JobFairConstant.DEFAULT_SEARCH_SORT_DIRECTION) Sort.Direction direction,
+            @RequestParam(value = "name", defaultValue = JobFairConstant.DEFAULT_JOBFAIR_NAME) String name
+    ) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Page<JobFairDTO> result = jobFairService.findByNameAndCompanyId(name, userDetails.getCompanyId(), PageRequest.of(offset, pageSize).withSort(Sort.by(direction, sortBy)));
+        return ResponseEntity.ok(result);
+
+    }
+
 
 }

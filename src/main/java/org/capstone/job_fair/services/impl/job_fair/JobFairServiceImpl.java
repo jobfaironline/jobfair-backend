@@ -9,6 +9,8 @@ import org.capstone.job_fair.repositories.job_fair.JobFairRepository;
 import org.capstone.job_fair.services.interfaces.job_fair.JobFairService;
 import org.capstone.job_fair.services.mappers.job_fair.JobFairMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -75,6 +77,11 @@ public class JobFairServiceImpl implements JobFairService {
         JobFairEntity entity = opt.get();
         jobFairRepository.delete(entity);
         return jobFairMapper.toDTO(entity);
+    }
+
+    @Override
+    public Page<JobFairDTO> findByNameAndCompanyId(String name, String companyId, Pageable pageable) {
+        return jobFairRepository.findByNameLikeAndCompanyId("%" + name + "%", companyId, pageable).map(jobFairMapper::toDTO);
     }
 
 
