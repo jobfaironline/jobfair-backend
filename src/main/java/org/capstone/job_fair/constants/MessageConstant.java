@@ -22,27 +22,10 @@ public final class MessageConstant {
         private JobFair() {
         }
 
-        public static final String CREATE_JOB_FAIR_PLAN_SUCCESSFULLY = "job-fair-plan.success.create";
-        public static final String UPDATE_JOB_FAIR_PLAN_SUCCESSFULLY = "job-fair-plan.success.update";
-        public static final String DELETE_JOB_FAIR_PLAN_SUCCESSFULLY = "job-fair-plan.success.delete";
-        public static final String SUBMIT_JOB_FAIR_PLAN_SUCCESSFULLY = "job-fair-plan.success.submit";
-        public static final String CANCEL_JOB_FAIR_PLAN_SUCCESSFULLY = "job-fair-plan.success.cancel";
-        public static final String RESTORED_DELETED_JOB_FAIR_PLAN_SUCCESSFULLY = "job-fair-plan.success.restore";
-        public static final String JOB_FAIR_NOT_FOUND = "job-fair-plan.error.not-found";
-        public static final String INVALID_CREATOR_ID = "job-fair-plan.error.invalid-creator-id";
-        public static final String INVALID_JOB_FAIR_STATUS = "job-fair-plan.error.invalid-job-fair-status";
-        public static final String END_TIME_LESS_THAN_START_TIME_ERROR = "job-fair-plan.error.end-time-less-than-start-time";
-        public static final String INVALID_END_TIME = "job-fair-plan.error.invalid-end-time";
-        public static final String INVALID_BUY_BOOTH_TIME = "job-fair-plan.error.invalid-buy-booth-time";
-        public static final String INVALID_STATUS_WHEN_EVALUATE = "job-fair-plan.error.invalid-status-when-evaluate";
-        public static final String REJECT_MISSING_REASON = "job-fair-plan.error.reject-missing-reason";
-        public static final String EVALUATE_SUCCESSFULLY = "job-fair-plan.success.evaluate-successfully";
-        public static final String JOB_FAIR_IS_NOT_APPROVED = "job-fair-plan.error.not-approved";
-        public static final String INVALID_COMPANY_REGISTER_START_TIME = "job-fair-plan.error.invalid-company-register-start-time";
-        public static final String INVALID_JOB_FAIR = "job-fair-plan.error.invalid-job-fair";
-        public static final String INVALID_SEARCH_TIME_RANGE = "job-fair-plan.error.invalid-search-time-range";
-        public static final String INVALID_PAGE_NUMBER = "job-fair-plan.error.invalid-page-number";
-        public static final String INVALID_JOB_FAIR_SEARCH_STATUS_OF_ADMIN = "job-fair-plan.error.invalid-job-fair-search-status-of-admin";
+        public static final String JOB_FAIR_NOT_FOUND = "job-fair.error.not-found";
+        public static final String INVALID_DECORATE_TIME = "job-fair.error.invalid-decorate-time";
+        public static final String INVALID_PUBLIC_TIME = "job-fair.error.invalid-public-time";
+        public static final String INVALID_BUFFER_TIME = "job-fair.error.invalid-buffer-time";
 
     }
 

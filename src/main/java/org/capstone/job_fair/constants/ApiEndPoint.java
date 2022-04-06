@@ -25,19 +25,8 @@ public final class ApiEndPoint {
         private JobFair() {
         }
 
-        public static final String JOB_FAIR_PLAN = ROOT_ENDPOINT + VERSION + "/job-fairs";
-        public static final String GET_OWN_PLAN = JOB_FAIR_PLAN + "/own-plan";
-        public static final String DELETE_JOB_FAIR_PLAN_DRAFT = JOB_FAIR_PLAN + "/delete";
-        public static final String SUBMIT_JOB_FAIR_PLAN_DRAFT = JOB_FAIR_PLAN + "/submit";
-        public static final String CANCEL_PENDING_JOB_FAIR_PLAN = JOB_FAIR_PLAN + "/cancel";
-        public static final String RESTORE_DELETED_JOB_FAIR_PLAN = JOB_FAIR_PLAN + "/restore";
-        public static final String EVALUATE_JOB_FAIL_PLAN = JOB_FAIR_PLAN + "/evaluate";
-        public static final String GET_APPROVE_JOB_FAIR_PLAN = JOB_FAIR_PLAN + "/approve";
-        public static final String FOR_3D_MAP = JOB_FAIR_PLAN + "/for-3d-map";
-        public static final String AVAILABLE_JOB_FAIR_FOR_REGISTRATION = JOB_FAIR_PLAN + "/available-register";
-        public static final String COMPANY_END_POINT = JOB_FAIR_PLAN + "/company";
-        public static final String ATTENDANT_END_POINT = JOB_FAIR_PLAN + "/attendant";
-        public static final String ADMIN_END_POINT = JOB_FAIR_PLAN + "/admin";
+        public static final String JOB_FAIR = ROOT_ENDPOINT + VERSION + "/job-fairs";
+        public static final String FOR_3D_MAP = JOB_FAIR + "/for-3d-map";
     }
 
     public static final class CompanyRegistration {

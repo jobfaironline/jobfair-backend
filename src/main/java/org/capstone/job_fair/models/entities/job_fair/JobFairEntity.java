@@ -48,7 +48,7 @@ public class JobFairEntity {
     private JobFairPlanStatus status;
     @Column(name = "cancel_reason", length = 500)
     private String cancelReason;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id")
     private CompanyEntity company;
 

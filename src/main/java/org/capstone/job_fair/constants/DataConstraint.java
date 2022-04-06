@@ -23,14 +23,6 @@ public final class DataConstraint {
 
         public static final int MIN_TIME = 0;
         public static final int MAX_DESCRIPTION_LENGTH = 500000;
-        public static final long VALID_START_JOB_FAIR_PLAN = 24 * 60 * 60 * 1000L;
-        public static final long VALID_TIME = 60 * 60 * 24 * 365 * 1000L;
-        public static final long VALID_REGISTER_TIME = 60 * 60 * 24 * 365 * 1000L;
-        public static final long VALID_BUY_BOOTH_TIME = 60 * 60 * 24 * 365 * 1000L;
-        public static final long VALID_EVENT_TIME = 60 * 60 * 24 * 365 * 1000L;
-        public static final long VALID_REGISTER_TO_BUY_BOOTH_TIME = 0;
-        public static final long VALID_BUY_BOOTH_TO_PUBLIC_TIME = 0;
-        public static final long VALID_PUBLIC_TO_EVENT_TIME = 0;
         public static final int MESSAGE_MIN_LENGTH = 1;
         public static final int MESSAGE_MAX_LENGTH = 500;
         public static final int COMPANY_REASON_CANCEL_JOB_FAIR_REGISTRATION_MAX_LENGTH = 1000;
@@ -40,6 +32,9 @@ public final class DataConstraint {
         public static final int MAX_ESTIMATE_PARTICIPANT_NUM = 1_000_000;
         public static final int TARGET_COMPANY_MAX_LENGTH = 500;
         public static final int TARGET_ATTENDANT_MAX_LENGTH = 500;
+        public static final long MINIMUM_DECORATE_TIME = 1 * 60 * 60 * 1000L;
+        public static final long MINIMUM_PUBLIC_TIME = 1 * 60 * 60 * 1000L;
+        public static final long MINIMUM_BUFFER_TIME = 0L;
 
 
     }
