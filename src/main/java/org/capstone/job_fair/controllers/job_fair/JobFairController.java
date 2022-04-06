@@ -25,6 +25,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -83,6 +84,7 @@ public class JobFairController {
         return ResponseEntity.ok(response);
     }
 
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
     @GetMapping(ApiEndPoint.JobFair.JOB_FAIR + "/{id}")
     public ResponseEntity<?> getJobFairDetailById(@PathVariable("id") String id) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -97,6 +99,7 @@ public class JobFairController {
         return ResponseEntity.ok(jobFairDTO);
     }
 
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
     @PostMapping(ApiEndPoint.JobFair.JOB_FAIR)
     public ResponseEntity<?> draftJobFair(@RequestBody DraftJobFairRequest request) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -106,6 +109,7 @@ public class JobFairController {
         return ResponseEntity.ok(jobFairDTO);
     }
 
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
     @PutMapping(ApiEndPoint.JobFair.JOB_FAIR)
     public ResponseEntity<?> updateJobFair(@RequestBody UpdateJobFairRequest request) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -114,6 +118,7 @@ public class JobFairController {
         return ResponseEntity.ok(jobFairDTO);
     }
 
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
     @DeleteMapping(ApiEndPoint.JobFair.JOB_FAIR + "/{id}")
     public ResponseEntity<?> deleteJobFair(@PathVariable("id") String id) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -121,6 +126,7 @@ public class JobFairController {
         return ResponseEntity.ok(jobFairDTO);
     }
 
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
     @GetMapping(ApiEndPoint.JobFair.JOB_FAIR)
     public ResponseEntity<?> getJobFair(
             @RequestParam(value = "offset", defaultValue = JobFairConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset,
