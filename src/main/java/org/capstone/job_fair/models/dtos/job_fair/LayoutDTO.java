@@ -1,6 +1,7 @@
 package org.capstone.job_fair.models.dtos.job_fair;
 
 import lombok.*;
+import org.capstone.job_fair.models.dtos.company.CompanyDTO;
 
 import java.io.Serializable;
 import java.util.Set;
@@ -17,4 +18,5 @@ public class LayoutDTO implements Serializable {
     private String url;
     private String description;
     private Set<LayoutBoothDTO> booths;
+    private CompanyDTO company;
 }
