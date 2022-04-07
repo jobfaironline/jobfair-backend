@@ -87,9 +87,10 @@ jobs:
           java-version: '11'
    #Create database
       - name: Get schema file
-        uses: actions/checkout@v3
+        uses: actions/checkout@v1
         with:
           repository: jobfaironline/schema
+          token: ${{secrets.PAT}}
       - run: |
             sudo /etc/init.d/mysql start
             cd schema
