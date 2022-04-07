@@ -32,9 +32,10 @@ public final class DataConstraint {
         public static final int MAX_ESTIMATE_PARTICIPANT_NUM = 1_000_000;
         public static final int TARGET_COMPANY_MAX_LENGTH = 500;
         public static final int TARGET_ATTENDANT_MAX_LENGTH = 500;
-        public static final long MINIMUM_DECORATE_TIME = 1 * 60 * 60 * 1000L;
-        public static final long MINIMUM_PUBLIC_TIME = 1 * 60 * 60 * 1000L;
+        public static final long MINIMUM_DECORATE_TIME = 60 * 60 * 1000L;
+        public static final long MINIMUM_PUBLIC_TIME = 60 * 60 * 1000L;
         public static final long MINIMUM_BUFFER_TIME = 0L;
+        public static final int HOST_NAME_MAX_LENGTH = 100;
 
 
     }
