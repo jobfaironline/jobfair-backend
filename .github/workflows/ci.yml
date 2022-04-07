@@ -93,7 +93,6 @@ jobs:
           token: ${{secrets.PAT}}
       - run: |
             sudo /etc/init.d/mysql start
-            cd schema
             ./runfile.sh
       - name: Run file
         run: cd .. && nohup java -jar jobfair-backend.jar &
