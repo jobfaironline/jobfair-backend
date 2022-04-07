@@ -86,15 +86,16 @@ jobs:
         with:
           java-version: '11'
    #Create database
-   #lala
-      - name: Get sql file
-        run: sudo apt update && sudo apt install curl -y
-      - name: Create database
-        run: |
-         sudo /etc/init.d/mysql start
-         curl -o schema.sql https://d3polnwtp0nqe6.cloudfront.net/Private/schema.sql && mysql -u ${{secrets.DATASOURCE_USERNAME}} -p${{ env.DB_PASSWORD }} < schema.sql
+      - name: Get schema file
+        uses: actions/checkout@master
+        with:
+          repository: jobfaironline/schema
+      - run: |
+            sudo /etc/init.d/mysql start
+            cd schema
+            ./runfile.sh
       - name: Run file
-        run: nohup java -jar jobfair-backend.jar &
+        run: cd .. && nohup java -jar jobfair-backend.jar &
       - name: verify
         run: curl http://localhost:5000/swagger-ui/index.html
    #Account test case    
