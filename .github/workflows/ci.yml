@@ -87,7 +87,7 @@ jobs:
           java-version: '11'
    #Create database
       - name: Get schema file
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
         with:
           repository: jobfaironline/schema
           token: ${{secrets.PAT}}
