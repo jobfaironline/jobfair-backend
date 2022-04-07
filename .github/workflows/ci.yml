@@ -87,7 +87,7 @@ jobs:
           java-version: '11'
    #Create database
       - name: Get schema file
-        uses: actions/checkout@master
+        uses: actions/checkout@v3
         with:
           repository: jobfaironline/schema
       - run: |
