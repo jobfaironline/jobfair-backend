@@ -75,17 +75,7 @@ jobs:
     #Run on Ubuntu using the latest version
     runs-on: ubuntu-latest
     steps:
-      - name: Download JAR
-        #Download the artifact which was uploaded in the build's job
-        uses: actions/download-artifact@v2
-        with:
-          name: artifact
-    #Set up JDK 11
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: '11'
-   #Create database
+    #Create database
       - name: Get schema file
         uses: actions/checkout@v2
         with:
@@ -94,8 +84,18 @@ jobs:
       - run: |
             sudo /etc/init.d/mysql start
             ./runfile.sh
+      - name: Download JAR
+    #Download the artifact which was uploaded in the build's job
+        uses: actions/download-artifact@v2
+        with:
+          name: artifact
+    #Set up JDK 11
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: '11'
       - name: Run file
-        run: cd .. && nohup java -jar jobfair-backend.jar &
+        run: nohup java -jar jobfair-backend.jar &
       - name: verify
         run: curl http://localhost:5000/swagger-ui/index.html
    #Account test case    
