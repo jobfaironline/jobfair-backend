@@ -95,7 +95,7 @@ jobs:
         with:
           java-version: '11'
       - name: Run file
-        run: nohup java -jar jobfair-backend.jar &
+        run: java -jar jobfair-backend.jar
 #       - name: verify
 #         run: curl http://localhost:5000/swagger-ui/index.html
    #Account test case    
