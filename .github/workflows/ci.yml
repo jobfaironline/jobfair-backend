@@ -75,8 +75,17 @@ jobs:
     #Run on Ubuntu using the latest version
     runs-on: ubuntu-latest
     steps:
+    #Create database
+      - name: Get schema file
+        uses: actions/checkout@v2
+        with:
+          repository: jobfaironline/schema
+          token: ${{secrets.PAT}}
+      - run: |
+            sudo /etc/init.d/mysql start
+            ./runfile.sh
       - name: Download JAR
-        #Download the artifact which was uploaded in the build's job
+    #Download the artifact which was uploaded in the build's job
         uses: actions/download-artifact@v2
         with:
           name: artifact
@@ -85,16 +94,10 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: '11'
-   #Create database
-   #lala
-      - name: Get sql file
-        run: sudo apt update && sudo apt install curl -y
-      - name: Create database
-        run: |
-         sudo /etc/init.d/mysql start
-         curl -o schema.sql https://d3polnwtp0nqe6.cloudfront.net/Private/schema.sql && mysql -u ${{secrets.DATASOURCE_USERNAME}} -p${{ env.DB_PASSWORD }} < schema.sql
       - name: Run file
         run: nohup java -jar jobfair-backend.jar &
+      - name: wait for app to fully loalded
+        run: sleep 60
       - name: verify
         run: curl http://localhost:5000/swagger-ui/index.html
    #Account test case    

@@ -26,5 +26,6 @@ public class JobFairDTO implements Serializable {
     private String thumbnailUrl;
     private JobFairPlanStatus status;
     private String cancelReason;
+    private String hostName;
     private CompanyDTO company;
 }
