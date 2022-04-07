@@ -14,7 +14,7 @@ import org.capstone.job_fair.models.dtos.company.JobFairBoothLayoutDTO;
 import org.capstone.job_fair.models.dtos.job_fair.JobFairDTO;
 import org.capstone.job_fair.models.dtos.job_fair.LayoutDTO;
 import org.capstone.job_fair.services.interfaces.company.CompanyBoothLayoutService;
-import org.capstone.job_fair.services.interfaces.company.CompanyBoothService;
+import org.capstone.job_fair.services.interfaces.company.JobFairBoothService;
 import org.capstone.job_fair.services.interfaces.job_fair.JobFairService;
 import org.capstone.job_fair.services.interfaces.job_fair.LayoutService;
 import org.capstone.job_fair.services.mappers.job_fair.JobFairMapper;
@@ -35,7 +35,7 @@ import java.util.Optional;
 public class JobFairController {
 
     @Autowired
-    private CompanyBoothService companyBoothService;
+    private JobFairBoothService jobFairBoothService;
 
     @Autowired
     private CompanyBoothLayoutService companyBoothLayoutService;
@@ -63,7 +63,7 @@ public class JobFairController {
         response.setJobFairLayoutUrl(layoutDTO.getUrl());
 
         layoutDTO.getBooths().forEach(boothDTO -> {
-            Optional<JobFairBoothDTO> companyBoothOpt = companyBoothService.getCompanyBoothByJobFairIdAndBoothId(jobFairId, boothDTO.getId());
+            Optional<JobFairBoothDTO> companyBoothOpt = jobFairBoothService.getCompanyBoothByJobFairIdAndBoothId(jobFairId, boothDTO.getId());
             if (companyBoothOpt.isPresent()) {
                 JobFairBoothDTO companyBooth = companyBoothOpt.get();
 

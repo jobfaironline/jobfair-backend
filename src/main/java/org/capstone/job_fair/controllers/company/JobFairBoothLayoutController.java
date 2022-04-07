@@ -29,7 +29,7 @@ import java.util.Optional;
 
 @RestController
 @Slf4j
-public class CompanyBoothLayoutController {
+public class JobFairBoothLayoutController {
 
     @Autowired
     private CompanyBoothLayoutService companyBoothLayoutService;

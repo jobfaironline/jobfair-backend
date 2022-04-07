@@ -11,7 +11,7 @@ import org.capstone.job_fair.models.entities.job_fair.LayoutBoothEntity;
 import org.capstone.job_fair.models.entities.job_fair.JobFairEntity;
 import org.capstone.job_fair.models.entities.job_fair.LayoutEntity;
 import org.capstone.job_fair.models.statuses.BoothStatus;
-import org.capstone.job_fair.repositories.company.CompanyBoothRepository;
+import org.capstone.job_fair.repositories.company.JobFairBoothRepository;
 import org.capstone.job_fair.repositories.job_fair.JobFairRepository;
 import org.capstone.job_fair.repositories.job_fair.LayoutRepository;
 import org.capstone.job_fair.services.interfaces.job_fair.LayoutService;
@@ -49,7 +49,7 @@ public class LayoutServiceImpl implements LayoutService {
     private AwsUtil awsUtil;
 
     @Autowired
-    private CompanyBoothRepository companyBoothRepository;
+    private JobFairBoothRepository jobFairBoothRepository;
 
 
     @Override
@@ -155,7 +155,7 @@ public class LayoutServiceImpl implements LayoutService {
         LayoutDTO layoutDTO = layoutMapper.toDTO(layoutOpt.get());
         Set<LayoutBoothDTO> newBooths = layoutDTO.getBooths()
                 .stream()
-                .filter(layoutBoothDTO -> !companyBoothRepository.getCompanyBoothByJobFairIdAndBoothId(jobFairId, layoutBoothDTO.getId()).isPresent())
+                .filter(layoutBoothDTO -> !jobFairBoothRepository.getCompanyBoothByJobFairIdAndBoothId(jobFairId, layoutBoothDTO.getId()).isPresent())
                 .collect(Collectors.toSet());
         layoutDTO.setBooths(newBooths);
         return Optional.of(layoutDTO);

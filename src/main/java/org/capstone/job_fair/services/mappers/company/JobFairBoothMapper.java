@@ -9,7 +9,7 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
         uses = {BoothMapper.class}
 )
-public abstract class CompanyBoothMapper {
+public abstract class JobFairBoothMapper {
     public abstract JobFairBoothDTO toDTO(JobFairBoothEntity entity);
 
     public abstract JobFairBoothEntity toEntity(JobFairBoothDTO dto);

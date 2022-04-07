@@ -248,32 +248,6 @@ public final class MessageConstant {
         public static final String SEND_FAILED = "mail.error.send-failed";
     }
 
-    public static final class CompanyRegistration {
-        private CompanyRegistration() {
-        }
-
-        public static final String JOB_FAIR_REGISTRATION_OUT_OF_REGISTER_TIME = "company-registration.error.out-of-register-time";
-        public static final String UNIQUE_JOB_POSITION_ERROR = "company-registration.error.unique-job-position";
-        public static final String MIN_MAX_SALARY_ERROR = "company-registration.error.min-max-salary";
-        public static final String SUBMIT_SUCCESSFULLY = "company-registration.success.submit";
-        public static final String NOT_FOUND = "company-registration.error.not-found";
-        public static final String COMPANY_MISMATCH = "company-registration.error.mismatch";
-        public static final String EXISTED_PENDING_REGISTRATION = "company-registration.error.existed-pending-registration";
-        public static final String NOT_ALLOW_CANCEL = "company-registration.error.not-allow-cancel";
-        public static final String CANCEL_SUCCESSFULLY = "company-registration.success.cancel";
-        public static final String REJECT_MISSING_REASON = "company-registration.error.reject-missing-reason";
-        public static final String INVALID_STATUS_WHEN_EVALUATE = "company-registration.error.invalid-status-when-evaluate";
-        public static final String INVALID_COMPANY_REGISTRATION_STATUS_WHEN_EVALUATE = "company-registration.error.invalid-company-registration-status-when-evaluate";
-        public static final String EVALUATE_SUCCESSFULLY = "company-registration.success.evaluate";
-        public static final String COMPANY_REGISTER_SUCCESSFULLY = "company-registration.success.register";
-        public static final String INVALID_STATUS_WHEN_UPDATE = "company-registration.error.invalid-status-when-update";
-        public static final String UPDATE_COMPANY_REGISTRATION_DRAF_SUCCESSFULLY = "company-registration.success.update-company-registration-draft";
-        public static final String INVALID_PAGE_NUMBER = "company-registration.error.invalid-page-number";
-        public static final String CREATOR_MISMATCH = "company-registration.error.creator-mismatch";
-        public static final String INVALID_SEARCH_STATUS = "company-registration.error.invalid-search-status";
-
-
-    }
 
     public static final class Staff {
         private Staff() {
@@ -326,30 +300,24 @@ public final class MessageConstant {
         public static final String ALREADY_APPLY_CV = "application.error.already-apply-cv";
     }
 
-    public static final class Order {
-        private Order() {
-        }
-
-        public static final String NOT_FOUND = "order.error.not-found";
-    }
-
-    public static final class Booth {
-        private Booth() {
-        }
-
-        public static final String NOT_FOUND = "booth.error.not-found";
-    }
-
-    public static final class BoothPurchase {
-        private BoothPurchase() {
-        }
-
-        public static final String ALREADY_HAS_BOOTH = "booth-purchase.error.already-buy-booth";
-    }
 
     public static final class Cv {
         private Cv() {
         }
+    }
+
+    public static final class Assignment {
+        private Assignment() {
+        }
+
+        public static final String NOT_FOUND = "assignment.error.not-found";
+    }
+
+    public static final class JobFairBooth {
+        private JobFairBooth() {
+        }
+
+        public static final String NOT_FOUND = "job-fair-booth.error.not-found";
     }
 
 }

@@ -3,6 +3,7 @@ package org.capstone.job_fair.models.dtos.job_fair;
 import lombok.*;
 import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
 import org.capstone.job_fair.models.dtos.company.JobFairBoothDTO;
+import org.capstone.job_fair.models.enums.AssignmentType;
 
 import java.io.Serializable;
 
@@ -11,10 +12,10 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Builder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class AssigmentDTO implements Serializable {
+public class AssignmentDTO implements Serializable {
     @EqualsAndHashCode.Include
     private String id;
-    private AssigmentDTO type;
+    private AssignmentType type;
     private CompanyEmployeeDTO companyEmployee;
     private JobFairBoothDTO jobFairBooth;
 }
