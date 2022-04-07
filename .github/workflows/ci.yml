@@ -89,7 +89,7 @@ jobs:
       - name: Get schema file
         uses: actions/checkout@v1
         with:
-          repository: jobfaironline/schema@main
+          repository: jobfaironline/schema
           token: ${{secrets.PAT}}
       - run: |
             sudo /etc/init.d/mysql start
