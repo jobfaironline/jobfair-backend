@@ -14,7 +14,6 @@ import java.util.Objects;
 @Entity
 @Getter
 @Setter
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "job_fair", schema = "dbo")
@@ -48,6 +47,8 @@ public class JobFairEntity {
     private JobFairPlanStatus status;
     @Column(name = "cancel_reason", length = 500)
     private String cancelReason;
+    @Column(name = "host_name", length = 100)
+    private String hostName;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id")
     private CompanyEntity company;

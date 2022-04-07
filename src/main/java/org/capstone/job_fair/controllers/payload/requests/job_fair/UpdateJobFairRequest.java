@@ -52,4 +52,7 @@ public class UpdateJobFairRequest {
     @Size(max = DataConstraint.JobFair.TARGET_ATTENDANT_MAX_LENGTH)
     private String targetAttendant;
 
+    @XSSConstraint
+    @Size(max = DataConstraint.JobFair.HOST_NAME_MAX_LENGTH)
+    private String hostName;
 }
