@@ -14,7 +14,7 @@ import java.io.Serializable;
 public class AssigmentDTO implements Serializable {
     @EqualsAndHashCode.Include
     private String id;
-    private Integer type;
+    private AssigmentDTO type;
     private CompanyEmployeeDTO companyEmployee;
     private JobFairBoothDTO jobFairBooth;
 }

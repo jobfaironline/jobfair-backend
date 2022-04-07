@@ -6,7 +6,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.capstone.job_fair.models.entities.company.CompanyEmployeeEntity;
 import org.capstone.job_fair.models.entities.company.JobFairBoothEntity;
+import org.capstone.job_fair.models.enums.AssignmentType;
 import org.hibernate.Hibernate;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -20,10 +22,13 @@ import java.util.Objects;
 public class AssignmentEntity {
     @Id
     @Column(name = "id", nullable = false, length = 36)
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "org.hibernate.id.UUIDGenerator")
     private String id;
 
     @Column(name = "type", nullable = false)
-    private Integer type;
+    @Enumerated(EnumType.ORDINAL)
+    private AssignmentType type;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_employee_id")
