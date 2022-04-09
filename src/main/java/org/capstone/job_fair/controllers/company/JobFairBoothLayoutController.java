@@ -43,42 +43,30 @@ public class JobFairBoothLayoutController {
     @Autowired
     private CompanyService companyService;
 
-    @GetMapping(ApiEndPoint.CompanyBoothLayout.COMPANY_BOOTH_LAYOUT)
+    @GetMapping(ApiEndPoint.JobFairBoothLayout.JOB_FAIR_BOOTH_LAYOUT)
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE)")
-    public ResponseEntity<?> getAllByCompanyBoothID(@RequestParam("companyBoothId") String companyBoothId) {
-        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String companyId = userDetails.getCompanyId();
-
-        Optional<String> companyIdOpt = companyService.getIdByCompanyBoothID(companyBoothId);
-        if (!companyIdOpt.isPresent()) {
-            return ResponseEntity.noContent().build();
-        } else {
-            if (!companyIdOpt.get().equals(companyId)) {
-                throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Company.COMPANY_MISSMATCH));
-            }
-        }
-
-        List<JobFairBoothLayoutDTO> result = companyBoothLayoutService.getLayoutsByCompanyBoothId(companyBoothId);
+    public ResponseEntity<?> getAllByCompanyBoothID(@RequestParam("jobFairBoothId") String jobFairBoothId) {
+        List<JobFairBoothLayoutDTO> result = companyBoothLayoutService.getLayoutsByCompanyBoothId(jobFairBoothId);
         if (result.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok().body(result);
     }
 
-    @GetMapping(ApiEndPoint.CompanyBoothLayout.LATEST_VERSION)
+    @GetMapping(ApiEndPoint.JobFairBoothLayout.LATEST_VERSION)
     public ResponseEntity<?> getLatestVersionByCompanyBoothID(@RequestParam("companyBoothId") String companyBoothId) {
         Optional<JobFairBoothLayoutDTO> result = companyBoothLayoutService.getLatestVersionByCompanyBoothId(companyBoothId);
         return result.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @GetMapping(ApiEndPoint.CompanyBoothLayout.COMPANY_BOOTH_LAYOUT + "/{id}")
+    @GetMapping(ApiEndPoint.JobFairBoothLayout.JOB_FAIR_BOOTH_LAYOUT + "/{id}")
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE)")
     public ResponseEntity<?> getById(@PathVariable("id") String id) {
         Optional<JobFairBoothLayoutDTO> result = companyBoothLayoutService.getById(id);
         return result.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @PostMapping(ApiEndPoint.CompanyBoothLayout.COMPANY_BOOTH_LAYOUT)
+    @PostMapping(ApiEndPoint.JobFairBoothLayout.JOB_FAIR_BOOTH_LAYOUT)
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE)")
     public ResponseEntity<?> createNewLayout(@RequestParam("companyBoothId") String companyBoothId, @RequestParam("file") MultipartFile file) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -111,7 +99,7 @@ public class JobFairBoothLayoutController {
         return ResponseEntity.created(URI.create(dto.getUrl())).body(dto);
     }
 
-    @PostMapping(ApiEndPoint.CompanyBoothLayout.VIDEO_LAYOUT_WITH_FILE)
+    @PostMapping(ApiEndPoint.JobFairBoothLayout.VIDEO_LAYOUT_WITH_FILE)
     public ResponseEntity<?> createNewVideoForLayoutWithFile(@RequestParam("layoutId") String layoutId,
                                                      @RequestParam("itemName") String itemName,
                                                      @RequestParam("file") MultipartFile file ){
@@ -128,7 +116,7 @@ public class JobFairBoothLayoutController {
         return ResponseEntity.created(URI.create(dto.getUrl())).body(dto);
     }
 
-    @PostMapping(ApiEndPoint.CompanyBoothLayout.VIDEO_LAYOUT_WITH_URL)
+    @PostMapping(ApiEndPoint.JobFairBoothLayout.VIDEO_LAYOUT_WITH_URL)
     public ResponseEntity<?> createNewVideoForLayoutWithUrl(@RequestParam("layoutId") String layoutId,
                                                             @RequestParam("itemName") String itemName,
                                                             @RequestParam("url") String url){

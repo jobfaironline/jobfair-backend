@@ -7,8 +7,8 @@ import org.capstone.job_fair.constants.GLBConstant;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.models.dtos.job_fair.LayoutBoothDTO;
 import org.capstone.job_fair.models.dtos.job_fair.LayoutDTO;
-import org.capstone.job_fair.models.entities.job_fair.LayoutBoothEntity;
 import org.capstone.job_fair.models.entities.job_fair.JobFairEntity;
+import org.capstone.job_fair.models.entities.job_fair.LayoutBoothEntity;
 import org.capstone.job_fair.models.entities.job_fair.LayoutEntity;
 import org.capstone.job_fair.models.statuses.BoothStatus;
 import org.capstone.job_fair.repositories.company.JobFairBoothRepository;
@@ -53,13 +53,21 @@ public class LayoutServiceImpl implements LayoutService {
 
 
     @Override
-    public List<LayoutDTO> getAll() {
-        return layoutRepository.findAll().stream().map(layoutMapper::toDTO).collect(Collectors.toList());
+    public List<LayoutDTO> getAllTemplateLayout() {
+        return layoutRepository.findByCompanyIdIsNull().stream().map(layoutMapper::toDTO).collect(Collectors.toList());
     }
 
     @Override
-    public Optional<LayoutDTO> findById(String id) {
-        return layoutRepository.findById(id).map(layoutMapper::toDTO);
+    public List<LayoutDTO> getCompanyLayout(String companyId) {
+        return layoutRepository.findByCompanyId(companyId).stream().map(layoutMapper::toDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<LayoutDTO> findByIdAndCompanyId(String id, String companyId) {
+        if (companyId == null) {
+            return layoutRepository.findById(id).map(layoutMapper::toDTO);
+        }
+        return layoutRepository.findByIdAndCompanyId(id, companyId).map(layoutMapper::toDTO);
     }
 
     @Override
@@ -78,14 +86,20 @@ public class LayoutServiceImpl implements LayoutService {
 
     @Override
     @Transactional
-    public void update(LayoutDTO dto) {
-        Optional<LayoutEntity> layoutEntityOpt = layoutRepository.findById(dto.getId());
+    public LayoutDTO update(LayoutDTO dto) {
+        Optional<LayoutEntity> layoutEntityOpt;
+        if (dto.getCompany() == null){
+            layoutEntityOpt = layoutRepository.findById(dto.getId());
+        } else {
+            layoutEntityOpt = layoutRepository.findByIdAndCompanyId(dto.getId(), dto.getCompany().getId());
+        }
         if (!layoutEntityOpt.isPresent()) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Account.NOT_FOUND));
         }
         LayoutEntity layoutEntity = layoutEntityOpt.get();
         layoutMapper.updateEntityFromDTO(dto, layoutEntity);
-        layoutRepository.save(layoutEntity);
+        layoutEntity = layoutRepository.save(layoutEntity);
+        return layoutMapper.toDTO(layoutEntity);
     }
 
 

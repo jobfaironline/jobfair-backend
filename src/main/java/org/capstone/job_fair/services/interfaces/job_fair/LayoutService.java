@@ -7,13 +7,15 @@ import java.util.List;
 import java.util.Optional;
 
 public interface LayoutService {
-    List<LayoutDTO> getAll();
+    List<LayoutDTO> getAllTemplateLayout();
 
-    Optional<LayoutDTO> findById(String id);
+    List<LayoutDTO> getCompanyLayout(String companyId);
+
+    Optional<LayoutDTO> findByIdAndCompanyId(String id, String companyId);
 
     LayoutDTO createNew(LayoutDTO dto);
 
-    void update(LayoutDTO dto);
+    LayoutDTO update(LayoutDTO dto);
 
     void validateAndGenerateBoothSlot(MultipartFile file, String layoutId);
 

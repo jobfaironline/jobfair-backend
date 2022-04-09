@@ -8,6 +8,7 @@ import org.capstone.job_fair.models.statuses.JobFairPlanStatus;
 import org.capstone.job_fair.repositories.job_fair.JobFairRepository;
 import org.capstone.job_fair.services.interfaces.job_fair.JobFairService;
 import org.capstone.job_fair.services.mappers.job_fair.JobFairMapper;
+import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -38,15 +39,14 @@ public class JobFairServiceImpl implements JobFairService {
         long now = new Date().getTime();
         dto.setCreateTime(now);
         dto.setStatus(JobFairPlanStatus.DRAFT);
-
         if (dto.getDecorateEndTime() < dto.getDecorateStartTime() + DataConstraint.JobFair.MINIMUM_DECORATE_TIME) {
-            throw new IllegalArgumentException(MessageConstant.JobFair.INVALID_DECORATE_TIME);
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.INVALID_DECORATE_TIME));
         }
         if (dto.getDecorateEndTime() < dto.getDecorateStartTime() + DataConstraint.JobFair.MINIMUM_PUBLIC_TIME) {
-            throw new IllegalArgumentException(MessageConstant.JobFair.INVALID_DECORATE_TIME);
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.INVALID_DECORATE_TIME));
         }
         if (dto.getPublicStartTime() < dto.getDecorateEndTime() + DataConstraint.JobFair.MINIMUM_BUFFER_TIME) {
-            throw new IllegalArgumentException(MessageConstant.JobFair.INVALID_BUFFER_TIME);
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.INVALID_BUFFER_TIME));
         }
 
         JobFairEntity entity = jobFairMapper.toEntity(dto);
