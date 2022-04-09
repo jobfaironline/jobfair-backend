@@ -133,6 +133,8 @@ public final class ApiEndPoint {
 
         public static final String LAYOUT_ENDPOINT = ROOT_ENDPOINT + VERSION + "/layouts";
         public static final String GET_BY_JOB_FAIR_AND_AVAILABLE_BOOTH_SLOT = LAYOUT_ENDPOINT + "/job-fair/available-slot";
+        public static final String TEMPLATE_LAYOUT = LAYOUT_ENDPOINT + "/template";
+        public static final String FOR_COMPANY_MANAGER = LAYOUT_ENDPOINT + "/company-manager";
     }
 
     public static final class AgoraToken {
@@ -157,14 +159,14 @@ public final class ApiEndPoint {
 
     }
 
-    public static final class CompanyBoothLayout {
-        private CompanyBoothLayout() {
+    public static final class JobFairBoothLayout {
+        private JobFairBoothLayout() {
         }
 
-        public static final String COMPANY_BOOTH_LAYOUT = ROOT_ENDPOINT + VERSION + "/company-booth-layout";
-        public static final String LATEST_VERSION = COMPANY_BOOTH_LAYOUT + "/latest";
-        public static final String VIDEO_LAYOUT_WITH_FILE = COMPANY_BOOTH_LAYOUT + "/videos/file";
-        public static final String VIDEO_LAYOUT_WITH_URL = COMPANY_BOOTH_LAYOUT + "/videos/url";
+        public static final String JOB_FAIR_BOOTH_LAYOUT = ROOT_ENDPOINT + VERSION + "/job-fair-booth-layout";
+        public static final String LATEST_VERSION = JOB_FAIR_BOOTH_LAYOUT + "/latest";
+        public static final String VIDEO_LAYOUT_WITH_FILE = JOB_FAIR_BOOTH_LAYOUT + "/videos/file";
+        public static final String VIDEO_LAYOUT_WITH_URL = JOB_FAIR_BOOTH_LAYOUT + "/videos/url";
 
 
     }

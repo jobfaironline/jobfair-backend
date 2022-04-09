@@ -1,23 +1,24 @@
 package org.capstone.job_fair.controllers.job_fair;
 
 import lombok.extern.slf4j.Slf4j;
+import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import org.capstone.job_fair.constants.AWSConstant;
 import org.capstone.job_fair.constants.ApiEndPoint;
-import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.controllers.payload.requests.job_fair.CreateLayoutMetaDataRequest;
 import org.capstone.job_fair.controllers.payload.requests.job_fair.UpdateLayoutMetaDataRequest;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
+import org.capstone.job_fair.models.dtos.company.CompanyDTO;
 import org.capstone.job_fair.models.dtos.job_fair.LayoutDTO;
 import org.capstone.job_fair.services.interfaces.job_fair.LayoutService;
 import org.capstone.job_fair.services.interfaces.util.FileStorageService;
 import org.capstone.job_fair.services.mappers.job_fair.LayoutMapper;
-import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -41,32 +42,48 @@ public class LayoutController {
     @Autowired
     private FileStorageService fileStorageService;
 
-    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).STAFF)")
-    @GetMapping(ApiEndPoint.Layout.LAYOUT_ENDPOINT)
-    public ResponseEntity<List<LayoutDTO>> getAll() {
-        List<LayoutDTO> result = layoutService.getAll();
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
+    @GetMapping(ApiEndPoint.Layout.TEMPLATE_LAYOUT)
+    public ResponseEntity<List<LayoutDTO>> getTemplateLayout() {
+        List<LayoutDTO> result = layoutService.getAllTemplateLayout();
         if (result.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok().body(result);
     }
 
-    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).STAFF)")
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
+    @GetMapping(ApiEndPoint.Layout.FOR_COMPANY_MANAGER)
+    public ResponseEntity<List<LayoutDTO>> getCompanyLayout() {
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        List<LayoutDTO> result = layoutService.getCompanyLayout(userDetails.getCompanyId());
+
+        if (result.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok().body(result);
+    }
+
+
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
     @GetMapping(ApiEndPoint.Layout.LAYOUT_ENDPOINT + "/{id}")
     public ResponseEntity<LayoutDTO> getById(@PathVariable("id") String id) {
-        Optional<LayoutDTO> layoutDTOOpt = layoutService.findById(id);
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Optional<LayoutDTO> layoutDTOOpt = layoutService.findByIdAndCompanyId(id, userDetails.getCompanyId());
         return layoutDTOOpt.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).STAFF)")
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
     @PostMapping(ApiEndPoint.Layout.LAYOUT_ENDPOINT)
     public ResponseEntity<LayoutDTO> uploadMetaData(@Valid @RequestBody CreateLayoutMetaDataRequest request) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         LayoutDTO dto = layoutMapper.toDTO(request);
+        dto.setCompany(CompanyDTO.builder().id(userDetails.getCompanyId()).build());
         dto = layoutService.createNew(dto);
         return ResponseEntity.created(URI.create(dto.getUrl())).body(dto);
     }
 
-    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).STAFF)")
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
     @PostMapping(ApiEndPoint.Layout.LAYOUT_ENDPOINT + "/{id}/content")
     public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file, @PathVariable("id") String id) {
         try {
@@ -83,7 +100,7 @@ public class LayoutController {
         return ResponseEntity.accepted().build();
     }
 
-    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).STAFF)")
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
     @GetMapping(ApiEndPoint.Layout.LAYOUT_ENDPOINT + "/{id}/content")
     public ResponseEntity<?> getFile(@PathVariable String id) {
         Resource file;
@@ -96,23 +113,19 @@ public class LayoutController {
                 "attachment; filename=\"" + file.getFilename() + "\"").body(file);
     }
 
-    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).STAFF)")
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
     @PutMapping(ApiEndPoint.Layout.LAYOUT_ENDPOINT + "/{id}")
     public ResponseEntity<?> update(@PathVariable("id") String id, @Valid @RequestBody UpdateLayoutMetaDataRequest request) {
-        try {
-            LayoutDTO dto = layoutMapper.toDTO(request);
-            dto.setId(id);
-            layoutService.update(dto);
-            return GenericResponse.build(
-                    MessageUtil.getMessage(MessageConstant.Layout.UPDATE_SUCCESSFULLY),
-                    HttpStatus.OK);
-        } catch (IllegalArgumentException ex) {
-            return GenericResponse.build(ex.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        LayoutDTO dto = layoutMapper.toDTO(request);
+        dto.setId(id);
+        dto.setCompany(CompanyDTO.builder().id(userDetails.getCompanyId()).build());
+        dto = layoutService.update(dto);
+        return ResponseEntity.ok(dto);
     }
 
     @GetMapping(ApiEndPoint.Layout.GET_BY_JOB_FAIR_AND_AVAILABLE_BOOTH_SLOT + "/{id}")
-    public ResponseEntity<?> getLayoutAndAvailableBoothSlotByJobFairId(@PathVariable("id") String id){
+    public ResponseEntity<?> getLayoutAndAvailableBoothSlotByJobFairId(@PathVariable("id") String id) {
         Optional<LayoutDTO> layoutDTOOpt = layoutService.getByJobFairIdWithAvailableBoothSlot(id);
         return layoutDTOOpt.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }

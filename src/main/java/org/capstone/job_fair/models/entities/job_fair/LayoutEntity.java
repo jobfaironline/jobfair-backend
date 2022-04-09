@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.capstone.job_fair.models.entities.company.CompanyEntity;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
@@ -29,6 +30,9 @@ public class LayoutEntity {
     private String description;
     @OneToMany(mappedBy = "layout", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
     private Set<LayoutBoothEntity> booths;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "company_id")
+    private CompanyEntity company;
 
 
     @Override

@@ -27,5 +27,6 @@ public abstract class LayoutMapper {
     @Mapping(target = "booths", ignore = true)
     public abstract LayoutDTO toDTO(UpdateLayoutMetaDataRequest request);
 
+    @Mapping(target = "company", source = "company", ignore = true)
     public abstract void updateEntityFromDTO(LayoutDTO dto, @MappingTarget LayoutEntity entity);
 }
