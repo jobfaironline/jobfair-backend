@@ -199,4 +199,15 @@ public final class ApiEndPoint {
 
         public static final String CV = ROOT_ENDPOINT + VERSION + "/cv";
     }
+
+    public static final class Assignment {
+        private Assignment() {
+        }
+
+        public static final String ASSIGNMENT = ROOT_ENDPOINT + VERSION + "/assignments";
+        public static final String ASSIGN = ASSIGNMENT + "/assign";
+        public static final String UNASSIGN = ASSIGNMENT + "/unassign";
+        public static final String JOB_FAIR = ASSIGNMENT + "/job-fair";
+        public static final String JOB_FAIR_BOOTH = ASSIGNMENT + "/job-fair-booth";
+    }
 }

@@ -3,10 +3,10 @@ package org.capstone.job_fair.services.impl.company;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.models.dtos.company.JobFairBoothDTO;
 import org.capstone.job_fair.models.entities.job_fair.JobFairEntity;
-import org.capstone.job_fair.repositories.company.CompanyBoothRepository;
+import org.capstone.job_fair.repositories.company.JobFairBoothRepository;
 import org.capstone.job_fair.repositories.job_fair.JobFairRepository;
-import org.capstone.job_fair.services.interfaces.company.CompanyBoothService;
-import org.capstone.job_fair.services.mappers.company.CompanyBoothMapper;
+import org.capstone.job_fair.services.interfaces.company.JobFairBoothService;
+import org.capstone.job_fair.services.mappers.company.JobFairBoothMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,19 +18,19 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
-public class CompanyBoothServiceImpl implements CompanyBoothService {
+public class JobFairBoothServiceImpl implements JobFairBoothService {
     @Autowired
-    private CompanyBoothRepository companyBoothRepository;
+    private JobFairBoothRepository jobFairBoothRepository;
 
     @Autowired
     private JobFairRepository jobFairRepository;
 
     @Autowired
-    private CompanyBoothMapper companyBoothMapper;
+    private JobFairBoothMapper jobFairBoothMapper;
 
     @Override
     public Optional<JobFairBoothDTO> getCompanyBoothByJobFairIdAndBoothId(String jobFairId, String boothId) {
-        return companyBoothRepository.getCompanyBoothByJobFairIdAndBoothId(jobFairId, boothId).map(companyBoothMapper::toDTO);
+        return jobFairBoothRepository.getCompanyBoothByJobFairIdAndBoothId(jobFairId, boothId).map(jobFairBoothMapper::toDTO);
     }
 
     @Override
@@ -39,14 +39,14 @@ public class CompanyBoothServiceImpl implements CompanyBoothService {
         if (!jobFairOpt.isPresent()){
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.JOB_FAIR_NOT_FOUND));
         }
-        return companyBoothRepository.getCompanyBoothByJobFairIdAndCompanyId(jobFairId, companyId)
+        return jobFairBoothRepository.getCompanyBoothByJobFairIdAndCompanyId(jobFairId, companyId)
                 .stream()
-                .map(companyBoothMapper::toDTO)
+                .map(jobFairBoothMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
     public Optional<JobFairBoothDTO> getById(String boothId) {
-        return companyBoothRepository.findById(boothId).map(companyBoothMapper::toDTO);
+        return jobFairBoothRepository.findById(boothId).map(jobFairBoothMapper::toDTO);
     }
 }

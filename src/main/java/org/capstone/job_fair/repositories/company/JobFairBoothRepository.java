@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface CompanyBoothRepository extends JpaRepository<JobFairBoothEntity, String> {
+public interface JobFairBoothRepository extends JpaRepository<JobFairBoothEntity, String> {
     @Query(
             value = "select * from company_booth where booth_id = :boothId AND order_id IN (select id from `order` where company_registration_id IN (select id from company_registration where job_fair_id = :jobFairId))",
             nativeQuery = true

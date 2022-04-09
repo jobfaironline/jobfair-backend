@@ -5,7 +5,7 @@ import org.capstone.job_fair.models.dtos.company.JobFairBoothDTO;
 import java.util.List;
 import java.util.Optional;
 
-public interface CompanyBoothService {
+public interface JobFairBoothService {
     Optional<JobFairBoothDTO> getCompanyBoothByJobFairIdAndBoothId(String jobFairId, String boothId);
 
     List<JobFairBoothDTO> getCompanyBoothByJobFairIdAndCompanyId(String jobFairId, String companyId);
