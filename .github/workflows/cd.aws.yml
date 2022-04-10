@@ -36,7 +36,8 @@ jobs:
             mkdir -p .platform/nginx/conf.d/
             cd .platform/nginx/conf.d/
             touch proxy.conf
-            echo 'client_max_body_size 50M;' > proxy.conf
+            echo 'client_max_body_size 50M;' >> proxy.conf
+            echo 'proxy_ignore_client_abort on;' >> proxy.conf
       #Build the application using Maven
       - name: Create source bundle file
         run: | 
