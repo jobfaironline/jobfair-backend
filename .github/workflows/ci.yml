@@ -82,8 +82,19 @@ jobs:
           repository: jobfaironline/schema
           token: ${{secrets.PAT}}
       - run: |
-            sudo /etc/init.d/mysql start
-            ./runfile.sh
+             sudo /etc/init.d/mysql start
+             cd DDL/
+             for filename in $(ls -1 * | sort -n); do
+              cat $filename >> schema.sql;
+             done
+             mysql -h $DATASOURCE_URL -P $DATASOURCE_PORT -u $DATASOURCE_USERNAME -p$DATASOURCE_PASSWORD < schema.sql
+             rm schema.sql
+             cd ../DML/
+             for filename in $(ls -1 * | sort -n); do
+              cat $filename >> schema.sql;
+             done
+             mysql -h $DATASOURCE_URL -P $DATASOURCE_PORT -u $DATASOURCE_USERNAME -p$DATASOURCE_PASSWORD < schema.sql
+             rm schema.sql
       - name: Download JAR
     #Download the artifact which was uploaded in the build's job
         uses: actions/download-artifact@v2
