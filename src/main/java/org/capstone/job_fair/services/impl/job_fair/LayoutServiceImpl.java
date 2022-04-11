@@ -12,6 +12,7 @@ import org.capstone.job_fair.models.entities.job_fair.JobFairEntity;
 import org.capstone.job_fair.models.entities.job_fair.LayoutBoothEntity;
 import org.capstone.job_fair.models.entities.job_fair.LayoutEntity;
 import org.capstone.job_fair.models.statuses.BoothStatus;
+import org.capstone.job_fair.models.statuses.JobFairPlanStatus;
 import org.capstone.job_fair.repositories.company.JobFairBoothRepository;
 import org.capstone.job_fair.repositories.job_fair.JobFairRepository;
 import org.capstone.job_fair.repositories.job_fair.LayoutRepository;
@@ -185,6 +186,8 @@ public class LayoutServiceImpl implements LayoutService {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.JOB_FAIR_NOT_FOUND));
 
         JobFairEntity jobFairEntity = jobFairEntityOptional.get();
+        if(!jobFairEntity.getStatus().equals(JobFairPlanStatus.DRAFT))
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.NOT_EDITABLE));
 
         jobFairBoothRepository.deleteAllByJobFairIdAndBoothLayoutCompanyId(jobFairId, companyId);
 

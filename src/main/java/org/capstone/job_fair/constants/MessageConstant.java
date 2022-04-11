@@ -26,6 +26,8 @@ public final class MessageConstant {
         public static final String INVALID_DECORATE_TIME = "job-fair.error.invalid-decorate-time";
         public static final String INVALID_PUBLIC_TIME = "job-fair.error.invalid-public-time";
         public static final String INVALID_BUFFER_TIME = "job-fair.error.invalid-buffer-time";
+        public static final String NOT_EDITABLE = "job-fair.error.not-editable";
+
 
     }
 
