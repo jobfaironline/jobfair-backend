@@ -7,6 +7,7 @@ import org.capstone.job_fair.constants.GLBConstant;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.models.dtos.job_fair.LayoutBoothDTO;
 import org.capstone.job_fair.models.dtos.job_fair.LayoutDTO;
+import org.capstone.job_fair.models.entities.company.JobFairBoothEntity;
 import org.capstone.job_fair.models.entities.job_fair.JobFairEntity;
 import org.capstone.job_fair.models.entities.job_fair.LayoutBoothEntity;
 import org.capstone.job_fair.models.entities.job_fair.LayoutEntity;
@@ -88,7 +89,7 @@ public class LayoutServiceImpl implements LayoutService {
     @Transactional
     public LayoutDTO update(LayoutDTO dto) {
         Optional<LayoutEntity> layoutEntityOpt;
-        if (dto.getCompany() == null){
+        if (dto.getCompany() == null) {
             layoutEntityOpt = layoutRepository.findById(dto.getId());
         } else {
             layoutEntityOpt = layoutRepository.findByIdAndCompanyId(dto.getId(), dto.getCompany().getId());
@@ -119,28 +120,24 @@ public class LayoutServiceImpl implements LayoutService {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Layout.INVALID_GLB_FILE));
         }
         layoutEntity.getBooths().removeAll(layoutEntity.getBooths());
-        Set<LayoutBoothEntity> boothEntities =
-                gltfModel.getNodeModels().stream()
-                        .filter(nodeModel -> nodeModel.getName().startsWith(GLBConstant.BOOTH_NAME_PREFIX))
-                        .map(nodeModel -> {
-                            LayoutBoothEntity layoutBoothEntity = new LayoutBoothEntity();
-                            layoutBoothEntity.setId(UUID.randomUUID().toString());
-                            layoutBoothEntity.setName(nodeModel.getName().replaceAll("([._\\-])", ""));
-                            layoutBoothEntity.setLayout(layoutEntity);
-                            layoutBoothEntity.setStatus(BoothStatus.NORMAL);
+        Set<LayoutBoothEntity> boothEntities = gltfModel.getNodeModels().stream().filter(nodeModel -> nodeModel.getName().startsWith(GLBConstant.BOOTH_NAME_PREFIX)).map(nodeModel -> {
+            LayoutBoothEntity layoutBoothEntity = new LayoutBoothEntity();
+            layoutBoothEntity.setId(UUID.randomUUID().toString());
+            layoutBoothEntity.setName(nodeModel.getName().replaceAll("([._\\-])", ""));
+            layoutBoothEntity.setLayout(layoutEntity);
+            layoutBoothEntity.setStatus(BoothStatus.NORMAL);
 
-                            //get position
-                            //https://github.com/KhronosGroup/glTF-Tutorials/blob/master/gltfTutorial/gltfTutorial_004_ScenesNodes.md
-                            //see the matrix section
-                            float[] result = new float[16];
-                            nodeModel.computeGlobalTransform(result);
-                            layoutBoothEntity.setX(result[12]);
-                            layoutBoothEntity.setY(result[13]);
-                            layoutBoothEntity.setZ(result[14]);
+            //get position
+            //https://github.com/KhronosGroup/glTF-Tutorials/blob/master/gltfTutorial/gltfTutorial_004_ScenesNodes.md
+            //see the matrix section
+            float[] result = new float[16];
+            nodeModel.computeGlobalTransform(result);
+            layoutBoothEntity.setX(result[12]);
+            layoutBoothEntity.setY(result[13]);
+            layoutBoothEntity.setZ(result[14]);
 
-                            return layoutBoothEntity;
-                        })
-                        .collect(Collectors.toSet());
+            return layoutBoothEntity;
+        }).collect(Collectors.toSet());
         layoutEntity.getBooths().addAll(boothEntities);
         layoutRepository.save(layoutEntity);
 
@@ -167,11 +164,35 @@ public class LayoutServiceImpl implements LayoutService {
         if (!layoutOpt.isPresent()) return Optional.empty();
         //check for which booth is available
         LayoutDTO layoutDTO = layoutMapper.toDTO(layoutOpt.get());
-        Set<LayoutBoothDTO> newBooths = layoutDTO.getBooths()
-                .stream()
-                .filter(layoutBoothDTO -> !jobFairBoothRepository.getCompanyBoothByJobFairIdAndBoothId(jobFairId, layoutBoothDTO.getId()).isPresent())
-                .collect(Collectors.toSet());
+        Set<LayoutBoothDTO> newBooths = layoutDTO.getBooths().stream().filter(layoutBoothDTO -> !jobFairBoothRepository.getCompanyBoothByJobFairIdAndBoothId(jobFairId, layoutBoothDTO.getId()).isPresent()).collect(Collectors.toSet());
         layoutDTO.setBooths(newBooths);
         return Optional.of(layoutDTO);
+    }
+
+
+    @Override
+    @Transactional
+    public void pickJobFairLayout(String jobFairId, String layoutId, String companyId) {
+
+        Optional<LayoutEntity> entityOptional = layoutRepository.findByIdAndCompanyIdOrCompanyIdIsNull(layoutId, companyId);
+        if (!entityOptional.isPresent())
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Layout.NOT_FOUND));
+
+        Set<LayoutBoothEntity> layoutBoothEntitySet = entityOptional.get().getBooths();
+
+        Optional<JobFairEntity> jobFairEntityOptional = jobFairRepository.findById(jobFairId);
+        if (!jobFairEntityOptional.isPresent())
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.JOB_FAIR_NOT_FOUND));
+
+        JobFairEntity jobFairEntity = jobFairEntityOptional.get();
+
+        jobFairBoothRepository.deleteAllByJobFairIdAndBoothLayoutCompanyId(jobFairId, companyId);
+
+        for (LayoutBoothEntity booth : layoutBoothEntitySet) {
+            JobFairBoothEntity jobFairBoothEntity = new JobFairBoothEntity();
+            jobFairBoothEntity.setJobFair(jobFairEntity);
+            jobFairBoothEntity.setBooth(booth);
+            jobFairBoothRepository.save(jobFairBoothEntity);
+        }
     }
 }

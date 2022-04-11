@@ -135,6 +135,7 @@ public final class ApiEndPoint {
         public static final String GET_BY_JOB_FAIR_AND_AVAILABLE_BOOTH_SLOT = LAYOUT_ENDPOINT + "/job-fair/available-slot";
         public static final String TEMPLATE_LAYOUT = LAYOUT_ENDPOINT + "/template";
         public static final String FOR_COMPANY_MANAGER = LAYOUT_ENDPOINT + "/company-manager";
+        public static final String PICK_JOB_FAIR_LAYOUT = LAYOUT_ENDPOINT + "/pick-job-fair-layout";
     }
 
     public static final class AgoraToken {

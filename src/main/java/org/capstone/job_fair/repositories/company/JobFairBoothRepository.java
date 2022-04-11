@@ -22,4 +22,7 @@ public interface JobFairBoothRepository extends JpaRepository<JobFairBoothEntity
             nativeQuery = true
     )
     List<JobFairBoothEntity> getCompanyBoothByJobFairIdAndCompanyId(@Param("jobFairId") String jobFairId, @Param("companyId") String companyId);
+
+    Integer deleteAllByJobFairIdAndBoothLayoutCompanyId(String jobFairId, String companyId);
+
 }
