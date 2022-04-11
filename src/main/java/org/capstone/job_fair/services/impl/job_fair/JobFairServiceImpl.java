@@ -33,12 +33,7 @@ public class JobFairServiceImpl implements JobFairService {
         return jobFairRepository.findById(id).map(jobFairMapper::toDTO);
     }
 
-    @Override
-    @Transactional
-    public JobFairDTO createNewJobFair(final JobFairDTO dto) {
-        long now = new Date().getTime();
-        dto.setCreateTime(now);
-        dto.setStatus(JobFairPlanStatus.DRAFT);
+    private void validateJobFairTime(JobFairDTO dto) {
         if (dto.getDecorateEndTime() < dto.getDecorateStartTime() + DataConstraint.JobFair.MINIMUM_DECORATE_TIME) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.INVALID_DECORATE_TIME));
         }
@@ -48,6 +43,14 @@ public class JobFairServiceImpl implements JobFairService {
         if (dto.getPublicStartTime() < dto.getDecorateEndTime() + DataConstraint.JobFair.MINIMUM_BUFFER_TIME) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.INVALID_BUFFER_TIME));
         }
+    }
+
+    @Override
+    @Transactional
+    public JobFairDTO createNewJobFair(final JobFairDTO dto) {
+        long now = new Date().getTime();
+        dto.setCreateTime(now);
+        dto.setStatus(JobFairPlanStatus.DRAFT);
 
         JobFairEntity entity = jobFairMapper.toEntity(dto);
         entity = jobFairRepository.save(entity);
