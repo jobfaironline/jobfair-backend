@@ -6,6 +6,7 @@ import org.capstone.job_fair.constants.AWSConstant;
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.controllers.payload.requests.job_fair.CreateLayoutMetaDataRequest;
 import org.capstone.job_fair.controllers.payload.requests.job_fair.UpdateLayoutMetaDataRequest;
+import org.capstone.job_fair.controllers.payload.requests.layout.PickJobFairLayoutRequest;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.dtos.company.CompanyDTO;
 import org.capstone.job_fair.models.dtos.job_fair.LayoutDTO;
@@ -128,5 +129,14 @@ public class LayoutController {
     public ResponseEntity<?> getLayoutAndAvailableBoothSlotByJobFairId(@PathVariable("id") String id) {
         Optional<LayoutDTO> layoutDTOOpt = layoutService.getByJobFairIdWithAvailableBoothSlot(id);
         return layoutDTOOpt.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    }
+
+    @PostMapping(ApiEndPoint.Layout.PICK_JOB_FAIR_LAYOUT)
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
+    public ResponseEntity<?> pickJobFairLayout(@Valid PickJobFairLayoutRequest request) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String companyId = userDetails.getCompanyId();
+        layoutService.pickJobFairLayout(request.getJobFairId(), request.getLayoutId(), companyId);
+        return ResponseEntity.ok().build();
     }
 }
