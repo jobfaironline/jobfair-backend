@@ -33,22 +33,28 @@ public class JobFairServiceImpl implements JobFairService {
         return jobFairRepository.findById(id).map(jobFairMapper::toDTO);
     }
 
+    private void validateJobFairTime(JobFairDTO dto) {
+        if (dto.getDecorateEndTime() != null && dto.getDecorateStartTime() != null &&
+                dto.getDecorateEndTime() < dto.getDecorateStartTime() + DataConstraint.JobFair.MINIMUM_DECORATE_TIME) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.INVALID_DECORATE_TIME));
+        }
+        if (dto.getDecorateStartTime() != null && dto.getDecorateEndTime() != null &&
+                dto.getDecorateEndTime() < dto.getDecorateStartTime() + DataConstraint.JobFair.MINIMUM_PUBLIC_TIME) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.INVALID_DECORATE_TIME));
+        }
+        if (dto.getPublicStartTime() != null && dto.getDecorateEndTime() != null &&
+                dto.getPublicStartTime() < dto.getDecorateEndTime() + DataConstraint.JobFair.MINIMUM_BUFFER_TIME) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.INVALID_BUFFER_TIME));
+        }
+    }
+
     @Override
     @Transactional
     public JobFairDTO createNewJobFair(final JobFairDTO dto) {
         long now = new Date().getTime();
         dto.setCreateTime(now);
         dto.setStatus(JobFairPlanStatus.DRAFT);
-        if (dto.getDecorateEndTime() < dto.getDecorateStartTime() + DataConstraint.JobFair.MINIMUM_DECORATE_TIME) {
-            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.INVALID_DECORATE_TIME));
-        }
-        if (dto.getDecorateEndTime() < dto.getDecorateStartTime() + DataConstraint.JobFair.MINIMUM_PUBLIC_TIME) {
-            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.INVALID_DECORATE_TIME));
-        }
-        if (dto.getPublicStartTime() < dto.getDecorateEndTime() + DataConstraint.JobFair.MINIMUM_BUFFER_TIME) {
-            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.INVALID_BUFFER_TIME));
-        }
-
+        validateJobFairTime(dto);
         JobFairEntity entity = jobFairMapper.toEntity(dto);
         entity = jobFairRepository.save(entity);
         return jobFairMapper.toDTO(entity);

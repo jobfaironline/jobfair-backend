@@ -19,27 +19,22 @@ import javax.validation.constraints.Size;
 public class DraftJobFairRequest {
 
     @NumberFormat
-    @NotNull
     @Min(DataConstraint.JobFair.MIN_TIME)
     private Long decorateStartTime;
 
     @NumberFormat
-    @NotNull
     @Min(DataConstraint.JobFair.MIN_TIME)
     private Long decorateEndTime;
 
     @NumberFormat
-    @NotNull
     @Min(DataConstraint.JobFair.MIN_TIME)
     private Long publicStartTime;
 
     @NumberFormat
-    @NotNull
     @Min(DataConstraint.JobFair.MIN_TIME)
     private Long publicEndTime;
 
     @XSSConstraint
-    @NotNull
     @Size(max = DataConstraint.JobFair.NAME_MAX_LENGTH)
     private String name;
 
