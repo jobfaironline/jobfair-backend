@@ -105,13 +105,12 @@ public class JobFairServiceImpl implements JobFairService {
         }
 
         JobFairEntity jobFairEntity = jobFairEntityOptional.get();
+        JobFairDTO jobFairDTO = jobFairMapper.toDTO(jobFairEntity);
 
-        Set<ConstraintViolation<JobFairEntity>> violations = validator.validate(jobFairEntity);
+        Set<ConstraintViolation<JobFairDTO>> violations = validator.validate(jobFairDTO);
         if (!violations.isEmpty()) {
             throw new ConstraintViolationException(violations);
         }
-
-        JobFairDTO jobFairDTO = jobFairMapper.toDTO(jobFairEntity);
         validateJobFairTime(jobFairDTO);
 
         if (!jobFairDTO.getStatus().equals(JobFairPlanStatus.DRAFT)) {

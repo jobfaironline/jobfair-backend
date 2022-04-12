@@ -11,8 +11,6 @@ import org.hibernate.Hibernate;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Objects;
 
@@ -30,39 +28,29 @@ public class JobFairEntity {
     @GenericGenerator(name = "uuid", strategy = "org.hibernate.id.UUIDGenerator")
     private String id;
     @Column(name = "create_time")
-    @NotNull
     private Long createTime;
     @Column(name = "decorate_start_time")
-    @NotNull
     private Long decorateStartTime;
     @Column(name = "decorate_end_time")
-    @NotNull
     private Long decorateEndTime;
     @Column(name = "public_start_time")
-    @NotNull
     private Long publicStartTime;
     @Column(name = "public_end_time")
-    @NotNull
     private Long publicEndTime;
     @Column(name = "name", length = 100)
-    @NotBlank
     private String name;
     @Column(name = "description", length = 500)
-    @NotBlank
     private String description;
     @Column(name = "target_attendant", length = 100)
-    @NotBlank
     private String targetAttendant;
     @Column(name = "thumbnail_url", length = 2048)
     private String thumbnailUrl;
     @Column(name = "status")
     @Enumerated(EnumType.ORDINAL)
-    @NotNull
     private JobFairPlanStatus status;
     @Column(name = "cancel_reason", length = 500)
     private String cancelReason;
     @Column(name = "host_name", length = 100)
-    @NotBlank
     private String hostName;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id")
