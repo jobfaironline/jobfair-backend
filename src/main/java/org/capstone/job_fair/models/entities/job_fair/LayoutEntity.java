@@ -33,6 +33,8 @@ public class LayoutEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id")
     private CompanyEntity company;
+    @Column(name = "thumbnail_url")
+    private String thumbnailUrl;
 
 
     @Override

@@ -139,6 +139,7 @@ public final class ApiEndPoint {
         public static final String TEMPLATE_LAYOUT = LAYOUT_ENDPOINT + "/template";
         public static final String FOR_COMPANY_MANAGER = LAYOUT_ENDPOINT + "/company-manager";
         public static final String PICK_JOB_FAIR_LAYOUT = LAYOUT_ENDPOINT + "/pick-job-fair-layout";
+        public static final String UPLOAD_THUMBNAIL = LAYOUT_ENDPOINT + "/upload-thumbnail";
     }
 
     public static final class AgoraToken {

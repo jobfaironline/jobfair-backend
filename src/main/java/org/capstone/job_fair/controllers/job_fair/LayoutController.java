@@ -1,9 +1,11 @@
 package org.capstone.job_fair.controllers.job_fair;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import org.capstone.job_fair.constants.AWSConstant;
 import org.capstone.job_fair.constants.ApiEndPoint;
+import org.capstone.job_fair.constants.DataConstraint;
 import org.capstone.job_fair.controllers.payload.requests.job_fair.CreateLayoutMetaDataRequest;
 import org.capstone.job_fair.controllers.payload.requests.job_fair.UpdateLayoutMetaDataRequest;
 import org.capstone.job_fair.controllers.payload.requests.layout.PickJobFairLayoutRequest;
@@ -13,6 +15,7 @@ import org.capstone.job_fair.models.dtos.job_fair.LayoutDTO;
 import org.capstone.job_fair.services.interfaces.job_fair.LayoutService;
 import org.capstone.job_fair.services.interfaces.util.FileStorageService;
 import org.capstone.job_fair.services.mappers.job_fair.LayoutMapper;
+import org.capstone.job_fair.utils.ImageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -139,4 +142,22 @@ public class LayoutController {
         layoutService.pickJobFairLayout(request.getJobFairId(), request.getLayoutId(), companyId);
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping(ApiEndPoint.Layout.UPLOAD_THUMBNAIL + "/{layoutId}")
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) OR hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
+    @SneakyThrows
+    public ResponseEntity<?> uploadThumbnail(@PathVariable("layoutId") String layoutId, @RequestParam("file") MultipartFile file) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String companyId = userDetails.getCompanyId();
+        byte[] image = ImageUtil.convertImage(file, DataConstraint.Layout.IMAGE_TYPE, DataConstraint.Layout.WIDTH_FACTOR,
+                DataConstraint.Layout.HEIGHT_FACTOR, DataConstraint.Layout.IMAGE_EXTENSION_TYPE);
+        String layoutThumbnailFolder = AWSConstant.LAYOUT_THUMBNAIL_FOLDER;
+        LayoutDTO layoutDTO = layoutService.updateLayoutThumbnail(layoutThumbnailFolder, layoutId, companyId);
+        fileStorageService.store(image, layoutThumbnailFolder + "/" + layoutDTO.getId()).exceptionally(throwable -> {
+            log.error(throwable.getMessage());
+            return null;
+        });
+        return ResponseEntity.ok(layoutDTO);
+    }
+
 }

@@ -24,4 +24,6 @@ public interface LayoutService {
     Optional<LayoutDTO> getByJobFairIdWithAvailableBoothSlot(String jobFairId);
 
     void pickJobFairLayout(String jobFairId, String layoutId, String companyId);
+
+    LayoutDTO updateLayoutThumbnail(String layoutThumbnailFolder, String layoutId, String companyId);
 }

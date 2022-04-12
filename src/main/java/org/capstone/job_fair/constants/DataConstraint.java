@@ -220,6 +220,10 @@ public final class DataConstraint {
         public static final int NAME_MIN_LENGTH = 1;
         public static final int DESCRIPTION_MAX_LENGTH = 500;
         public static final int DESCRIPTION_MIN_LENGTH = 1;
+        public static final int IMAGE_TYPE = BufferedImage.TYPE_INT_BGR;
+        public static final String IMAGE_EXTENSION_TYPE = "jpg";
+        public static final double WIDTH_FACTOR = 0.5;
+        public static final double HEIGHT_FACTOR = 0.5;
     }
 
     public static final class Application {
