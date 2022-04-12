@@ -15,8 +15,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Validator;
 import java.util.Date;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @Transactional(readOnly = true)
@@ -28,22 +32,22 @@ public class JobFairServiceImpl implements JobFairService {
     @Autowired
     private JobFairMapper jobFairMapper;
 
+    @Autowired
+    private Validator validator;
+
     @Override
     public Optional<JobFairDTO> getById(String id) {
         return jobFairRepository.findById(id).map(jobFairMapper::toDTO);
     }
 
     private void validateJobFairTime(JobFairDTO dto) {
-        if (dto.getDecorateEndTime() != null && dto.getDecorateStartTime() != null &&
-                dto.getDecorateEndTime() < dto.getDecorateStartTime() + DataConstraint.JobFair.MINIMUM_DECORATE_TIME) {
+        if (dto.getDecorateEndTime() != null && dto.getDecorateStartTime() != null && dto.getDecorateEndTime() < dto.getDecorateStartTime() + DataConstraint.JobFair.MINIMUM_DECORATE_TIME) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.INVALID_DECORATE_TIME));
         }
-        if (dto.getDecorateStartTime() != null && dto.getDecorateEndTime() != null &&
-                dto.getDecorateEndTime() < dto.getDecorateStartTime() + DataConstraint.JobFair.MINIMUM_PUBLIC_TIME) {
+        if (dto.getDecorateStartTime() != null && dto.getDecorateEndTime() != null && dto.getDecorateEndTime() < dto.getDecorateStartTime() + DataConstraint.JobFair.MINIMUM_PUBLIC_TIME) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.INVALID_DECORATE_TIME));
         }
-        if (dto.getPublicStartTime() != null && dto.getDecorateEndTime() != null &&
-                dto.getPublicStartTime() < dto.getDecorateEndTime() + DataConstraint.JobFair.MINIMUM_BUFFER_TIME) {
+        if (dto.getPublicStartTime() != null && dto.getDecorateEndTime() != null && dto.getPublicStartTime() < dto.getDecorateEndTime() + DataConstraint.JobFair.MINIMUM_BUFFER_TIME) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.INVALID_BUFFER_TIME));
         }
     }
@@ -88,6 +92,34 @@ public class JobFairServiceImpl implements JobFairService {
     @Override
     public Page<JobFairDTO> findByNameAndCompanyId(String name, String companyId, Pageable pageable) {
         return jobFairRepository.findByNameLikeAndCompanyId("%" + name + "%", companyId, pageable).map(jobFairMapper::toDTO);
+    }
+
+
+    @Override
+    @Transactional
+    public void publishJobFair(String companyId, String jobFairId) {
+
+        Optional<JobFairEntity> jobFairEntityOptional = jobFairRepository.findByIdAndCompanyId(jobFairId, companyId);
+        if (!jobFairEntityOptional.isPresent()) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.JOB_FAIR_NOT_FOUND));
+        }
+
+        JobFairEntity jobFairEntity = jobFairEntityOptional.get();
+        JobFairDTO jobFairDTO = jobFairMapper.toDTO(jobFairEntity);
+
+        Set<ConstraintViolation<JobFairDTO>> violations = validator.validate(jobFairDTO);
+        if (!violations.isEmpty()) {
+            throw new ConstraintViolationException(violations);
+        }
+        validateJobFairTime(jobFairDTO);
+
+        if (!jobFairDTO.getStatus().equals(JobFairPlanStatus.DRAFT)) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.NOT_EDITABLE));
+        }
+
+        jobFairEntity.setStatus(JobFairPlanStatus.PUBLISH);
+
+        jobFairRepository.save(jobFairEntity);
     }
 
 

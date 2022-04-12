@@ -142,4 +142,11 @@ public class JobFairController {
     }
 
 
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
+    @PostMapping(ApiEndPoint.JobFair.PUBLISH + "/{jobFairId}")
+    public ResponseEntity<?> publishJobFair(@PathVariable("jobFairId") String jobFairPlanId) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        jobFairService.publishJobFair(userDetails.getCompanyId(), jobFairPlanId);
+        return ResponseEntity.ok().build();
+    }
 }
