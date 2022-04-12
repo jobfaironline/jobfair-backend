@@ -17,4 +17,5 @@ public interface JobFairService {
 
     Page<JobFairDTO> findByNameAndCompanyId(String name, String companyId, Pageable pageable);
 
+    void publishJobFair(String companyId, String jobFairId);
 }
