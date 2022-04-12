@@ -186,7 +186,7 @@ public class LayoutServiceImpl implements LayoutService {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.JOB_FAIR_NOT_FOUND));
 
         JobFairEntity jobFairEntity = jobFairEntityOptional.get();
-        if(!jobFairEntity.getStatus().equals(JobFairPlanStatus.DRAFT))
+        if (!jobFairEntity.getStatus().equals(JobFairPlanStatus.DRAFT))
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.NOT_EDITABLE));
 
         jobFairBoothRepository.deleteAllByJobFairIdAndBoothLayoutCompanyId(jobFairId, companyId);
@@ -198,4 +198,23 @@ public class LayoutServiceImpl implements LayoutService {
             jobFairBoothRepository.save(jobFairBoothEntity);
         }
     }
+
+    @Override
+    @Transactional
+    public LayoutDTO createOrUpdateLayoutThumbnail(String layoutThumbnailFolder, String layoutId, String companyId) {
+        String url = awsUtil.generateAwsS3AccessString(layoutThumbnailFolder, layoutId);
+        Optional<LayoutEntity> layoutEntityOptional = null;
+        if (companyId == null) layoutEntityOptional = layoutRepository.findById(layoutId);
+        else
+            layoutEntityOptional = layoutRepository.findByIdAndCompanyId(layoutId, companyId);
+        if (!layoutEntityOptional.isPresent()) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Layout.NOT_FOUND));
+        }
+        LayoutEntity layoutEntity = layoutEntityOptional.get();
+        layoutEntity.setThumbnailUrl(url);
+        layoutRepository.save(layoutEntity);
+        return layoutMapper.toDTO(layoutEntity);
+    }
+
+
 }
