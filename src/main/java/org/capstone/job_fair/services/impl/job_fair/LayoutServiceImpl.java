@@ -201,7 +201,7 @@ public class LayoutServiceImpl implements LayoutService {
 
     @Override
     @Transactional
-    public LayoutDTO updateLayoutThumbnail(String layoutThumbnailFolder, String layoutId, String companyId) {
+    public LayoutDTO createOrUpdateLayoutThumbnail(String layoutThumbnailFolder, String layoutId, String companyId) {
         String url = awsUtil.generateAwsS3AccessString(layoutThumbnailFolder, layoutId);
         Optional<LayoutEntity> layoutEntityOptional = null;
         if (companyId == null) layoutEntityOptional = layoutRepository.findById(layoutId);

@@ -151,9 +151,8 @@ public class LayoutController {
         String companyId = userDetails.getCompanyId();
         byte[] image = ImageUtil.convertImage(file, DataConstraint.Layout.IMAGE_TYPE, DataConstraint.Layout.WIDTH_FACTOR,
                 DataConstraint.Layout.HEIGHT_FACTOR, DataConstraint.Layout.IMAGE_EXTENSION_TYPE);
-        String layoutThumbnailFolder = AWSConstant.LAYOUT_THUMBNAIL_FOLDER;
-        LayoutDTO layoutDTO = layoutService.updateLayoutThumbnail(layoutThumbnailFolder, layoutId, companyId);
-        fileStorageService.store(image, layoutThumbnailFolder + "/" + layoutDTO.getId()).exceptionally(throwable -> {
+        LayoutDTO layoutDTO = layoutService.createOrUpdateLayoutThumbnail(AWSConstant.LAYOUT_THUMBNAIL_FOLDER, layoutId, companyId);
+        fileStorageService.store(image, AWSConstant.LAYOUT_THUMBNAIL_FOLDER + "/" + layoutDTO.getId()).exceptionally(throwable -> {
             log.error(throwable.getMessage());
             return null;
         });
