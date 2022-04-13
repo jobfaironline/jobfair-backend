@@ -183,5 +183,10 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
         return mapper.toDTO(companyEmployeeEntityOpt.get());
     }
 
+    @Override
+    public Integer getCompanyEmployeeCount(String companyId) {
+        return employeeRepository.countByCompanyId(companyId);
+    }
+
 
 }

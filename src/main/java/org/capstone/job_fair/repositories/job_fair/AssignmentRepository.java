@@ -16,5 +16,8 @@ public interface AssignmentRepository extends JpaRepository<AssignmentEntity, St
 
     List<AssignmentEntity> findByJobFairBoothIdAndJobFairBoothJobFairCompanyId(String jobFairBoothId, String companyId);
 
+    @Query("select count(distinct a.jobFairBooth) from AssignmentEntity a where a.jobFairBooth.jobFair.id = ?1")
+    Integer countDistinctJobFairBoothByJobFairBoothJobFairId(String jobFairId);
 
+    Integer countByJobFairBoothJobFairId(String jobFairId);
 }

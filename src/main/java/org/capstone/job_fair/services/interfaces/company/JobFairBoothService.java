@@ -11,4 +11,6 @@ public interface JobFairBoothService {
     List<JobFairBoothDTO> getCompanyBoothByJobFairId(String jobFairId);
 
     Optional<JobFairBoothDTO> getById(String boothId);
+
+    Integer getBoothCountByJobFair(String jobFairId);
 }

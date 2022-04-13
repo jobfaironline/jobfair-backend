@@ -134,4 +134,14 @@ public class AssignmentServiceImpl implements AssignmentService {
         }).collect(Collectors.toList());
         return companyEmployees.stream().map(companyEmployeeMapper::toDTO).collect(Collectors.toList());
     }
+
+    @Override
+    public Integer getCountAssignedBoothByJobFair(String jobFairId) {
+        return assignmentRepository.countDistinctJobFairBoothByJobFairBoothJobFairId(jobFairId);
+    }
+
+    @Override
+    public Integer getCountAssignedEmployeeByJobFair(String jobFairId) {
+        return assignmentRepository.countByJobFairBoothJobFairId(jobFairId);
+    }
 }
