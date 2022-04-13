@@ -36,6 +36,10 @@ public final class DataConstraint {
         public static final long MINIMUM_PUBLIC_TIME = 60 * 60 * 1000L;
         public static final long MINIMUM_BUFFER_TIME = 0L;
         public static final int HOST_NAME_MAX_LENGTH = 100;
+        public static final int IMAGE_TYPE = BufferedImage.TYPE_INT_BGR;
+        public static final String IMAGE_EXTENSION_TYPE = "jpg";
+        public static final double WIDTH_FACTOR = 0.5;
+        public static final double HEIGHT_FACTOR = 0.5;
 
 
     }
