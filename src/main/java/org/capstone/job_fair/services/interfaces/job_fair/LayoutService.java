@@ -25,4 +25,5 @@ public interface LayoutService {
 
     void pickJobFairLayout(String jobFairId, String layoutId, String companyId);
 
+    LayoutDTO createOrUpdateLayoutThumbnail(String layoutThumbnailFolder, String layoutId, String companyId);
 }
