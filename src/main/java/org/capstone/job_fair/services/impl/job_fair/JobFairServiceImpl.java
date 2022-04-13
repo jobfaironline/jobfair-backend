@@ -128,6 +128,7 @@ public class JobFairServiceImpl implements JobFairService {
     }
 
     @Override
+    @Transactional
     public JobFairDTO createOrUpdateJobFairThumbnail(String jobfairThumbnailFolder, String jobFairId, String companyId) {
         String url = awsUtil.generateAwsS3AccessString(jobfairThumbnailFolder, jobFairId);
         Optional<JobFairEntity> jobFairEntityOptional = null;
