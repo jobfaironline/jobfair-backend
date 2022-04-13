@@ -128,11 +128,11 @@ public class JobFairServiceImpl implements JobFairService {
     }
 
     @Override
-    public JobFairDTO createOrUpdateJobFairThumbnail(String jobfairThumbnailFolder, String layoutId, String companyId) {
-        String url = awsUtil.generateAwsS3AccessString(jobfairThumbnailFolder, layoutId);
+    public JobFairDTO createOrUpdateJobFairThumbnail(String jobfairThumbnailFolder, String jobFairId, String companyId) {
+        String url = awsUtil.generateAwsS3AccessString(jobfairThumbnailFolder, jobFairId);
         Optional<JobFairEntity> jobFairEntityOptional = null;
-        if (companyId == null) jobFairEntityOptional = jobFairRepository.findById(layoutId);
-        else jobFairEntityOptional = jobFairRepository.findByIdAndCompanyId(layoutId, companyId);
+        if (companyId == null) jobFairEntityOptional = jobFairRepository.findById(jobFairId);
+        else jobFairEntityOptional = jobFairRepository.findByIdAndCompanyId(jobFairId, companyId);
         if (!jobFairEntityOptional.isPresent()) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.JOB_FAIR_NOT_FOUND));
         }

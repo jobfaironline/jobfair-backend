@@ -154,12 +154,12 @@ public class JobFairController {
     @PostMapping(ApiEndPoint.JobFair.UPLOAD_THUMBNAIL + "/{jobFairId}")
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) OR hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
     @SneakyThrows
-    public ResponseEntity<?> uploadThumbnail(@PathVariable("jobFairId") String layoutId, @RequestParam("file") MultipartFile file) {
+    public ResponseEntity<?> uploadThumbnail(@PathVariable("jobFairId") String jobFairId, @RequestParam("file") MultipartFile file) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String companyId = userDetails.getCompanyId();
 
         byte[] image = ImageUtil.convertImage(file, DataConstraint.JobFair.IMAGE_TYPE, DataConstraint.JobFair.WIDTH_FACTOR, DataConstraint.JobFair.HEIGHT_FACTOR, DataConstraint.JobFair.IMAGE_EXTENSION_TYPE);
-        JobFairDTO jobFairDTO = jobFairService.createOrUpdateJobFairThumbnail(AWSConstant.JOBFAIR_THUMBNAIL_FOLDER, layoutId, companyId);
+        JobFairDTO jobFairDTO = jobFairService.createOrUpdateJobFairThumbnail(AWSConstant.JOBFAIR_THUMBNAIL_FOLDER, jobFairId, companyId);
 
         fileStorageService.store(image, AWSConstant.JOBFAIR_THUMBNAIL_FOLDER + "/" + jobFairDTO.getId()).exceptionally(throwable -> {
             log.error(throwable.getMessage());
