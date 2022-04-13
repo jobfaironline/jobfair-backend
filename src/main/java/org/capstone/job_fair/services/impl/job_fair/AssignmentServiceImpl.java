@@ -1,15 +1,19 @@
 package org.capstone.job_fair.services.impl.job_fair;
 
 import org.capstone.job_fair.constants.MessageConstant;
+import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
 import org.capstone.job_fair.models.dtos.job_fair.AssignmentDTO;
 import org.capstone.job_fair.models.entities.company.CompanyEmployeeEntity;
 import org.capstone.job_fair.models.entities.company.JobFairBoothEntity;
 import org.capstone.job_fair.models.entities.job_fair.AssignmentEntity;
+import org.capstone.job_fair.models.entities.job_fair.JobFairEntity;
 import org.capstone.job_fair.models.enums.AssignmentType;
 import org.capstone.job_fair.repositories.company.CompanyEmployeeRepository;
 import org.capstone.job_fair.repositories.company.JobFairBoothRepository;
 import org.capstone.job_fair.repositories.job_fair.AssignmentRepository;
+import org.capstone.job_fair.repositories.job_fair.JobFairRepository;
 import org.capstone.job_fair.services.interfaces.job_fair.AssignmentService;
+import org.capstone.job_fair.services.mappers.company.CompanyEmployeeMapper;
 import org.capstone.job_fair.services.mappers.job_fair.AssignmentMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +39,12 @@ public class AssignmentServiceImpl implements AssignmentService {
 
     @Autowired
     private JobFairBoothRepository jobFairBoothRepository;
+
+    @Autowired
+    private JobFairRepository jobFairRepository;
+
+    @Autowired
+    private CompanyEmployeeMapper companyEmployeeMapper;
 
 
     private AssignmentDTO updateAssigment(AssignmentEntity entity, String companyId) {
@@ -107,5 +117,21 @@ public class AssignmentServiceImpl implements AssignmentService {
     @Override
     public List<AssignmentDTO> getAssigmentByJobFairBoothId(String jobFairBoothId, String companyId) {
         return assignmentRepository.findByJobFairBoothIdAndJobFairBoothJobFairCompanyId(jobFairBoothId, companyId).stream().map(assignmentMapper::toDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<CompanyEmployeeDTO> getAvailableCompanyByJobFairId(String jobFairId, String companyId) {
+        Optional<JobFairEntity> jobFairOpt = jobFairRepository.findByIdAndCompanyId(jobFairId, companyId);
+        if (!jobFairOpt.isPresent()) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.JOB_FAIR_NOT_FOUND));
+        }
+        List<AssignmentEntity> assignmentsInJobFair = assignmentRepository.findByJobFairBoothJobFairIdAndJobFairBoothJobFairCompanyId(jobFairId, companyId);
+        List<CompanyEmployeeEntity> companyEmployees = companyEmployeeRepository.findAllByCompanyId(companyId);
+
+        companyEmployees = companyEmployees.stream().filter(companyEmployee -> {
+            boolean result = assignmentsInJobFair.stream().anyMatch(assignment -> assignment.getCompanyEmployee().getAccountId().equals(companyEmployee.getAccountId()));
+            return !result;
+        }).collect(Collectors.toList());
+        return companyEmployees.stream().map(companyEmployeeMapper::toDTO).collect(Collectors.toList());
     }
 }

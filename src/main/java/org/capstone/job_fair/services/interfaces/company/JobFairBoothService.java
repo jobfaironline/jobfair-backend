@@ -8,7 +8,7 @@ import java.util.Optional;
 public interface JobFairBoothService {
     Optional<JobFairBoothDTO> getCompanyBoothByJobFairIdAndBoothId(String jobFairId, String boothId);
 
-    List<JobFairBoothDTO> getCompanyBoothByJobFairIdAndCompanyId(String jobFairId, String companyId);
+    List<JobFairBoothDTO> getCompanyBoothByJobFairId(String jobFairId);
 
     Optional<JobFairBoothDTO> getById(String boothId);
 }

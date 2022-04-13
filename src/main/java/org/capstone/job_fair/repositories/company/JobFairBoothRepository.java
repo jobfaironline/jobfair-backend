@@ -17,11 +17,7 @@ public interface JobFairBoothRepository extends JpaRepository<JobFairBoothEntity
     )
     Optional<JobFairBoothEntity> getCompanyBoothByJobFairIdAndBoothId(@Param("jobFairId") String jobFairId, @Param("boothId") String boothId);
 
-    @Query(
-            value = "select * from company_booth where company_booth.order_id IN (select id from `order` where company_registration_id = (select id from company_registration where company_id = :companyId and job_fair_id = :jobFairId and status = 4))",
-            nativeQuery = true
-    )
-    List<JobFairBoothEntity> getCompanyBoothByJobFairIdAndCompanyId(@Param("jobFairId") String jobFairId, @Param("companyId") String companyId);
+    List<JobFairBoothEntity> findByJobFairId(String jobFairId);
 
     Integer deleteAllByJobFairIdAndBoothLayoutCompanyId(String jobFairId, String companyId);
 

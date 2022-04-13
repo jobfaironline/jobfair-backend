@@ -1,5 +1,6 @@
 package org.capstone.job_fair.services.interfaces.job_fair;
 
+import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
 import org.capstone.job_fair.models.dtos.job_fair.AssignmentDTO;
 import org.capstone.job_fair.models.enums.AssignmentType;
 
@@ -13,4 +14,6 @@ public interface AssignmentService {
     List<AssignmentDTO> getAssignmentByJobFairId(String jobFairId, String companyId);
 
     List<AssignmentDTO> getAssigmentByJobFairBoothId(String jobFairBoothId, String companyId);
+
+    List<CompanyEmployeeDTO> getAvailableCompanyByJobFairId(String jobFairId, String companyId);
 }

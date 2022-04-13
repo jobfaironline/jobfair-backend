@@ -16,4 +16,5 @@ public interface AssignmentRepository extends JpaRepository<AssignmentEntity, St
 
     List<AssignmentEntity> findByJobFairBoothIdAndJobFairBoothJobFairCompanyId(String jobFairBoothId, String companyId);
 
+
 }

@@ -34,12 +34,12 @@ public class JobFairBoothServiceImpl implements JobFairBoothService {
     }
 
     @Override
-    public List<JobFairBoothDTO> getCompanyBoothByJobFairIdAndCompanyId(String jobFairId, String companyId) {
+    public List<JobFairBoothDTO> getCompanyBoothByJobFairId(String jobFairId) {
         Optional<JobFairEntity> jobFairOpt = jobFairRepository.findById(jobFairId);
         if (!jobFairOpt.isPresent()){
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.JOB_FAIR_NOT_FOUND));
         }
-        return jobFairBoothRepository.getCompanyBoothByJobFairIdAndCompanyId(jobFairId, companyId)
+        return jobFairBoothRepository.findByJobFairId(jobFairId)
                 .stream()
                 .map(jobFairBoothMapper::toDTO)
                 .collect(Collectors.toList());
