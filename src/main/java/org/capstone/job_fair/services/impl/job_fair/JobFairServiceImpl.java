@@ -128,7 +128,7 @@ public class JobFairServiceImpl implements JobFairService {
     }
 
     @Override
-    public JobFairDTO createOrUpdateLayoutThumbnail(String jobfairThumbnailFolder, String layoutId, String companyId) {
+    public JobFairDTO createOrUpdateJobFairThumbnail(String jobfairThumbnailFolder, String layoutId, String companyId) {
         String url = awsUtil.generateAwsS3AccessString(jobfairThumbnailFolder, layoutId);
         Optional<JobFairEntity> jobFairEntityOptional = null;
         if (companyId == null) jobFairEntityOptional = jobFairRepository.findById(layoutId);

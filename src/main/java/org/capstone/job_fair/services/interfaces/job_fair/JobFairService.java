@@ -19,5 +19,5 @@ public interface JobFairService {
 
     void publishJobFair(String companyId, String jobFairId);
 
-    JobFairDTO createOrUpdateLayoutThumbnail(String jobfairThumbnailFolder, String layoutId, String companyId);
+    JobFairDTO createOrUpdateJobFairThumbnail(String jobfairThumbnailFolder, String layoutId, String companyId);
 }
