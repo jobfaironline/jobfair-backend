@@ -8,6 +8,7 @@ import org.capstone.job_fair.models.statuses.JobFairPlanStatus;
 import org.capstone.job_fair.repositories.job_fair.JobFairRepository;
 import org.capstone.job_fair.services.interfaces.job_fair.JobFairService;
 import org.capstone.job_fair.services.mappers.job_fair.JobFairMapper;
+import org.capstone.job_fair.utils.AwsUtil;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -34,6 +35,10 @@ public class JobFairServiceImpl implements JobFairService {
 
     @Autowired
     private Validator validator;
+
+
+    @Autowired
+    private AwsUtil awsUtil;
 
     @Override
     public Optional<JobFairDTO> getById(String id) {
@@ -122,5 +127,21 @@ public class JobFairServiceImpl implements JobFairService {
         jobFairRepository.save(jobFairEntity);
     }
 
-
+    @Override
+    public JobFairDTO createOrUpdateJobFairThumbnail(String jobfairThumbnailFolder, String jobFairId, String companyId) {
+        String url = awsUtil.generateAwsS3AccessString(jobfairThumbnailFolder, jobFairId);
+        Optional<JobFairEntity> jobFairEntityOptional = null;
+        if (companyId == null) jobFairEntityOptional = jobFairRepository.findById(jobFairId);
+        else jobFairEntityOptional = jobFairRepository.findByIdAndCompanyId(jobFairId, companyId);
+        if (!jobFairEntityOptional.isPresent()) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.JOB_FAIR_NOT_FOUND));
+        }
+        JobFairEntity jobFairEntity = jobFairEntityOptional.get();
+        if (!jobFairEntity.getStatus().equals(JobFairPlanStatus.DRAFT)){
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.NOT_EDITABLE));
+        }
+        jobFairEntity.setThumbnailUrl(url);
+        jobFairRepository.save(jobFairEntity);
+        return jobFairMapper.toDTO(jobFairEntity);
+    }
 }

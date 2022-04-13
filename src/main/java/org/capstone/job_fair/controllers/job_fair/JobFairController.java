@@ -1,9 +1,9 @@
 package org.capstone.job_fair.controllers.job_fair;
 
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
-import org.capstone.job_fair.constants.ApiEndPoint;
-import org.capstone.job_fair.constants.JobFairConstant;
-import org.capstone.job_fair.constants.MessageConstant;
+import org.capstone.job_fair.constants.*;
 import org.capstone.job_fair.controllers.payload.requests.job_fair.DraftJobFairRequest;
 import org.capstone.job_fair.controllers.payload.requests.job_fair.UpdateJobFairRequest;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
@@ -17,7 +17,9 @@ import org.capstone.job_fair.services.interfaces.company.CompanyBoothLayoutServi
 import org.capstone.job_fair.services.interfaces.company.JobFairBoothService;
 import org.capstone.job_fair.services.interfaces.job_fair.JobFairService;
 import org.capstone.job_fair.services.interfaces.job_fair.LayoutService;
+import org.capstone.job_fair.services.interfaces.util.FileStorageService;
 import org.capstone.job_fair.services.mappers.job_fair.JobFairMapper;
+import org.capstone.job_fair.utils.ImageUtil;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -28,10 +30,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
 
 @RestController
+@Slf4j
 public class JobFairController {
 
     @Autowired
@@ -48,6 +52,9 @@ public class JobFairController {
 
     @Autowired
     private JobFairMapper jobFairMapper;
+
+    @Autowired
+    private FileStorageService fileStorageService;
 
     @GetMapping(ApiEndPoint.JobFair.FOR_3D_MAP + "/{id}")
     public ResponseEntity<?> getJobFairInformationFor3DMap(@PathVariable("id") String jobFairId) {
@@ -128,13 +135,7 @@ public class JobFairController {
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
     @GetMapping(ApiEndPoint.JobFair.JOB_FAIR)
-    public ResponseEntity<?> getJobFair(
-            @RequestParam(value = "offset", defaultValue = JobFairConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset,
-            @RequestParam(value = "pageSize", defaultValue = JobFairConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize,
-            @RequestParam(value = "sortBy", defaultValue = JobFairConstant.DEFAULT_SEARCH_SORT_BY_VALUE) String sortBy,
-            @RequestParam(value = "direction", required = false, defaultValue = JobFairConstant.DEFAULT_SEARCH_SORT_DIRECTION) Sort.Direction direction,
-            @RequestParam(value = "name", defaultValue = JobFairConstant.DEFAULT_JOBFAIR_NAME) String name
-    ) {
+    public ResponseEntity<?> getJobFair(@RequestParam(value = "offset", defaultValue = JobFairConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset, @RequestParam(value = "pageSize", defaultValue = JobFairConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize, @RequestParam(value = "sortBy", defaultValue = JobFairConstant.DEFAULT_SEARCH_SORT_BY_VALUE) String sortBy, @RequestParam(value = "direction", required = false, defaultValue = JobFairConstant.DEFAULT_SEARCH_SORT_DIRECTION) Sort.Direction direction, @RequestParam(value = "name", defaultValue = JobFairConstant.DEFAULT_JOBFAIR_NAME) String name) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Page<JobFairDTO> result = jobFairService.findByNameAndCompanyId(name, userDetails.getCompanyId(), PageRequest.of(offset, pageSize).withSort(Sort.by(direction, sortBy)));
         return ResponseEntity.ok(result);
@@ -148,5 +149,22 @@ public class JobFairController {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         jobFairService.publishJobFair(userDetails.getCompanyId(), jobFairPlanId);
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping(ApiEndPoint.JobFair.UPLOAD_THUMBNAIL + "/{jobFairId}")
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) OR hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
+    @SneakyThrows
+    public ResponseEntity<?> uploadThumbnail(@PathVariable("jobFairId") String jobFairId, @RequestParam("file") MultipartFile file) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String companyId = userDetails.getCompanyId();
+
+        byte[] image = ImageUtil.convertImage(file, DataConstraint.JobFair.IMAGE_TYPE, DataConstraint.JobFair.WIDTH_FACTOR, DataConstraint.JobFair.HEIGHT_FACTOR, DataConstraint.JobFair.IMAGE_EXTENSION_TYPE);
+        JobFairDTO jobFairDTO = jobFairService.createOrUpdateJobFairThumbnail(AWSConstant.JOBFAIR_THUMBNAIL_FOLDER, jobFairId, companyId);
+
+        fileStorageService.store(image, AWSConstant.JOBFAIR_THUMBNAIL_FOLDER + "/" + jobFairDTO.getId()).exceptionally(throwable -> {
+            log.error(throwable.getMessage());
+            return null;
+        });
+        return ResponseEntity.ok(jobFairDTO);
     }
 }
