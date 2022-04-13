@@ -4,10 +4,12 @@ import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.controllers.payload.requests.job_fair.AssignEmployeeRequest;
 import org.capstone.job_fair.controllers.payload.requests.job_fair.UnAssignEmployRequest;
+import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
 import org.capstone.job_fair.models.dtos.job_fair.AssignmentDTO;
 import org.capstone.job_fair.services.interfaces.job_fair.AssignmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +22,7 @@ public class AssignmentController {
     private AssignmentService assignmentService;
 
     @PostMapping(ApiEndPoint.Assignment.ASSIGN)
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
     public ResponseEntity<?> assignEmployee(@Valid @RequestBody AssignEmployeeRequest request) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         AssignmentDTO dto = assignmentService.assignEmployee(request.getEmployeeId(), request.getJobFairBoothId(), request.getType(), userDetails.getCompanyId());
@@ -27,6 +30,7 @@ public class AssignmentController {
     }
 
     @DeleteMapping(ApiEndPoint.Assignment.UNASSIGN)
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
     public ResponseEntity<?> unassignEmployee(@Valid @RequestBody UnAssignEmployRequest request) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         AssignmentDTO dto = assignmentService.unAssignEmployee(request.getEmployeeId(), request.getJobFairBoothId(), userDetails.getCompanyId());
@@ -34,6 +38,7 @@ public class AssignmentController {
     }
 
     @GetMapping(ApiEndPoint.Assignment.JOB_FAIR + "/{id}")
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
     public ResponseEntity<?> getAssignmentByJobFair(@PathVariable("id") String id) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         List<AssignmentDTO> result = assignmentService.getAssignmentByJobFairId(id, userDetails.getCompanyId());
@@ -44,6 +49,7 @@ public class AssignmentController {
     }
 
     @GetMapping(ApiEndPoint.Assignment.JOB_FAIR_BOOTH + "/{id}")
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
     public ResponseEntity<?> getAssignmentByJobFairBooth(@PathVariable("id") String id) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         List<AssignmentDTO> result = assignmentService.getAssigmentByJobFairBoothId(id, userDetails.getCompanyId());
@@ -51,5 +57,16 @@ public class AssignmentController {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok(result);
+    }
+
+    @GetMapping(ApiEndPoint.Assignment.JOB_FAIR_AVAILABLE + "/{id}")
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
+    public ResponseEntity<?> getAvailableEmployeeByJobFair(@PathVariable("id") String jobFairId) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        List<CompanyEmployeeDTO> companyEmployees = assignmentService.getAvailableCompanyByJobFairId(jobFairId, userDetails.getCompanyId());
+        if (companyEmployees.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(companyEmployees);
     }
 }

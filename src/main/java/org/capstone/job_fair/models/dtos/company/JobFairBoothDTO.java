@@ -15,5 +15,5 @@ public class JobFairBoothDTO implements Serializable {
     @EqualsAndHashCode.Include
     private String id;
     private JobFairDTO jobFair;
-    private LayoutBoothDTO layoutBoothDTO;
+    private LayoutBoothDTO booth;
 }

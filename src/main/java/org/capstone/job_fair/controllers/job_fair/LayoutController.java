@@ -136,11 +136,17 @@ public class LayoutController {
 
     @PostMapping(ApiEndPoint.Layout.PICK_JOB_FAIR_LAYOUT)
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
-    public ResponseEntity<?> pickJobFairLayout(@Valid PickJobFairLayoutRequest request) {
+    public ResponseEntity<?> pickJobFairLayout(@Valid @RequestBody PickJobFairLayoutRequest request) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String companyId = userDetails.getCompanyId();
         layoutService.pickJobFairLayout(request.getJobFairId(), request.getLayoutId(), companyId);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping(ApiEndPoint.Layout.LAYOUT_BY_JOB_FAIR + "/{id}")
+    public ResponseEntity<?> getLayoutByJobFairId(@PathVariable("id") String jobFairId){
+        return layoutService.getByJobFairId(jobFairId).map(dto -> ResponseEntity.ok(dto)).orElse(ResponseEntity.notFound().build());
+
     }
 
     @PostMapping(ApiEndPoint.Layout.UPLOAD_THUMBNAIL + "/{layoutId}")

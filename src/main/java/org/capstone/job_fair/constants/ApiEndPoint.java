@@ -140,6 +140,7 @@ public final class ApiEndPoint {
         public static final String FOR_COMPANY_MANAGER = LAYOUT_ENDPOINT + "/company-manager";
         public static final String PICK_JOB_FAIR_LAYOUT = LAYOUT_ENDPOINT + "/pick-job-fair-layout";
         public static final String UPLOAD_THUMBNAIL = LAYOUT_ENDPOINT + "/upload-thumbnail";
+        public static final String LAYOUT_BY_JOB_FAIR = LAYOUT_ENDPOINT + "/job-fair";
     }
 
     public static final class AgoraToken {
@@ -184,18 +185,12 @@ public final class ApiEndPoint {
         public static final String COUNTRY_ENPOINT = ROOT_ENDPOINT + VERSION + "/country";
     }
 
-    public static final class BoothPurchase {
-        private BoothPurchase() {
+
+    public static final class JobFairBooth {
+        private JobFairBooth() {
         }
 
-        public static final String BOOTH_PURCHASE = ROOT_ENDPOINT + VERSION + "/purchase-booth";
-    }
-
-    public static final class CompanyBooth {
-        private CompanyBooth() {
-        }
-
-        public static final String COMPANY_BOOTH = ROOT_ENDPOINT + VERSION + "/company-booth";
+        public static final String COMPANY_BOOTH = ROOT_ENDPOINT + VERSION + "/job-fair-booth";
     }
 
     public static final class Cv {
@@ -214,5 +209,6 @@ public final class ApiEndPoint {
         public static final String UNASSIGN = ASSIGNMENT + "/unassign";
         public static final String JOB_FAIR = ASSIGNMENT + "/job-fair";
         public static final String JOB_FAIR_BOOTH = ASSIGNMENT + "/job-fair-booth";
+        public static final String JOB_FAIR_AVAILABLE = ASSIGNMENT + "/available";
     }
 }

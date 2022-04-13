@@ -13,6 +13,8 @@ import java.util.Optional;
 public interface JobFairRepository extends JpaRepository<JobFairEntity, String> {
     Optional<JobFairEntity> findByIdAndCompanyId(String jobFairId, String companyId);
 
-    Page<JobFairEntity> findByNameLikeAndCompanyId(String name, String companyId, Pageable pageable);
+
+    Page<JobFairEntity> findByNameLikeOrNameIsNullAndCompanyId(String name, String companyId, Pageable pageable);
+
 
 }
