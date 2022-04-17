@@ -49,4 +49,9 @@ public class JobFairBoothServiceImpl implements JobFairBoothService {
     public Optional<JobFairBoothDTO> getById(String boothId) {
         return jobFairBoothRepository.findById(boothId).map(jobFairBoothMapper::toDTO);
     }
+
+    @Override
+    public Integer getBoothCountByJobFair(String jobFairId) {
+        return jobFairBoothRepository.countByJobFairId(jobFairId);
+    }
 }

@@ -16,4 +16,10 @@ public interface AssignmentService {
     List<AssignmentDTO> getAssigmentByJobFairBoothId(String jobFairBoothId, String companyId);
 
     List<CompanyEmployeeDTO> getAvailableCompanyByJobFairId(String jobFairId, String companyId);
+
+    Integer getCountAssignedBoothByJobFair(String jobFairId);
+
+    Integer getCountAssignedEmployeeByJobFair(String jobFairId);
+
+
 }

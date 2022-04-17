@@ -24,4 +24,5 @@ public interface CompanyEmployeeService {
 
     CompanyEmployeeDTO getCompanyEmployeeByAccountId(String employeeID, String companyID);
 
+    Integer getCompanyEmployeeCount(String companyId);
 }
