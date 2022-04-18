@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface AssignmentService {
     AssignmentDTO assignEmployee(String employeeId, String jobFairBoothId, AssignmentType type, String companyId);
@@ -24,6 +25,8 @@ public interface AssignmentService {
     Integer getCountAssignedEmployeeByJobFair(String jobFairId);
 
     Page<AssignmentDTO> getAssignmentByEmployeeId(String employeeId, Pageable pageable);
+
+    Optional<AssignmentDTO> getAssignmentById(String id);
 
 
 }

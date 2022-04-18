@@ -151,4 +151,9 @@ public class AssignmentServiceImpl implements AssignmentService {
     public Page<AssignmentDTO> getAssignmentByEmployeeId(String employeeId, Pageable pageable) {
         return assignmentRepository.findByCompanyEmployeeAccountId(employeeId, pageable).map(assignmentMapper::toDTO);
     }
+
+    @Override
+    public Optional<AssignmentDTO> getAssignmentById(String id) {
+        return assignmentRepository.findById(id).map(assignmentMapper::toDTO);
+    }
 }

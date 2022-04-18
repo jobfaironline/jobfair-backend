@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class AssignmentController {
@@ -36,9 +37,6 @@ public class AssignmentController {
     @Autowired
     private JobFairBoothService jobFairBoothService;
 
-
-    @Autowired
-    private JobFairService jobFairService;
 
     @PostMapping(ApiEndPoint.Assignment.ASSIGN)
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
@@ -108,6 +106,7 @@ public class AssignmentController {
     }
 
     @GetMapping(ApiEndPoint.Assignment.OF_EMPLOYEE)
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE)")
     public ResponseEntity<?> getAssignmentByEmployeeId(
             @RequestParam(value = "offset", defaultValue = AssignmentConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset,
             @RequestParam(value = "pageSize", defaultValue = AssignmentConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize,
@@ -116,5 +115,15 @@ public class AssignmentController {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Page<AssignmentDTO> result = assignmentService.getAssignmentByEmployeeId(userDetails.getId(), PageRequest.of(offset, pageSize).withSort(Sort.by(direction, sortBy)));
         return ResponseEntity.ok(result);
+    }
+
+    @GetMapping(ApiEndPoint.Assignment.ASSIGNMENT + "/{id}")
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) OR hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE)")
+    public ResponseEntity<?> getAssignmentById(@PathVariable("id") String id){
+        Optional<AssignmentDTO> assignmentOpt = assignmentService.getAssignmentById(id);
+        if (!assignmentOpt.isPresent()){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(assignmentOpt.get());
     }
 }
