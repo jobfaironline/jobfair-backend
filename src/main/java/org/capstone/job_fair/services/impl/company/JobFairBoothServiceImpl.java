@@ -30,7 +30,7 @@ public class JobFairBoothServiceImpl implements JobFairBoothService {
 
     @Override
     public Optional<JobFairBoothDTO> getCompanyBoothByJobFairIdAndBoothId(String jobFairId, String boothId) {
-        return jobFairBoothRepository.getCompanyBoothByJobFairIdAndBoothId(jobFairId, boothId).map(jobFairBoothMapper::toDTO);
+        return jobFairBoothRepository.findByJobFairIdAndBoothId(jobFairId, boothId).map(jobFairBoothMapper::toDTO);
     }
 
     @Override

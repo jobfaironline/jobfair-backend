@@ -13,11 +13,8 @@ import java.util.Optional;
 
 @Repository
 public interface JobFairBoothRepository extends JpaRepository<JobFairBoothEntity, String> {
-    @Query(
-            value = "select * from company_booth where booth_id = :boothId AND order_id IN (select id from `order` where company_registration_id IN (select id from company_registration where job_fair_id = :jobFairId))",
-            nativeQuery = true
-    )
-    Optional<JobFairBoothEntity> getCompanyBoothByJobFairIdAndBoothId(@Param("jobFairId") String jobFairId, @Param("boothId") String boothId);
+
+    Optional<JobFairBoothEntity> findByJobFairIdAndBoothId(String jobFairId, String boothId);
 
     List<JobFairBoothEntity> findByJobFairId(String jobFairId);
 
