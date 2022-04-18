@@ -3,6 +3,8 @@ package org.capstone.job_fair.services.interfaces.job_fair;
 import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
 import org.capstone.job_fair.models.dtos.job_fair.AssignmentDTO;
 import org.capstone.job_fair.models.enums.AssignmentType;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -20,6 +22,8 @@ public interface AssignmentService {
     Integer getCountAssignedBoothByJobFair(String jobFairId);
 
     Integer getCountAssignedEmployeeByJobFair(String jobFairId);
+
+    Page<AssignmentDTO> getAssignmentByEmployeeId(String employeeId, Pageable pageable);
 
 
 }

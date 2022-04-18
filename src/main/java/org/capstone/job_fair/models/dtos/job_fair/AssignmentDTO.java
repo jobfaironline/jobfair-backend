@@ -16,6 +16,7 @@ public class AssignmentDTO implements Serializable {
     @EqualsAndHashCode.Include
     private String id;
     private AssignmentType type;
+    private Long createTime;
     private CompanyEmployeeDTO companyEmployee;
     private JobFairBoothDTO jobFairBooth;
 }

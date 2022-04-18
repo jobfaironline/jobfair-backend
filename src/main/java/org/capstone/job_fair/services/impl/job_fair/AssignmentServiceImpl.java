@@ -17,6 +17,8 @@ import org.capstone.job_fair.services.mappers.company.CompanyEmployeeMapper;
 import org.capstone.job_fair.services.mappers.job_fair.AssignmentMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -143,5 +145,10 @@ public class AssignmentServiceImpl implements AssignmentService {
     @Override
     public Integer getCountAssignedEmployeeByJobFair(String jobFairId) {
         return assignmentRepository.countByJobFairBoothJobFairId(jobFairId);
+    }
+
+    @Override
+    public Page<AssignmentDTO> getAssignmentByEmployeeId(String employeeId, Pageable pageable) {
+        return assignmentRepository.findByCompanyEmployeeAccountId(employeeId, pageable).map(assignmentMapper::toDTO);
     }
 }
