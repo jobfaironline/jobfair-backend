@@ -31,7 +31,7 @@ public class JobFairBoothLayoutEntity {
     private String url;
 
     @OneToMany
-    @JoinColumn(name = "company_booth_layout_id", referencedColumnName = "id")
+    @JoinColumn(name = "job_fair_booth_layout_id", referencedColumnName = "id")
     List<JobFairBoothLayoutVideoEntity> companyBoothLayoutVideos;
 
     @Override

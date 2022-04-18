@@ -11,8 +11,9 @@ import org.capstone.job_fair.models.dtos.company.JobFairBoothLayoutDTO;
 import org.capstone.job_fair.models.dtos.company.JobFairBoothLayoutVideoDTO;
 import org.capstone.job_fair.services.interfaces.company.CompanyBoothLayoutService;
 import org.capstone.job_fair.services.interfaces.company.CompanyService;
+import org.capstone.job_fair.services.interfaces.company.JobFairBoothService;
 import org.capstone.job_fair.services.interfaces.util.FileStorageService;
-import org.capstone.job_fair.services.mappers.company.CompanyBoothLayoutMapper;
+import org.capstone.job_fair.services.mappers.company.JobFairBoothLayoutMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -35,13 +36,16 @@ public class JobFairBoothLayoutController {
     private CompanyBoothLayoutService companyBoothLayoutService;
 
     @Autowired
-    private CompanyBoothLayoutMapper companyBoothLayoutMapper;
+    private JobFairBoothLayoutMapper jobFairBoothLayoutMapper;
 
     @Autowired
     private FileStorageService fileStorageService;
 
     @Autowired
     private CompanyService companyService;
+
+    @Autowired
+    private JobFairBoothService jobFairBoothService;
 
     @GetMapping(ApiEndPoint.JobFairBoothLayout.JOB_FAIR_BOOTH_LAYOUT)
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE)")
@@ -72,11 +76,13 @@ public class JobFairBoothLayoutController {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String companyId = userDetails.getCompanyId();
 
-        Optional<String> companyIdOpt = companyService.getIdByCompanyBoothID(companyBoothId);
-        if (!companyIdOpt.isPresent()) {
+        Optional<JobFairBoothDTO> jobFairBoothOpt = jobFairBoothService.getById(companyBoothId);
+
+
+        if (!jobFairBoothOpt.isPresent()) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyBoothLayout.NOT_FOUND));
         } else {
-            if (!companyIdOpt.get().equals(companyId)) {
+            if (!jobFairBoothOpt.get().getJobFair().getCompany().getId().equals(companyId)) {
                 throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Company.COMPANY_MISSMATCH));
             }
         }

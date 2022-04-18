@@ -10,7 +10,7 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
         uses = {JobFairBoothMapper.class, CompanyBoothLayoutVideoMapper.class}
 )
-public abstract class CompanyBoothLayoutMapper {
+public abstract class JobFairBoothLayoutMapper {
     public abstract JobFairBoothLayoutEntity toEntity(JobFairBoothLayoutDTO dto);
 
     public abstract JobFairBoothLayoutDTO toDTO(JobFairBoothLayoutEntity entity);
