@@ -2,8 +2,10 @@ package org.capstone.job_fair.repositories.job_fair;
 
 import org.capstone.job_fair.models.entities.job_fair.AssignmentEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,4 +22,7 @@ public interface AssignmentRepository extends JpaRepository<AssignmentEntity, St
     Integer countDistinctJobFairBoothByJobFairBoothJobFairId(String jobFairId);
 
     Integer countByJobFairBoothJobFairId(String jobFairId);
+
+    @Modifying
+    Integer deleteByJobFairBoothId(String jobFairBoothId);
 }

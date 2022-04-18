@@ -14,6 +14,7 @@ import org.capstone.job_fair.models.entities.job_fair.LayoutEntity;
 import org.capstone.job_fair.models.statuses.BoothStatus;
 import org.capstone.job_fair.models.statuses.JobFairPlanStatus;
 import org.capstone.job_fair.repositories.company.JobFairBoothRepository;
+import org.capstone.job_fair.repositories.job_fair.AssignmentRepository;
 import org.capstone.job_fair.repositories.job_fair.JobFairRepository;
 import org.capstone.job_fair.repositories.job_fair.LayoutRepository;
 import org.capstone.job_fair.services.interfaces.job_fair.LayoutService;
@@ -52,6 +53,9 @@ public class LayoutServiceImpl implements LayoutService {
 
     @Autowired
     private JobFairBoothRepository jobFairBoothRepository;
+
+    @Autowired
+    private AssignmentRepository assignmentRepository;
 
 
     @Override
@@ -189,7 +193,16 @@ public class LayoutServiceImpl implements LayoutService {
         if (!jobFairEntity.getStatus().equals(JobFairPlanStatus.DRAFT))
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.NOT_EDITABLE));
 
-        jobFairBoothRepository.deleteAllByJobFairIdAndBoothLayoutCompanyId(jobFairId, companyId);
+        //check new layout's id == jobFair's layout's id
+        if (jobFairEntity.getJobFairBoothList().size() != 0 && jobFairEntity.getJobFairBoothList().get(0).getBooth().getLayout().getId().equals(layoutId)){
+            return;
+        }
+
+        for (JobFairBoothEntity booth : jobFairEntity.getJobFairBoothList()){
+            assignmentRepository.deleteByJobFairBoothId(booth.getId());
+        }
+
+        jobFairBoothRepository.deleteAllByJobFairId(jobFairId);
 
         for (LayoutBoothEntity booth : layoutBoothEntitySet) {
             JobFairBoothEntity jobFairBoothEntity = new JobFairBoothEntity();
