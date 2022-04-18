@@ -11,7 +11,8 @@ jobs:
     #Depends on sonar's job
     name: Build
     #Run on Ubuntu using the latest version
-    runs-on: ubuntu-latest
+#     runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       #Check-out your repository under $GITHUB_WORKSPACE, so your workflow can access it
       - uses: actions/checkout@v1
@@ -58,7 +59,8 @@ jobs:
     needs: build
     name: Deploy
     #Run on Ubuntu using the latest version
-    runs-on: ubuntu-latest
+#     runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - name: Download JAR
         #Download the artifact which was uploaded in the build's job
