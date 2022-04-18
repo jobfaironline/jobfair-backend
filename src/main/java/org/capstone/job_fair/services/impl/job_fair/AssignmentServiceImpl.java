@@ -8,6 +8,7 @@ import org.capstone.job_fair.models.entities.company.JobFairBoothEntity;
 import org.capstone.job_fair.models.entities.job_fair.AssignmentEntity;
 import org.capstone.job_fair.models.entities.job_fair.JobFairEntity;
 import org.capstone.job_fair.models.enums.AssignmentType;
+import org.capstone.job_fair.models.statuses.JobFairPlanStatus;
 import org.capstone.job_fair.repositories.company.CompanyEmployeeRepository;
 import org.capstone.job_fair.repositories.company.JobFairBoothRepository;
 import org.capstone.job_fair.repositories.job_fair.AssignmentRepository;
@@ -149,7 +150,7 @@ public class AssignmentServiceImpl implements AssignmentService {
 
     @Override
     public Page<AssignmentDTO> getAssignmentByEmployeeId(String employeeId, Pageable pageable) {
-        return assignmentRepository.findByCompanyEmployeeAccountId(employeeId, pageable).map(assignmentMapper::toDTO);
+        return assignmentRepository.findByCompanyEmployeeAccountIdAndJobFairBoothJobFairStatus(employeeId, JobFairPlanStatus.PUBLISH, pageable).map(assignmentMapper::toDTO);
     }
 
     @Override
