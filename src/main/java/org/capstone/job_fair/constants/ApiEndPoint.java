@@ -1,5 +1,7 @@
 package org.capstone.job_fair.constants;
 
+import lombok.NoArgsConstructor;
+
 public final class ApiEndPoint {
     private ApiEndPoint() {
     }
@@ -18,6 +20,14 @@ public final class ApiEndPoint {
         public static final String LOGOUT_ENDPOINT = AUTHENTICATION_ENDPOINT + "/logout";
         public static final String GENERATE_OTP_ENDPOINT = AUTHENTICATION_ENDPOINT + "/generate-otp";
         public static final String RESET_PASSWORD_ENDPOINT = AUTHENTICATION_ENDPOINT + "/reset-password";
+
+    }
+
+    public static final class Notification{
+        private Notification(){
+
+        }
+        public static final String NOTIFICATION_ENDPOINT = ROOT_ENDPOINT + VERSION + "/noti";
 
     }
 
@@ -105,6 +115,7 @@ public final class ApiEndPoint {
         public static final String ACCOUNT_ENDPOINT = ROOT_ENDPOINT + VERSION + "/accounts";
         public static final String CHANGE_PASSWORD_ENDPOINT = ACCOUNT_ENDPOINT + "/change-password";
         public static final String PICTURE_PROFILE_ENDPOINT = ACCOUNT_ENDPOINT + "/upload-picture-profile";
+        public static final String GET_INFO = ACCOUNT_ENDPOINT + "/get-info";
     }
 
     public static final class CompanyEmployee {
