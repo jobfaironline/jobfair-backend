@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
         uses = {SubCategoryMapper.class})
-public abstract class RegistrationJobPositionMapper {
+public abstract class BoothJobPositionMapper {
 
     @Autowired
     private SubCategoryMapper subCategoryMapper;

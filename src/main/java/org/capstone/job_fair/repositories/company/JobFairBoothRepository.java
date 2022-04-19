@@ -23,4 +23,6 @@ public interface JobFairBoothRepository extends JpaRepository<JobFairBoothEntity
 
     Integer countByJobFairId(String jobFairId);
 
+    Optional<JobFairBoothEntity> findByIdAndJobFairCompanyId(String jobFairBoothId, String companyId);
+
 }

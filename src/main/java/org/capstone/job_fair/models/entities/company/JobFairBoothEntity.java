@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.capstone.job_fair.models.entities.company.job.BoothJobPositionEntity;
 import org.capstone.job_fair.models.entities.job_fair.AssignmentEntity;
 import org.capstone.job_fair.models.entities.job_fair.JobFairEntity;
 import org.capstone.job_fair.models.entities.job_fair.LayoutBoothEntity;
@@ -11,6 +12,7 @@ import org.hibernate.Hibernate;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -28,6 +30,9 @@ public class JobFairBoothEntity {
     @GenericGenerator(name = "uuid", strategy = "org.hibernate.id.UUIDGenerator")
     private String id;
 
+    @Column(name="description")
+    private String description;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "job_fair_id")
     private JobFairEntity jobFair;
@@ -39,6 +44,10 @@ public class JobFairBoothEntity {
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "job_fair_booth_id", referencedColumnName = "id")
     private Set<AssignmentEntity> assignments;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "job_fair_booth_id", referencedColumnName = "id")
+    private List<BoothJobPositionEntity> boothJobPositions;
 
     @Override
     public boolean equals(Object o) {
