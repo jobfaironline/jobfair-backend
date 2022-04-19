@@ -16,7 +16,6 @@ public interface JobFairRepository extends JpaRepository<JobFairEntity, String> 
     Optional<JobFairEntity> findByIdAndCompanyId(String jobFairId, String companyId);
 
     List<JobFairEntity> findByCompanyIdAndStatus(String companyId, JobFairPlanStatus status);
-    Boolean existsJobFairEntitiesByIdAndCompanyIdAndStatus(String jobFairId, String companyId, JobFairPlanStatus status);
     Page<JobFairEntity> findByNameLikeOrNameIsNullAndCompanyId(String name, String companyId, Pageable pageable);
 
 
