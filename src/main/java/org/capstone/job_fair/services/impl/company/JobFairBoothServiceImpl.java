@@ -92,7 +92,7 @@ public class JobFairBoothServiceImpl implements JobFairBoothService {
         }
         //check decorate time
         long now = new Date().getTime();
-        if (now < jobFairEntity.getDecorateStartTime() || now > jobFairEntity.getDecorateStartTime()){
+        if (now < jobFairEntity.getDecorateStartTime() || now > jobFairEntity.getDecorateEndTime()){
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.NOT_EDITABLE));
         }
         //check job position belongs in company
