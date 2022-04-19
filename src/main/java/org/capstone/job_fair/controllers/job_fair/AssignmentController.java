@@ -2,6 +2,8 @@ package org.capstone.job_fair.controllers.job_fair;
 
 import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import org.capstone.job_fair.constants.ApiEndPoint;
+import org.capstone.job_fair.constants.AssignmentConstant;
+import org.capstone.job_fair.constants.JobFairConstant;
 import org.capstone.job_fair.controllers.payload.requests.job_fair.AssignEmployeeRequest;
 import org.capstone.job_fair.controllers.payload.requests.job_fair.UnAssignEmployRequest;
 import org.capstone.job_fair.controllers.payload.responses.JobFairAssignmentStatisticsResponse;
@@ -12,6 +14,9 @@ import org.capstone.job_fair.services.interfaces.company.JobFairBoothService;
 import org.capstone.job_fair.services.interfaces.job_fair.AssignmentService;
 import org.capstone.job_fair.services.interfaces.job_fair.JobFairService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class AssignmentController {
@@ -31,9 +37,6 @@ public class AssignmentController {
     @Autowired
     private JobFairBoothService jobFairBoothService;
 
-
-    @Autowired
-    private JobFairService jobFairService;
 
     @PostMapping(ApiEndPoint.Assignment.ASSIGN)
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
@@ -100,5 +103,27 @@ public class AssignmentController {
                 .boothTotal(boothTotal)
                 .build();
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping(ApiEndPoint.Assignment.OF_EMPLOYEE)
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE)")
+    public ResponseEntity<?> getAssignmentByEmployeeId(
+            @RequestParam(value = "offset", defaultValue = AssignmentConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset,
+            @RequestParam(value = "pageSize", defaultValue = AssignmentConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize,
+            @RequestParam(value = "sortBy", defaultValue = AssignmentConstant.DEFAULT_SEARCH_SORT_BY_VALUE) String sortBy,
+            @RequestParam(value = "direction", required = false, defaultValue = AssignmentConstant.DEFAULT_SEARCH_SORT_DIRECTION) Sort.Direction direction){
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Page<AssignmentDTO> result = assignmentService.getAssignmentByEmployeeId(userDetails.getId(), PageRequest.of(offset, pageSize).withSort(Sort.by(direction, sortBy)));
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping(ApiEndPoint.Assignment.ASSIGNMENT + "/{id}")
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) OR hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE)")
+    public ResponseEntity<?> getAssignmentById(@PathVariable("id") String id){
+        Optional<AssignmentDTO> assignmentOpt = assignmentService.getAssignmentById(id);
+        if (!assignmentOpt.isPresent()){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(assignmentOpt.get());
     }
 }

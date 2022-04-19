@@ -155,6 +155,9 @@ public class LayoutServiceImpl implements LayoutService {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.JOB_FAIR_NOT_FOUND));
         }
         JobFairEntity jobFairEntity = jobFairEntityOpt.get();
+        if (jobFairEntity.getJobFairBoothList().size() == 0){
+            return Optional.empty();
+        }
         return layoutRepository.findById(jobFairEntity.getJobFairBoothList().get(0).getBooth().getLayout().getId()).map(layoutMapper::toDTO);
     }
 
@@ -169,7 +172,7 @@ public class LayoutServiceImpl implements LayoutService {
         if (!layoutOpt.isPresent()) return Optional.empty();
         //check for which booth is available
         LayoutDTO layoutDTO = layoutMapper.toDTO(layoutOpt.get());
-        Set<LayoutBoothDTO> newBooths = layoutDTO.getBooths().stream().filter(layoutBoothDTO -> !jobFairBoothRepository.getCompanyBoothByJobFairIdAndBoothId(jobFairId, layoutBoothDTO.getId()).isPresent()).collect(Collectors.toSet());
+        Set<LayoutBoothDTO> newBooths = layoutDTO.getBooths().stream().filter(layoutBoothDTO -> !jobFairBoothRepository.findByJobFairIdAndBoothId(jobFairId, layoutBoothDTO.getId()).isPresent()).collect(Collectors.toSet());
         layoutDTO.setBooths(newBooths);
         return Optional.of(layoutDTO);
     }

@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
         uses = {SubCategoryMapper.class})
-public abstract class RegistrationJobPositionMapper {
+public abstract class BoothJobPositionMapper {
 
     @Autowired
     private SubCategoryMapper subCategoryMapper;
@@ -40,6 +40,7 @@ public abstract class RegistrationJobPositionMapper {
     @Mapping(target = "jobType", source = "jobTypeEntity", qualifiedByName = "toJobPositionDTOJobType")
     @Mapping(target = "subCategoryDTOs", source = "categories", qualifiedByName = "toJobPositionDTOSubCategory")
     @Mapping(target = "skillTagDTOS", source = "skillTagEntities", qualifiedByName = "toJobPositionDTOSkillTag")
+    @Mapping(target = "jobFairBooth", ignore = true)
     public abstract BoothJobPositionDTO toDTO(BoothJobPositionEntity entity);
 
     @Mapping(target = "language", qualifiedByName = "toJobPositionEntityLanguage")
@@ -47,6 +48,7 @@ public abstract class RegistrationJobPositionMapper {
     @Mapping(target = "jobTypeEntity", source = "jobType", qualifiedByName = "toJobPositionEntityJobType")
     @Mapping(target = "categories", source = "subCategoryDTOs", qualifiedByName = "toJobPositionEntitySubCategory")
     @Mapping(target = "skillTagEntities", source = "skillTagDTOS", qualifiedByName = "toJobPositionEntitySkillTag")
+    @Mapping(target = "jobFairBooth", ignore = true)
     public abstract BoothJobPositionEntity toEntity(BoothJobPositionDTO jobPositionDTO);
 
     @Named("toJobPositionDTOSkillTag")

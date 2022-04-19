@@ -30,6 +30,9 @@ public class AssignmentEntity {
     @Enumerated(EnumType.ORDINAL)
     private AssignmentType type;
 
+    @Column(name = "create_time")
+    private Long createTime;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_employee_id")
     private CompanyEmployeeEntity companyEmployee;
@@ -37,6 +40,7 @@ public class AssignmentEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "job_fair_booth_id")
     private JobFairBoothEntity jobFairBooth;
+
 
     @Override
     public boolean equals(Object o) {

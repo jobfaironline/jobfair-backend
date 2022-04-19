@@ -320,6 +320,8 @@ public final class MessageConstant {
         }
 
         public static final String NOT_FOUND = "job-fair-booth.error.not-found";
+        public static final String UNIQUE_JOB_POSITION_ERROR = "job-fair-booth.error.unique-job-position";
+
     }
 
 }
