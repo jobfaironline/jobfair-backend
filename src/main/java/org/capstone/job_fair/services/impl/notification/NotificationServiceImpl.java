@@ -13,6 +13,7 @@ import org.capstone.job_fair.repositories.account.AccountRepository;
 import org.capstone.job_fair.services.interfaces.notification.NotificationService;
 import org.capstone.job_fair.services.mappers.notification.NotificationMessageMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 
@@ -35,7 +36,8 @@ public class NotificationServiceImpl implements NotificationService {
     @Autowired
     private AccountRepository accountRepository;
 
-    private String queueURL = "https://sqs.ap-southeast-1.amazonaws.com/845953824246/jobhub-messageQueue";
+    @Value("${aws.sqs.url}")
+    private String queueURL;
 
     @Override
     public void createNotification(NotificationMessageDTO message, Role role) {
