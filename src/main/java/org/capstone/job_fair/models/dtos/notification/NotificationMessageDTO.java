@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.capstone.job_fair.models.enums.NotificationType;
 
 import java.io.Serializable;
 
@@ -14,7 +15,7 @@ import java.io.Serializable;
 public class NotificationMessageDTO implements Serializable {
     private String id;
     private String notificationId;
-    private String notificationType;
+    private NotificationType notificationType;
     private String title;
     private String message;
     private boolean isRead;

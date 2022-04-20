@@ -1,12 +1,11 @@
 package org.capstone.job_fair.models.entities.notification;
 
 
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
+import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.capstone.job_fair.models.enums.NotificationType;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -15,7 +14,7 @@ import lombok.Setter;
 public class NotificationMessageEntity {
     private String id;
     private String notificationId;
-    private String notificationType;
+    private NotificationType notificationType;
     private String title;
     private String message;
     private boolean isRead;
@@ -34,7 +33,8 @@ public class NotificationMessageEntity {
     }
 
     @DynamoDBAttribute(attributeName = "notificationType")
-    public String getNotificationType() {
+    @DynamoDBTyped(DynamoDBMapperFieldModel.DynamoDBAttributeType.S)
+    public NotificationType getNotificationType() {
         return notificationType;
     }
 
