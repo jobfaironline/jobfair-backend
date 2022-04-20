@@ -1,6 +1,5 @@
 package org.capstone.job_fair.services.mappers.notification;
 
-import org.capstone.job_fair.models.dtos.notification.NotificationDTO;
 import org.capstone.job_fair.models.dtos.notification.NotificationMessageDTO;
 import org.capstone.job_fair.models.entities.notification.NotificationMessageEntity;
 import org.mapstruct.Mapper;

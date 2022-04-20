@@ -12,10 +12,12 @@ import java.io.Serializable;
 @Data
 @Builder
 public class NotificationMessageDTO implements Serializable {
+    private String id;
     private String notificationId;
     private String notificationType;
     private String title;
     private String message;
     private boolean isRead;
     private long createDate;
+    private String userId;
 }

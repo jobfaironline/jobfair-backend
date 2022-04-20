@@ -13,6 +13,7 @@ import lombok.Setter;
 @DynamoDBTable(tableName = "NotificationMessage")
 @Setter
 public class NotificationMessageEntity {
+    private String id;
     private String notificationId;
     private String notificationType;
     private String title;
@@ -20,14 +21,23 @@ public class NotificationMessageEntity {
     private boolean isRead;
     private long createDate;
 
-    @DynamoDBHashKey(attributeName = "notificationId")
+    private String userId;
+
+    @DynamoDBHashKey(attributeName = "id")
+    public String getId() {
+        return id;
+    }
+
+    @DynamoDBAttribute(attributeName = "notificationId")
     public String getNotificationId() {
         return notificationId;
     }
+
     @DynamoDBAttribute(attributeName = "notificationType")
     public String getNotificationType() {
         return notificationType;
     }
+
     @DynamoDBAttribute(attributeName = "title")
     public String getTitle() {
         return title;
@@ -46,5 +56,10 @@ public class NotificationMessageEntity {
     @DynamoDBAttribute(attributeName = "createDate")
     public long getCreateDate() {
         return createDate;
+    }
+
+    @DynamoDBAttribute(attributeName = "userId")
+    public String getUserId() {
+        return userId;
     }
 }
