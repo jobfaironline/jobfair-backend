@@ -4,16 +4,22 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.model.SendMessageBatchRequest;
+import com.amazonaws.services.sqs.model.SendMessageBatchRequestEntry;
 import com.amazonaws.services.sqs.model.SendMessageRequest;
 import org.capstone.job_fair.models.dtos.notification.NotificationDTO;
+import org.capstone.job_fair.models.dtos.notification.NotificationMessageDTO;
 import org.capstone.job_fair.models.entities.notification.NotificationEntity;
+import org.capstone.job_fair.models.entities.notification.NotificationMessageEntity;
+import org.capstone.job_fair.models.entities.notification.SendToUserEntity;
 import org.capstone.job_fair.services.mappers.notification.NotificationMapper;
+import org.capstone.job_fair.services.mappers.notification.NotificationMessageMapper;
+import org.capstone.job_fair.services.mappers.notification.SendToUserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
@@ -29,25 +35,41 @@ public class NotificationServiceImpl {
     @Autowired
     private AmazonSQS amazonSQS;
 
-    public void createNotification(String receiverId, String message){
+    @Autowired
+    private NotificationMessageMapper notificationMessageMapper;
+
+    @Autowired
+    private SendToUserMapper sendToUserMapper;
+
+    public void createNotification(String receiverId, String message) {
 
     }
 
-    public void createNotification(List<String> receiverIds, String message){
+    public void createNotification(List<String> receiverIds, String message) {
 
     }
 
-    public void createNotification(List<NotificationDTO> notificationDTOList) {
-        List<NotificationEntity> notificationEntityList = (List<NotificationEntity>) notificationDTOList.stream().map(noti -> notificationMapper.toEntity(noti));
-        DynamoDBMapper mapper = new DynamoDBMapper(dynamoDBClient);
-        mapper.batchSave(notificationEntityList);
+    public void createNotification(NotificationMessageDTO message, List<String> receiverIdList) {
 
-        SendMessageRequest send_msg_request = new SendMessageRequest()
-                .withQueueUrl("https://sqs.ap-southeast-1.amazonaws.com/845953824246/jobhub-messageQueue")
-                .withMessageBody("hello world");
-        SendMessageBatchRequest sendMessageBatchRequest = new SendMessageBatchRequest()
-                .withQueueUrl("https://sqs.ap-southeast-1.amazonaws.com/845953824246/jobhub-messageQueue").
-        amazonSQS.sendMessage(send_msg_request);
+        DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(dynamoDBClient);
+        String queueURL = "https://sqs.ap-southeast-1.amazonaws.com/845953824246/jobhub-messageQueue";
+
+
+        message.setNotificationId(UUID.randomUUID().toString());
+        message.setRead(false);
+        message.setCreateDate(new Date().getTime());
+
+        NotificationMessageEntity notificationMessageEntity = notificationMessageMapper.toEntity(message);
+        dynamoDBMapper.save(notificationMessageEntity);
+
+        List<SendToUserEntity> sendToUserEntityList = receiverIdList.stream().map(s -> {
+            SendToUserEntity entity = new SendToUserEntity(UUID.randomUUID().toString(), s, message.getNotificationId());
+            return entity;
+        }).collect(Collectors.toList());
+
+        dynamoDBMapper.batchSave(sendToUserEntityList);
+        SendMessageRequest sendMessageRequest = new SendMessageRequest().withMessageBody(message.getNotificationId()).withQueueUrl(queueURL);
+        amazonSQS.sendMessage(sendMessageRequest);
 
     }
 
