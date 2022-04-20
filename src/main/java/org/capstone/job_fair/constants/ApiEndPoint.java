@@ -222,5 +222,7 @@ public final class ApiEndPoint {
         public static final String JOB_FAIR = ASSIGNMENT + "/job-fair";
         public static final String JOB_FAIR_BOOTH = ASSIGNMENT + "/job-fair-booth";
         public static final String JOB_FAIR_AVAILABLE = ASSIGNMENT + "/available";
+        public static final String JOB_FAIR_STATISTICS = ASSIGNMENT + "/statistics";
+        public static final String OF_EMPLOYEE = ASSIGNMENT + "/employee";
     }
 }

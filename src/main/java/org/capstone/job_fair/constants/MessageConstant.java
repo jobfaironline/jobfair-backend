@@ -27,6 +27,7 @@ public final class MessageConstant {
         public static final String INVALID_PUBLIC_TIME = "job-fair.error.invalid-public-time";
         public static final String INVALID_BUFFER_TIME = "job-fair.error.invalid-buffer-time";
         public static final String NOT_EDITABLE = "job-fair.error.not-editable";
+        public static final String JOB_FAIR_ALREADY_PUBLISH = "job-fair.error.already-publish";
 
 
     }
@@ -320,6 +321,8 @@ public final class MessageConstant {
         }
 
         public static final String NOT_FOUND = "job-fair-booth.error.not-found";
+        public static final String UNIQUE_JOB_POSITION_ERROR = "job-fair-booth.error.unique-job-position";
+
     }
 
 }

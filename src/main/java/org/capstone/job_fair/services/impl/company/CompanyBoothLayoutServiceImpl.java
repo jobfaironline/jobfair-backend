@@ -6,10 +6,10 @@ import org.capstone.job_fair.models.dtos.company.JobFairBoothLayoutDTO;
 import org.capstone.job_fair.models.dtos.company.JobFairBoothLayoutVideoDTO;
 import org.capstone.job_fair.models.entities.company.JobFairBoothLayoutEntity;
 import org.capstone.job_fair.models.entities.company.JobFairBoothLayoutVideoEntity;
-import org.capstone.job_fair.repositories.company.CompanyBoothLayoutRepository;
+import org.capstone.job_fair.repositories.company.JobFairBoothLayoutRepository;
 import org.capstone.job_fair.repositories.company.CompanyBoothLayoutVideoRepository;
 import org.capstone.job_fair.services.interfaces.company.CompanyBoothLayoutService;
-import org.capstone.job_fair.services.mappers.company.CompanyBoothLayoutMapper;
+import org.capstone.job_fair.services.mappers.company.JobFairBoothLayoutMapper;
 import org.capstone.job_fair.services.mappers.company.CompanyBoothLayoutVideoMapper;
 import org.capstone.job_fair.utils.AwsUtil;
 import org.capstone.job_fair.utils.GLTFUtil;
@@ -32,13 +32,13 @@ import java.util.stream.Collectors;
 public class CompanyBoothLayoutServiceImpl implements CompanyBoothLayoutService {
 
     @Autowired
-    private CompanyBoothLayoutRepository companyBoothLayoutRepository;
+    private JobFairBoothLayoutRepository jobFairBoothLayoutRepository;
 
     @Autowired
     private CompanyBoothLayoutVideoRepository companyBoothLayoutVideoRepository;
 
     @Autowired
-    private CompanyBoothLayoutMapper boothLayoutMapper;
+    private JobFairBoothLayoutMapper boothLayoutMapper;
 
     @Autowired
     private CompanyBoothLayoutVideoMapper companyBoothLayoutVideoMapper;
@@ -48,7 +48,7 @@ public class CompanyBoothLayoutServiceImpl implements CompanyBoothLayoutService 
 
     @Override
     public List<JobFairBoothLayoutDTO> getLayoutsByCompanyBoothId(String companyBoothId) {
-        return companyBoothLayoutRepository
+        return jobFairBoothLayoutRepository
                 .findByJobFairBoothId(companyBoothId)
                 .stream()
                 .map(boothLayoutMapper::toDTO)
@@ -57,14 +57,14 @@ public class CompanyBoothLayoutServiceImpl implements CompanyBoothLayoutService 
 
     @Override
     public Optional<JobFairBoothLayoutDTO> getLatestVersionByCompanyBoothId(String companyBoothId) {
-        return companyBoothLayoutRepository
+        return jobFairBoothLayoutRepository
                 .findTopByJobFairBoothIdOrderByVersionDesc(companyBoothId)
                 .map(boothLayoutMapper::toDTO);
     }
 
     @Override
     public Optional<JobFairBoothLayoutDTO> getById(String id) {
-        return companyBoothLayoutRepository.findById(id).map(boothLayoutMapper::toDTO);
+        return jobFairBoothLayoutRepository.findById(id).map(boothLayoutMapper::toDTO);
     }
 
     @Override
@@ -77,7 +77,7 @@ public class CompanyBoothLayoutServiceImpl implements CompanyBoothLayoutService 
         }
 
         Optional<JobFairBoothLayoutEntity> latestVersionOpt =
-                    companyBoothLayoutRepository.findTopByJobFairBoothIdOrderByVersionDesc(dto.getJobFairBooth().getId());
+                    jobFairBoothLayoutRepository.findTopByJobFairBoothIdOrderByVersionDesc(dto.getJobFairBooth().getId());
         int version = latestVersionOpt.map(jobFairBoothLayoutEntity -> jobFairBoothLayoutEntity.getVersion() + 1).orElse(0);
 
 
@@ -89,14 +89,14 @@ public class CompanyBoothLayoutServiceImpl implements CompanyBoothLayoutService 
         entity.setUrl(url);
         entity.setVersion(version);
         entity.setCreateDate(new Date().getTime());
-        entity = companyBoothLayoutRepository.save(entity);
+        entity = jobFairBoothLayoutRepository.save(entity);
         return boothLayoutMapper.toDTO(entity);
     }
 
     @Transactional
     @Override
     public JobFairBoothLayoutVideoDTO createNewVideoWithFile(JobFairBoothLayoutVideoDTO dto){
-        Optional<JobFairBoothLayoutEntity> layoutOpt = companyBoothLayoutRepository.findById(dto.getJobFairBoothLayoutId());
+        Optional<JobFairBoothLayoutEntity> layoutOpt = jobFairBoothLayoutRepository.findById(dto.getJobFairBoothLayoutId());
         if (!layoutOpt.isPresent()){
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Layout.NOT_FOUND));
         }
@@ -113,7 +113,7 @@ public class CompanyBoothLayoutServiceImpl implements CompanyBoothLayoutService 
     @Override
     @Transactional
     public JobFairBoothLayoutVideoDTO createNewVideoWithUrl(JobFairBoothLayoutVideoDTO dto) {
-        Optional<JobFairBoothLayoutEntity> layoutOpt = companyBoothLayoutRepository.findById(dto.getJobFairBoothLayoutId());
+        Optional<JobFairBoothLayoutEntity> layoutOpt = jobFairBoothLayoutRepository.findById(dto.getJobFairBoothLayoutId());
         if (!layoutOpt.isPresent()){
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Layout.NOT_FOUND));
         }

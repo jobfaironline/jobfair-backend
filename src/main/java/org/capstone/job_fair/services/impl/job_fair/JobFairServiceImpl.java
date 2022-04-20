@@ -20,6 +20,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -108,8 +109,15 @@ public class JobFairServiceImpl implements JobFairService {
         if (!jobFairEntityOptional.isPresent()) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.JOB_FAIR_NOT_FOUND));
         }
-
         JobFairEntity jobFairEntity = jobFairEntityOptional.get();
+        Long publicStartTime = jobFairEntity.getPublicStartTime();
+        List<JobFairEntity> listEntity = jobFairRepository.findByCompanyIdAndStatus(companyId, JobFairPlanStatus.PUBLISH);
+        for(JobFairEntity entity : listEntity) {
+            if (publicStartTime >= entity.getPublicStartTime()
+                    && publicStartTime <= entity.getPublicEndTime())
+                throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.JOB_FAIR_ALREADY_PUBLISH));
+        }
+
         JobFairDTO jobFairDTO = jobFairMapper.toDTO(jobFairEntity);
 
         Set<ConstraintViolation<JobFairDTO>> violations = validator.validate(jobFairDTO);
@@ -128,6 +136,7 @@ public class JobFairServiceImpl implements JobFairService {
     }
 
     @Override
+    @Transactional
     public JobFairDTO createOrUpdateJobFairThumbnail(String jobfairThumbnailFolder, String jobFairId, String companyId) {
         String url = awsUtil.generateAwsS3AccessString(jobfairThumbnailFolder, jobFairId);
         Optional<JobFairEntity> jobFairEntityOptional = null;

@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface RegistrationJobPositionRepository extends JpaRepository<BoothJobPositionEntity, String> {
+public interface BoothJobPositionRepository extends JpaRepository<BoothJobPositionEntity, String> {
 
     Integer countById(String id);
 }

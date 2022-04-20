@@ -1,9 +1,14 @@
 package org.capstone.job_fair.repositories.job_fair;
 
 import org.capstone.job_fair.models.entities.job_fair.AssignmentEntity;
+import org.capstone.job_fair.models.statuses.JobFairPlanStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,5 +21,13 @@ public interface AssignmentRepository extends JpaRepository<AssignmentEntity, St
 
     List<AssignmentEntity> findByJobFairBoothIdAndJobFairBoothJobFairCompanyId(String jobFairBoothId, String companyId);
 
+    @Query("select count(distinct a.jobFairBooth) from AssignmentEntity a where a.jobFairBooth.jobFair.id = ?1")
+    Integer countDistinctJobFairBoothByJobFairBoothJobFairId(String jobFairId);
 
+    Integer countByJobFairBoothJobFairId(String jobFairId);
+
+    @Modifying
+    Integer deleteByJobFairBoothId(String jobFairBoothId);
+
+    Page<AssignmentEntity> findByCompanyEmployeeAccountIdAndJobFairBoothJobFairStatus(String employeeId, JobFairPlanStatus status, Pageable pageable);
 }

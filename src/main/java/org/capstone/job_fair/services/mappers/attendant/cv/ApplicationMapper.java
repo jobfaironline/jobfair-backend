@@ -11,10 +11,10 @@ import org.capstone.job_fair.models.enums.Gender;
 import org.capstone.job_fair.services.mappers.account.AccountMapper;
 import org.capstone.job_fair.services.mappers.attendant.AttendantMapper;
 import org.capstone.job_fair.services.mappers.attendant.CountryMapper;
-import org.capstone.job_fair.services.mappers.company.RegistrationJobPositionMapper;
+import org.capstone.job_fair.services.mappers.company.BoothJobPositionMapper;
 import org.mapstruct.*;
 
-@Mapper(componentModel = "spring", uses = {AccountMapper.class, AttendantMapper.class, CvMapper.class, RegistrationJobPositionMapper.class, CountryMapper.class}, nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+@Mapper(componentModel = "spring", uses = {AccountMapper.class, AttendantMapper.class, CvMapper.class, BoothJobPositionMapper.class, CountryMapper.class}, nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public abstract class ApplicationMapper {
 
     @Mapping(source = "boothJobPosition", target = "boothJobPositionDTO")

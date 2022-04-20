@@ -7,7 +7,7 @@ import org.capstone.job_fair.models.dtos.attendant.cv.CvDTO;
 import org.capstone.job_fair.models.entities.attendant.cv.ApplicationEntity;
 import org.capstone.job_fair.models.enums.ApplicationStatus;
 import org.capstone.job_fair.repositories.attendant.cv.ApplicationRepository;
-import org.capstone.job_fair.repositories.company.job.RegistrationJobPositionRepository;
+import org.capstone.job_fair.repositories.company.job.BoothJobPositionRepository;
 import org.capstone.job_fair.services.interfaces.account.AccountService;
 import org.capstone.job_fair.services.interfaces.attendant.ApplicationService;
 import org.capstone.job_fair.services.interfaces.attendant.cv.CvService;
@@ -32,7 +32,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     private ApplicationRepository applicationRepository;
 
     @Autowired
-    private RegistrationJobPositionRepository regisJobPosRepository;
+    private BoothJobPositionRepository regisJobPosRepository;
 
     @Autowired
     private AccountService accountService;

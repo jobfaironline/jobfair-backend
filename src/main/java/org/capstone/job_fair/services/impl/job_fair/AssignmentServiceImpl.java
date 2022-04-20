@@ -8,6 +8,7 @@ import org.capstone.job_fair.models.entities.company.JobFairBoothEntity;
 import org.capstone.job_fair.models.entities.job_fair.AssignmentEntity;
 import org.capstone.job_fair.models.entities.job_fair.JobFairEntity;
 import org.capstone.job_fair.models.enums.AssignmentType;
+import org.capstone.job_fair.models.statuses.JobFairPlanStatus;
 import org.capstone.job_fair.repositories.company.CompanyEmployeeRepository;
 import org.capstone.job_fair.repositories.company.JobFairBoothRepository;
 import org.capstone.job_fair.repositories.job_fair.AssignmentRepository;
@@ -17,6 +18,8 @@ import org.capstone.job_fair.services.mappers.company.CompanyEmployeeMapper;
 import org.capstone.job_fair.services.mappers.job_fair.AssignmentMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -133,5 +136,25 @@ public class AssignmentServiceImpl implements AssignmentService {
             return !result;
         }).collect(Collectors.toList());
         return companyEmployees.stream().map(companyEmployeeMapper::toDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public Integer getCountAssignedBoothByJobFair(String jobFairId) {
+        return assignmentRepository.countDistinctJobFairBoothByJobFairBoothJobFairId(jobFairId);
+    }
+
+    @Override
+    public Integer getCountAssignedEmployeeByJobFair(String jobFairId) {
+        return assignmentRepository.countByJobFairBoothJobFairId(jobFairId);
+    }
+
+    @Override
+    public Page<AssignmentDTO> getAssignmentByEmployeeId(String employeeId, Pageable pageable) {
+        return assignmentRepository.findByCompanyEmployeeAccountIdAndJobFairBoothJobFairStatus(employeeId, JobFairPlanStatus.PUBLISH, pageable).map(assignmentMapper::toDTO);
+    }
+
+    @Override
+    public Optional<AssignmentDTO> getAssignmentById(String id) {
+        return assignmentRepository.findById(id).map(assignmentMapper::toDTO);
     }
 }

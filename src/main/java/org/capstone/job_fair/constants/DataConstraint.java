@@ -25,12 +25,7 @@ public final class DataConstraint {
         public static final int MAX_DESCRIPTION_LENGTH = 500000;
         public static final int MESSAGE_MIN_LENGTH = 1;
         public static final int MESSAGE_MAX_LENGTH = 500;
-        public static final int COMPANY_REASON_CANCEL_JOB_FAIR_REGISTRATION_MAX_LENGTH = 1000;
-        public static final int COMPANY_REASON_CANCEL_JOB_FAIR_REGISTRATION_MIN_LENGTH = 1;
         public static final int NAME_MAX_LENGTH = 100;
-        public static final int MIN_ESTIMATE_PARTICIPANT_NUM = 0;
-        public static final int MAX_ESTIMATE_PARTICIPANT_NUM = 1_000_000;
-        public static final int TARGET_COMPANY_MAX_LENGTH = 500;
         public static final int TARGET_ATTENDANT_MAX_LENGTH = 500;
         public static final long MINIMUM_DECORATE_TIME = 60 * 60 * 1000L;
         public static final long MINIMUM_PUBLIC_TIME = 60 * 60 * 1000L;
@@ -42,16 +37,6 @@ public final class DataConstraint {
         public static final double HEIGHT_FACTOR = 0.5;
 
 
-    }
-
-    public static final class CompanyRegistration {
-        private CompanyRegistration() {
-        }
-
-        public static final int MESSAGE_MIN_LENGTH = 1;
-        public static final int MESSAGE_MAX_LENGTH = 1000;
-        public static final int OFFSET_MIN = 0;
-        public static final int PAGE_SIZE_MIN = 0;
     }
 
     public static final class WorkHistory {
@@ -115,7 +100,6 @@ public final class DataConstraint {
         public static final int FUNCTION_MAX_LENGTH = 100;
         public static final int ORGANIZATION_MIN_LENGTH = 1;
         public static final int ORGANIZATION_MAX_LENGTH = 100;
-        public static final long FROM_DATE = -2208988800000L;
         public static final int MIN_DESCRIPTION_LENGTH = 1;
         public static final int MAX_DESCRIPTION_LENGTH = 5000;
 
@@ -127,7 +111,7 @@ public final class DataConstraint {
 
         public static final int TITLE_LENGTH = 200;
         public static final int DESCRIPTION_LENGTH = 1000;
-        public static final int REQUIREMENT_LENGTH = 1000;
+        public static final int NOTE_LENGTH = 1000;
         public static final long SALARY_MAX = 10000;
         public static final long SALARY_MIN = 0;
         public static final int CONTACT_PERSON_NAME_LENGTH = 100;
@@ -138,8 +122,12 @@ public final class DataConstraint {
         public static final int SKILL_TAG_MIN = 1;
         public static final int EMPLOYEE_MIN = 1;
         public static final int EMPLOYEE_MAX = 100000;
-        public static final int OFFSET_MIN = 0;
-        public static final int PAGE_SIZE_MIN = 0;
+        public static final int TEST_LENGTH_MIN = 1;
+        public static final int TEST_LENGTH_MAX = 1000;
+        public static final int NUM_OF_QUESTION_MIN = 1;
+        public static final int NUM_OF_QUESTION_MAX = 100;
+        public static final int PASS_MARK_MIN = 0;
+        public static final int PASS_MARK_MAX = 10;
     }
 
     public static final class Account {

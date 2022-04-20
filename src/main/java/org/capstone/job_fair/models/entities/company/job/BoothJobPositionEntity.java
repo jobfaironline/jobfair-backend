@@ -79,9 +79,27 @@ public class BoothJobPositionEntity {
     @Column(name="origin_job_position_id")
     private String originJobPosition;
 
+    @Column(name="note")
+    private String note;
+
+    @Column(name="is_have_test")
+    private Boolean isHaveTest;
+
+    @Column(name="test_time_length")
+    private Integer testTimeLength;
+
+    @Column(name="num_of_question")
+    private Integer numOfQuestion;
+
+    @Column(name="pass_mark")
+    private Double passMark;
+
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "job_fair_booth_id")
     private JobFairBoothEntity jobFairBooth;
+
+
 
     @Override
     public boolean equals(Object o) {

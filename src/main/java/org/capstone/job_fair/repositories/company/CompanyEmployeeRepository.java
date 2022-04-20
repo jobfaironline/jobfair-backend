@@ -18,4 +18,6 @@ public interface CompanyEmployeeRepository extends JpaRepository<CompanyEmployee
     Optional<CompanyEmployeeEntity> findByAccountId(String accountId);
 
     Optional<CompanyEmployeeEntity> findByAccountIdAndCompanyId(String accountID, String companyID);
+
+    Integer countByCompanyId(String companyId);
 }

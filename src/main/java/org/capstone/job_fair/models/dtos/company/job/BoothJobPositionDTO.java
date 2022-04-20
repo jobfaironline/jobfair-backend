@@ -8,6 +8,7 @@ import org.capstone.job_fair.models.enums.JobLevel;
 import org.capstone.job_fair.models.enums.JobType;
 import org.capstone.job_fair.models.enums.Language;
 
+import javax.persistence.Column;
 import java.io.Serializable;
 import java.util.List;
 
@@ -34,5 +35,10 @@ public class BoothJobPositionDTO implements Serializable {
     private Integer numOfPosition;
     private String locationId;
     private String originJobPosition;
+    private String note;
+    private Boolean isHaveTest;
+    private Integer testTimeLength;
+    private Integer numOfQuestion;
+    private Double passMark;
     private JobFairBoothDTO jobFairBooth;
 }

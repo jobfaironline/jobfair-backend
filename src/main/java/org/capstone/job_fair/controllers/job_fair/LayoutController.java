@@ -82,7 +82,9 @@ public class LayoutController {
     public ResponseEntity<LayoutDTO> uploadMetaData(@Valid @RequestBody CreateLayoutMetaDataRequest request) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         LayoutDTO dto = layoutMapper.toDTO(request);
-        dto.setCompany(CompanyDTO.builder().id(userDetails.getCompanyId()).build());
+        if (userDetails.getCompanyId() != null){
+            dto.setCompany(CompanyDTO.builder().id(userDetails.getCompanyId()).build());
+        }
         dto = layoutService.createNew(dto);
         return ResponseEntity.created(URI.create(dto.getUrl())).body(dto);
     }
