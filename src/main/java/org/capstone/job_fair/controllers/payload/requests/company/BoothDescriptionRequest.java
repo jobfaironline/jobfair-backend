@@ -41,7 +41,6 @@ public class BoothDescriptionRequest {
         @Min(DataConstraint.JobPosition.SALARY_MIN)
         @Max(DataConstraint.JobPosition.SALARY_MAX)
         private Double minSalary;
-        @NotNull
         @NumberFormat
         @Min(DataConstraint.JobPosition.SALARY_MIN)
         @Max(DataConstraint.JobPosition.SALARY_MAX)
