@@ -4,7 +4,6 @@ on:
   push:
     branches: [ main ]
 
-
 jobs:   #Build's job
   CI:
     env:
@@ -33,7 +32,7 @@ jobs:   #Build's job
       DB_DATABASE: ${{secrets.DATABASE_NAME}}
       DB_USER: ${{secrets.DATASOURCE_USERNAME}}
       DB_PASSWORD: ${{secrets.DATASOURCE_PASSWORD}}     
-    name: Build
+    name: CI
     #Run on Ubuntu using the latest version
     runs-on: ubuntu-latest
     steps:
@@ -52,12 +51,7 @@ jobs:   #Build's job
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
-      #Build the application using Maven
-      - name: Build with Maven
-        run: |
-             mvn clean install
-             mv target/jobfair-backend.jar .
-    #Create database
+              #Create database
       - name: Get schema file
         uses: actions/checkout@v2
         with:
@@ -77,11 +71,14 @@ jobs:   #Build's job
              done
              mysql -h $DATASOURCE_URL -P $DATASOURCE_PORT -u $DATASOURCE_USERNAME -p$DATASOURCE_PASSWORD < schema.sql
              rm schema.sql
-      - name: Run file
-        run: nohup java -jar jobfair-backend.jar &
-      - name: wait for app to fully loalded
-        run: sleep 60
-      - name: verify
+      #Build the application using Maven
+      - name: Build and run file
+        run: |
+             mvn clean install
+             cd target/
+             nohup java -jar jobfair-backend.jar &
+             sleep 60
+      - name: Verify app has successfully been loadded
         run: curl http://localhost:5000/swagger-ui/index.html
    #Account test case    
       - name: Run account test case
