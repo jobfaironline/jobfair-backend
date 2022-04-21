@@ -51,6 +51,7 @@ jobs:
             name: artifact
             #From this path
             path: backend.zip
+            retention-days: 1
           
   #Deploy's job
   deploy:
