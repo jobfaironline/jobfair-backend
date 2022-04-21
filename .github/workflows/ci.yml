@@ -1,7 +1,7 @@
 name: CI
 
 on:
-  push:
+  pull_request:
     branches: [ main ]
 
 jobs:   #Build's job
@@ -73,11 +73,12 @@ jobs:   #Build's job
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
       #Build the application using Maven
+      #This shit need a lot of time to start. That why I have to add "sleep 60" command to wait for this shit to start :D
       - name: Build and run file
         run: |
              mvn clean install
              cd target/
-             nohup java -jar jobfair-backend.jar &
+             nohup java -jar jobfair-backend.jar &       
              sleep 60
       - name: Verify app has successfully been loadded
         run: curl http://localhost:5000/swagger-ui/index.html
