@@ -1,13 +1,38 @@
 name: CI
 
 on:
-  pull_request:
+  push:
     branches: [ main ]
 
 
-jobs:
-   #Build's job
-  build:
+jobs:   #Build's job
+  CI:
+    env:
+      DATASOURCE_PASSWORD: ${{secrets.DATASOURCE_PASSWORD}}
+      DATASOURCE_URL: ${{secrets.DATASOURCE_URL}}
+      DATASOURCE_PORT: ${{secrets.DATASOURCE_PORT}}
+      DATABASE_NAME: ${{secrets.DATABASE_NAME}}
+      DATASOURCE_USERNAME: ${{secrets.DATASOURCE_USERNAME}}
+      JWT_EXPIRATION: ${{secrets.JWT_EXPIRATION}}
+      JWT_REFESH_EXPIRATION: ${{secrets.JWT_REFESH_EXPIRATION}}
+      JWT_SECRET: ${{secrets.JWT_SECRET}}
+      SPRING_MAIL_HOST: ${{secrets.SPRING_MAIL_HOST}}
+      SPRING_MAIL_PORT: ${{secrets.SPRING_MAIL_PORT}}
+      SPRING_MAIL_SNMP_PORT: ${{secrets.SPRING_MAIL_SNMP_PORT}}
+      SPRING_MAIL_PROPERTIES_MAIL_TRANSPORT_PROTOCOL: ${{secrets.SPRING_MAIL_PROPERTIES_MAIL_TRANSPORT_PROTOCOL}}
+      SPRING_MAIL_USERNAME: ${{secrets.SPRING_MAIL_USERNAME}}
+      SPRING_MAIL_PASSWORD: ${{secrets.SPRING_MAIL_PASSWORD}}
+      MAIL_FROM: ${{secrets.MAIL_FROM}}
+      SPRING_MAIL_SMTP_AUTH: ${{secrets.SPRING_MAIL_SMTP_AUTH}}
+      SPRING_MAIL_SMTP_STARTTLS: ${{secrets.SPRING_MAIL_SMTP_STARTTLS}}
+      SPRING_MAIL_SMTP_STARTTLS_REQIRED: ${{secrets.SPRING_MAIL_SMTP_STARTTLS_REQIRED}}
+      API_DOMAIN: ${{secrets.API_DOMAIN}}
+      API_PORT: ${{secrets.API_PORT}}
+      AWS_ACCESS_KEY_ID: ${{secrets.AWS_TEST_ACCESS_TOKEN_ID}}
+      AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_TEST_ACCESS_SECRET_KEY}}
+      DB_DATABASE: ${{secrets.DATABASE_NAME}}
+      DB_USER: ${{secrets.DATASOURCE_USERNAME}}
+      DB_PASSWORD: ${{secrets.DATASOURCE_PASSWORD}}     
     name: Build
     #Run on Ubuntu using the latest version
     runs-on: ubuntu-latest
@@ -40,42 +65,6 @@ jobs:
           #From this path
           path: target/jobfair-backend.jar
           retention-days: 1
-          
-  #Test's job
-  test:
-    env:
-    ## Sets environment variable
-      DATASOURCE_PASSWORD: ${{secrets.DATASOURCE_PASSWORD}}
-      DATASOURCE_URL: ${{secrets.DATASOURCE_URL}}
-      DATASOURCE_PORT: ${{secrets.DATASOURCE_PORT}}
-      DATABASE_NAME: ${{secrets.DATABASE_NAME}}
-      DATASOURCE_USERNAME: ${{secrets.DATASOURCE_USERNAME}}
-      JWT_EXPIRATION: ${{secrets.JWT_EXPIRATION}}
-      JWT_REFESH_EXPIRATION: ${{secrets.JWT_REFESH_EXPIRATION}}
-      JWT_SECRET: ${{secrets.JWT_SECRET}}
-      SPRING_MAIL_HOST: ${{secrets.SPRING_MAIL_HOST}}
-      SPRING_MAIL_PORT: ${{secrets.SPRING_MAIL_PORT}}
-      SPRING_MAIL_SNMP_PORT: ${{secrets.SPRING_MAIL_SNMP_PORT}}
-      SPRING_MAIL_PROPERTIES_MAIL_TRANSPORT_PROTOCOL: ${{secrets.SPRING_MAIL_PROPERTIES_MAIL_TRANSPORT_PROTOCOL}}
-      SPRING_MAIL_USERNAME: ${{secrets.SPRING_MAIL_USERNAME}}
-      SPRING_MAIL_PASSWORD: ${{secrets.SPRING_MAIL_PASSWORD}}
-      MAIL_FROM: ${{secrets.MAIL_FROM}}
-      SPRING_MAIL_SMTP_AUTH: ${{secrets.SPRING_MAIL_SMTP_AUTH}}
-      SPRING_MAIL_SMTP_STARTTLS: ${{secrets.SPRING_MAIL_SMTP_STARTTLS}}
-      SPRING_MAIL_SMTP_STARTTLS_REQIRED: ${{secrets.SPRING_MAIL_SMTP_STARTTLS_REQIRED}}
-      API_DOMAIN: ${{secrets.API_DOMAIN}}
-      API_PORT: ${{secrets.API_PORT}}
-      AWS_ACCESS_KEY_ID: ${{secrets.AWS_TEST_ACCESS_TOKEN_ID}}
-      AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_TEST_ACCESS_SECRET_KEY}}
-      DB_DATABASE: ${{secrets.DATABASE_NAME}}
-      DB_USER: ${{secrets.DATASOURCE_USERNAME}}
-      DB_PASSWORD: ${{secrets.DATASOURCE_PASSWORD}}
-    #Depends on build's job
-    needs: build
-    name: Test
-    #Run on Ubuntu using the latest version
-    runs-on: ubuntu-latest
-    steps:
     #Create database
       - name: Get schema file
         uses: actions/checkout@v2
