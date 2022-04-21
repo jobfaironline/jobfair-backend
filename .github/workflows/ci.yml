@@ -36,8 +36,6 @@ jobs:   #Build's job
     #Run on Ubuntu using the latest version
     runs-on: ubuntu-latest
     steps:
-    #Check-out your repository under $GITHUB_WORKSPACE, so your workflow can access it
-      - uses: actions/checkout@v1
     #Create database
       - name: Get schema file
         uses: actions/checkout@v2
@@ -59,6 +57,8 @@ jobs:   #Build's job
              done
              mysql -h $DATASOURCE_URL -P $DATASOURCE_PORT -u $DATASOURCE_USERNAME -p$DATASOURCE_PASSWORD < schema.sql
              rm schema.sql
+      #Check-out your repository under $GITHUB_WORKSPACE, so your workflow can access it
+      - uses: actions/checkout@v1
       #Set up JDK 11
       - name: Set up JDK
         uses: actions/setup-java@v1
