@@ -54,17 +54,9 @@ jobs:   #Build's job
           restore-keys: ${{ runner.os }}-m2
       #Build the application using Maven
       - name: Build with Maven
-        run: mvn clean install
-      #Build the application using Maven
-      - name: Upload JAR
-        #This uploads artifacts from your workflow allowing you to share data between jobs and store data once a workflow is complete.
-        uses: actions/upload-artifact@v2
-        with:
-          #Set artifact name
-          name: artifact
-          #From this path
-          path: target/jobfair-backend.jar
-          retention-days: 1
+        run: |
+             mvn clean install
+             mv target/jobfair-backend.jar .
     #Create database
       - name: Get schema file
         uses: actions/checkout@v2
@@ -85,16 +77,6 @@ jobs:   #Build's job
              done
              mysql -h $DATASOURCE_URL -P $DATASOURCE_PORT -u $DATASOURCE_USERNAME -p$DATASOURCE_PASSWORD < schema.sql
              rm schema.sql
-      - name: Download JAR
-    #Download the artifact which was uploaded in the build's job
-        uses: actions/download-artifact@v2
-        with:
-          name: artifact
-    #Set up JDK 11
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: '11'
       - name: Run file
         run: nohup java -jar jobfair-backend.jar &
       - name: wait for app to fully loalded
