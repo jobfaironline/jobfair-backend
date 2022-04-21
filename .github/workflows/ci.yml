@@ -39,6 +39,7 @@ jobs:
           name: artifact
           #From this path
           path: target/jobfair-backend.jar
+          retention-days: 1
           
   #Test's job
   test:
