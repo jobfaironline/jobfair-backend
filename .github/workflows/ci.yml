@@ -36,28 +36,16 @@ jobs:   #Build's job
     #Run on Ubuntu using the latest version
     runs-on: ubuntu-latest
     steps:
-      #Check-out your repository under $GITHUB_WORKSPACE, so your workflow can access it
+    #Check-out your repository under $GITHUB_WORKSPACE, so your workflow can access it
       - uses: actions/checkout@v1
-      #Set up JDK 11
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: '11'
-      #Set up Maven cache
-      - name: Cache Maven packages
-        #This action allows caching dependencies and build outputs to improve workflow execution time.
-        uses: actions/cache@v1
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
-              #Create database
+    #Create database
       - name: Get schema file
         uses: actions/checkout@v2
         with:
           repository: jobfaironline/schema
           token: ${{secrets.PAT}}
-      - run: |
+      - name: Create database
+        run: |
              sudo /etc/init.d/mysql start
              cd DDL/
              for filename in $(ls -1 * | sort -n); do
@@ -71,6 +59,19 @@ jobs:   #Build's job
              done
              mysql -h $DATASOURCE_URL -P $DATASOURCE_PORT -u $DATASOURCE_USERNAME -p$DATASOURCE_PASSWORD < schema.sql
              rm schema.sql
+      #Set up JDK 11
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: '11'
+      #Set up Maven cache
+      - name: Cache Maven packages
+        #This action allows caching dependencies and build outputs to improve workflow execution time.
+        uses: actions/cache@v1
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
       #Build the application using Maven
       - name: Build and run file
         run: |
@@ -80,8 +81,8 @@ jobs:   #Build's job
              sleep 60
       - name: Verify app has successfully been loadded
         run: curl http://localhost:5000/swagger-ui/index.html
-   #Account test case    
-      - name: Run account test case
+     #Test   
+      - name: Run test
         uses: matt-ball/newman-action@master
         with:
           apiKey: ${{secrets.postmanApiKey}}
