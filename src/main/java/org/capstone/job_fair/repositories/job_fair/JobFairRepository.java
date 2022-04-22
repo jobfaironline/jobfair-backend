@@ -16,6 +16,8 @@ public interface JobFairRepository extends JpaRepository<JobFairEntity, String> 
     Optional<JobFairEntity> findByIdAndCompanyId(String jobFairId, String companyId);
 
     List<JobFairEntity> findByCompanyIdAndStatus(String companyId, JobFairPlanStatus status);
+
+    @Query("select j from JobFairEntity j where (j.name like ?1 or j.name is null) and j.company.id = ?2")
     Page<JobFairEntity> findByNameLikeOrNameIsNullAndCompanyId(String name, String companyId, Pageable pageable);
 
 
