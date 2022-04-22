@@ -11,5 +11,11 @@ public interface NotificationService {
     void createNotification(NotificationMessageDTO message, String receiverId);
 
     void createNotification(NotificationMessageDTO message, List<String> receiverIdList);
+
+    List<NotificationMessageDTO> getNotificationByAccountId(String id);
+
+    void readNotification(String id, String userId);
+
+    void readAll(String userId);
 }
 

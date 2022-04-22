@@ -23,13 +23,6 @@ public final class ApiEndPoint {
 
     }
 
-    public static final class Notification{
-        private Notification(){
-
-        }
-        public static final String NOTIFICATION_ENDPOINT = ROOT_ENDPOINT + VERSION + "/noti";
-
-    }
 
     public static final class JobFair {
         private JobFair() {
@@ -224,5 +217,14 @@ public final class ApiEndPoint {
         public static final String JOB_FAIR_AVAILABLE = ASSIGNMENT + "/available";
         public static final String JOB_FAIR_STATISTICS = ASSIGNMENT + "/statistics";
         public static final String OF_EMPLOYEE = ASSIGNMENT + "/employee";
+    }
+
+    public static final class Notification {
+        private Notification(){}
+
+        public static final String NOTIFICATION = ROOT_ENDPOINT + VERSION + "/notifications";
+        public static final String READ = NOTIFICATION + "/read";
+        public static final String READ_ALL = NOTIFICATION + "/read-all";
+
     }
 }

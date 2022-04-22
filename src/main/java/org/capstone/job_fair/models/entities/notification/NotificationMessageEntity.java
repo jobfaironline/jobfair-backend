@@ -3,6 +3,7 @@ package org.capstone.job_fair.models.entities.notification;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.capstone.job_fair.models.enums.NotificationType;
@@ -10,56 +11,24 @@ import org.capstone.job_fair.models.enums.NotificationType;
 @AllArgsConstructor
 @NoArgsConstructor
 @DynamoDBTable(tableName = "NotificationMessage")
-@Setter
+@Data
 public class NotificationMessageEntity {
-    private String id;
-    private String notificationId;
-    private NotificationType notificationType;
-    private String title;
-    private String message;
-    private boolean isRead;
-    private long createDate;
-
-    private String userId;
-
     @DynamoDBHashKey(attributeName = "id")
-    public String getId() {
-        return id;
-    }
-
+    private String id;
     @DynamoDBAttribute(attributeName = "notificationId")
-    public String getNotificationId() {
-        return notificationId;
-    }
-
+    private String notificationId;
     @DynamoDBAttribute(attributeName = "notificationType")
     @DynamoDBTyped(DynamoDBMapperFieldModel.DynamoDBAttributeType.S)
-    public NotificationType getNotificationType() {
-        return notificationType;
-    }
-
+    private NotificationType notificationType;
     @DynamoDBAttribute(attributeName = "title")
-    public String getTitle() {
-        return title;
-    }
-
+    private String title;
     @DynamoDBAttribute(attributeName = "message")
-    public String getMessage() {
-        return message;
-    }
-
+    private String message;
     @DynamoDBAttribute(attributeName = "isRead")
-    public boolean isRead() {
-        return isRead;
-    }
-
+    private boolean isRead;
     @DynamoDBAttribute(attributeName = "createDate")
-    public long getCreateDate() {
-        return createDate;
-    }
-
+    private long createDate;
     @DynamoDBAttribute(attributeName = "userId")
-    public String getUserId() {
-        return userId;
-    }
+    private String userId;
+
 }
