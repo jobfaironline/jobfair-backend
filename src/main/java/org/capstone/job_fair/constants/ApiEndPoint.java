@@ -106,6 +106,7 @@ public final class ApiEndPoint {
         public static final String ACCOUNT_ENDPOINT = ROOT_ENDPOINT + VERSION + "/accounts";
         public static final String CHANGE_PASSWORD_ENDPOINT = ACCOUNT_ENDPOINT + "/change-password";
         public static final String PICTURE_PROFILE_ENDPOINT = ACCOUNT_ENDPOINT + "/upload-picture-profile";
+        public static final String GET_INFO = ACCOUNT_ENDPOINT + "/get-info";
     }
 
     public static final class CompanyEmployee {

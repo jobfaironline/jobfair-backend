@@ -120,4 +120,10 @@ public class AccountController {
         return ResponseEntity.created(URI.create(accountDTO.getProfileImageUrl())).build();
     }
 
+    @GetMapping(ApiEndPoint.Account.GET_INFO)
+    public ResponseEntity<?> getAccountInfo(){
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return ResponseEntity.ok(userDetails);
+    }
+
 }
