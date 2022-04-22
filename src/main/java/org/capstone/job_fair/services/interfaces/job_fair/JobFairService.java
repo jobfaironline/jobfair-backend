@@ -20,4 +20,6 @@ public interface JobFairService {
     void publishJobFair(String companyId, String jobFairId);
 
     JobFairDTO createOrUpdateJobFairThumbnail(String jobfairThumbnailFolder, String jobFairId, String companyId);
+
+    Page<JobFairDTO> findJobFairForAttendantByName(String name, Pageable pageable);
 }

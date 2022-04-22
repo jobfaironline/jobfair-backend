@@ -166,4 +166,12 @@ public class JobFairController {
         });
         return ResponseEntity.ok(jobFairDTO);
     }
+
+    @GetMapping(ApiEndPoint.JobFair.FOR_ATTENDANT)
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ATTENDANT)")
+    public ResponseEntity<?> getJobFairForAttendant(@RequestParam(value = "offset", defaultValue = JobFairConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset, @RequestParam(value = "pageSize", defaultValue = JobFairConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize, @RequestParam(value = "sortBy", defaultValue = JobFairConstant.DEFAULT_SEARCH_SORT_BY_VALUE) String sortBy, @RequestParam(value = "direction", required = false, defaultValue = JobFairConstant.DEFAULT_SEARCH_SORT_DIRECTION) Sort.Direction direction, @RequestParam(value = "name", defaultValue = JobFairConstant.DEFAULT_JOBFAIR_NAME) String name) {
+        Page<JobFairDTO> result = jobFairService.findJobFairForAttendantByName(name, PageRequest.of(offset, pageSize).withSort(Sort.by(direction, sortBy)));
+        return ResponseEntity.ok(result);
+    }
+
 }
