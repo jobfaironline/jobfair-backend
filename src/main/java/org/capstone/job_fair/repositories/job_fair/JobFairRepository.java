@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -17,6 +18,9 @@ public interface JobFairRepository extends JpaRepository<JobFairEntity, String> 
 
     List<JobFairEntity> findByCompanyIdAndStatus(String companyId, JobFairPlanStatus status);
     Page<JobFairEntity> findByNameLikeOrNameIsNullAndCompanyId(String name, String companyId, Pageable pageable);
+
+    @Query("select j from JobFairEntity j where (j.name like :name or j.name is null) and j.status = :status and (j.publicStartTime <= :currentTime and j.publicEndTime >= :currentTime)")
+    Page<JobFairEntity> findJobFairForAttendant(@Param("name") String name, @Param("status") JobFairPlanStatus status, @Param("currentTime") long currentTime, Pageable pageable);
 
 
 }

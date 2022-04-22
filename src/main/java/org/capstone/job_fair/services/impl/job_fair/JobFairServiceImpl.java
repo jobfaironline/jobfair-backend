@@ -153,4 +153,10 @@ public class JobFairServiceImpl implements JobFairService {
         jobFairRepository.save(jobFairEntity);
         return jobFairMapper.toDTO(jobFairEntity);
     }
+
+    @Override
+    public Page<JobFairDTO> findJobFairForAttendantByName(String name, Pageable pageable) {
+        long currentTime = new Date().getTime();
+        return jobFairRepository.findJobFairForAttendant("%" + name + "%", JobFairPlanStatus.PUBLISH, currentTime, pageable).map(jobFairMapper::toDTO);
+    }
 }
