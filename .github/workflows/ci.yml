@@ -4,46 +4,9 @@ on:
   pull_request:
     branches: [ main ]
 
-
-jobs:
-   #Build's job
-  build:
-    name: Build
-    #Run on Ubuntu using the latest version
-    runs-on: ubuntu-latest
-    steps:
-      #Check-out your repository under $GITHUB_WORKSPACE, so your workflow can access it
-      - uses: actions/checkout@v1
-      #Set up JDK 11
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: '11'
-      #Set up Maven cache
-      - name: Cache Maven packages
-        #This action allows caching dependencies and build outputs to improve workflow execution time.
-        uses: actions/cache@v1
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
-      #Build the application using Maven
-      - name: Build with Maven
-        run: mvn clean install
-      #Build the application using Maven
-      - name: Upload JAR
-        #This uploads artifacts from your workflow allowing you to share data between jobs and store data once a workflow is complete.
-        uses: actions/upload-artifact@v2
-        with:
-          #Set artifact name
-          name: artifact
-          #From this path
-          path: target/jobfair-backend.jar
-          
-  #Test's job
-  test:
+jobs:   #Build's job
+  CI:
     env:
-    ## Sets environment variable
       DATASOURCE_PASSWORD: ${{secrets.DATASOURCE_PASSWORD}}
       DATASOURCE_URL: ${{secrets.DATASOURCE_URL}}
       DATASOURCE_PORT: ${{secrets.DATASOURCE_PORT}}
@@ -68,10 +31,8 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_TEST_ACCESS_SECRET_KEY}}
       DB_DATABASE: ${{secrets.DATABASE_NAME}}
       DB_USER: ${{secrets.DATASOURCE_USERNAME}}
-      DB_PASSWORD: ${{secrets.DATASOURCE_PASSWORD}}
-    #Depends on build's job
-    needs: build
-    name: Test
+      DB_PASSWORD: ${{secrets.DATASOURCE_PASSWORD}}     
+    name: CI
     #Run on Ubuntu using the latest version
     runs-on: ubuntu-latest
     steps:
@@ -81,7 +42,8 @@ jobs:
         with:
           repository: jobfaironline/schema
           token: ${{secrets.PAT}}
-      - run: |
+      - name: Create database
+        run: |
              sudo /etc/init.d/mysql start
              cd DDL/
              for filename in $(ls -1 * | sort -n); do
@@ -95,24 +57,33 @@ jobs:
              done
              mysql -h $DATASOURCE_URL -P $DATASOURCE_PORT -u $DATASOURCE_USERNAME -p$DATASOURCE_PASSWORD < schema.sql
              rm schema.sql
-      - name: Download JAR
-    #Download the artifact which was uploaded in the build's job
-        uses: actions/download-artifact@v2
-        with:
-          name: artifact
-    #Set up JDK 11
+      #Check-out your repository under $GITHUB_WORKSPACE, so your workflow can access it
+      - uses: actions/checkout@v1
+      #Set up JDK 11
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
           java-version: '11'
-      - name: Run file
-        run: nohup java -jar jobfair-backend.jar &
-      - name: wait for app to fully loalded
-        run: sleep 60
-      - name: verify
+      #Set up Maven cache
+      - name: Cache Maven packages
+        #This action allows caching dependencies and build outputs to improve workflow execution time.
+        uses: actions/cache@v1
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+      #Build the application using Maven
+      #This shit need a lot of time to start. That why I have to add "sleep 60" command to wait for this shit to start :D
+      - name: Build and run file
+        run: |
+             mvn clean install
+             cd target/
+             nohup java -jar jobfair-backend.jar &       
+             sleep 60
+      - name: Verify app has successfully been loadded
         run: curl http://localhost:5000/swagger-ui/index.html
-   #Account test case    
-      - name: Run account test case
+     #Test   
+      - name: Run test
         uses: matt-ball/newman-action@master
         with:
           apiKey: ${{secrets.postmanApiKey}}
