@@ -1,7 +1,5 @@
 package org.capstone.job_fair.constants;
 
-import lombok.NoArgsConstructor;
-
 public final class ApiEndPoint {
     private ApiEndPoint() {
     }
@@ -41,7 +39,7 @@ public final class ApiEndPoint {
         }
 
         public static final String QUESTION = ROOT_ENDPOINT + VERSION + "/questions";
-        public static final String UPDATE = QUESTION + "/update";
+        public static final String CREATE = QUESTION + "/create";
     }
 
     public static final class CompanyRegistration {

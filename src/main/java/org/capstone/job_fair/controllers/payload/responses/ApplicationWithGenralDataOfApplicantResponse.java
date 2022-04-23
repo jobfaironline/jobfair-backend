@@ -3,7 +3,6 @@ package org.capstone.job_fair.controllers.payload.responses;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.capstone.job_fair.models.dtos.attendant.CountryDTO;
 import org.capstone.job_fair.models.dtos.attendant.cv.*;
 import org.capstone.job_fair.models.enums.ApplicationStatus;
 import org.capstone.job_fair.models.enums.Gender;

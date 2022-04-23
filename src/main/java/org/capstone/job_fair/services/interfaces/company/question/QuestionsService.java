@@ -14,8 +14,8 @@ public interface QuestionsService {
 
     Page<QuestionsDTO> getQuestionsByCriteria(String companyId, String content, long fromDate, long toDate, QuestionStatus status, int pageSize, int offset, String sortBy, Sort.Direction direction);
 
-    void deleteQuestion(String questionId, String companyId);
+    QuestionsDTO deleteQuestion(String questionId, String companyId);
 
-    public QuestionsDTO updateQuestion(QuestionsDTO dto, String userId, String companyId);
+    public QuestionsDTO updateQuestion(QuestionsDTO dto, String companyId);
 
 }

@@ -12,7 +12,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.bind.annotation.RestController;
-import software.amazon.awssdk.regions.Region;
 import springfox.documentation.spring.data.rest.configuration.SpringDataRestConfiguration;
 
 

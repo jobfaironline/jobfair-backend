@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -64,24 +63,24 @@ public class QuestionsServiceImpl implements QuestionsService {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Job.INVALID_PAGE_NUMBER));
         if (fromDate > toDate)
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Question.INVALID_DATE_RANGE));
-        System.out.println("Content: " + content + " FromDate: " + fromDate + " ToDate: " + toDate + " Status: " + status);
         Page<QuestionsEntity> questionsEntityPage = questionsRepository.findAllByContentContainsAndCreateDateBetweenAndStatusAndJobPositionCompanyId(content, fromDate, toDate, status, companyId, PageRequest.of(offset, pageSize).withSort(Sort.by(direction, sortBy)));
         return questionsEntityPage.map(entity -> questionsMapper.toDTO(entity));
     }
 
     @Override
-    public void deleteQuestion(String questionId, String companyId) {
+    public QuestionsDTO deleteQuestion(String questionId, String companyId) {
         Optional<QuestionsEntity> questionsEntityOptional = questionsRepository.findByIdAndJobPositionCompanyId(questionId, companyId);
         if (!questionsEntityOptional.isPresent())
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Question.NOT_FOUND));
         QuestionsEntity questionsEntity = questionsEntityOptional.get();
         questionsEntity.setStatus(QuestionStatus.INACTIVE);
         questionsRepository.save(questionsEntity);
+        return questionsMapper.toDTO(questionsEntity);
     }
 
     @Override
     @Transactional
-    public QuestionsDTO updateQuestion(QuestionsDTO dto, String userId, String companyId) {
+    public QuestionsDTO updateQuestion(QuestionsDTO dto, String companyId) {
         Optional<JobPositionEntity> jobPositionEntityOptional = jobPositionRepository.findByIdAndCompanyId(dto.getJobPosition().getId(), companyId);
         if (!jobPositionEntityOptional.isPresent())
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Job.JOB_POSITION_NOT_FOUND));

@@ -5,10 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.capstone.job_fair.models.entities.company.job.questions.QuestionsEntity;
-import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.*;
 import java.io.Serializable;
 
 @Data
@@ -18,6 +15,6 @@ import java.io.Serializable;
 public class ChoicesDTO implements Serializable {
     private String id;
     private String content;
-    private Byte isCorrect;
+    private boolean isCorrect;
     private String questionId;
 }

@@ -2,7 +2,6 @@ package org.capstone.job_fair.services.mappers.company;
 
 import org.capstone.job_fair.models.dtos.company.JobFairBoothDTO;
 import org.capstone.job_fair.models.entities.company.JobFairBoothEntity;
-import org.capstone.job_fair.models.entities.job_fair.JobFairEntity;
 import org.capstone.job_fair.services.mappers.job_fair.BoothMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;

@@ -1,7 +1,5 @@
 package org.capstone.job_fair.constants;
 
-import org.capstone.job_fair.models.statuses.QuestionStatus;
-
 public class QuestionConstant {
     private QuestionConstant() {
 

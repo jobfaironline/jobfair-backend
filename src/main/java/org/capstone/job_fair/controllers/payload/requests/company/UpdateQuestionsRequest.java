@@ -27,7 +27,7 @@ public class UpdateQuestionsRequest {
     @NotNull
     private String jobPositionId;
     @Valid
-    private List<org.capstone.job_fair.controllers.payload.requests.company.CreateQuestionsRequest.Choice> choicesList;
+    private List<Choice> choicesList;
 
     @Data
     @AllArgsConstructor
@@ -36,7 +36,7 @@ public class UpdateQuestionsRequest {
         @NotBlank
         @XSSConstraint
         private String content;
-        private Byte isCorrect;
+        private boolean isCorrect;
     }
 }
 

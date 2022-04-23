@@ -2,16 +2,13 @@ package org.capstone.job_fair.controllers.company;
 
 import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import org.capstone.job_fair.constants.ApiEndPoint;
-import org.capstone.job_fair.constants.JobPositionConstant;
 import org.capstone.job_fair.constants.QuestionConstant;
 import org.capstone.job_fair.controllers.payload.requests.company.CreateQuestionsRequest;
 import org.capstone.job_fair.controllers.payload.requests.company.UpdateQuestionsRequest;
-import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.dtos.company.job.JobPositionDTO;
 import org.capstone.job_fair.models.dtos.company.job.questions.ChoicesDTO;
 import org.capstone.job_fair.models.dtos.company.job.questions.QuestionsDTO;
 import org.capstone.job_fair.models.statuses.QuestionStatus;
-import org.capstone.job_fair.repositories.company.job.questions.QuestionsRepository;
 import org.capstone.job_fair.services.interfaces.company.question.QuestionsService;
 import org.capstone.job_fair.services.mappers.company.question.QuestionsMapper;
 import org.capstone.job_fair.validators.XSSConstraint;
@@ -25,7 +22,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -34,14 +30,14 @@ import java.util.stream.Collectors;
 public class QuestionsController {
 
     @Autowired
-    QuestionsMapper questionsMapper;
+    private QuestionsMapper questionsMapper;
 
     @Autowired
-    QuestionsService questionsService;
+    private QuestionsService questionsService;
 
 
-    @PostMapping(ApiEndPoint.Questions.QUESTION)
-    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE)")
+    @PostMapping(ApiEndPoint.Questions.CREATE)
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
     public ResponseEntity<?> createQuestions(@Validated @RequestBody CreateQuestionsRequest request) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         QuestionsDTO questionsDTO = new QuestionsDTO();
@@ -50,15 +46,15 @@ public class QuestionsController {
         questionsDTO.setJobPosition(jobPositionDTO);
         questionsDTO.setContent(request.getContent());
         List<ChoicesDTO> choicesDTOList = request.getChoicesList().stream().map(choice -> {
-            return new ChoicesDTO(null, choice.getContent(), choice.getIsCorrect(), null);
+            return new ChoicesDTO(null, choice.getContent(), choice.isCorrect(), null);
         }).collect(Collectors.toList());
         questionsDTO.setChoicesList(choicesDTOList);
         questionsDTO = questionsService.createQuestion(questionsDTO, userDetails.getId(), userDetails.getCompanyId());
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @PostMapping(ApiEndPoint.Questions.UPDATE)
-    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE)")
+    @PostMapping(ApiEndPoint.Questions.QUESTION)
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
     public ResponseEntity<?> updateQuestion(@Validated @RequestBody UpdateQuestionsRequest request) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         QuestionsDTO questionsDTO = new QuestionsDTO();
@@ -69,16 +65,16 @@ public class QuestionsController {
         questionsDTO.setId(request.getId());
         List<ChoicesDTO> choicesDTOList = null;
         if (request.getChoicesList() != null) choicesDTOList = request.getChoicesList().stream().map(choice -> {
-            return new ChoicesDTO(null, choice.getContent(), choice.getIsCorrect(), null);
+            return new ChoicesDTO(null, choice.getContent(), choice.isCorrect(), null);
         }).collect(Collectors.toList());
 
         questionsDTO.setChoicesList(choicesDTOList);
-        questionsDTO = questionsService.updateQuestion(questionsDTO, userDetails.getId(), userDetails.getCompanyId());
+        questionsDTO = questionsService.updateQuestion(questionsDTO, userDetails.getCompanyId());
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @GetMapping(ApiEndPoint.Questions.QUESTION + "/{id}")
-    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE)")
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
     public ResponseEntity<?> getQuestionById(@PathVariable("id") String id) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Optional<QuestionsDTO> questionsDTOOptional = questionsService.getQuestionById(id, userDetails.getCompanyId());
@@ -87,7 +83,7 @@ public class QuestionsController {
     }
 
     @GetMapping(ApiEndPoint.Questions.QUESTION)
-    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE)")
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
     public ResponseEntity<?> getQuestionByCriteria(@RequestParam(value = "offset", defaultValue = QuestionConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset, @RequestParam(value = "pageSize", required = false, defaultValue = QuestionConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize, @RequestParam(value = "sortBy", required = false, defaultValue = QuestionConstant.DEFAULT_SEARCH_SORT_BY_VALUE) String sortBy, @RequestParam(value = "direction", required = false, defaultValue = QuestionConstant.DEFAULT_SEARCH_SORT_DIRECTION) Sort.Direction direction, @XSSConstraint @RequestParam(value = "questionContent", required = false, defaultValue = QuestionConstant.DEFAULT_SEARCH_QUESTION_CONTENT) String searchContent, @RequestParam(value = "fromDate", required = false, defaultValue = QuestionConstant.DEFAULT_FROM_DATE) long fromDate, @RequestParam(value = "toDate", required = false, defaultValue = QuestionConstant.DEFAULT_TO_DATE) long toDate, @RequestParam(value = "status", required = false, defaultValue = QuestionConstant.DEFAULT_QUESTION_STATUS) QuestionStatus status) {
 
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -100,8 +96,8 @@ public class QuestionsController {
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE)")
     public ResponseEntity<?> deleteQuestion(@PathVariable("id") String id) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        questionsService.deleteQuestion(id, userDetails.getCompanyId());
-        return ResponseEntity.ok().build();
+        QuestionsDTO dto = questionsService.deleteQuestion(id, userDetails.getCompanyId());
+        return ResponseEntity.ok(dto);
     }
 
 }

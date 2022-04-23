@@ -5,12 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.capstone.job_fair.models.dtos.company.job.JobPositionDTO;
-import org.capstone.job_fair.models.entities.company.job.JobPositionEntity;
-import org.capstone.job_fair.models.entities.company.job.questions.ChoicesEntity;
 import org.capstone.job_fair.models.statuses.QuestionStatus;
-import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
 

@@ -1,12 +1,10 @@
 package org.capstone.job_fair.repositories.company.job.questions;
 
-import org.capstone.job_fair.models.entities.company.job.BoothJobPositionEntity;
 import org.capstone.job_fair.models.entities.company.job.questions.QuestionsEntity;
 import org.capstone.job_fair.models.statuses.QuestionStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 
 import java.util.Optional;
 

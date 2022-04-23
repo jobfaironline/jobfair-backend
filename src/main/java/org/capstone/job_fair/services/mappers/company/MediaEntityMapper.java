@@ -3,7 +3,6 @@ package org.capstone.job_fair.services.mappers.company;
 import org.capstone.job_fair.models.dtos.company.CompanyMediaDTO;
 import org.capstone.job_fair.models.entities.company.CompanyMediaEntity;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,

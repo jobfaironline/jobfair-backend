@@ -1,7 +1,5 @@
 package org.capstone.job_fair.constants;
 
-import javax.management.Query;
-
 public final class MessageConstant {
     private MessageConstant() {
 

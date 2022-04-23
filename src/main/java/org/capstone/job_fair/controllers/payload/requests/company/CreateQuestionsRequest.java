@@ -4,9 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.capstone.job_fair.models.dtos.company.job.JobPositionDTO;
-import org.capstone.job_fair.models.dtos.company.job.questions.ChoicesDTO;
-import org.capstone.job_fair.models.dtos.company.job.questions.QuestionsDTO;
 import org.capstone.job_fair.validators.XSSConstraint;
 
 import javax.validation.Valid;
@@ -35,6 +32,6 @@ public class CreateQuestionsRequest {
         @NotBlank
         @XSSConstraint
         private String content;
-        private Byte isCorrect;
+        private boolean isCorrect;
     }
 }
