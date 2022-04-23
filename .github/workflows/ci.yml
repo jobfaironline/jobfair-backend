@@ -33,7 +33,8 @@ jobs:   #Build's job
       DB_USER: ${{secrets.DATASOURCE_USERNAME}}
       DB_PASSWORD: ${{secrets.DATASOURCE_PASSWORD}} 
       JOB_HUB_AWS_SQS_URL: ${{secrets.JOB_HUB_AWS_SQS_URL}} 
-      JOB_HUB_AWS_REGION: ${{secrets.AP-SOUTHEAST-1}} 
+      JOB_HUB_AWS_REGION: ${{secrets.AWS_REGION}} 
+      AWS_REGION: ${{secrets.AWS_REGION}} 
     name: CI
     #Run on Ubuntu using the latest version
     runs-on: ubuntu-latest
