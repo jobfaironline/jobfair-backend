@@ -39,7 +39,6 @@ public final class ApiEndPoint {
         }
 
         public static final String QUESTION = ROOT_ENDPOINT + VERSION + "/questions";
-        public static final String CREATE = QUESTION + "/create";
     }
 
     public static final class CompanyRegistration {

@@ -36,7 +36,7 @@ public class QuestionsController {
     private QuestionsService questionsService;
 
 
-    @PostMapping(ApiEndPoint.Questions.CREATE)
+    @PutMapping(ApiEndPoint.Questions.QUESTION)
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
     public ResponseEntity<?> createQuestions(@Validated @RequestBody CreateQuestionsRequest request) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
