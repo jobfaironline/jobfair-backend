@@ -24,7 +24,7 @@ public class ChoicesEntity {
     @Column(name = "content")
     private String content;
     @Column(name = "isCorrect")
-    private boolean isCorrect;
+    private Boolean isCorrect;
     @Column(name = "questionId")
     private String questionId;
 

@@ -15,6 +15,6 @@ import java.io.Serializable;
 public class ChoicesDTO implements Serializable {
     private String id;
     private String content;
-    private boolean isCorrect;
+    private Boolean isCorrect;
     private String questionId;
 }
