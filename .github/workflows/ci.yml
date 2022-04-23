@@ -31,7 +31,9 @@ jobs:   #Build's job
       AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_TEST_ACCESS_SECRET_KEY}}
       DB_DATABASE: ${{secrets.DATABASE_NAME}}
       DB_USER: ${{secrets.DATASOURCE_USERNAME}}
-      DB_PASSWORD: ${{secrets.DATASOURCE_PASSWORD}}     
+      DB_PASSWORD: ${{secrets.DATASOURCE_PASSWORD}} 
+      JOB_HUB_AWS_SQS_URL: ${{secrets.JOB_HUB_AWS_SQS_URL}} 
+      JOB_HUB_AWS_REGION: ${{secrets.AP-SOUTHEAST-1}} 
     name: CI
     #Run on Ubuntu using the latest version
     runs-on: ubuntu-latest
