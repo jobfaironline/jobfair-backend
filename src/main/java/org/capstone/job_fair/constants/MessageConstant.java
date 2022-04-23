@@ -325,5 +325,9 @@ public final class MessageConstant {
 
     }
 
+    public static final class Notification {
+        private Notification(){}
+        public static final String NOT_FOUND = "notification.error.not-found";
+    }
 }
 

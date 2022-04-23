@@ -96,6 +96,21 @@
             <version>8.0.22</version>
         </dependency>
         <!-- End Database dependencies -->
+        <!-- DynamoDB dependencies -->
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-dynamodb</artifactId>
+            <version>1.12.201</version>
+        </dependency>
+        <!-- End DynamoDB dependencies -->
+        <!-- AWS sqs dependencies -->
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-sqs</artifactId>
+            <version>1.12.201</version>
+        </dependency>
+        <!-- End AWS sqs dependencies -->
+
         <!-- Swagger dependencies -->
         <dependency>
             <groupId>io.springfox</groupId>

@@ -1,5 +1,7 @@
 package org.capstone.job_fair.constants;
 
+import lombok.NoArgsConstructor;
+
 public final class ApiEndPoint {
     private ApiEndPoint() {
     }
@@ -20,6 +22,7 @@ public final class ApiEndPoint {
         public static final String RESET_PASSWORD_ENDPOINT = AUTHENTICATION_ENDPOINT + "/reset-password";
 
     }
+
 
     public static final class JobFair {
         private JobFair() {
@@ -215,5 +218,14 @@ public final class ApiEndPoint {
         public static final String JOB_FAIR_AVAILABLE = ASSIGNMENT + "/available";
         public static final String JOB_FAIR_STATISTICS = ASSIGNMENT + "/statistics";
         public static final String OF_EMPLOYEE = ASSIGNMENT + "/employee";
+    }
+
+    public static final class Notification {
+        private Notification(){}
+
+        public static final String NOTIFICATION = ROOT_ENDPOINT + VERSION + "/notifications";
+        public static final String READ = NOTIFICATION + "/read";
+        public static final String READ_ALL = NOTIFICATION + "/read-all";
+
     }
 }
