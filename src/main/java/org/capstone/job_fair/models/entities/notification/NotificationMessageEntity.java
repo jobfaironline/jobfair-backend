@@ -5,7 +5,6 @@ import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.capstone.job_fair.models.enums.NotificationType;
 
 @AllArgsConstructor

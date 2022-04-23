@@ -18,6 +18,17 @@ public final class MessageConstant {
         public static final String HTTP_MESSAGE_NOT_VALID = "error.exception.http-message-not-valid";
     }
 
+    public static final class Question {
+        private Question() {
+
+
+        }
+
+        public static final String INVALID_DATE_RANGE = "error.question.invalid-date-range";
+        public static final String NOT_FOUND = "error.question.not-found";
+
+    }
+
     public static final class JobFair {
         private JobFair() {
         }
@@ -326,7 +337,9 @@ public final class MessageConstant {
     }
 
     public static final class Notification {
-        private Notification(){}
+        private Notification() {
+        }
+
         public static final String NOT_FOUND = "notification.error.not-found";
     }
 }

@@ -5,7 +5,10 @@ import org.capstone.job_fair.constants.DataConstraint;
 import org.capstone.job_fair.validators.XSSConstraint;
 import org.springframework.format.annotation.NumberFormat;
 
-import javax.validation.constraints.*;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @Data
 @NoArgsConstructor

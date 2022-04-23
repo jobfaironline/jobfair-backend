@@ -1,7 +1,7 @@
 package org.capstone.job_fair.third_party.io.agora.sample;
 
-import org.capstone.job_fair.third_party.io.agora.media.DynamicKey5;
 import org.apache.commons.codec.binary.Hex;
+import org.capstone.job_fair.third_party.io.agora.media.DynamicKey5;
 
 import java.util.Map;
 import java.util.TreeMap;

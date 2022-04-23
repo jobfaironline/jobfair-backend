@@ -85,11 +85,13 @@ public abstract class JobPositionMapper {
 
     @Named("toJobPositionDTOLanguage")
     public static Language toJobPositionDTOLanguage(LanguageEntity languageEntity) {
+        if (languageEntity == null) return null;
         return Arrays.stream(Language.values()).filter(language -> language.getCode().equals(languageEntity.getId())).findFirst().orElse(null);
     }
 
     @Named("toJobPositionEntityLanguage")
     public static LanguageEntity toJobPositionEntityLanguage(Language language) {
+        if (language == null) return null;
         LanguageEntity entity = new LanguageEntity();
         entity.setId(language.getCode());
         return entity;
@@ -97,11 +99,13 @@ public abstract class JobPositionMapper {
 
     @Named("toJobPositionDTOJobLevel")
     public static JobLevel toJobPositionDTOJobLevel(JobLevelEntity jobLevelEntity) {
+        if (jobLevelEntity == null) return null;
         return JobLevel.values()[jobLevelEntity.getId()];
     }
 
     @Named("toJobPositionEntityJobLevel")
     public static JobLevelEntity toJobPositionEntityJobLevel(JobLevel jobLevel) {
+        if (jobLevel == null) return null;
         JobLevelEntity entity = new JobLevelEntity();
         entity.setId(jobLevel.ordinal());
         return entity;
@@ -109,11 +113,13 @@ public abstract class JobPositionMapper {
 
     @Named("toJobPositionDTOJobType")
     public static JobType toJobPositionDTOJobType(JobTypeEntity jobTypeEntity) {
+        if (jobTypeEntity == null) return null;
         return JobType.values()[jobTypeEntity.getId()];
     }
 
     @Named("toJobPositionEntityJobType")
     public static JobTypeEntity toJobPositionEntityJobType(JobType jobType) {
+        if (jobType == null) return null;
         JobTypeEntity entity = new JobTypeEntity();
         entity.setId(jobType.ordinal());
         return entity;
@@ -121,6 +127,7 @@ public abstract class JobPositionMapper {
 
     @Named("toJobPositionDTOSubCategory")
     public List<SubCategoryDTO> toJobPositionDTOSubCategory(Set<SubCategoryEntity> categories) {
+        if (categories == null) return null;
         return categories.stream().map(entity -> subCategoryMapper.toDTO(entity)).collect(Collectors.toList());
     }
 
@@ -132,6 +139,7 @@ public abstract class JobPositionMapper {
 
     @Named("toJobPositionDTOSkillTag")
     public List<SkillTagDTO> toJobPositionDTOSkillTag(Set<SkillTagEntity> skillTagEntities) {
+        if (skillTagEntities == null) return null;
         return skillTagEntities.stream().map(entity -> skillTagMapper.toDTO(entity)).collect(Collectors.toList());
     }
 

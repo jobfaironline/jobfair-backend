@@ -1,7 +1,5 @@
 package org.capstone.job_fair.constants;
 
-import lombok.NoArgsConstructor;
-
 public final class ApiEndPoint {
     private ApiEndPoint() {
     }
@@ -33,8 +31,14 @@ public final class ApiEndPoint {
         public static final String PUBLISH = JOB_FAIR + "/publish";
         public static final String UPLOAD_THUMBNAIL = JOB_FAIR + "/upload-thumbnail";
         public static final String FOR_ATTENDANT = JOB_FAIR + "/attendants";
+    }
 
+    public static class Questions {
+        private Questions() {
 
+        }
+
+        public static final String QUESTION = ROOT_ENDPOINT + VERSION + "/questions";
     }
 
     public static final class CompanyRegistration {
@@ -221,7 +225,8 @@ public final class ApiEndPoint {
     }
 
     public static final class Notification {
-        private Notification(){}
+        private Notification() {
+        }
 
         public static final String NOTIFICATION = ROOT_ENDPOINT + VERSION + "/notifications";
         public static final String READ = NOTIFICATION + "/read";
