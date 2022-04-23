@@ -1,5 +1,7 @@
 package org.capstone.job_fair.constants;
 
+import javax.management.Query;
+
 public final class MessageConstant {
     private MessageConstant() {
 
@@ -16,6 +18,17 @@ public final class MessageConstant {
         public static final String METHOD_ARGUMENT_NOT_VALID = "error.exception.method-argument-not-valid";
         public static final String ENTITY_NOT_FOUND = "error.exception.entity-not-found";
         public static final String HTTP_MESSAGE_NOT_VALID = "error.exception.http-message-not-valid";
+    }
+
+    public static final class Question {
+        private Question() {
+
+
+        }
+
+        public static final String INVALID_DATE_RANGE = "error.question.invalid-date-range";
+        public static final String NOT_FOUND = "error.question.not-found";
+
     }
 
     public static final class JobFair {
@@ -326,7 +339,9 @@ public final class MessageConstant {
     }
 
     public static final class Notification {
-        private Notification(){}
+        private Notification() {
+        }
+
         public static final String NOT_FOUND = "notification.error.not-found";
     }
 }
