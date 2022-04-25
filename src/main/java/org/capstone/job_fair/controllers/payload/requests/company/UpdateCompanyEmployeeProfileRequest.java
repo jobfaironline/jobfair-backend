@@ -9,6 +9,7 @@ import org.capstone.job_fair.constants.DataConstraint;
 import org.capstone.job_fair.models.enums.Gender;
 import org.capstone.job_fair.models.statuses.AccountStatus;
 import org.capstone.job_fair.validators.EmailConstraint;
+import org.capstone.job_fair.validators.NameConstraint;
 import org.capstone.job_fair.validators.PhoneConstraint;
 import org.capstone.job_fair.validators.XSSConstraint;
 
@@ -37,12 +38,15 @@ public class UpdateCompanyEmployeeProfileRequest {
         private String profileImageUrl;
         @Size(max = DataConstraint.Account.NAME_LENGTH)
         @XSSConstraint
+        @NameConstraint
         private String firstname;
         @Size(max = DataConstraint.Account.NAME_LENGTH)
         @XSSConstraint
+        @NameConstraint
         private String lastname;
         @Size(max = DataConstraint.Account.NAME_LENGTH)
         @XSSConstraint
+        @NameConstraint
         private String middlename;
 
         private Gender gender;

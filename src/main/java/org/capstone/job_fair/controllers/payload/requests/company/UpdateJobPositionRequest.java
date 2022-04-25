@@ -9,6 +9,7 @@ import org.capstone.job_fair.models.enums.JobLevel;
 import org.capstone.job_fair.models.enums.JobType;
 import org.capstone.job_fair.models.enums.Language;
 import org.capstone.job_fair.validators.EmailConstraint;
+import org.capstone.job_fair.validators.NameConstraint;
 import org.capstone.job_fair.validators.XSSConstraint;
 
 import javax.validation.Valid;
@@ -25,6 +26,7 @@ public class UpdateJobPositionRequest {
     private String title;
     @XSSConstraint
     @Size(max = DataConstraint.JobPosition.CONTACT_PERSON_NAME_LENGTH)
+    @NameConstraint
     private String contactPersonName;
     @EmailConstraint
     private String contactEmail;

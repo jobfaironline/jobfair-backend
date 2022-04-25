@@ -10,10 +10,7 @@ import org.capstone.job_fair.models.enums.Gender;
 import org.capstone.job_fair.models.enums.JobLevel;
 import org.capstone.job_fair.models.enums.Marital;
 import org.capstone.job_fair.models.enums.Qualification;
-import org.capstone.job_fair.validators.EmailConstraint;
-import org.capstone.job_fair.validators.PasswordConstraint;
-import org.capstone.job_fair.validators.PhoneConstraint;
-import org.capstone.job_fair.validators.XSSConstraint;
+import org.capstone.job_fair.validators.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.*;
@@ -94,12 +91,15 @@ public class UpdateAttendantRequest {
         private String profileImageUrl;
         @Size(max = DataConstraint.Account.NAME_LENGTH)
         @XSSConstraint
+        @NameConstraint
         private String firstname;
         @Size(max = DataConstraint.Account.NAME_LENGTH)
         @XSSConstraint
+        @NameConstraint
         private String lastname;
         @Size(max = DataConstraint.Account.NAME_LENGTH)
         @XSSConstraint
+        @NameConstraint
         private String middlename;
         private Gender gender;
     }

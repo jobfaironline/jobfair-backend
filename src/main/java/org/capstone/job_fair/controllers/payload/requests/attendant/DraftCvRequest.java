@@ -9,6 +9,7 @@ import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.models.enums.JobLevel;
 import org.capstone.job_fair.models.enums.Qualification;
 import org.capstone.job_fair.validators.EmailConstraint;
+import org.capstone.job_fair.validators.NameConstraint;
 import org.capstone.job_fair.validators.PhoneConstraint;
 import org.capstone.job_fair.validators.XSSConstraint;
 
@@ -144,6 +145,7 @@ public class DraftCvRequest {
     public static class References {
         @XSSConstraint
         @Size(min = DataConstraint.Reference.FULLNAME_MIN_LENGTH, max = DataConstraint.Reference.FULLNAME_MAX_LENGTH)
+        @NameConstraint
         private String fullname;
         @XSSConstraint
         @Size(min = DataConstraint.Reference.POSITION_MIN_LENGTH, max = DataConstraint.Reference.POSITION_MAX_LENGTH)

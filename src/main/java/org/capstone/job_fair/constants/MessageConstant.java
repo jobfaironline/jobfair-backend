@@ -55,6 +55,7 @@ public final class MessageConstant {
         public static final String INVALID_PHONE_FORMAT = "{error.format.invalid-phone}";
         public static final String NOT_BLANK_FORMAT = "{error.format.blank-value}";
         public static final String XSS_MESSAGE = "{error.format.xss}";
+        public static final String INVALID_NAME_MESSAGE = "{error.format.name}";
     }
 
     public static final class AccessControlMessage {

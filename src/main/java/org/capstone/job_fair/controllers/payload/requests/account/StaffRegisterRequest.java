@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import org.capstone.job_fair.constants.DataConstraint;
 import org.capstone.job_fair.models.enums.Gender;
 import org.capstone.job_fair.validators.EmailConstraint;
+import org.capstone.job_fair.validators.NameConstraint;
 import org.capstone.job_fair.validators.PhoneConstraint;
 import org.capstone.job_fair.validators.XSSConstraint;
 
@@ -23,13 +24,16 @@ public class StaffRegisterRequest {
     @NotBlank
     @Size(max = DataConstraint.Account.NAME_LENGTH)
     @XSSConstraint
+    @NameConstraint
     private String firstname;
     @Size(max = DataConstraint.Account.NAME_LENGTH)
     @XSSConstraint
+    @NameConstraint
     private String middlename;
     @NotBlank
     @Size(max = DataConstraint.Account.NAME_LENGTH)
     @XSSConstraint
+    @NameConstraint
     private String lastname;
     @NotNull
     @PhoneConstraint
