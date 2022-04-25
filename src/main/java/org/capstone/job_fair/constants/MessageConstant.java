@@ -215,6 +215,10 @@ public final class MessageConstant {
 
         public static final String INVALID_CERTIFICATION = "certification.error.invalid";
         public static final String CERTIFICATION_NOT_FOUND = "certification.error.not-found";
+
+        public static final String EXPIRED_DATE_NOT_FOUND = "certification.error.expired-date-not-found";
+        public static final String ISSUE_DATE_AND_EXPIRED_DATE_RANGE_ERROR = "certification.error.issue-date-and-expired-date-range-error";
+
     }
 
     public static final class Reference {

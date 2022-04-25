@@ -14,7 +14,9 @@ public class CvCertificationDTO implements Serializable {
     private String id;
     private String name;
     private String institution;
-    private Integer year;
+    private Long expiredDate;
+    private Long issueDate;
+    private Boolean doesNotExpired;
     private String certificationLink;
 
 }

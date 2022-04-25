@@ -13,6 +13,8 @@ public class CertificationDTO {
     private String id;
     private String name;
     private String institution;
-    private Integer year;
+    private Long issueDate;
+    private Long expiredDate;
+    private Boolean doesNotExpired;
     private String certificationLink;
 }
