@@ -30,9 +30,7 @@ public class AWSFileStorageService implements FileStorageService {
     private String bucketName;
 
     @Override
-    @SneakyThrows
-    @Async("threadPoolTaskExecutor")
-    public CompletableFuture<Void> store(byte[] bytes, String name) {
+    public void store(byte[] bytes, String name) {
         Map<String, String> metadata = new HashMap<>();
         metadata.put("x-amz-meta-myVal", "test");
 
@@ -44,20 +42,17 @@ public class AWSFileStorageService implements FileStorageService {
 
 
         PutObjectResponse response = amazonS3Client.putObject(putOb, RequestBody.fromBytes(bytes));
-        return CompletableFuture.completedFuture(null);
     }
 
 
     @Override
-    @SneakyThrows
-    @Async("threadPoolTaskExecutor")
-    public CompletableFuture<Resource> loadAsResource(String filename) {
+    public Resource loadAsResource(String filename) {
         GetObjectRequest objectRequest = GetObjectRequest.builder()
                 .bucket(bucketName)
                 .key(filename)
                 .build();
 
         ResponseBytes<GetObjectResponse> objectBytes = amazonS3Client.getObjectAsBytes(objectRequest);
-        return CompletableFuture.completedFuture(new ByteArrayResource(objectBytes.asByteArray()));
+        return new ByteArrayResource(objectBytes.asByteArray());
     }
 }

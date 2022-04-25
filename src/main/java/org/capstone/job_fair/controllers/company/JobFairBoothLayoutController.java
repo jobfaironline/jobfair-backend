@@ -94,10 +94,7 @@ public class JobFairBoothLayoutController {
         dto = companyBoothLayoutService.createNew(dto, file);
 
         try {
-            fileStorageService.store(file.getBytes(), AWSConstant.COMPANY_BOOTH_LAYOUT_FOLDER + "/" + dto.getId()).exceptionally(throwable -> {
-                log.error(throwable.getMessage());
-                return null;
-            });
+            fileStorageService.store(file.getBytes(), AWSConstant.COMPANY_BOOTH_LAYOUT_FOLDER + "/" + dto.getId());
         } catch (IOException e) {
             return GenericResponse.build(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -112,10 +109,7 @@ public class JobFairBoothLayoutController {
         JobFairBoothLayoutVideoDTO dto = JobFairBoothLayoutVideoDTO.builder().itemName(itemName).jobFairBoothLayoutId(layoutId).build();
         dto = companyBoothLayoutService.createNewVideoWithFile(dto);
         try {
-            fileStorageService.store(file.getBytes(), AWSConstant.COMPANY_BOOTH_LAYOUT_VIDEO_FOLDER + "/" + dto.getId()).exceptionally(throwable -> {
-                log.error(throwable.getMessage());
-                return null;
-            });
+            fileStorageService.store(file.getBytes(), AWSConstant.COMPANY_BOOTH_LAYOUT_VIDEO_FOLDER + "/" + dto.getId());
         } catch (IOException e) {
             return GenericResponse.build(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }

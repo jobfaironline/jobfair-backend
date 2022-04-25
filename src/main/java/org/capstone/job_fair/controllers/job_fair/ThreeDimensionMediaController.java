@@ -70,10 +70,7 @@ public class ThreeDimensionMediaController {
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).STAFF)")
     public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file, @PathVariable("id") String id) {
         try {
-            fileStorageService.store(file.getBytes(), AWSConstant.DECORATED_ITEMS_FOLDER + "/" + id).exceptionally(throwable -> {
-                log.error(throwable.getMessage());
-                return null;
-            });
+            fileStorageService.store(file.getBytes(), AWSConstant.DECORATED_ITEMS_FOLDER + "/" + id);
         } catch (IOException e) {
             return GenericResponse.build(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -83,12 +80,7 @@ public class ThreeDimensionMediaController {
     @GetMapping(ApiEndPoint.ThreeDimensionMedia.THREE_DIMENSION_MEDIA_ENDPOINT + "/{id}/content")
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).STAFF)")
     public ResponseEntity<?> getFile(@PathVariable String id) {
-        Resource file;
-        try {
-            file = fileStorageService.loadAsResource(id).get();
-        } catch (InterruptedException | ExecutionException e) {
-            return GenericResponse.build(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        Resource file = fileStorageService.loadAsResource(id);
         return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
                 "attachment; filename=\"" + file.getFilename() + "\"").body(file);
     }
