@@ -50,8 +50,8 @@ public class QuestionsController {
             return new ChoicesDTO(null, choice.getContent(), choice.isCorrect(), null);
         }).collect(Collectors.toList());
         questionsDTO.setChoicesList(choicesDTOList);
-        questionsService.createQuestion(questionsDTO, userDetails.getId(), userDetails.getCompanyId());
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        questionsDTO = questionsService.createQuestion(questionsDTO, userDetails.getId(), userDetails.getCompanyId());
+        return ResponseEntity.ok(questionsMapper.toResponse(questionsDTO));
     }
 
     @PostMapping(ApiEndPoint.Questions.QUESTION)
@@ -70,8 +70,8 @@ public class QuestionsController {
         }).collect(Collectors.toList());
 
         questionsDTO.setChoicesList(choicesDTOList);
-        questionsService.updateQuestion(questionsDTO, userDetails.getCompanyId());
-        return ResponseEntity.status(HttpStatus.OK).build();
+        questionsDTO = questionsService.updateQuestion(questionsDTO, userDetails.getCompanyId());
+        return ResponseEntity.ok(questionsMapper.toResponse(questionsDTO));
     }
 
     @GetMapping(ApiEndPoint.Questions.QUESTION + "/{id}")
@@ -79,7 +79,7 @@ public class QuestionsController {
     public ResponseEntity<?> getQuestionById(@PathVariable("id") String id) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Optional<QuestionsDTO> questionsDTOOptional = questionsService.getQuestionById(id, userDetails.getCompanyId());
-        if (!questionsDTOOptional.isPresent()) return ResponseEntity.noContent().build();
+        if (!questionsDTOOptional.isPresent()) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(questionsMapper.toResponse(questionsDTOOptional.get()));
     }
 
