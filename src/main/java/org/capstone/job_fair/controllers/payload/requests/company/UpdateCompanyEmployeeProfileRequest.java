@@ -50,6 +50,4 @@ public class UpdateCompanyEmployeeProfileRequest {
 
     @Valid
     private AccountRequest accountRequest;
-    @NotBlank
-    private String department;
 }

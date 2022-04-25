@@ -138,7 +138,6 @@ public class CompanyEmployeeController {
         CompanyEmployeeDTO companyEmployeeDTO = CompanyEmployeeDTO.builder()
                 .account(accountDTO)
                 .accountId(userDetails.getId())
-                .department(request.getDepartment())
                 .build();
         companyEmployeeService.updateProfile(companyEmployeeDTO);
 
