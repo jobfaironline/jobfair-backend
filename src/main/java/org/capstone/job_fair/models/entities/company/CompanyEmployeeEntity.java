@@ -32,6 +32,9 @@ public class CompanyEmployeeEntity {
     @JoinColumn(name = "company_id")
     private CompanyEntity company;
 
+    @Column(name = "department")
+    private String department;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
