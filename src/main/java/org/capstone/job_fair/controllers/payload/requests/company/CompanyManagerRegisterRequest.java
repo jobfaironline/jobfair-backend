@@ -42,4 +42,6 @@ public class CompanyManagerRegisterRequest {
     private Gender gender;
     @NotNull
     private String companyId;
+    @NotBlank
+    private String department;
 }

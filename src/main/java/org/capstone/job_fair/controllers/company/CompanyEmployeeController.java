@@ -92,6 +92,7 @@ public class CompanyEmployeeController {
         CompanyEmployeeDTO dto = new CompanyEmployeeDTO();
         dto.setAccount(accountDTO);
         dto.setCompanyDTO(companyDTO);
+        dto.setDepartment(request.getDepartment());
 
         dto = companyEmployeeService.createNewCompanyManagerAccount(dto);
         accountService.sendVerifyAccountEmail(dto.getAccount().getId());
@@ -137,6 +138,7 @@ public class CompanyEmployeeController {
         CompanyEmployeeDTO companyEmployeeDTO = CompanyEmployeeDTO.builder()
                 .account(accountDTO)
                 .accountId(userDetails.getId())
+                .department(request.getDepartment())
                 .build();
         companyEmployeeService.updateProfile(companyEmployeeDTO);
 

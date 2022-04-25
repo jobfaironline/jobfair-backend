@@ -38,4 +38,6 @@ public class CompanyEmployeeRegisterRequest {
     private String phone;
     @NotNull
     private Gender gender;
+    @NotBlank
+    private String department;
 }

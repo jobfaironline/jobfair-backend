@@ -13,6 +13,7 @@ import org.capstone.job_fair.validators.PhoneConstraint;
 import org.capstone.job_fair.validators.XSSConstraint;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 
@@ -49,4 +50,6 @@ public class UpdateCompanyEmployeeProfileRequest {
 
     @Valid
     private AccountRequest accountRequest;
+    @NotBlank
+    private String department;
 }
