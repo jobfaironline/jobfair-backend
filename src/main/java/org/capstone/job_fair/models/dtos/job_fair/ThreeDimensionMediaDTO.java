@@ -16,4 +16,6 @@ public class ThreeDimensionMediaDTO {
     private String name;
     private String description;
     private ThreeDimensionMediaType type;
+    private String thumbnailUrl;
+
 }

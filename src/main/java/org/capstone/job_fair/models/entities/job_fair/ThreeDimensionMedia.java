@@ -34,6 +34,8 @@ public class ThreeDimensionMedia {
     @Column(name = "type")
     @Enumerated(EnumType.ORDINAL)
     private ThreeDimensionMediaType type;
+    @Column(name = "thumbnail_url")
+    private String thumbnailUrl;
 
 
     @Override
