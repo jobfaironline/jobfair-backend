@@ -26,12 +26,23 @@ public class CvCertificationEntity {
     @Basic
     @Column(name = "name")
     private String name;
+
     @Basic
     @Column(name = "institution")
     private String institution;
+
     @Basic
-    @Column(name = "year")
-    private Integer year;
+    @Column(name = "issue_date")
+    private Long issueDate;
+
+    @Basic
+    @Column(name = "expired_date")
+    private Long expiredDate;
+
+    @Basic
+    @Column(name = "does_not_expired")
+    private Boolean doesNotExpired;
+
     @Basic
     @Column(name = "certification_link")
     private String certificationLink;

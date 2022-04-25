@@ -28,8 +28,15 @@ public class CertificationEntity {
     @Column(name = "institution")
     private String institution;
 
-    @Column(name = "year")
-    private Integer year;
+    @Column(name = "issue_date")
+    private Long issueDate;
+
+    @Column(name = "expired_date")
+    private Long expiredDate;
+
+    @Basic
+    @Column(name = "does_not_expired")
+    private Boolean doesNotExpired;
 
     @Column(name = "certification_link")
     private String certificationLink;

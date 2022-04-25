@@ -1,10 +1,14 @@
 package org.capstone.job_fair.services.impl.attendant.cv;
 
+import org.capstone.job_fair.constants.MessageConstant;
+import org.capstone.job_fair.models.dtos.attendant.cv.CvCertificationDTO;
 import org.capstone.job_fair.models.dtos.attendant.cv.CvDTO;
+import org.capstone.job_fair.models.entities.attendant.cv.CvCertificationEntity;
 import org.capstone.job_fair.models.entities.attendant.cv.CvEntity;
 import org.capstone.job_fair.repositories.attendant.cv.CvRepository;
 import org.capstone.job_fair.services.interfaces.attendant.cv.CvService;
 import org.capstone.job_fair.services.mappers.attendant.cv.CvMapper;
+import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,13 +26,32 @@ public class CvServiceImpl implements CvService {
     @Autowired
     private CvMapper cvMapper;
 
+    private void validateCertification(CvCertificationEntity entity) {
+        //If certification has expiration date => we need to validate issue date and expired date are not null
+        //And issue date is less than expired date
+        //If certification doesn't have expiration date => don't care about expired date
+        //Issue date has been validated not null in request
+        if (!entity.getDoesNotExpired()) {
+            if (entity.getExpiredDate() == null) {
+                throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Certification.EXPIRED_DATE_NOT_FOUND));
+            }
+            if (entity.getIssueDate() > entity.getExpiredDate()) {
+                throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Certification.ISSUE_DATE_AND_EXPIRED_DATE_RANGE_ERROR));
+            }
+        }
+
+    }
+
     @Override
     @Transactional
     public CvDTO draftCv(CvDTO dto) {
 
         CvEntity entity = cvMapper.toEntity(dto);
         entity.getActivities().forEach(activity -> activity.setCv(entity));
-        entity.getCertifications().forEach(certification -> certification.setCv(entity));
+        entity.getCertifications().forEach(certification -> {
+            validateCertification(certification);
+            certification.setCv(entity);
+        });
         entity.getEducations().forEach(education -> education.setCv(entity));
         entity.getReferences().forEach(reference -> reference.setCv(entity));
         entity.getWorkHistories().forEach(history -> history.setCv(entity));
@@ -40,10 +63,7 @@ public class CvServiceImpl implements CvService {
 
     @Override
     public List<CvDTO> getAllByAttendantId(String attendantId) {
-        return cvRepository.findByAttendantAccountId(attendantId)
-                .stream()
-                .map(cvMapper::toDTO)
-                .collect(Collectors.toList());
+        return cvRepository.findByAttendantAccountId(attendantId).stream().map(cvMapper::toDTO).collect(Collectors.toList());
     }
 
     @Override

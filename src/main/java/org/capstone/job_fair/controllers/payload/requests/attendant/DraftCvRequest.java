@@ -13,10 +13,7 @@ import org.capstone.job_fair.validators.PhoneConstraint;
 import org.capstone.job_fair.validators.XSSConstraint;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.util.List;
 
 @Data
@@ -130,8 +127,11 @@ public class DraftCvRequest {
         @XSSConstraint
         @Size(min = DataConstraint.Certification.INSTITUTION_MIN_LENGTH, max = DataConstraint.Certification.INSTITUTION_MAX_LENGTH)
         private String institution;
-        @Min(value = DataConstraint.Certification.YEAR_MIN)
-        private Integer year;
+        @NotNull
+        private Long issueDate;
+        private Long expiredDate;
+        @NotNull
+        private Boolean doesNotExpired;
         @XSSConstraint
         @Size(min = DataConstraint.Certification.URL_MIN_LENGTH, max = DataConstraint.Certification.URL_MAX_LENGTH)
         private String certificationLink;
