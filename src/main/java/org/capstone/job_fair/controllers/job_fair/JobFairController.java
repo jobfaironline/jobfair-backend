@@ -160,10 +160,7 @@ public class JobFairController {
         byte[] image = ImageUtil.convertImage(file, DataConstraint.JobFair.IMAGE_TYPE, DataConstraint.JobFair.WIDTH_FACTOR, DataConstraint.JobFair.HEIGHT_FACTOR, DataConstraint.JobFair.IMAGE_EXTENSION_TYPE);
         JobFairDTO jobFairDTO = jobFairService.createOrUpdateJobFairThumbnail(AWSConstant.JOBFAIR_THUMBNAIL_FOLDER, jobFairId, companyId);
 
-        fileStorageService.store(image, AWSConstant.JOBFAIR_THUMBNAIL_FOLDER + "/" + jobFairDTO.getId()).exceptionally(throwable -> {
-            log.error(throwable.getMessage());
-            return null;
-        });
+        fileStorageService.store(image, AWSConstant.JOBFAIR_THUMBNAIL_FOLDER + "/" + jobFairDTO.getId());
         return ResponseEntity.ok(jobFairDTO);
     }
 

@@ -94,10 +94,7 @@ public class LayoutController {
     public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file, @PathVariable("id") String id) {
         try {
             layoutService.validateAndGenerateBoothSlot(file, id);
-            fileStorageService.store(file.getBytes(), AWSConstant.LAYOUT_FOLDER + "/" + id).exceptionally(throwable -> {
-                log.error(throwable.getMessage());
-                return null;
-            });
+            fileStorageService.store(file.getBytes(), AWSConstant.LAYOUT_FOLDER + "/" + id);
         } catch (IllegalArgumentException e) {
             return GenericResponse.build(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (IOException e) {
@@ -109,12 +106,7 @@ public class LayoutController {
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
     @GetMapping(ApiEndPoint.Layout.LAYOUT_ENDPOINT + "/{id}/content")
     public ResponseEntity<?> getFile(@PathVariable String id) {
-        Resource file;
-        try {
-            file = fileStorageService.loadAsResource(id).get();
-        } catch (InterruptedException | ExecutionException e) {
-            return GenericResponse.build(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        Resource file = fileStorageService.loadAsResource(id);
         return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
                 "attachment; filename=\"" + file.getFilename() + "\"").body(file);
     }
@@ -147,7 +139,7 @@ public class LayoutController {
 
     @GetMapping(ApiEndPoint.Layout.LAYOUT_BY_JOB_FAIR + "/{id}")
     public ResponseEntity<?> getLayoutByJobFairId(@PathVariable("id") String jobFairId){
-        return layoutService.getByJobFairId(jobFairId).map(dto -> ResponseEntity.ok(dto)).orElse(ResponseEntity.notFound().build());
+        return layoutService.getByJobFairId(jobFairId).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
 
     }
 
@@ -160,10 +152,7 @@ public class LayoutController {
         byte[] image = ImageUtil.convertImage(file, DataConstraint.Layout.IMAGE_TYPE, DataConstraint.Layout.WIDTH_FACTOR,
                 DataConstraint.Layout.HEIGHT_FACTOR, DataConstraint.Layout.IMAGE_EXTENSION_TYPE);
         LayoutDTO layoutDTO = layoutService.createOrUpdateLayoutThumbnail(AWSConstant.LAYOUT_THUMBNAIL_FOLDER, layoutId, companyId);
-        fileStorageService.store(image, AWSConstant.LAYOUT_THUMBNAIL_FOLDER + "/" + layoutDTO.getId()).exceptionally(throwable -> {
-            log.error(throwable.getMessage());
-            return null;
-        });
+        fileStorageService.store(image, AWSConstant.LAYOUT_THUMBNAIL_FOLDER + "/" + layoutDTO.getId());
         return ResponseEntity.ok(layoutDTO);
     }
 

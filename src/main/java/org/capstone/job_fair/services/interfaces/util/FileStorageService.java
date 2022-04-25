@@ -5,7 +5,7 @@ import org.springframework.core.io.Resource;
 import java.util.concurrent.CompletableFuture;
 
 public interface FileStorageService {
-    CompletableFuture<Void> store(byte[] bytes, String name);
+    void store(byte[] bytes, String name);
 
-    CompletableFuture<Resource> loadAsResource(String filename);
+    Resource loadAsResource(String filename);
 }

@@ -96,10 +96,7 @@ public class CompanyController {
             byte[] image = ImageUtil.convertImage(file, DataConstraint.Company.COMPANY_LOGO_TYPE, DataConstraint.Company.WIDTH_FACTOR, DataConstraint.Company.HEIGHT_FACTOR, DataConstraint.Company.COMPANY_LOGO_EXTENSION_TYPE);
             String companyLogoFolder = AWSConstant.COMPANY_LOGO_FOLDER;
             companyDTO = companyService.updateCompanyLogo(companyLogoFolder, companyId);
-            fileStorageService.store(image, companyLogoFolder + "/" + companyDTO.getId()).exceptionally(throwable -> {
-                log.error(throwable.getMessage());
-                return null;
-            });
+            fileStorageService.store(image, companyLogoFolder + "/" + companyDTO.getId());
         } catch (IOException e) {
             return GenericResponse.build((e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }

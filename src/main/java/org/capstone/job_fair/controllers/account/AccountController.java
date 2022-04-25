@@ -110,10 +110,7 @@ public class AccountController {
             byte[] image = ImageUtil.convertImage(file, DataConstraint.Account.IMAGE_TYPE, DataConstraint.Account.WIDTH_FACTOR, DataConstraint.Account.HEIGHT_FACTOR, DataConstraint.Account.IMAGE_EXTENSION_TYPE);
             String pictureProfileFolder = AWSConstant.PICTURE_PROFILE_FOLDER;
             accountDTO = accountService.updateProfilePicture(pictureProfileFolder, id);
-            fileStorageService.store(image, pictureProfileFolder + "/" + accountDTO.getId()).exceptionally(throwable -> {
-                log.error(throwable.getMessage());
-                return null;
-            });
+            fileStorageService.store(image, pictureProfileFolder + "/" + accountDTO.getId());
         } catch (IOException e) {
             return GenericResponse.build((e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
