@@ -31,8 +31,7 @@ public abstract class QuestionsMapper {
     public abstract void updateQuestion(QuestionsDTO dto, @MappingTarget QuestionsEntity entity);
 
     @Mapping(target = "jobPositionId", source = "jobPosition.id")
-    @Mapping(target = "choicesList", source = "choicesList", qualifiedByName = "toChoicesListDTO")
-    public abstract QuestionResponse toResponse(QuestionsEntity entity);
+    public abstract QuestionResponse toResponse(QuestionsDTO dto);
 
 
     @Named("requestToDTO")
