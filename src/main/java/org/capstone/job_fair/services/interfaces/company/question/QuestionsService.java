@@ -1,5 +1,6 @@
 package org.capstone.job_fair.services.interfaces.company.question;
 
+import org.capstone.job_fair.controllers.payload.responses.QuestionResponse;
 import org.capstone.job_fair.models.dtos.company.job.questions.QuestionsDTO;
 import org.capstone.job_fair.models.statuses.QuestionStatus;
 import org.springframework.data.domain.Page;
@@ -18,4 +19,5 @@ public interface QuestionsService {
 
     public QuestionsDTO updateQuestion(QuestionsDTO dto, String companyId);
 
+    Page<QuestionsDTO> getQuestionByJobPosition(String companyId, String jobPositionId, int offset, int pageSize, String sortBy, Sort.Direction direction);
 }

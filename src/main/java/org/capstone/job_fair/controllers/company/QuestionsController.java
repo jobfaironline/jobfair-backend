@@ -5,6 +5,7 @@ import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.QuestionConstant;
 import org.capstone.job_fair.controllers.payload.requests.company.CreateQuestionsRequest;
 import org.capstone.job_fair.controllers.payload.requests.company.UpdateQuestionsRequest;
+import org.capstone.job_fair.controllers.payload.responses.QuestionResponse;
 import org.capstone.job_fair.models.dtos.company.job.JobPositionDTO;
 import org.capstone.job_fair.models.dtos.company.job.questions.ChoicesDTO;
 import org.capstone.job_fair.models.dtos.company.job.questions.QuestionsDTO;
@@ -50,7 +51,7 @@ public class QuestionsController {
         }).collect(Collectors.toList());
         questionsDTO.setChoicesList(choicesDTOList);
         questionsDTO = questionsService.createQuestion(questionsDTO, userDetails.getId(), userDetails.getCompanyId());
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity.ok(questionsMapper.toResponse(questionsDTO));
     }
 
     @PostMapping(ApiEndPoint.Questions.QUESTION)
@@ -70,7 +71,7 @@ public class QuestionsController {
 
         questionsDTO.setChoicesList(choicesDTOList);
         questionsDTO = questionsService.updateQuestion(questionsDTO, userDetails.getCompanyId());
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return ResponseEntity.ok(questionsMapper.toResponse(questionsDTO));
     }
 
     @GetMapping(ApiEndPoint.Questions.QUESTION + "/{id}")
@@ -78,8 +79,8 @@ public class QuestionsController {
     public ResponseEntity<?> getQuestionById(@PathVariable("id") String id) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Optional<QuestionsDTO> questionsDTOOptional = questionsService.getQuestionById(id, userDetails.getCompanyId());
-        if (!questionsDTOOptional.isPresent()) return ResponseEntity.noContent().build();
-        return ResponseEntity.ok(questionsDTOOptional.get());
+        if (!questionsDTOOptional.isPresent()) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(questionsMapper.toResponse(questionsDTOOptional.get()));
     }
 
     @GetMapping(ApiEndPoint.Questions.QUESTION)
@@ -89,7 +90,7 @@ public class QuestionsController {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Page<QuestionsDTO> questionsDTOPage = questionsService.getQuestionsByCriteria(userDetails.getCompanyId(), searchContent, fromDate, toDate, status, pageSize, offset, sortBy, direction);
         if (questionsDTOPage.getTotalElements() == 0) return ResponseEntity.noContent().build();
-        return ResponseEntity.ok(questionsDTOPage);
+        return ResponseEntity.ok(questionsDTOPage.map(dto -> questionsMapper.toResponse(dto)));
     }
 
     @DeleteMapping(ApiEndPoint.Questions.QUESTION + "/{id}")
@@ -97,7 +98,20 @@ public class QuestionsController {
     public ResponseEntity<?> deleteQuestion(@PathVariable("id") String id) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         QuestionsDTO dto = questionsService.deleteQuestion(id, userDetails.getCompanyId());
-        return ResponseEntity.ok(dto);
+        return ResponseEntity.ok(questionsMapper.toResponse(dto));
+    }
+
+    @GetMapping(ApiEndPoint.Questions.BY_JOB_POSITION + "/{id}")
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
+    public ResponseEntity<?> getAllQuestionsOfJobPosition(@PathVariable("id") String jobPositionId,
+                                                          @RequestParam(value = "offset", defaultValue = QuestionConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset,
+                                                          @RequestParam(value = "pageSize", required = false, defaultValue = QuestionConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize,
+                                                          @RequestParam(value = "sortBy", required = false, defaultValue = QuestionConstant.DEFAULT_SEARCH_SORT_BY_VALUE) String sortBy,
+                                                          @RequestParam(value = "direction", required = false, defaultValue = QuestionConstant.DEFAULT_SEARCH_SORT_DIRECTION) Sort.Direction direction) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Page<QuestionsDTO> dtoPage = questionsService.getQuestionByJobPosition(userDetails.getCompanyId(), jobPositionId, offset, pageSize, sortBy, direction);
+        if (dtoPage.getTotalElements() == 0) return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(dtoPage.map(dto -> questionsMapper.toResponse(dto)));
     }
 
 }

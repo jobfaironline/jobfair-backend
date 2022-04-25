@@ -3,6 +3,7 @@ package org.capstone.job_fair.services.impl.company.question;
 import org.capstone.job_fair.constants.DataConstraint;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.constants.QuestionConstant;
+import org.capstone.job_fair.controllers.payload.responses.QuestionResponse;
 import org.capstone.job_fair.models.dtos.company.job.questions.QuestionsDTO;
 import org.capstone.job_fair.models.entities.company.job.JobPositionEntity;
 import org.capstone.job_fair.models.entities.company.job.questions.QuestionsEntity;
@@ -93,5 +94,14 @@ public class QuestionsServiceImpl implements QuestionsService {
         questionsEntity = questionsRepository.save(questionsEntity);
         return questionsMapper.toDTO(questionsEntity);
     }
+
+    @Override
+    public Page<QuestionsDTO> getQuestionByJobPosition(String companyId, String jobPositionId, int offset, int pageSize, String sortBy, Sort.Direction direction) {
+        if (offset < DataConstraint.Paging.OFFSET_MIN || pageSize < DataConstraint.Paging.PAGE_SIZE_MIN)
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Job.INVALID_PAGE_NUMBER));
+        Page<QuestionsEntity> questionsEntityPage = questionsRepository.findAllByJobPositionIdAndJobPositionCompanyId(jobPositionId, companyId, PageRequest.of(offset, pageSize).withSort(Sort.by(direction, sortBy)));
+        return questionsEntityPage.map(entity -> questionsMapper.toDTO(entity));
+    }
+
 
 }

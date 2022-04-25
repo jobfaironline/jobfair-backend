@@ -1,6 +1,7 @@
 package org.capstone.job_fair.services.mappers.company.question;
 
 import org.capstone.job_fair.controllers.payload.requests.company.CreateQuestionsRequest;
+import org.capstone.job_fair.controllers.payload.responses.QuestionResponse;
 import org.capstone.job_fair.models.dtos.company.job.questions.ChoicesDTO;
 import org.capstone.job_fair.models.dtos.company.job.questions.QuestionsDTO;
 import org.capstone.job_fair.models.entities.company.job.questions.ChoicesEntity;
@@ -28,6 +29,9 @@ public abstract class QuestionsMapper {
     public abstract QuestionsDTO toDTO(CreateQuestionsRequest request);
 
     public abstract void updateQuestion(QuestionsDTO dto, @MappingTarget QuestionsEntity entity);
+
+    @Mapping(target = "jobPositionId", source = "jobPosition.id")
+    public abstract QuestionResponse toResponse(QuestionsDTO dto);
 
 
     @Named("requestToDTO")
