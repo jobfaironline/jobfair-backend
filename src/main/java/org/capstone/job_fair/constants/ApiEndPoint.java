@@ -132,6 +132,9 @@ public final class ApiEndPoint {
         }
 
         public static final String THREE_DIMENSION_MEDIA_ENDPOINT = ROOT_ENDPOINT + VERSION + "/3d-media";
+        public static final String UPLODAD_THUMBNAIL = THREE_DIMENSION_MEDIA_ENDPOINT + "/upload-thumbnail";
+        public static final String GET_BY_TYPE = THREE_DIMENSION_MEDIA_ENDPOINT + "/get-by-type";
+
     }
 
     public static final class Staff {
