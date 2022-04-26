@@ -32,6 +32,15 @@ public final class MessageConstant {
         public static final String DUPLICATED = "residence.error.duplicate-job-level";
     }
 
+    public static final class Role {
+        private Role() {
+
+        }
+
+        public static final String NOT_FOUND = "role.error.not-found";
+        public static final String DUPLICATED = "role.error.duplicate-job-level";
+    }
+
     public static final class Qualification {
         private Qualification() {
 
