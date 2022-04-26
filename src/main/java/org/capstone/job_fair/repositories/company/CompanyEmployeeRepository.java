@@ -24,6 +24,8 @@ public interface CompanyEmployeeRepository extends JpaRepository<CompanyEmployee
 
     Integer countByCompanyId(String companyId);
 
+    @Query("select c from CompanyEmployeeEntity c " +
+            "where (c.account.firstname like concat('%', ?1, '%') or c.account.middlename like concat('%', ?2, '%') or c.account.lastname like concat('%', ?3, '%') or c.employeeId like concat('%', ?4, '%')) and c.company.id = ?5")
     Page<CompanyEmployeeEntity> findAllByAccountFirstnameContainsOrAccountMiddlenameContainsOrAccountLastnameContainsOrEmployeeIdContainsAndCompanyId
             (String firstName, String middleName, String lastName, String employeeId, String companyId, Pageable pageable);
 }
