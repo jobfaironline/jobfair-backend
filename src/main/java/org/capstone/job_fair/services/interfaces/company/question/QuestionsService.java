@@ -22,5 +22,5 @@ public interface QuestionsService {
 
     Page<QuestionsDTO> getQuestionByJobPosition(String companyId, String jobPositionId, String searchContent, QuestionStatus status, int offset, int pageSize, String sortBy, Sort.Direction direction);
 
-    List<QuestionsDTO> createNewJobPositionsFromCSVFile(MultipartFile file);
+    List<QuestionsDTO> createNewJobPositionsFromCSVFile(MultipartFile file, String jobPositionId);
 }

@@ -33,6 +33,7 @@ import javax.transaction.Transactional;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class QuestionsServiceImpl implements QuestionsService {
@@ -125,17 +126,22 @@ public class QuestionsServiceImpl implements QuestionsService {
     @Override
     @Transactional
     @SneakyThrows
-    public List<QuestionsDTO> createNewJobPositionsFromCSVFile(MultipartFile file) {
+    public List<QuestionsDTO> createNewJobPositionsFromCSVFile(MultipartFile file, String jobPositionId) {
         List<QuestionsDTO> result = new ArrayList<>();
         if (!CSVConstant.TYPE.equals(file.getContentType())) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Job.CSV_FILE_ERROR));
         }
+        //check existed job position
+        Optional<JobPositionEntity> jobPositionOpt = jobPositionRepository.findById(jobPositionId);
+        jobPositionOpt.orElseThrow(() -> new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Job.JOB_POSITION_NOT_FOUND)));
+
         Reader reader = new InputStreamReader(file.getInputStream());
         CsvToBean<CreateQuestionCSVRequest> csvToBean = new CsvToBeanBuilder(reader)
                 .withType(CreateQuestionCSVRequest.class)
                 .withIgnoreLeadingWhiteSpace(true)
                 .build();
         Iterator<CreateQuestionCSVRequest> questionCSVs = csvToBean.iterator();
+        QuestionsDTO questionsDTO = null;
         int numberOfCreatedJob = 0;
         while (questionCSVs.hasNext()) {
             numberOfCreatedJob++;
@@ -146,38 +152,31 @@ public class QuestionsServiceImpl implements QuestionsService {
                 String errorMessage = String.format(MessageUtil.getMessage(MessageConstant.Job.CSV_LINE_ERROR), numberOfCreatedJob);
                 throw new IllegalArgumentException(errorMessage);
             }
-            JobPositionDTO jobPositionDTO = JobPositionDTO.builder().id(csvRequest.getJobPositionId()).build();
-            QuestionsDTO questionsDTO = QuestionsDTO.builder().content(csvRequest.getContent()).jobPosition(jobPositionDTO).build();
-            List<ChoicesDTO> choicesDTOS = new ArrayList<>();
 
-            if (csvRequest.getAnswer1Content() != null && csvRequest.getAnswer1IsCorrect() != null) {
-                ChoicesDTO choicesDTO = ChoicesDTO.builder().content(csvRequest.getAnswer1Content()).isCorrect(csvRequest.getAnswer1IsCorrect()).build();
-                choicesDTOS.add(choicesDTO);
+            //if first line is not the question
+            if (questionsDTO == null && !csvRequest.getIsQuestion()) {
+                throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Question.CSV_WRONG_FORMAT));
             }
 
-            if (csvRequest.getAnswer2Content() != null && csvRequest.getAnswer2IsCorrect() != null) {
-                ChoicesDTO choicesDTO = ChoicesDTO.builder().content(csvRequest.getAnswer2Content()).isCorrect(csvRequest.getAnswer2IsCorrect()).build();
-                choicesDTOS.add(choicesDTO);
-            }
+            if (csvRequest.getIsQuestion()){
+                if (questionsDTO != null){
+                    //before create new question, check old question has at least 1 correct answer
+                    long correctChoiceCount = questionsDTO.getChoicesList().stream().filter(ChoicesDTO::getIsCorrect).count();
+                    if (correctChoiceCount == 0) {
+                        throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Question.LACK_CORRECT_ANSWER));
+                    }
+                }
 
-            if (csvRequest.getAnswer3Content() != null && csvRequest.getAnswer3IsCorrect() != null) {
-                ChoicesDTO choicesDTO = ChoicesDTO.builder().content(csvRequest.getAnswer3Content()).isCorrect(csvRequest.getAnswer3IsCorrect()).build();
-                choicesDTOS.add(choicesDTO);
+                JobPositionDTO jobPositionDTO = JobPositionDTO.builder().id(jobPositionId).build();
+                questionsDTO = QuestionsDTO.builder().content(csvRequest.getContent()).jobPosition(jobPositionDTO).build();
+                questionsDTO.setChoicesList(new ArrayList<>());
+                result.add(questionsDTO);
+            } else {
+                ChoicesDTO choicesDTO = ChoicesDTO.builder().content(csvRequest.getContent()).isCorrect(csvRequest.getIsCorrect()).build();
+                questionsDTO.getChoicesList().add(choicesDTO);
             }
-
-            if (csvRequest.getAnswer3Content() != null && csvRequest.getAnswer4IsCorrect() != null) {
-                ChoicesDTO choicesDTO = ChoicesDTO.builder().content(csvRequest.getAnswer4Content()).isCorrect(csvRequest.getAnswer4IsCorrect()).build();
-                choicesDTOS.add(choicesDTO);
-            }
-            long correctChoiceCount = choicesDTOS.stream().filter(ChoicesDTO::getIsCorrect).count();
-            if (correctChoiceCount == 0) {
-                throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Question.LACK_CORRECT_ANSWER));
-            }
-
-            questionsDTO.setChoicesList(choicesDTOS);
-            questionsDTO = this.createQuestion(questionsDTO);
-            result.add(questionsDTO);
         }
+        result = result.stream().map(this::createQuestion).collect(Collectors.toList());
         return result;
     }
 

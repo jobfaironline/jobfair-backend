@@ -21,6 +21,7 @@ public final class MessageConstant {
         public static final String INVALID_DATE_RANGE = "question.error.invalid-date-range";
         public static final String NOT_FOUND = "question.error.not-found";
         public static final String LACK_CORRECT_ANSWER = "question.error.lack-correct-answer";
+        public static final String CSV_WRONG_FORMAT = "question.error.csv-wrong-format";
         private Question() {
 
 
