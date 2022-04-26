@@ -126,7 +126,7 @@ public class QuestionsServiceImpl implements QuestionsService {
     @Override
     @Transactional
     @SneakyThrows
-    public List<QuestionsDTO> createNewJobPositionsFromCSVFile(MultipartFile file, String jobPositionId) {
+    public List<QuestionsDTO> createNewQuestionsFromCSVFile(MultipartFile file, String jobPositionId) {
         List<QuestionsDTO> result = new ArrayList<>();
         if (!CSVConstant.TYPE.equals(file.getContentType())) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Job.CSV_FILE_ERROR));

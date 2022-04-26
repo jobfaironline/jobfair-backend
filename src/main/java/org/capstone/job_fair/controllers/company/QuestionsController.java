@@ -127,7 +127,7 @@ public class QuestionsController {
     @PostMapping(ApiEndPoint.Questions.UPLOAD_CSV + "/{id}")
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
     public ResponseEntity<?> createMultipleQuestionsFromCSVFile(@PathVariable("id") String jobPositionId, @RequestPart("file") MultipartFile file) throws IOException {
-        List<QuestionsDTO> result = questionsService.createNewJobPositionsFromCSVFile(file, jobPositionId);
+        List<QuestionsDTO> result = questionsService.createNewQuestionsFromCSVFile(file, jobPositionId);
         return ResponseEntity.ok(result);
     }
 
