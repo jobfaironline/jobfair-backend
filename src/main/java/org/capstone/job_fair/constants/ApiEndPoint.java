@@ -21,6 +21,16 @@ public final class ApiEndPoint {
 
     }
 
+    public static final class Gender {
+        private Gender() {
+
+        }
+
+        public static final String GENDER_ENDPOINT = ROOT_ENDPOINT + VERSION + "/auth";
+
+
+    }
+
 
     public static final class JobFair {
         private JobFair() {

@@ -168,6 +168,8 @@ public final class MessageConstant {
         }
 
         public static final String NOT_FOUND = "gender.error.not-found";
+        public static final String DUPLICATED_GENDER = "gender.error.duplicated";
+
     }
 
     public static final class Job {
