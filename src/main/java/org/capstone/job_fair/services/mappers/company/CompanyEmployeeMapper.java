@@ -1,6 +1,7 @@
 package org.capstone.job_fair.services.mappers.company;
 
 import org.capstone.job_fair.controllers.payload.requests.company.CompanyEmployeeRegisterRequest;
+import org.capstone.job_fair.controllers.payload.requests.company.CreateCompanyEmployeeCSVRequest;
 import org.capstone.job_fair.controllers.payload.responses.CompanyEmployeeResponse;
 import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
 import org.capstone.job_fair.models.entities.company.CompanyEmployeeEntity;
@@ -31,4 +32,10 @@ public abstract class CompanyEmployeeMapper {
 
     @Mapping(source = "companyDTO.id", target = "companyId")
     public abstract CompanyEmployeeResponse toResponse(CompanyEmployeeDTO dto);
+
+    @Mapping(source = "firstName", target = "account.firstname")
+    @Mapping(source = "middleName", target = "account.middlename")
+    @Mapping(source = "lastName", target = "account.lastname")
+    @Mapping(source = "email", target = "account.email")
+    public abstract CompanyEmployeeDTO toDTO(CreateCompanyEmployeeCSVRequest request);
 }

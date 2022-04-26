@@ -35,6 +35,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
 import javax.validation.Valid;
@@ -157,8 +158,10 @@ public class CompanyEmployeeController {
     public ResponseEntity<?> getCompanyEmployees(@PathVariable String companyId,
                                                  @RequestParam(value = "offset", defaultValue = CompanyEmployeeConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset,
                                                  @RequestParam(value = "pageSize", required = false, defaultValue = CompanyEmployeeConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize,
+                                                 @RequestParam(value = "sortBy", required = false, defaultValue = CompanyEmployeeConstant.DEFAULT_SEARCH_SORT_BY_VALUE) String sortBy,
+                                                 @RequestParam(value = "direction", required = false, defaultValue = CompanyEmployeeConstant.DEFAULT_SEARCH_SORT_DIRECTION) Sort.Direction direction,
                                                  @XSSConstraint @RequestParam(value = "searchContent", required = false, defaultValue = CompanyEmployeeConstant.DEFAULT_SEARCH_CONTENT) String searchContent) {
-        Page<CompanyEmployeeResponse> employees = companyEmployeeService.getAllCompanyEmployees(companyId, searchContent, pageSize, offset).map(companyEmployeeMapper::toResponse);
+        Page<CompanyEmployeeResponse> employees = companyEmployeeService.getAllCompanyEmployees(companyId, searchContent, pageSize, offset, sortBy, direction).map(companyEmployeeMapper::toResponse);
         return new ResponseEntity<>(employees, HttpStatus.OK);
     }
 
@@ -236,8 +239,13 @@ public class CompanyEmployeeController {
         return ResponseEntity.ok(employeeDTO);
     }
 
-
-
-
+    @PostMapping(ApiEndPoint.CompanyEmployee.UPLOAD_CSV_ENDPOINT)
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
+    public ResponseEntity<?> createMultipleCompanyEmployeeFromCSVFile(@RequestPart("file") MultipartFile file){
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String companyId = userDetails.getCompanyId();
+        List<CompanyEmployeeDTO> companyEmployeeDTOS = companyEmployeeService.createNewCompanyEmployeesFromCSVFile(file, companyId);
+        return ResponseEntity.ok(companyEmployeeDTOS);
+    }
 
 }

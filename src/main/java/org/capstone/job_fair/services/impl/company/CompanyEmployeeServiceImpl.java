@@ -1,8 +1,17 @@
 package org.capstone.job_fair.services.impl.company;
 
+import com.opencsv.bean.CsvToBean;
+import com.opencsv.bean.CsvToBeanBuilder;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.capstone.job_fair.constants.AccountConstant;
+import org.capstone.job_fair.constants.CSVConstant;
 import org.capstone.job_fair.constants.MessageConstant;
+import org.capstone.job_fair.controllers.payload.requests.company.CreateCompanyEmployeeCSVRequest;
+import org.capstone.job_fair.controllers.payload.requests.company.CreateJobPositionRequest;
+import org.capstone.job_fair.models.dtos.company.CompanyDTO;
 import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
+import org.capstone.job_fair.models.dtos.company.job.JobPositionDTO;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
 import org.capstone.job_fair.models.entities.account.RoleEntity;
 import org.capstone.job_fair.models.entities.company.CompanyEmployeeEntity;
@@ -14,6 +23,7 @@ import org.capstone.job_fair.repositories.account.AccountRepository;
 import org.capstone.job_fair.repositories.company.CompanyEmployeeRepository;
 import org.capstone.job_fair.repositories.company.CompanyRepository;
 import org.capstone.job_fair.services.interfaces.company.CompanyEmployeeService;
+import org.capstone.job_fair.services.interfaces.util.MailService;
 import org.capstone.job_fair.services.mappers.company.CompanyEmployeeMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.capstone.job_fair.utils.PasswordGenerator;
@@ -24,15 +34,19 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BindException;
+import org.springframework.validation.Errors;
+import org.springframework.validation.Validator;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.util.*;
 
 @Service
 @Transactional(readOnly = true)
+@Slf4j
 public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
     @Autowired
     private CompanyEmployeeMapper mapper;
@@ -48,6 +62,12 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
 
     @Autowired
     private AccountRepository accountRepository;
+
+    @Autowired
+    private Validator validator;
+
+    @Autowired
+    private MailService mailService;
 
 
     private boolean isEmailExist(String email) {
@@ -121,9 +141,9 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
     }
 
     @Override
-    public Page<CompanyEmployeeDTO> getAllCompanyEmployees(String companyId, String searchContent, int pageSize, int offset) {
+    public Page<CompanyEmployeeDTO> getAllCompanyEmployees(String companyId, String searchContent, int pageSize, int offset, String sortBy, Sort.Direction direction) {
         return employeeRepository.findAllByAccountFirstnameContainsOrAccountMiddlenameContainsOrAccountLastnameContainsOrEmployeeIdContainsAndCompanyId
-                        (searchContent, searchContent, searchContent, searchContent, companyId, PageRequest.of(offset, pageSize))
+                        (searchContent, searchContent, searchContent, searchContent, companyId, PageRequest.of(offset, pageSize).withSort(Sort.by(direction, sortBy)))
                 .map(mapper::toDTO);
     }
 
@@ -195,6 +215,47 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
     @Override
     public Integer getCompanyEmployeeCount(String companyId) {
         return employeeRepository.countByCompanyId(companyId);
+    }
+
+    @Override
+    @Transactional
+    @SneakyThrows
+    public List<CompanyEmployeeDTO> createNewCompanyEmployeesFromCSVFile(MultipartFile file, String companyId) {
+        List<CompanyEmployeeDTO> result = new ArrayList<>();
+        if (!CSVConstant.TYPE.equals(file.getContentType())) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Job.CSV_FILE_ERROR));
+        }
+        Reader reader = new InputStreamReader(file.getInputStream());
+        CsvToBean<CreateCompanyEmployeeCSVRequest> csvToBean = new CsvToBeanBuilder(reader)
+                .withType(CreateCompanyEmployeeCSVRequest.class)
+                .withIgnoreLeadingWhiteSpace(true)
+                .build();
+        Iterator<CreateCompanyEmployeeCSVRequest> companyEmployeeCSVs = csvToBean.iterator();
+        int numberOfCreatedJob = 0;
+        while (companyEmployeeCSVs.hasNext()) {
+            numberOfCreatedJob++;
+            CreateCompanyEmployeeCSVRequest companyEmployeeCSVRequest = companyEmployeeCSVs.next();
+            Errors errors = new BindException(companyEmployeeCSVRequest, CreateJobPositionRequest.class.getSimpleName());
+            validator.validate(companyEmployeeCSVRequest, errors);
+            if (errors.hasErrors()) {
+                String errorMessage = String.format(MessageUtil.getMessage(MessageConstant.Job.CSV_LINE_ERROR), numberOfCreatedJob);
+                throw new IllegalArgumentException(errorMessage);
+            }
+            CompanyDTO companyDTO = CompanyDTO.builder().id(companyId).build();
+            CompanyEmployeeDTO companyEmployeeDTO = mapper.toDTO(companyEmployeeCSVRequest);
+            companyEmployeeDTO.setCompanyDTO(companyDTO);
+            createNewCompanyEmployeeAccount(companyEmployeeDTO);
+            result.add(companyEmployeeDTO);
+            //send email
+            this.mailService.sendMail(companyEmployeeDTO.getAccount().getEmail(),
+                            MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMAIL_SUBJECT),
+                            MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMAIL_CONTENT) + companyEmployeeDTO.getAccount().getPassword())
+                    .exceptionally(throwable -> {
+                        log.error(throwable.getMessage());
+                        return null;
+                    });
+        }
+        return result;
     }
 
 
