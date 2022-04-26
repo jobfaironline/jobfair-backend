@@ -22,7 +22,7 @@ public class GenderController {
     @GetMapping(ApiEndPoint.Gender.GENDER_ENDPOINT + "/{id}")
     public ResponseEntity<?> findById(@PathVariable("id") int id) {
         Optional<GenderDTO> dtoOptional = genderService.findById(id);
-        return dtoOptional.isPresent() ? ResponseEntity.ok(dtoOptional.get()) : ResponseEntity.noContent().build();
+        return dtoOptional.isPresent() ? ResponseEntity.ok(dtoOptional.get()) : ResponseEntity.notFound().build();
     }
 
     @GetMapping(ApiEndPoint.Gender.GENDER_ENDPOINT)

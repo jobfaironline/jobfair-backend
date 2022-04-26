@@ -25,7 +25,7 @@ public class ProfessionalCategoryController {
     @GetMapping(ApiEndPoint.ProfessionalCategory.PROFESSIONAL_CATEGORY_ENDPOINT + "/{id}")
     public ResponseEntity<?> findById(@PathVariable("id") int id) {
         Optional<ProfessionCategoryDTO> dtoOptional = professionalCategoryService.findById(id);
-        return dtoOptional.isPresent() ? ResponseEntity.ok(dtoOptional.get()) : ResponseEntity.noContent().build();
+        return dtoOptional.isPresent() ? ResponseEntity.ok(dtoOptional.get()) : ResponseEntity.notFound().build();
     }
 
     @GetMapping(ApiEndPoint.ProfessionalCategory.PROFESSIONAL_CATEGORY_ENDPOINT)

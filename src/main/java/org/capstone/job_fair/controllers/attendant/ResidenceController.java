@@ -28,7 +28,7 @@ public class ResidenceController {
     @GetMapping(ApiEndPoint.Residence.RESIDENCE_ENDPOINT + "/{id}")
     public ResponseEntity<?> findById(@PathVariable("id") String id) {
         Optional<ResidenceDTO> dtoOptional = residenceService.findById(id);
-        return dtoOptional.isPresent() ? ResponseEntity.ok(dtoOptional.get()) : ResponseEntity.noContent().build();
+        return dtoOptional.isPresent() ? ResponseEntity.ok(dtoOptional.get()) : ResponseEntity.notFound().build();
     }
 
     @GetMapping(ApiEndPoint.Residence.RESIDENCE_ENDPOINT)

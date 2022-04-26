@@ -23,7 +23,7 @@ public class QualificationController {
     @GetMapping(ApiEndPoint.Qualification.PROFESSIONAL_CATEGORY_ENDPOINT + "/{id}")
     public ResponseEntity<?> findById(@PathVariable("id") int id) {
         Optional<QualificationDTO> dtoOptional = qualificationService.findById(id);
-        return dtoOptional.isPresent() ? ResponseEntity.ok(dtoOptional.get()) : ResponseEntity.noContent().build();
+        return dtoOptional.isPresent() ? ResponseEntity.ok(dtoOptional.get()) : ResponseEntity.notFound().build();
     }
 
     @GetMapping(ApiEndPoint.Qualification.PROFESSIONAL_CATEGORY_ENDPOINT)

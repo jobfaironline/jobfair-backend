@@ -24,7 +24,7 @@ public class SkillTagController {
     @GetMapping(ApiEndPoint.Skill.SKILL_ENDPOINT + "/{id}")
     public ResponseEntity<?> findById(@PathVariable("id") int id) {
         Optional<SkillTagDTO> dtoOptional = skillService.findById(id);
-        return dtoOptional.isPresent() ? ResponseEntity.ok(dtoOptional.get()) : ResponseEntity.noContent().build();
+        return dtoOptional.isPresent() ? ResponseEntity.ok(dtoOptional.get()) : ResponseEntity.notFound().build();
     }
 
     @GetMapping(ApiEndPoint.Skill.SKILL_ENDPOINT)

@@ -23,7 +23,7 @@ public class RoleController {
     @GetMapping(ApiEndPoint.Role.ROLE_ENDPOINT + "/{id}")
     public ResponseEntity<?> findById(@PathVariable("id") int id) {
         Optional<RoleDTO> dtoOptional = roleService.findById(id);
-        return dtoOptional.isPresent() ? ResponseEntity.ok(dtoOptional.get()) : ResponseEntity.noContent().build();
+        return dtoOptional.isPresent() ? ResponseEntity.ok(dtoOptional.get()) : ResponseEntity.notFound().build();
     }
 
     @GetMapping(ApiEndPoint.Role.ROLE_ENDPOINT)

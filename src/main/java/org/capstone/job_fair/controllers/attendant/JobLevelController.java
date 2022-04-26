@@ -24,7 +24,7 @@ public class JobLevelController {
     @GetMapping(ApiEndPoint.JobLevel.JOB_LEVEL_ENDPOINT + "/{id}")
     public ResponseEntity<?> findById(@PathVariable("id") int id) {
         Optional<JobLevelDTO> dtoOptional = jobLevelService.findById(id);
-        return dtoOptional.isPresent() ? ResponseEntity.ok(dtoOptional.get()) : ResponseEntity.noContent().build();
+        return dtoOptional.isPresent() ? ResponseEntity.ok(dtoOptional.get()) : ResponseEntity.notFound().build();
     }
 
     @GetMapping(ApiEndPoint.JobLevel.JOB_LEVEL_ENDPOINT)
