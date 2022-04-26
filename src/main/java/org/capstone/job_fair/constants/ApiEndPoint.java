@@ -38,6 +38,13 @@ public final class ApiEndPoint {
         public static final String JOB_LEVEL_ENDPOINT = ROOT_ENDPOINT + VERSION + "/job-level";
     }
 
+    public static final class ProfessionalCategory{
+        private ProfessionalCategory(){
+
+        }
+        public static final String PROFESSIONAL_CATEGORY_ENDPOINT = ROOT_ENDPOINT + VERSION + "/professional-category";
+    }
+
 
     public static final class JobFair {
         private JobFair() {
