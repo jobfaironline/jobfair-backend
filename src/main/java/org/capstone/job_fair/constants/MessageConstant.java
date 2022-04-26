@@ -130,6 +130,7 @@ public final class MessageConstant {
         public static final String EXISTED = "account.error.existed";
         public static final String EMAIL_EXISTED = "account.error.email-existed";
         public static final String NOT_FOUND_COUNTRY = "account.error.not-found-country";
+        public static final String COUNTRY_EXISTED = "account.error.country-existed";
         public static final String NOT_FOUND_RESIDENCE = "account.error.not-found-residence";
         public static final String NOT_FOUND_JOB_LEVEL = "account.error.not-found-job-level";
         public static final String NOT_FOUND_QUALIFICATION = "account.error.not-found-qualification";

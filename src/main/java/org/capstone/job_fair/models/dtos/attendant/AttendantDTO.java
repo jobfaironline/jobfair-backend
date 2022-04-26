@@ -23,7 +23,7 @@ public class AttendantDTO implements Serializable {
     private String jobTitle;
     private Double yearOfExp;
     private Marital maritalStatus;
-    private String countryId;
+    private Integer countryId;
     private Integer residenceId;
     private JobLevel jobLevel;
 
