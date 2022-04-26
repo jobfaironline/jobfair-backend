@@ -38,6 +38,13 @@ public final class ApiEndPoint {
         public static final String JOB_LEVEL_ENDPOINT = ROOT_ENDPOINT + VERSION + "/job-level";
     }
 
+    public static final class Residence{
+        private Residence(){
+
+        }
+        public static final String RESIDENCE_ENDPOINT = ROOT_ENDPOINT + VERSION + "/residence";
+    }
+
     public static final class ProfessionalCategory{
         private ProfessionalCategory(){
 

@@ -2,6 +2,7 @@ package org.capstone.job_fair.models.entities.attendant;
 
 import lombok.*;
 import org.hibernate.Hibernate;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -17,6 +18,8 @@ public class ResidenceEntity {
     @EqualsAndHashCode.Include
     @Id
     @Column(name = "id")
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "org.hibernate.id.UUIDGenerator")
     private String id;
     @Basic
     @Column(name = "name")

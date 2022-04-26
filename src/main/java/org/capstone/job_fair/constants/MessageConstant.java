@@ -23,6 +23,15 @@ public final class MessageConstant {
         public static final String DUPLICATED = "professional-category.error.duplicate-job-level";
     }
 
+    public static final class Residence {
+        private Residence() {
+
+        }
+
+        public static final String NOT_FOUND = "residence.error.not-found";
+        public static final String DUPLICATED = "residence.error.duplicate-job-level";
+    }
+
     public static final class Qualification {
         private Qualification() {
 

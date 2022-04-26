@@ -1,7 +1,10 @@
 package org.capstone.job_fair.models.dtos.attendant;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 
@@ -12,6 +15,8 @@ import java.io.Serializable;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class ResidenceDTO implements Serializable {
     @EqualsAndHashCode.Include
+    @JsonIgnoreProperties
     private String id;
+    @NotBlank
     private String name;
 }
