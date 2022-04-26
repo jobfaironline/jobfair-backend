@@ -189,5 +189,10 @@ public class JobPositionServiceImpl implements JobPositionService {
         return result;
     }
 
+    @Override
+    public Optional<JobPositionDTO> getByIdAndCompanyId(String id, String companyId) {
+        return jobPositionRepository.findByIdAndCompanyId(id, companyId).map(mapper::toDTO);
+    }
+
 
 }

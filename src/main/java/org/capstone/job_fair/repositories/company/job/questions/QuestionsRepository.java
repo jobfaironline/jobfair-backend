@@ -14,7 +14,7 @@ public interface QuestionsRepository extends JpaRepository<QuestionsEntity, Stri
 
     void deleteByIdAndJobPositionCompanyId(String id, String companyId);
 
-    Page<QuestionsEntity> findAllByJobPositionIdAndJobPositionCompanyId(String jobPositionId, String companyId, Pageable pageable);
+    Page<QuestionsEntity> findAllByContentContainsAndJobPositionIdAndJobPositionCompanyIdAndStatus(String searchContent, String jobPositionId, String companyId, QuestionStatus status, Pageable pageable);
 
     Page<QuestionsEntity> findAllByContentContainsAndCreateDateBetweenAndStatusAndJobPositionCompanyId(String content, Long fromDate, Long toDate, QuestionStatus status, String companyId, Pageable pageable);
 

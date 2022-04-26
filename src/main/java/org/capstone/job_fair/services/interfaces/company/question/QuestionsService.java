@@ -1,11 +1,12 @@
 package org.capstone.job_fair.services.interfaces.company.question;
 
-import org.capstone.job_fair.controllers.payload.responses.QuestionResponse;
 import org.capstone.job_fair.models.dtos.company.job.questions.QuestionsDTO;
 import org.capstone.job_fair.models.statuses.QuestionStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface QuestionsService {
@@ -19,5 +20,7 @@ public interface QuestionsService {
 
     public QuestionsDTO updateQuestion(QuestionsDTO dto, String companyId);
 
-    Page<QuestionsDTO> getQuestionByJobPosition(String companyId, String jobPositionId, int offset, int pageSize, String sortBy, Sort.Direction direction);
+    Page<QuestionsDTO> getQuestionByJobPosition(String companyId, String jobPositionId, String searchContent, QuestionStatus status, int offset, int pageSize, String sortBy, Sort.Direction direction);
+
+    List<QuestionsDTO> createNewQuestionsFromCSVFile(MultipartFile file, String jobPositionId);
 }
