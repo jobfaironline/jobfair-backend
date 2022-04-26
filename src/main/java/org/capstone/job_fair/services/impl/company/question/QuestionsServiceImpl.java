@@ -87,6 +87,7 @@ public class QuestionsServiceImpl implements QuestionsService {
     }
 
     @Override
+    @Transactional
     public QuestionsDTO deleteQuestion(String questionId, String companyId) {
         Optional<QuestionsEntity> questionsEntityOptional = questionsRepository.findByIdAndJobPositionCompanyId(questionId, companyId);
         if (!questionsEntityOptional.isPresent())
@@ -114,10 +115,10 @@ public class QuestionsServiceImpl implements QuestionsService {
     }
 
     @Override
-    public Page<QuestionsDTO> getQuestionByJobPosition(String companyId, String jobPositionId, String searchContent, int offset, int pageSize, String sortBy, Sort.Direction direction) {
+    public Page<QuestionsDTO> getQuestionByJobPosition(String companyId, String jobPositionId, String searchContent, QuestionStatus status, int offset, int pageSize, String sortBy, Sort.Direction direction) {
         if (offset < DataConstraint.Paging.OFFSET_MIN || pageSize < DataConstraint.Paging.PAGE_SIZE_MIN)
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Job.INVALID_PAGE_NUMBER));
-        Page<QuestionsEntity> questionsEntityPage = questionsRepository.findAllByContentContainsAndJobPositionIdAndJobPositionCompanyId(searchContent, jobPositionId, companyId, PageRequest.of(offset, pageSize).withSort(Sort.by(direction, sortBy)));
+        Page<QuestionsEntity> questionsEntityPage = questionsRepository.findAllByContentContainsAndJobPositionIdAndJobPositionCompanyIdAndStatus(searchContent, jobPositionId, companyId, status, PageRequest.of(offset, pageSize).withSort(Sort.by(direction, sortBy)));
         return questionsEntityPage.map(entity -> questionsMapper.toDTO(entity));
     }
 

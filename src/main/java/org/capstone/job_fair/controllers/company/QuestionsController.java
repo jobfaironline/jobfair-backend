@@ -116,9 +116,10 @@ public class QuestionsController {
                                                           @RequestParam(value = "pageSize", required = false, defaultValue = QuestionConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize,
                                                           @RequestParam(value = "sortBy", required = false, defaultValue = QuestionConstant.DEFAULT_SEARCH_SORT_BY_VALUE) String sortBy,
                                                           @RequestParam(value = "direction", required = false, defaultValue = QuestionConstant.DEFAULT_SEARCH_SORT_DIRECTION) Sort.Direction direction,
+                                                          @RequestParam(value = "status", required = false, defaultValue = QuestionConstant.DEFAULT_QUESTION_STATUS) QuestionStatus status,
                                                           @XSSConstraint @RequestParam(value = "questionContent", required = false, defaultValue = QuestionConstant.DEFAULT_SEARCH_QUESTION_CONTENT) String searchContent) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Page<QuestionsDTO> dtoPage = questionsService.getQuestionByJobPosition(userDetails.getCompanyId(), jobPositionId, searchContent, offset, pageSize, sortBy, direction);
+        Page<QuestionsDTO> dtoPage = questionsService.getQuestionByJobPosition(userDetails.getCompanyId(), jobPositionId, searchContent, status, offset, pageSize, sortBy, direction);
         if (dtoPage.getTotalElements() == 0) return ResponseEntity.noContent().build();
         return ResponseEntity.ok(dtoPage.map(dto -> questionsMapper.toResponse(dto)));
     }

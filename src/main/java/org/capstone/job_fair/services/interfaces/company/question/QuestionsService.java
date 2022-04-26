@@ -20,7 +20,7 @@ public interface QuestionsService {
 
     public QuestionsDTO updateQuestion(QuestionsDTO dto, String companyId);
 
-    Page<QuestionsDTO> getQuestionByJobPosition(String companyId, String jobPositionId, String searchContent, int offset, int pageSize, String sortBy, Sort.Direction direction);
+    Page<QuestionsDTO> getQuestionByJobPosition(String companyId, String jobPositionId, String searchContent, QuestionStatus status, int offset, int pageSize, String sortBy, Sort.Direction direction);
 
     List<QuestionsDTO> createNewJobPositionsFromCSVFile(MultipartFile file);
 }
