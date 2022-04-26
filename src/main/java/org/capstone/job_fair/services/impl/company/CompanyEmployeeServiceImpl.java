@@ -7,6 +7,7 @@ import org.capstone.job_fair.models.entities.account.AccountEntity;
 import org.capstone.job_fair.models.entities.account.RoleEntity;
 import org.capstone.job_fair.models.entities.company.CompanyEmployeeEntity;
 import org.capstone.job_fair.models.entities.company.CompanyEntity;
+import org.capstone.job_fair.models.enums.Gender;
 import org.capstone.job_fair.models.enums.Role;
 import org.capstone.job_fair.models.statuses.AccountStatus;
 import org.capstone.job_fair.repositories.account.AccountRepository;
@@ -89,6 +90,7 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
         dto.getAccount().setStatus(AccountStatus.REGISTERED);
         dto.getAccount().setProfileImageUrl(AccountConstant.DEFAULT_PROFILE_IMAGE_URL);
         dto.getAccount().setCreateTime(new Date().getTime());
+        dto.getAccount().setGender(Gender.MALE);
 
         CompanyEmployeeEntity entity = mapper.toEntity(dto);
         String hashPassword = encoder.encode(password);

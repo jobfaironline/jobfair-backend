@@ -25,8 +25,6 @@ public abstract class CompanyEmployeeMapper {
     @Mapping(source = "firstName", target = "account.firstname")
     @Mapping(source = "middleName", target = "account.middlename")
     @Mapping(source = "lastName", target = "account.lastname")
-    @Mapping(source = "phone", target = "account.phone")
-    @Mapping(source = "gender", target = "account.gender")
     @Mapping(target = "accountId", ignore = true)
     public abstract CompanyEmployeeDTO toDTO(CompanyEmployeeRegisterRequest request);
 }

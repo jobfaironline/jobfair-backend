@@ -37,11 +37,10 @@ public class CompanyEmployeeRegisterRequest {
     @XSSConstraint
     @NameConstraint
     private String lastName;
-    @NotNull
-    @PhoneConstraint
-    private String phone;
-    @NotNull
-    private Gender gender;
     @NotBlank
+    @Size(max = DataConstraint.CompanyEmployee.DEPARTMENT_MAX_LENGTH)
     private String department;
+    @NotBlank
+    @Size(max = DataConstraint.CompanyEmployee.EMPLOYEE_ID_MAX_LENGTH)
+    private String employeeId;
 }

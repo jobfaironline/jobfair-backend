@@ -16,4 +16,5 @@ public class CompanyEmployeeDTO implements Serializable {
     private AccountDTO account;
     private CompanyDTO companyDTO;
     private String department;
+    private String employeeId;
 }
