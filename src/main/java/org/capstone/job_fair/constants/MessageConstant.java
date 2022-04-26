@@ -5,6 +5,15 @@ public final class MessageConstant {
 
     }
 
+    public static final class JobLevel{
+        private JobLevel(){
+
+        }
+
+        public static final String NOT_FOUND = "job-level.error.not-found";
+        public static final String DUPLICATED = "job-level.error.duplicate-job-level";
+    }
+
     public static final class Exception {
         private Exception() {
         }
