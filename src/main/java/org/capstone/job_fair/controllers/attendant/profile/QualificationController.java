@@ -32,7 +32,7 @@ public class QualificationController {
         return dtoList.size() == 0 ? ResponseEntity.noContent().build() : ResponseEntity.ok(dtoList);
     }
 
-    @PutMapping(ApiEndPoint.Qualification.PROFESSIONAL_CATEGORY_ENDPOINT)
+    @PostMapping(ApiEndPoint.Qualification.PROFESSIONAL_CATEGORY_ENDPOINT)
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
     public ResponseEntity<?> create(@RequestBody @Validated QualificationDTO request) {
         QualificationDTO dto = new QualificationDTO(request.getId(), request.getName());
@@ -40,7 +40,7 @@ public class QualificationController {
         return ResponseEntity.ok(dto);
     }
 
-    @PostMapping(ApiEndPoint.Qualification.PROFESSIONAL_CATEGORY_ENDPOINT)
+    @PutMapping(ApiEndPoint.Qualification.PROFESSIONAL_CATEGORY_ENDPOINT)
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
     public ResponseEntity<?> update(@RequestBody @Validated QualificationDTO request) {
         request = qualificationService.update(request);

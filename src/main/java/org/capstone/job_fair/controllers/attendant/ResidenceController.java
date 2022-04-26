@@ -37,7 +37,7 @@ public class ResidenceController {
         return dtoList.size() == 0 ? ResponseEntity.noContent().build() : ResponseEntity.ok(dtoList);
     }
 
-    @PutMapping(ApiEndPoint.Residence.RESIDENCE_ENDPOINT)
+    @PostMapping(ApiEndPoint.Residence.RESIDENCE_ENDPOINT)
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
     public ResponseEntity<?> create(@RequestBody @Validated CreateResidenceRequest request) {
         ResidenceDTO dto = new ResidenceDTO(null, request.getName());
@@ -45,7 +45,7 @@ public class ResidenceController {
         return ResponseEntity.ok(dto);
     }
 
-    @PostMapping(ApiEndPoint.Residence.RESIDENCE_ENDPOINT)
+    @PutMapping(ApiEndPoint.Residence.RESIDENCE_ENDPOINT)
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
     public ResponseEntity<?> update(@RequestBody @Validated UpdateResidenceRequest request) {
         ResidenceDTO dto = new ResidenceDTO();

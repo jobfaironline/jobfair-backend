@@ -33,7 +33,7 @@ public class JobLevelController {
         return dtoList.size() == 0 ? ResponseEntity.noContent().build() : ResponseEntity.ok(dtoList);
     }
 
-    @PutMapping(ApiEndPoint.JobLevel.JOB_LEVEL_ENDPOINT)
+    @PostMapping(ApiEndPoint.JobLevel.JOB_LEVEL_ENDPOINT)
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
     public ResponseEntity<?> create(@RequestBody @Validated JobLevelDTO request) {
         JobLevelDTO dto = new JobLevelDTO(request.getId(), request.getName());
@@ -41,7 +41,7 @@ public class JobLevelController {
         return ResponseEntity.ok(dto);
     }
 
-    @PostMapping(ApiEndPoint.JobLevel.JOB_LEVEL_ENDPOINT)
+    @PutMapping(ApiEndPoint.JobLevel.JOB_LEVEL_ENDPOINT)
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
     public ResponseEntity<?> update(@RequestBody @Validated JobLevelDTO request) {
         request = jobLevelService.update(request);

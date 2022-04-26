@@ -34,7 +34,7 @@ public class ProfessionalCategoryController {
         return dtoList.size() == 0 ? ResponseEntity.noContent().build() : ResponseEntity.ok(dtoList);
     }
 
-    @PutMapping(ApiEndPoint.ProfessionalCategory.PROFESSIONAL_CATEGORY_ENDPOINT)
+    @PostMapping(ApiEndPoint.ProfessionalCategory.PROFESSIONAL_CATEGORY_ENDPOINT)
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
     public ResponseEntity<?> create(@RequestBody @Validated ProfessionCategoryDTO request) {
         ProfessionCategoryDTO dto = new ProfessionCategoryDTO(request.getId(), request.getName());
@@ -42,7 +42,7 @@ public class ProfessionalCategoryController {
         return ResponseEntity.ok(dto);
     }
 
-    @PostMapping(ApiEndPoint.ProfessionalCategory.PROFESSIONAL_CATEGORY_ENDPOINT)
+    @PutMapping(ApiEndPoint.ProfessionalCategory.PROFESSIONAL_CATEGORY_ENDPOINT)
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
     public ResponseEntity<?> update(@RequestBody @Validated ProfessionCategoryDTO request) {
         request = professionalCategoryService.update(request);

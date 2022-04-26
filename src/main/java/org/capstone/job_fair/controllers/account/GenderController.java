@@ -31,7 +31,7 @@ public class GenderController {
         return dtoList.size() == 0 ? ResponseEntity.noContent().build() : ResponseEntity.ok(dtoList);
     }
 
-    @PutMapping(ApiEndPoint.Gender.GENDER_ENDPOINT)
+    @PostMapping(ApiEndPoint.Gender.GENDER_ENDPOINT)
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
     public ResponseEntity<?> createGender(@RequestBody @Validated GenderDTO request) {
         GenderDTO dto = new GenderDTO(request.getId(), request.getName(), request.getDescription());
@@ -39,7 +39,7 @@ public class GenderController {
         return ResponseEntity.ok(dto);
     }
 
-    @PostMapping(ApiEndPoint.Gender.GENDER_ENDPOINT)
+    @PutMapping(ApiEndPoint.Gender.GENDER_ENDPOINT)
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
     public ResponseEntity<?> updateGender(@RequestBody @Validated GenderDTO request) {
         request = genderService.updateGender(request);

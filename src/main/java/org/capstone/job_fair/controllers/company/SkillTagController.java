@@ -33,7 +33,7 @@ public class SkillTagController {
         return dtoList.size() == 0 ? ResponseEntity.noContent().build() : ResponseEntity.ok(dtoList);
     }
 
-    @PutMapping(ApiEndPoint.Skill.SKILL_ENDPOINT)
+    @PostMapping(ApiEndPoint.Skill.SKILL_ENDPOINT)
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
     public ResponseEntity<?> create(@RequestBody @Validated SkillTagDTO request) {
         SkillTagDTO dto = new SkillTagDTO(request.getId(), request.getName());
@@ -41,7 +41,7 @@ public class SkillTagController {
         return ResponseEntity.ok(dto);
     }
 
-    @PostMapping(ApiEndPoint.Skill.SKILL_ENDPOINT)
+    @PutMapping(ApiEndPoint.Skill.SKILL_ENDPOINT)
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
     public ResponseEntity<?> update(@RequestBody @Validated SkillTagDTO request) {
         request = skillService.update(request);
