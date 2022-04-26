@@ -254,5 +254,13 @@ public final class DataConstraint {
         public static final int MAX_NAME_LENGTH = 100;
     }
 
+    public static final class CompanyEmployee {
+        private CompanyEmployee() {
+
+        }
+        public static final int DEPARTMENT_MAX_LENGTH = 100;
+        public static final int EMPLOYEE_ID_MAX_LENGTH = 100;
+    }
+
 
 }
