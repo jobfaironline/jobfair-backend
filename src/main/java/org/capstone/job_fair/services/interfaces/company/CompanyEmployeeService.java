@@ -1,6 +1,8 @@
 package org.capstone.job_fair.services.interfaces.company;
 
 import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,7 +14,7 @@ public interface CompanyEmployeeService {
 
     void updateProfile(CompanyEmployeeDTO dto);
 
-    List<CompanyEmployeeDTO> getAllCompanyEmployees(String id);
+    Page<CompanyEmployeeDTO> getAllCompanyEmployees(String companyId, String searchContent, int pageSize, int offset);
 
     Boolean deleteEmployee(String id);
 

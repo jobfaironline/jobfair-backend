@@ -2,7 +2,10 @@ package org.capstone.job_fair.repositories.company;
 
 import org.capstone.job_fair.models.entities.company.CompanyEmployeeEntity;
 import org.capstone.job_fair.models.statuses.AccountStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -20,4 +23,7 @@ public interface CompanyEmployeeRepository extends JpaRepository<CompanyEmployee
     Optional<CompanyEmployeeEntity> findByAccountIdAndCompanyId(String accountID, String companyID);
 
     Integer countByCompanyId(String companyId);
+
+    Page<CompanyEmployeeEntity> findAllByAccountFirstnameContainsOrAccountMiddlenameContainsOrAccountLastnameContainsOrEmployeeIdContainsAndCompanyId
+            (String firstName, String middleName, String lastName, String employeeId, String companyId, Pageable pageable);
 }

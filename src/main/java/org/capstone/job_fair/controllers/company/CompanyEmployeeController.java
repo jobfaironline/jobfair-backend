@@ -4,10 +4,13 @@ package org.capstone.job_fair.controllers.company;
 import lombok.extern.slf4j.Slf4j;
 import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import org.capstone.job_fair.constants.ApiEndPoint;
+import org.capstone.job_fair.constants.CompanyEmployeeConstant;
 import org.capstone.job_fair.constants.MessageConstant;
+import org.capstone.job_fair.constants.QuestionConstant;
 import org.capstone.job_fair.controllers.payload.requests.company.CompanyEmployeeRegisterRequest;
 import org.capstone.job_fair.controllers.payload.requests.company.CompanyManagerRegisterRequest;
 import org.capstone.job_fair.controllers.payload.requests.company.UpdateCompanyEmployeeProfileRequest;
+import org.capstone.job_fair.controllers.payload.responses.CompanyEmployeeResponse;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
 import org.capstone.job_fair.models.dtos.company.CompanyDTO;
@@ -20,7 +23,10 @@ import org.capstone.job_fair.services.interfaces.util.MailService;
 import org.capstone.job_fair.services.mappers.company.CompanyEmployeeMapper;
 import org.capstone.job_fair.services.mappers.company.CompanyMapper;
 import org.capstone.job_fair.utils.MessageUtil;
+import org.capstone.job_fair.validators.XSSConstraint;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
@@ -148,10 +154,11 @@ public class CompanyEmployeeController {
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
     @GetMapping(ApiEndPoint.CompanyEmployee.COMPANY_EMPLOYEE_ENDPOINT + "/{companyId}")
-    public ResponseEntity<?> getCompanyEmployees(@PathVariable String companyId) {
-        List<CompanyEmployeeDTO> employees = companyEmployeeService.getAllCompanyEmployees(companyId);
-        if (employees.isEmpty())
-            return new ResponseEntity<>(MessageUtil.getMessage(MessageConstant.Exception.RESOURCE_NOT_FOUND), HttpStatus.NOT_FOUND);
+    public ResponseEntity<?> getCompanyEmployees(@PathVariable String companyId,
+                                                 @RequestParam(value = "offset", defaultValue = CompanyEmployeeConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset,
+                                                 @RequestParam(value = "pageSize", required = false, defaultValue = CompanyEmployeeConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize,
+                                                 @XSSConstraint @RequestParam(value = "searchContent", required = false, defaultValue = CompanyEmployeeConstant.DEFAULT_SEARCH_CONTENT) String searchContent) {
+        Page<CompanyEmployeeResponse> employees = companyEmployeeService.getAllCompanyEmployees(companyId, searchContent, pageSize, offset).map(companyEmployeeMapper::toResponse);
         return new ResponseEntity<>(employees, HttpStatus.OK);
     }
 
@@ -228,5 +235,9 @@ public class CompanyEmployeeController {
             return GenericResponse.build(MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMPLOYEE_NOT_FOUND), HttpStatus.NOT_FOUND);
         return ResponseEntity.ok(employeeDTO);
     }
+
+
+
+
 
 }

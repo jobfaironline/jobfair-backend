@@ -85,7 +85,15 @@ public class QuestionsController {
 
     @GetMapping(ApiEndPoint.Questions.QUESTION)
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
-    public ResponseEntity<?> getQuestionByCriteria(@RequestParam(value = "offset", defaultValue = QuestionConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset, @RequestParam(value = "pageSize", required = false, defaultValue = QuestionConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize, @RequestParam(value = "sortBy", required = false, defaultValue = QuestionConstant.DEFAULT_SEARCH_SORT_BY_VALUE) String sortBy, @RequestParam(value = "direction", required = false, defaultValue = QuestionConstant.DEFAULT_SEARCH_SORT_DIRECTION) Sort.Direction direction, @XSSConstraint @RequestParam(value = "questionContent", required = false, defaultValue = QuestionConstant.DEFAULT_SEARCH_QUESTION_CONTENT) String searchContent, @RequestParam(value = "fromDate", required = false, defaultValue = QuestionConstant.DEFAULT_FROM_DATE) long fromDate, @RequestParam(value = "toDate", required = false, defaultValue = QuestionConstant.DEFAULT_TO_DATE) long toDate, @RequestParam(value = "status", required = false, defaultValue = QuestionConstant.DEFAULT_QUESTION_STATUS) QuestionStatus status) {
+    public ResponseEntity<?> getQuestionByCriteria(
+            @RequestParam(value = "offset", defaultValue = QuestionConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset,
+            @RequestParam(value = "pageSize", required = false, defaultValue = QuestionConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize,
+            @RequestParam(value = "sortBy", required = false, defaultValue = QuestionConstant.DEFAULT_SEARCH_SORT_BY_VALUE) String sortBy,
+            @RequestParam(value = "direction", required = false, defaultValue = QuestionConstant.DEFAULT_SEARCH_SORT_DIRECTION) Sort.Direction direction,
+            @XSSConstraint @RequestParam(value = "questionContent", required = false, defaultValue = QuestionConstant.DEFAULT_SEARCH_QUESTION_CONTENT) String searchContent,
+            @RequestParam(value = "fromDate", required = false, defaultValue = QuestionConstant.DEFAULT_FROM_DATE) long fromDate,
+            @RequestParam(value = "toDate", required = false, defaultValue = QuestionConstant.DEFAULT_TO_DATE) long toDate,
+            @RequestParam(value = "status", required = false, defaultValue = QuestionConstant.DEFAULT_QUESTION_STATUS) QuestionStatus status) {
 
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Page<QuestionsDTO> questionsDTOPage = questionsService.getQuestionsByCriteria(userDetails.getCompanyId(), searchContent, fromDate, toDate, status, pageSize, offset, sortBy, direction);
