@@ -37,9 +37,9 @@ public final class ApiEndPoint {
         private Questions() {
 
         }
-
         public static final String QUESTION = ROOT_ENDPOINT + VERSION + "/questions";
         public static final String BY_JOB_POSITION = QUESTION + "/job-position";
+        public static final String UPLOAD_CSV = QUESTION + "/csv";
     }
 
     public static final class CompanyRegistration {

@@ -42,6 +42,16 @@ public class JobController {
     @Autowired
     private CompanyEmployeeService companyEmployeeService;
 
+    @GetMapping(ApiEndPoint.Job.JOB_POSITION_ENDPOINT + "/{jobId}")
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE) ")
+    public ResponseEntity<?> getJobPositionById(@PathVariable("jobId") String jobPositionId) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String companyId = userDetails.getCompanyId();
+        Optional<JobPositionDTO> jobPositionOpt = jobPositionService.getByIdAndCompanyId(jobPositionId, companyId);
+
+        return jobPositionOpt.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN) ")
     @PostMapping(ApiEndPoint.Job.JOB_POSITION_ENDPOINT)
@@ -108,7 +118,7 @@ public class JobController {
     }
 
     @PostMapping(ApiEndPoint.Job.CREAT_JOB_POSITION_UPLOAD_CSV)
-    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE)")
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
     public ResponseEntity<?> createMultipleJobPositionFromCSVFile(@RequestParam("file") MultipartFile file) throws IOException {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String companyId = userDetails.getCompanyId();
