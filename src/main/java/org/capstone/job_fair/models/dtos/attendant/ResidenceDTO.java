@@ -15,8 +15,7 @@ import java.io.Serializable;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class ResidenceDTO implements Serializable {
     @EqualsAndHashCode.Include
-    @JsonIgnoreProperties
-    private String id;
+    private Integer id;
     @NotBlank
     private String name;
 }

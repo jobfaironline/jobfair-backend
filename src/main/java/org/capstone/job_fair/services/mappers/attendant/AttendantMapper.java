@@ -122,7 +122,7 @@ public abstract class AttendantMapper {
     }
 
     @Named("fromResidenceIdOfAttendantDTO")
-    public ResidenceEntity fromResidenceIdOfAttendantDTO(String residenceId) {
+    public ResidenceEntity fromResidenceIdOfAttendantDTO(Integer residenceId) {
         if (residenceId == null) return null;
         ResidenceEntity entity = new ResidenceEntity();
         entity.setId(residenceId);
@@ -130,7 +130,7 @@ public abstract class AttendantMapper {
     }
 
     @Named("fromResidenceEntityOfAttendantEntity")
-    public String fromResidenceEntityOfAttendantEntity(ResidenceEntity entity) {
+    public Integer fromResidenceEntityOfAttendantEntity(ResidenceEntity entity) {
         if (entity == null) return null;
         return entity.getId();
     }

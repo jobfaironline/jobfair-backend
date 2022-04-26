@@ -6,13 +6,13 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ResidenceService {
-    Integer getCountResidenceById(String id);
+    Integer getCountResidenceById(int id);
 
-    Optional<ResidenceDTO> findById(String id);
+    Optional<ResidenceDTO> findById(int id);
 
     List<ResidenceDTO> getAll();
 
-    ResidenceDTO delete(String id);
+    ResidenceDTO delete(int id);
 
     ResidenceDTO create(ResidenceDTO dto);
 

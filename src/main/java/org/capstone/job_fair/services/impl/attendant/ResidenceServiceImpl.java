@@ -27,12 +27,12 @@ public class ResidenceServiceImpl implements ResidenceService {
     private ResidenceMapper residenceMapper;
 
     @Override
-    public Integer getCountResidenceById(String id) {
+    public Integer getCountResidenceById(int id) {
         return residenceRepository.countById(id);
     }
 
     @Override
-    public Optional<ResidenceDTO> findById(String id) {
+    public Optional<ResidenceDTO> findById(int id) {
         return residenceRepository.findById(id).map(entity -> residenceMapper.toDTO(entity));
     }
 
@@ -43,7 +43,7 @@ public class ResidenceServiceImpl implements ResidenceService {
 
     @Override
     @Transactional
-    public ResidenceDTO delete(String id) {
+    public ResidenceDTO delete(int id) {
         Optional<ResidenceEntity> entityOptional = residenceRepository.findById(id);
         if(!entityOptional.isPresent()) throw new
                 IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Residence.NOT_FOUND));
@@ -54,6 +54,9 @@ public class ResidenceServiceImpl implements ResidenceService {
     @Override
     @Transactional
     public ResidenceDTO create(ResidenceDTO dto) {
+        Optional<ResidenceEntity> entityOptional = residenceRepository.findById(dto.getId());
+        if(entityOptional.isPresent()) throw new
+                IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Residence.DUPLICATED));
         ResidenceEntity entity = residenceRepository.save(residenceMapper.toEntity(dto));
         return residenceMapper.toDTO(entity);
     }

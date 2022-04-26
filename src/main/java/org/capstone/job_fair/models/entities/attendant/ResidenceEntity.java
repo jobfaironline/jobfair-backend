@@ -18,9 +18,7 @@ public class ResidenceEntity {
     @EqualsAndHashCode.Include
     @Id
     @Column(name = "id")
-    @GeneratedValue(generator = "uuid")
-    @GenericGenerator(name = "uuid", strategy = "org.hibernate.id.UUIDGenerator")
-    private String id;
+    private Integer id;
     @Basic
     @Column(name = "name")
     private String name;

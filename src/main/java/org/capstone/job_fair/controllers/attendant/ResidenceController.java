@@ -2,12 +2,7 @@ package org.capstone.job_fair.controllers.attendant;
 
 
 import org.capstone.job_fair.constants.ApiEndPoint;
-import org.capstone.job_fair.controllers.payload.requests.attendant.CreateResidenceRequest;
-import org.capstone.job_fair.controllers.payload.requests.attendant.UpdateResidenceRequest;
-import org.capstone.job_fair.models.dtos.attendant.JobLevelDTO;
 import org.capstone.job_fair.models.dtos.attendant.ResidenceDTO;
-import org.capstone.job_fair.models.entities.attendant.ResidenceEntity;
-import org.capstone.job_fair.services.interfaces.attendant.JobLevelService;
 import org.capstone.job_fair.services.interfaces.attendant.ResidenceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +21,7 @@ public class ResidenceController {
 
 
     @GetMapping(ApiEndPoint.Residence.RESIDENCE_ENDPOINT + "/{id}")
-    public ResponseEntity<?> findById(@PathVariable("id") String id) {
+    public ResponseEntity<?> findById(@PathVariable("id") Integer id) {
         Optional<ResidenceDTO> dtoOptional = residenceService.findById(id);
         return dtoOptional.isPresent() ? ResponseEntity.ok(dtoOptional.get()) : ResponseEntity.notFound().build();
     }
@@ -39,7 +34,7 @@ public class ResidenceController {
 
     @PostMapping(ApiEndPoint.Residence.RESIDENCE_ENDPOINT)
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
-    public ResponseEntity<?> create(@RequestBody @Validated CreateResidenceRequest request) {
+    public ResponseEntity<?> create(@RequestBody @Validated ResidenceDTO request) {
         ResidenceDTO dto = new ResidenceDTO(null, request.getName());
         dto = residenceService.create(dto);
         return ResponseEntity.ok(dto);
@@ -47,7 +42,7 @@ public class ResidenceController {
 
     @PutMapping(ApiEndPoint.Residence.RESIDENCE_ENDPOINT)
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
-    public ResponseEntity<?> update(@RequestBody @Validated UpdateResidenceRequest request) {
+    public ResponseEntity<?> update(@RequestBody @Validated ResidenceDTO request) {
         ResidenceDTO dto = new ResidenceDTO();
         dto.setId(request.getId());
         dto.setName(request.getName());
@@ -57,7 +52,7 @@ public class ResidenceController {
 
     @DeleteMapping(ApiEndPoint.Residence.RESIDENCE_ENDPOINT + "/{id}")
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
-    public ResponseEntity<?> delete(@PathVariable("id") String id) {
+    public ResponseEntity<?> delete(@PathVariable("id") Integer id) {
         ResidenceDTO dto = residenceService.delete(id);
         return ResponseEntity.ok(dto);
     }

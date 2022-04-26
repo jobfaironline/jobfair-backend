@@ -56,7 +56,7 @@ public class AttendantServiceImpl implements AttendantService {
         return countryService.getCountCountryById(id) != 0;
     }
 
-    private boolean isResidenceExist(String id) {
+    private boolean isResidenceExist(int id) {
         return residenceService.getCountResidenceById(id) != 0;
     }
 
