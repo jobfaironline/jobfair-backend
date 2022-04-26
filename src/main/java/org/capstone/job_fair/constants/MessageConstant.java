@@ -238,6 +238,7 @@ public final class MessageConstant {
 
         public static final String INVALID_SKILL = "skill.error.invalid";
         public static final String SKILL_NOT_FOUND = "skill.error.not-found";
+        public static final String DUPLICATED = "skill.error.duplicate";
     }
 
     public static final class WorkHistory {
