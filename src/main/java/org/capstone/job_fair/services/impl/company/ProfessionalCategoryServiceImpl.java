@@ -9,12 +9,14 @@ import org.capstone.job_fair.services.mappers.company.ProfessionCategoryEntityMa
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional(readOnly = true)
 public class ProfessionalCategoryServiceImpl implements ProfessionalCategoryService {
 
     @Autowired
@@ -34,6 +36,7 @@ public class ProfessionalCategoryServiceImpl implements ProfessionalCategoryServ
     }
 
     @Override
+    @Transactional
     public ProfessionCategoryDTO delete(int id) {
         Optional<ProfessionCategoryEntity> professionCategoryEntityOptional = professionalCategoryRepository.findById(id);
         if (!professionCategoryEntityOptional.isPresent()) throw new
@@ -43,6 +46,7 @@ public class ProfessionalCategoryServiceImpl implements ProfessionalCategoryServ
     }
 
     @Override
+    @Transactional
     public ProfessionCategoryDTO create(ProfessionCategoryDTO dto) {
         Optional<ProfessionCategoryEntity> professionCategoryEntityOptional = professionalCategoryRepository.findById(dto.getId());
         if (professionCategoryEntityOptional.isPresent()) throw new
@@ -52,6 +56,7 @@ public class ProfessionalCategoryServiceImpl implements ProfessionalCategoryServ
     }
 
     @Override
+    @Transactional
     public ProfessionCategoryDTO update(ProfessionCategoryDTO dto) {
         Optional<ProfessionCategoryEntity> professionCategoryEntityOptional = professionalCategoryRepository.findById(dto.getId());
         if (!professionCategoryEntityOptional.isPresent()) throw new

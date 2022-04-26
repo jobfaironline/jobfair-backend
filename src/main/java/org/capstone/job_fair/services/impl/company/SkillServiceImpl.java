@@ -9,6 +9,7 @@ import org.capstone.job_fair.services.mappers.job_fair.SkillTagMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,6 +17,7 @@ import java.util.stream.Collectors;
 
 
 @Service
+@Transactional(readOnly = true)
 public class SkillServiceImpl implements SkillService {
 
     @Autowired
@@ -36,6 +38,7 @@ public class SkillServiceImpl implements SkillService {
     }
 
     @Override
+    @Transactional
     public SkillTagDTO delete(int id) {
         Optional<SkillTagEntity> entityOptional = skillTagRepository.findById(id);
         if(!entityOptional.isPresent()) throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.SkillTag.NOT_FOUND));
@@ -44,6 +47,7 @@ public class SkillServiceImpl implements SkillService {
     }
 
     @Override
+    @Transactional
     public SkillTagDTO create(SkillTagDTO dto) {
         Optional<SkillTagEntity> entityOptional = skillTagRepository.findById(dto.getId());
         if(entityOptional.isPresent()) throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Skill.DUPLICATED));
@@ -52,6 +56,7 @@ public class SkillServiceImpl implements SkillService {
     }
 
     @Override
+    @Transactional
     public SkillTagDTO update(SkillTagDTO dto) {
         Optional<SkillTagEntity> entityOptional = skillTagRepository.findById(dto.getId());
         if(!entityOptional.isPresent()) throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.SkillTag.NOT_FOUND));

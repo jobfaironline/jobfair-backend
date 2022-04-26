@@ -9,12 +9,14 @@ import org.capstone.job_fair.services.mappers.attendant.profile.QualificationMap
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional(readOnly = true)
 public class QualificationServiceImpl implements QualificationService {
 
     @Autowired
@@ -34,6 +36,7 @@ public class QualificationServiceImpl implements QualificationService {
     }
 
     @Override
+    @Transactional
     public QualificationDTO delete(int id) {
         Optional<QualificationEntity> entityOptional = qualificationRepository.findById(id);
         if(!entityOptional.isPresent()) throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Qualification.NOT_FOUND));
@@ -42,6 +45,7 @@ public class QualificationServiceImpl implements QualificationService {
      }
 
     @Override
+    @Transactional
     public QualificationDTO create(QualificationDTO dto) {
         Optional<QualificationEntity> entityOptional = qualificationRepository.findById(Integer.parseInt(dto.getId()));
         if(entityOptional.isPresent()) throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Qualification.DUPLICATED));
@@ -52,6 +56,7 @@ public class QualificationServiceImpl implements QualificationService {
     }
 
     @Override
+    @Transactional
     public QualificationDTO update(QualificationDTO dto) {
         Optional<QualificationEntity> entityOptional = qualificationRepository.findById(Integer.parseInt(dto.getId()));
         if(!entityOptional.isPresent()) throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Qualification.NOT_FOUND));

@@ -10,12 +10,14 @@ import org.capstone.job_fair.services.mappers.attendant.JobLevelMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional(readOnly = true)
 public class JobLevelServiceImpl implements JobLevelService {
 
     @Autowired
@@ -35,6 +37,7 @@ public class JobLevelServiceImpl implements JobLevelService {
     }
 
     @Override
+    @Transactional
     public JobLevelDTO delete(int id) {
         Optional<JobLevelEntity> entityOptional = jobLevelRepository.findById(id);
         if(!entityOptional.isPresent()) throw new
@@ -44,6 +47,7 @@ public class JobLevelServiceImpl implements JobLevelService {
     }
 
     @Override
+    @Transactional
     public JobLevelDTO create(JobLevelDTO dto) {
         Optional<JobLevelEntity> entityOptional = jobLevelRepository.findById(Integer.parseInt(dto.getId()));
         if(entityOptional.isPresent()) throw new
@@ -53,6 +57,7 @@ public class JobLevelServiceImpl implements JobLevelService {
     }
 
     @Override
+    @Transactional
     public JobLevelDTO update(JobLevelDTO dto) {
         Optional<JobLevelEntity> entityOptional = jobLevelRepository.findById(Integer.parseInt(dto.getId()));
         if(!entityOptional.isPresent()) throw new
