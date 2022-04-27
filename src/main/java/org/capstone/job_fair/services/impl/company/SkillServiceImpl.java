@@ -49,8 +49,6 @@ public class SkillServiceImpl implements SkillService {
     @Override
     @Transactional
     public SkillTagDTO create(SkillTagDTO dto) {
-        Optional<SkillTagEntity> entityOptional = skillTagRepository.findById(dto.getId());
-        if(entityOptional.isPresent()) throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Skill.DUPLICATED));
         SkillTagEntity entity = skillTagRepository.save(skillTagMapper.toEntity(dto));
         return skillTagMapper.toDTO(entity);
     }

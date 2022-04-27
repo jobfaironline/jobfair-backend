@@ -2,6 +2,7 @@ package org.capstone.job_fair.controllers.attendant;
 
 import lombok.extern.slf4j.Slf4j;
 import org.capstone.job_fair.constants.ApiEndPoint;
+import org.capstone.job_fair.controllers.payload.requests.attendant.CreateCountryRequest;
 import org.capstone.job_fair.models.dtos.attendant.CountryDTO;
 import org.capstone.job_fair.models.dtos.company.ProfessionCategoryDTO;
 import org.capstone.job_fair.services.interfaces.attendant.CountryService;
@@ -36,8 +37,8 @@ public class CountryController {
 
     @PostMapping(ApiEndPoint.Country.COUNTRY_ENPOINT)
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
-    public ResponseEntity<?> create(@RequestBody @Validated CountryDTO request) {
-        CountryDTO dto = new CountryDTO(request.getId(), request.getName());
+    public ResponseEntity<?> create(@RequestBody @Validated CreateCountryRequest request) {
+        CountryDTO dto = new CountryDTO(null, request.getName());
         dto = countryService.create(dto);
         return ResponseEntity.ok(dto);
     }

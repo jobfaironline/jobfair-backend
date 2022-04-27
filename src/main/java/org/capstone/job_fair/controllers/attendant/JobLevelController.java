@@ -2,6 +2,7 @@ package org.capstone.job_fair.controllers.attendant;
 
 
 import org.capstone.job_fair.constants.ApiEndPoint;
+import org.capstone.job_fair.controllers.payload.requests.attendant.CreateJobLevelRequest;
 import org.capstone.job_fair.models.dtos.account.GenderDTO;
 import org.capstone.job_fair.models.dtos.attendant.JobLevelDTO;
 import org.capstone.job_fair.services.interfaces.account.GenderService;
@@ -35,8 +36,8 @@ public class JobLevelController {
 
     @PostMapping(ApiEndPoint.JobLevel.JOB_LEVEL_ENDPOINT)
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
-    public ResponseEntity<?> create(@RequestBody @Validated JobLevelDTO request) {
-        JobLevelDTO dto = new JobLevelDTO(request.getId(), request.getName());
+    public ResponseEntity<?> create(@RequestBody @Validated CreateJobLevelRequest request) {
+        JobLevelDTO dto = new JobLevelDTO(null, request.getName());
         dto = jobLevelService.create(dto);
         return ResponseEntity.ok(dto);
     }

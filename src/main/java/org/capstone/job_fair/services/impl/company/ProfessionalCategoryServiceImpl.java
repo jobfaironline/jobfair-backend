@@ -48,9 +48,6 @@ public class ProfessionalCategoryServiceImpl implements ProfessionalCategoryServ
     @Override
     @Transactional
     public ProfessionCategoryDTO create(ProfessionCategoryDTO dto) {
-        Optional<ProfessionCategoryEntity> professionCategoryEntityOptional = professionalCategoryRepository.findById(dto.getId());
-        if (professionCategoryEntityOptional.isPresent()) throw new
-                IllegalArgumentException(MessageUtil.getMessage(MessageConstant.ProfessionalCategory.DUPLICATED));
         ProfessionCategoryEntity entity = professionalCategoryRepository.save(professionCategoryEntityMapper.toEntity(dto));
         return professionCategoryEntityMapper.toDTO(entity);
     }

@@ -37,8 +37,6 @@ public class GenderServiceImpl implements GenderService {
     @Override
     @Transactional
     public GenderDTO createGender(GenderDTO dto) {
-        Optional<GenderEntity> entityOptional = genderRepository.findById(dto.getId());
-        if(entityOptional.isPresent()) throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Gender.DUPLICATED_GENDER));
         GenderEntity entity = mapper.toEntity(dto);
         entity = genderRepository.save(entity);
         return mapper.toDTO(entity);

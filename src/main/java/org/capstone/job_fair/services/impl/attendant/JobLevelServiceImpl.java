@@ -49,9 +49,6 @@ public class JobLevelServiceImpl implements JobLevelService {
     @Override
     @Transactional
     public JobLevelDTO create(JobLevelDTO dto) {
-        Optional<JobLevelEntity> entityOptional = jobLevelRepository.findById(Integer.parseInt(dto.getId()));
-        if(entityOptional.isPresent()) throw new
-                IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobLevel.DUPLICATED));
         JobLevelEntity entity = jobLevelRepository.save(jobLevelMapper.toEntity(dto));
         return jobLevelMapper.toDTO(entity);
     }

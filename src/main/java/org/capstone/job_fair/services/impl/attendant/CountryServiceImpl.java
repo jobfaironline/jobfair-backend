@@ -64,8 +64,6 @@ public class CountryServiceImpl implements CountryService {
     @Override
     @Transactional
     public CountryDTO create(CountryDTO dto) {
-        Optional<CountryEntity> entityOptional = countryRepository.findById(dto.getId());
-        if(entityOptional.isPresent()) throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Account.COUNTRY_EXISTED));
         CountryEntity entity = countryRepository.save(countryMapper.toEntity(dto));
         return countryMapper.toDTO(entity);
     }

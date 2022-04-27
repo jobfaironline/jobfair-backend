@@ -2,6 +2,7 @@ package org.capstone.job_fair.controllers.attendant;
 
 
 import org.capstone.job_fair.constants.ApiEndPoint;
+import org.capstone.job_fair.controllers.payload.requests.attendant.CreateResidenceRequest;
 import org.capstone.job_fair.models.dtos.attendant.ResidenceDTO;
 import org.capstone.job_fair.services.interfaces.attendant.ResidenceService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +35,7 @@ public class ResidenceController {
 
     @PostMapping(ApiEndPoint.Residence.RESIDENCE_ENDPOINT)
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
-    public ResponseEntity<?> create(@RequestBody @Validated ResidenceDTO request) {
+    public ResponseEntity<?> create(@RequestBody @Validated CreateResidenceRequest request) {
         ResidenceDTO dto = new ResidenceDTO(null, request.getName());
         dto = residenceService.create(dto);
         return ResponseEntity.ok(dto);

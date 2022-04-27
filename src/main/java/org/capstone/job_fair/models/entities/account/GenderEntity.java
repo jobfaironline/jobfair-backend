@@ -16,6 +16,7 @@ import java.util.Objects;
 public class GenderEntity {
     @Id
     @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @Column(name = "name")
     private String name;

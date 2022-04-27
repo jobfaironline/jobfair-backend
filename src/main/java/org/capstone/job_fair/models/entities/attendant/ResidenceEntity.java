@@ -18,6 +18,7 @@ public class ResidenceEntity {
     @EqualsAndHashCode.Include
     @Id
     @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @Basic
     @Column(name = "name")

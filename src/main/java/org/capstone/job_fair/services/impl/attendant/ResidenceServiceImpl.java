@@ -54,9 +54,6 @@ public class ResidenceServiceImpl implements ResidenceService {
     @Override
     @Transactional
     public ResidenceDTO create(ResidenceDTO dto) {
-        Optional<ResidenceEntity> entityOptional = residenceRepository.findById(dto.getId());
-        if(entityOptional.isPresent()) throw new
-                IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Residence.DUPLICATED));
         ResidenceEntity entity = residenceRepository.save(residenceMapper.toEntity(dto));
         return residenceMapper.toDTO(entity);
     }

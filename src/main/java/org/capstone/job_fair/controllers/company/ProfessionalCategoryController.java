@@ -2,6 +2,7 @@ package org.capstone.job_fair.controllers.company;
 
 
 import org.capstone.job_fair.constants.ApiEndPoint;
+import org.capstone.job_fair.controllers.payload.requests.company.CreateProfessionalCategoryRequest;
 import org.capstone.job_fair.models.dtos.attendant.JobLevelDTO;
 import org.capstone.job_fair.models.dtos.company.ProfessionCategoryDTO;
 import org.capstone.job_fair.services.interfaces.attendant.JobLevelService;
@@ -36,8 +37,8 @@ public class ProfessionalCategoryController {
 
     @PostMapping(ApiEndPoint.ProfessionalCategory.PROFESSIONAL_CATEGORY_ENDPOINT)
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
-    public ResponseEntity<?> create(@RequestBody @Validated ProfessionCategoryDTO request) {
-        ProfessionCategoryDTO dto = new ProfessionCategoryDTO(request.getId(), request.getName());
+    public ResponseEntity<?> create(@RequestBody @Validated CreateProfessionalCategoryRequest request) {
+        ProfessionCategoryDTO dto = new ProfessionCategoryDTO(null, request.getName());
         dto = professionalCategoryService.create(dto);
         return ResponseEntity.ok(dto);
     }

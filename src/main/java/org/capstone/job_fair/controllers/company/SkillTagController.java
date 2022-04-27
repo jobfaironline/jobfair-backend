@@ -1,6 +1,7 @@
 package org.capstone.job_fair.controllers.company;
 
 import org.capstone.job_fair.constants.ApiEndPoint;
+import org.capstone.job_fair.controllers.payload.requests.company.CreateSkillTagRequest;
 import org.capstone.job_fair.models.dtos.company.ProfessionCategoryDTO;
 import org.capstone.job_fair.models.dtos.company.SkillTagDTO;
 import org.capstone.job_fair.services.interfaces.company.ProfessionalCategoryService;
@@ -35,8 +36,8 @@ public class SkillTagController {
 
     @PostMapping(ApiEndPoint.Skill.SKILL_ENDPOINT)
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
-    public ResponseEntity<?> create(@RequestBody @Validated SkillTagDTO request) {
-        SkillTagDTO dto = new SkillTagDTO(request.getId(), request.getName());
+    public ResponseEntity<?> create(@RequestBody @Validated CreateSkillTagRequest request) {
+        SkillTagDTO dto = new SkillTagDTO(null, request.getName());
         dto = skillService.create(dto);
         return ResponseEntity.ok(dto);
     }

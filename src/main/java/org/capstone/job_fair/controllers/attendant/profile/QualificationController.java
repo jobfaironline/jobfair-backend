@@ -1,6 +1,7 @@
 package org.capstone.job_fair.controllers.attendant.profile;
 
 import org.capstone.job_fair.constants.ApiEndPoint;
+import org.capstone.job_fair.controllers.payload.requests.attendant.CreateQualificationRequest;
 import org.capstone.job_fair.models.dtos.attendant.JobLevelDTO;
 import org.capstone.job_fair.models.dtos.attendant.profile.QualificationDTO;
 import org.capstone.job_fair.services.interfaces.attendant.JobLevelService;
@@ -34,8 +35,8 @@ public class QualificationController {
 
     @PostMapping(ApiEndPoint.Qualification.PROFESSIONAL_CATEGORY_ENDPOINT)
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
-    public ResponseEntity<?> create(@RequestBody @Validated QualificationDTO request) {
-        QualificationDTO dto = new QualificationDTO(request.getId(), request.getName());
+    public ResponseEntity<?> create(@RequestBody @Validated CreateQualificationRequest request) {
+        QualificationDTO dto = new QualificationDTO(null, request.getName());
         dto = qualificationService.create(dto);
         return ResponseEntity.ok(dto);
     }

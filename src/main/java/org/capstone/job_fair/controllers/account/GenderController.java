@@ -1,6 +1,7 @@
 package org.capstone.job_fair.controllers.account;
 
 import org.capstone.job_fair.constants.ApiEndPoint;
+import org.capstone.job_fair.controllers.payload.requests.account.CreateGenderRequest;
 import org.capstone.job_fair.models.dtos.account.GenderDTO;
 import org.capstone.job_fair.services.interfaces.account.GenderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,8 +34,8 @@ public class GenderController {
 
     @PostMapping(ApiEndPoint.Gender.GENDER_ENDPOINT)
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
-    public ResponseEntity<?> createGender(@RequestBody @Validated GenderDTO request) {
-        GenderDTO dto = new GenderDTO(request.getId(), request.getName(), request.getDescription());
+    public ResponseEntity<?> createGender(@RequestBody @Validated CreateGenderRequest request) {
+        GenderDTO dto = new GenderDTO(null, request.getName(), request.getDescription());
         dto = genderService.createGender(dto);
         return ResponseEntity.ok(dto);
     }
