@@ -1,11 +1,11 @@
-package org.capstone.job_fair.controllers.attendant;
+package org.capstone.job_fair.controllers.company;
 
-import lombok.extern.slf4j.Slf4j;
 import org.capstone.job_fair.constants.ApiEndPoint;
-import org.capstone.job_fair.controllers.payload.requests.attendant.CreateCountryRequest;
-import org.capstone.job_fair.models.dtos.attendant.CountryDTO;
+import org.capstone.job_fair.controllers.payload.requests.company.CreateSkillTagRequest;
 import org.capstone.job_fair.models.dtos.company.ProfessionCategoryDTO;
-import org.capstone.job_fair.services.interfaces.attendant.CountryService;
+import org.capstone.job_fair.models.dtos.company.SkillTagDTO;
+import org.capstone.job_fair.services.interfaces.company.ProfessionalCategoryService;
+import org.capstone.job_fair.services.interfaces.company.SkillService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -16,47 +16,43 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@Slf4j
-public class CountryController {
+public class SkillTagController {
+
 
     @Autowired
-    CountryService countryService;
+    private SkillService skillService;
 
-
-    @GetMapping(ApiEndPoint.Country.COUNTRY_ENPOINT + "/{id}")
+    @GetMapping(ApiEndPoint.Skill.SKILL_ENDPOINT + "/{id}")
     public ResponseEntity<?> findById(@PathVariable("id") int id) {
-        Optional<CountryDTO> dtoOptional = countryService.findById(id);
+        Optional<SkillTagDTO> dtoOptional = skillService.findById(id);
         return dtoOptional.isPresent() ? ResponseEntity.ok(dtoOptional.get()) : ResponseEntity.notFound().build();
     }
 
-    @GetMapping(ApiEndPoint.Country.COUNTRY_ENPOINT)
+    @GetMapping(ApiEndPoint.Skill.SKILL_ENDPOINT)
     public ResponseEntity<?> getAll() {
-        List<CountryDTO> dtoList = countryService.getAll();
+        List<SkillTagDTO> dtoList = skillService.getAll();
         return dtoList.size() == 0 ? ResponseEntity.noContent().build() : ResponseEntity.ok(dtoList);
     }
 
-    @PostMapping(ApiEndPoint.Country.COUNTRY_ENPOINT)
+    @PostMapping(ApiEndPoint.Skill.SKILL_ENDPOINT)
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
-    public ResponseEntity<?> create(@RequestBody @Validated CreateCountryRequest request) {
-        CountryDTO dto = new CountryDTO(null, request.getName());
-        dto = countryService.create(dto);
+    public ResponseEntity<?> create(@RequestBody @Validated CreateSkillTagRequest request) {
+        SkillTagDTO dto = new SkillTagDTO(null, request.getName());
+        dto = skillService.create(dto);
         return ResponseEntity.ok(dto);
     }
 
-    @PutMapping(ApiEndPoint.Country.COUNTRY_ENPOINT)
+    @PutMapping(ApiEndPoint.Skill.SKILL_ENDPOINT)
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
-    public ResponseEntity<?> update(@RequestBody @Validated CountryDTO request) {
-        request = countryService.update(request);
+    public ResponseEntity<?> update(@RequestBody @Validated SkillTagDTO request) {
+        request = skillService.update(request);
         return ResponseEntity.ok(request);
     }
 
-    @DeleteMapping(ApiEndPoint.Country.COUNTRY_ENPOINT + "/{id}")
+    @DeleteMapping(ApiEndPoint.Skill.SKILL_ENDPOINT + "/{id}")
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
     public ResponseEntity<?> delete(@PathVariable("id") int id) {
-        CountryDTO dto = countryService.delete(id);
+        SkillTagDTO dto = skillService.delete(id);
         return ResponseEntity.ok(dto);
     }
-
-
-
 }

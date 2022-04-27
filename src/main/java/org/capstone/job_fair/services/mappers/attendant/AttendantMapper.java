@@ -108,7 +108,7 @@ public abstract class AttendantMapper {
     public abstract AttendantDTO toDTO(RegisterAttendantRequest request);
 
     @Named("fromCountryIdOfAttendantDTO")
-    public CountryEntity fromCountryIdOfAttendantDTO(String countryId) {
+    public CountryEntity fromCountryIdOfAttendantDTO(Integer countryId) {
         if (countryId == null) return null;
         CountryEntity entity = new CountryEntity();
         entity.setId(countryId);
@@ -116,13 +116,13 @@ public abstract class AttendantMapper {
     }
 
     @Named("fromCountryEntityOfAttendantEntity")
-    public String fromCountryEntityOfAttendantEntity(CountryEntity entity) {
+    public Integer fromCountryEntityOfAttendantEntity(CountryEntity entity) {
         if (entity == null) return null;
         return entity.getId();
     }
 
     @Named("fromResidenceIdOfAttendantDTO")
-    public ResidenceEntity fromResidenceIdOfAttendantDTO(String residenceId) {
+    public ResidenceEntity fromResidenceIdOfAttendantDTO(Integer residenceId) {
         if (residenceId == null) return null;
         ResidenceEntity entity = new ResidenceEntity();
         entity.setId(residenceId);
@@ -130,7 +130,7 @@ public abstract class AttendantMapper {
     }
 
     @Named("fromResidenceEntityOfAttendantEntity")
-    public String fromResidenceEntityOfAttendantEntity(ResidenceEntity entity) {
+    public Integer fromResidenceEntityOfAttendantEntity(ResidenceEntity entity) {
         if (entity == null) return null;
         return entity.getId();
     }

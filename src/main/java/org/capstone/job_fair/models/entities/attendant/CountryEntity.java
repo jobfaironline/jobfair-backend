@@ -17,9 +17,8 @@ import java.util.Objects;
 public class CountryEntity {
     @Id
     @Column(name = "id")
-    @GeneratedValue(generator = "uuid")
-    @GenericGenerator(name = "uuid", strategy = "org.hibernate.id.UUIDGenerator")
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
     @Column(name = "name", length = 1000)
     private String name;

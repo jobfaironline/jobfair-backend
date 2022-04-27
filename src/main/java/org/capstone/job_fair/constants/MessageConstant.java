@@ -5,6 +5,51 @@ public final class MessageConstant {
 
     }
 
+    public static final class JobLevel {
+        private JobLevel() {
+
+        }
+
+        public static final String NOT_FOUND = "job-level.error.not-found";
+        public static final String DUPLICATED = "job-level.error.duplicate-job-level";
+    }
+
+    public static final class ProfessionalCategory {
+        private ProfessionalCategory() {
+
+        }
+
+        public static final String NOT_FOUND = "professional-category.error.not-found";
+        public static final String DUPLICATED = "professional-category.error.duplicate-job-level";
+    }
+
+    public static final class Residence {
+        private Residence() {
+
+        }
+
+        public static final String NOT_FOUND = "residence.error.not-found";
+        public static final String DUPLICATED = "residence.error.duplicate-job-level";
+    }
+
+    public static final class Role {
+        private Role() {
+
+        }
+
+        public static final String NOT_FOUND = "role.error.not-found";
+        public static final String DUPLICATED = "role.error.duplicate-job-level";
+    }
+
+    public static final class Qualification {
+        private Qualification() {
+
+        }
+
+        public static final String NOT_FOUND = "qualification.error.not-found";
+        public static final String DUPLICATED = "qualification.error.duplicate-job-level";
+    }
+
     public static final class Exception {
         public static final String RESOURCE_NOT_FOUND = "error.exception.resource-not-found";
         public static final String JWT_ERROR = "error.exception.jwt-error";
@@ -27,9 +72,11 @@ public final class MessageConstant {
 
         }
 
+
     }
 
     public static final class JobFair {
+
         public static final String JOB_FAIR_NOT_FOUND = "job-fair.error.not-found";
         public static final String INVALID_DECORATE_TIME = "job-fair.error.invalid-decorate-time";
         public static final String INVALID_PUBLIC_TIME = "job-fair.error.invalid-public-time";
@@ -79,6 +126,7 @@ public final class MessageConstant {
         public static final String EXISTED = "account.error.existed";
         public static final String EMAIL_EXISTED = "account.error.email-existed";
         public static final String NOT_FOUND_COUNTRY = "account.error.not-found-country";
+        public static final String COUNTRY_EXISTED = "account.error.country-existed";
         public static final String NOT_FOUND_RESIDENCE = "account.error.not-found-residence";
         public static final String NOT_FOUND_JOB_LEVEL = "account.error.not-found-job-level";
         public static final String NOT_FOUND_QUALIFICATION = "account.error.not-found-qualification";
@@ -161,6 +209,8 @@ public final class MessageConstant {
 
         private Gender() {
         }
+        public static final String DUPLICATED_GENDER = "gender.error.duplicated";
+
     }
 
     public static final class Job {
@@ -182,6 +232,7 @@ public final class MessageConstant {
         public static final String SKILL_NOT_FOUND = "skill.error.not-found";
         private Skill() {
         }
+        public static final String DUPLICATED = "skill.error.duplicate";
     }
 
     public static final class WorkHistory {
