@@ -21,6 +21,58 @@ public final class ApiEndPoint {
 
     }
 
+    public static final class Gender {
+        private Gender() {
+
+        }
+
+        public static final String GENDER_ENDPOINT = ROOT_ENDPOINT + VERSION + "/gender";
+
+
+    }
+
+    public static final class JobLevel{
+        private JobLevel(){
+
+        }
+        public static final String JOB_LEVEL_ENDPOINT = ROOT_ENDPOINT + VERSION + "/job-level";
+    }
+
+    public static final class Residence{
+        private Residence(){
+
+        }
+        public static final String RESIDENCE_ENDPOINT = ROOT_ENDPOINT + VERSION + "/residence";
+    }
+
+    public static final class ProfessionalCategory{
+        private ProfessionalCategory(){
+
+        }
+        public static final String PROFESSIONAL_CATEGORY_ENDPOINT = ROOT_ENDPOINT + VERSION + "/professional-category";
+    }
+
+    public static final class Skill{
+        private Skill(){
+
+        }
+        public static final String SKILL_ENDPOINT = ROOT_ENDPOINT + VERSION + "/skill";
+    }
+
+    public static final class Qualification{
+        private Qualification(){
+
+        }
+        public static final String PROFESSIONAL_CATEGORY_ENDPOINT = ROOT_ENDPOINT + VERSION + "/qualification";
+    }
+
+    public static final class Role{
+        private Role(){
+
+        }
+        public static final String ROLE_ENDPOINT = ROOT_ENDPOINT + VERSION + "/role";
+    }
+
 
     public static final class JobFair {
         private JobFair() {

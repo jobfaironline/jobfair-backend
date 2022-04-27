@@ -1,7 +1,10 @@
 package org.capstone.job_fair.models.dtos.company;
 
 import lombok.*;
+import org.springframework.format.annotation.NumberFormat;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Data
@@ -11,6 +14,9 @@ import java.io.Serializable;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class ProfessionCategoryDTO implements Serializable {
     @EqualsAndHashCode.Include
-    private int id;
+    @NotNull
+    @NumberFormat
+    private Integer id;
+    @NotBlank
     private String name;
 }

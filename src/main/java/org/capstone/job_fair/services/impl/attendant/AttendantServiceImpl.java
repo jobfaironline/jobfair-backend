@@ -52,11 +52,11 @@ public class AttendantServiceImpl implements AttendantService {
         return accountService.getCountAccountByEmail(email) != 0;
     }
 
-    private boolean isCountryExist(String id) {
+    private boolean isCountryExist(int id) {
         return countryService.getCountCountryById(id) != 0;
     }
 
-    private boolean isResidenceExist(String id) {
+    private boolean isResidenceExist(int id) {
         return residenceService.getCountResidenceById(id) != 0;
     }
 

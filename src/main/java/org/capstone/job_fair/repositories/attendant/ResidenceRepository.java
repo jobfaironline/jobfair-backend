@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 
 
 @Repository
-public interface ResidenceRepository extends JpaRepository<ResidenceEntity, String> {
-    Integer countById(String id);
+public interface ResidenceRepository extends JpaRepository<ResidenceEntity, Integer> {
+    Integer countById(int id);
 }

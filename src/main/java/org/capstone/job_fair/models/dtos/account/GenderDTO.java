@@ -1,6 +1,10 @@
 package org.capstone.job_fair.models.dtos.account;
 
 import lombok.*;
+import org.springframework.format.annotation.NumberFormat;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Data
 @AllArgsConstructor
@@ -9,6 +13,12 @@ import lombok.*;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class GenderDTO {
     @EqualsAndHashCode.Include
-    private int id;
+    @NotNull
+    @NumberFormat
+    private Integer id;
+    @NotBlank
     private String name;
+    @NotBlank
+    private String description;
+
 }
