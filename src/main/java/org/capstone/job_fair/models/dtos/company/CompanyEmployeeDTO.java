@@ -1,5 +1,6 @@
 package org.capstone.job_fair.models.dtos.company;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
 
@@ -16,4 +17,5 @@ public class CompanyEmployeeDTO implements Serializable {
     private AccountDTO account;
     private CompanyDTO companyDTO;
     private String department;
+    private String employeeId;
 }

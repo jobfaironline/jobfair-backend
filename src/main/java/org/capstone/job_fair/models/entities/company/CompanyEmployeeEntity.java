@@ -35,6 +35,9 @@ public class CompanyEmployeeEntity {
     @Column(name = "department")
     private String department;
 
+    @Column(name = "employee_id")
+    private String employeeId;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

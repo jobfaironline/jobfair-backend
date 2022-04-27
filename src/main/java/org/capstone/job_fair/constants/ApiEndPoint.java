@@ -89,9 +89,9 @@ public final class ApiEndPoint {
         private Questions() {
 
         }
-
         public static final String QUESTION = ROOT_ENDPOINT + VERSION + "/questions";
         public static final String BY_JOB_POSITION = QUESTION + "/job-position";
+        public static final String UPLOAD_CSV = QUESTION + "/csv";
     }
 
     public static final class CompanyRegistration {
@@ -177,6 +177,7 @@ public final class ApiEndPoint {
         public static final String REGISTER_COMPANY_MANAGER = COMPANY_EMPLOYEE_ENDPOINT + "/manager/register";
         public static final String UPDATE_PROFILE_ENDPOINT = COMPANY_EMPLOYEE_ENDPOINT + "/update";
         public static final String PROMOTE_EMPLOYEE_ENDPOINT = COMPANY_EMPLOYEE_ENDPOINT + "/promote";
+        public static final String UPLOAD_CSV_ENDPOINT = COMPANY_EMPLOYEE_ENDPOINT + "/csv";
     }
 
     public static final class ThreeDimensionMedia {
