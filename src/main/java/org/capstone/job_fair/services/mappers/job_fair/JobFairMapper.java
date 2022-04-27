@@ -4,11 +4,14 @@ import org.capstone.job_fair.controllers.payload.requests.job_fair.DraftJobFairR
 import org.capstone.job_fair.controllers.payload.requests.job_fair.UpdateJobFairRequest;
 import org.capstone.job_fair.models.dtos.job_fair.JobFairDTO;
 import org.capstone.job_fair.models.entities.job_fair.JobFairEntity;
+import org.capstone.job_fair.services.mappers.company.CompanyMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
-@Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+@Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE, uses = {
+        CompanyMapper.class
+})
 public abstract class JobFairMapper {
     public abstract JobFairEntity toEntity(JobFairDTO dto);
 

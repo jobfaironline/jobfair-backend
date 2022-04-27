@@ -90,7 +90,6 @@ public class JobFairController {
         return ResponseEntity.ok(response);
     }
 
-    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
     @GetMapping(ApiEndPoint.JobFair.JOB_FAIR + "/{id}")
     public ResponseEntity<?> getJobFairDetailById(@PathVariable("id") String id) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -99,9 +98,6 @@ public class JobFairController {
             return ResponseEntity.notFound().build();
         }
         JobFairDTO jobFairDTO = result.get();
-        if (!jobFairDTO.getCompany().getId().equals(userDetails.getCompanyId())) {
-            return ResponseEntity.notFound().build();
-        }
         return ResponseEntity.ok(jobFairDTO);
     }
 
@@ -166,8 +162,15 @@ public class JobFairController {
 
     @GetMapping(ApiEndPoint.JobFair.FOR_ATTENDANT)
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ATTENDANT)")
-    public ResponseEntity<?> getJobFairForAttendant(@RequestParam(value = "offset", defaultValue = JobFairConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset, @RequestParam(value = "pageSize", defaultValue = JobFairConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize, @RequestParam(value = "sortBy", defaultValue = JobFairConstant.DEFAULT_SEARCH_SORT_BY_VALUE) String sortBy, @RequestParam(value = "direction", required = false, defaultValue = JobFairConstant.DEFAULT_SEARCH_SORT_DIRECTION) Sort.Direction direction, @RequestParam(value = "name", defaultValue = JobFairConstant.DEFAULT_JOBFAIR_NAME) String name) {
-        Page<JobFairDTO> result = jobFairService.findJobFairForAttendantByName(name, PageRequest.of(offset, pageSize).withSort(Sort.by(direction, sortBy)));
+    public ResponseEntity<?> getJobFairForAttendant(
+            @RequestParam(value = "offset", defaultValue = JobFairConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset,
+            @RequestParam(value = "pageSize", defaultValue = JobFairConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize,
+            @RequestParam(value = "sortBy", defaultValue = JobFairConstant.DEFAULT_SEARCH_SORT_BY_VALUE) String sortBy,
+            @RequestParam(value = "direction", required = false, defaultValue = JobFairConstant.DEFAULT_SEARCH_SORT_DIRECTION) Sort.Direction direction,
+            @RequestParam(value = "name", defaultValue = JobFairConstant.DEFAULT_JOBFAIR_NAME) String name,
+            @RequestParam(value = "categoryId", defaultValue = JobFairConstant.DEFAULT_CATEGORY_ID) String categoryId,
+            @RequestParam(value = "countryId", defaultValue = JobFairConstant.DEFAULT_COUNTRY_ID) String countryId) {
+        Page<JobFairDTO> result = jobFairService.findJobFairForAttendantByCriteria(name, countryId, categoryId, PageRequest.of(offset, pageSize).withSort(Sort.by(direction, sortBy)));
         return ResponseEntity.ok(result);
     }
 

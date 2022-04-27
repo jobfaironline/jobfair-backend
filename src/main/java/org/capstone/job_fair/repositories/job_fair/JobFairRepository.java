@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -21,8 +22,13 @@ public interface JobFairRepository extends JpaRepository<JobFairEntity, String> 
     @Query("select j from JobFairEntity j where (j.name like ?1 or j.name is null) and j.company.id = ?2")
     Page<JobFairEntity> findByNameLikeOrNameIsNullAndCompanyId(String name, String companyId, Pageable pageable);
 
-    @Query("select j from JobFairEntity j where (j.name like :name or j.name is null) and j.status = :status and (j.publicStartTime <= :currentTime and j.publicEndTime >= :currentTime)")
-    Page<JobFairEntity> findJobFairForAttendant(@Param("name") String name, @Param("status") JobFairPlanStatus status, @Param("currentTime") long currentTime, Pageable pageable);
+    @Query("select DISTINCT j from JobFairEntity j JOIN j.company.subCategories as c where (j.name like :name or j.name is null) and j.status = :status and (j.publicStartTime <= :currentTime and j.publicEndTime >= :currentTime) and (CAST(:subCategoryId as int ) = c.id OR :subCategoryId='')")
+    Page<JobFairEntity> findJobFairForAttendant(
+            @Param("name") String name,
+            @Param("status") JobFairPlanStatus status,
+            @Param("currentTime") long currentTime,
+            @Param("subCategoryId") String subCategory,
+            Pageable pageable);
 
 
 }

@@ -155,8 +155,13 @@ public class JobFairServiceImpl implements JobFairService {
     }
 
     @Override
-    public Page<JobFairDTO> findJobFairForAttendantByName(String name, Pageable pageable) {
+    public Page<JobFairDTO> findJobFairForAttendantByCriteria(String name, String countryId, String subCategoryId, Pageable pageable) {
         long currentTime = new Date().getTime();
-        return jobFairRepository.findJobFairForAttendant("%" + name + "%", JobFairPlanStatus.PUBLISH, currentTime, pageable).map(jobFairMapper::toDTO);
+        return jobFairRepository.findJobFairForAttendant
+                ("%" + name + "%",
+                        JobFairPlanStatus.PUBLISH,
+                        currentTime,
+                        subCategoryId,
+                        pageable).map(jobFairMapper::toDTO);
     }
 }
