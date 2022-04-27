@@ -51,7 +51,8 @@ public class NotificationServiceImpl implements NotificationService {
 
         message.setNotificationId(UUID.randomUUID().toString());
         message.setRead(false);
-        message.setCreateDate(new Date().getTime());
+        Long now = new Date().getTime();
+        message.setCreateDate(now.toString());
 
         List<NotificationMessageEntity> notificationMessageEntityList = accountIdList.stream().map(s -> {
             NotificationMessageEntity entity = notificationMessageMapper.toEntity(message);
@@ -71,7 +72,8 @@ public class NotificationServiceImpl implements NotificationService {
 
         message.setNotificationId(UUID.randomUUID().toString());
         message.setRead(false);
-        message.setCreateDate(new Date().getTime());
+        Long now = new Date().getTime();
+        message.setCreateDate(now.toString());
 
         NotificationMessageEntity entity = notificationMessageMapper.toEntity(message);
         entity.setId(UUID.randomUUID().toString());
@@ -89,7 +91,8 @@ public class NotificationServiceImpl implements NotificationService {
 
         message.setNotificationId(UUID.randomUUID().toString());
         message.setRead(false);
-        message.setCreateDate(new Date().getTime());
+        Long now = new Date().getTime();
+        message.setCreateDate(now.toString());
 
         List<NotificationMessageEntity> notificationMessageEntityList = receiverIdList.stream().map(s -> {
             NotificationMessageEntity entity = notificationMessageMapper.toEntity(message);
@@ -118,7 +121,7 @@ public class NotificationServiceImpl implements NotificationService {
 
         List<NotificationMessageEntity> notifications = dynamoDBMapper.scan(NotificationMessageEntity.class, scanExpression);
         notifications = notifications.stream().collect(Collectors.toList());
-        notifications.sort((o1, o2) -> Math.toIntExact(o2.getCreateDate() - o1.getCreateDate()));
+        notifications.sort((o1, o2) -> Math.toIntExact(o2.getCreateDate().compareTo(o1.getCreateDate())));
 
         return notifications.stream().map(notificationMessageMapper::toDTO).collect(Collectors.toList());
 
