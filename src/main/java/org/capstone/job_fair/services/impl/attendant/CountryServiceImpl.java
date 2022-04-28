@@ -35,14 +35,6 @@ public class CountryServiceImpl implements CountryService {
     CountryMapper countryMapper;
 
     @Override
-    public List<CountryDTO> getAllCountries(){
-        List<CountryEntity> countryEntities = countryRepository.findAll();
-        return countryEntities.stream().map(countryMapper::toDTO).collect(Collectors.toList());
-
-
-    }
-
-    @Override
     public Optional<CountryDTO> findById(int id) {
         return countryRepository.findById(id).map(countryEntity -> countryMapper.toDTO(countryEntity));
     }

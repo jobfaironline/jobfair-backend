@@ -19,5 +19,6 @@ public class JobFairBoothDTO implements Serializable {
     private String description;
     private JobFairDTO jobFair;
     private LayoutBoothDTO booth;
+    private String name;
     private List<BoothJobPositionDTO> boothJobPositions;
 }
