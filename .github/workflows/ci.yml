@@ -50,10 +50,10 @@ jobs:   #Build's job
         run: |
              sudo /etc/init.d/mysql start
              cd DDL/
+             echo $DB_OPTIONS >> 00.1_db_options.sql;
              for filename in $(ls -1 * | sort -n); do
               cat $filename >> schema.sql;
              done
-             echo $DB_OPTIONS >> schema.sql
              mysql -h $DATASOURCE_URL -P $DATASOURCE_PORT -u $DATASOURCE_USERNAME -p$DATASOURCE_PASSWORD < schema.sql
              rm schema.sql
              cd ../DML/
