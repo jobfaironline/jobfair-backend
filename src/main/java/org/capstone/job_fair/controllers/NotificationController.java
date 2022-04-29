@@ -3,6 +3,7 @@ package org.capstone.job_fair.controllers;
 import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.models.dtos.notification.NotificationMessageDTO;
+import org.capstone.job_fair.models.enums.NotificationType;
 import org.capstone.job_fair.services.interfaces.notification.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +29,7 @@ public class NotificationController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping(ApiEndPoint.Notification.READ_ALL )
+    @PostMapping(ApiEndPoint.Notification.READ_ALL)
     public ResponseEntity<?> readNotification() {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         notificationService.readAll(userDetails.getId());
@@ -36,8 +37,8 @@ public class NotificationController {
     }
 
     @PostMapping("/notification")
-    public ResponseEntity<?> makeNoti(@RequestParam String message, @RequestParam String title, @RequestParam String userId){
-        NotificationMessageDTO dto = NotificationMessageDTO.builder().message(message).title(title).userId(userId).build();
+    public ResponseEntity<?> makeNoti(@RequestParam String message, @RequestParam String title, @RequestParam String userId, @RequestParam NotificationType type) {
+        NotificationMessageDTO dto = NotificationMessageDTO.builder().message(message).title(title).userId(userId).notificationType(type).build();
         notificationService.createNotification(dto, userId);
         return ResponseEntity.ok().build();
     }

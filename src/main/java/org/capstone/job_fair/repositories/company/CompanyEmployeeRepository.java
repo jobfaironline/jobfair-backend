@@ -1,6 +1,7 @@
 package org.capstone.job_fair.repositories.company;
 
 import org.capstone.job_fair.models.entities.company.CompanyEmployeeEntity;
+import org.capstone.job_fair.models.enums.Role;
 import org.capstone.job_fair.models.statuses.AccountStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,7 +15,7 @@ import java.util.Optional;
 @Repository
 public interface CompanyEmployeeRepository extends JpaRepository<CompanyEmployeeEntity, String> {
 
-    List<CompanyEmployeeEntity> findAllByCompanyId(String id);
+    List<CompanyEmployeeEntity> findAllByCompanyIdAndAccountRoleId(String id, int roleId);
 
     Integer countByCompanyIdAndAccountStatusIn(String companyId, List<AccountStatus> status);
 

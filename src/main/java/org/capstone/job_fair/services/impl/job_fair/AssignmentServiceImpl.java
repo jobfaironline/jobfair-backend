@@ -8,6 +8,7 @@ import org.capstone.job_fair.models.entities.company.JobFairBoothEntity;
 import org.capstone.job_fair.models.entities.job_fair.AssignmentEntity;
 import org.capstone.job_fair.models.entities.job_fair.JobFairEntity;
 import org.capstone.job_fair.models.enums.AssignmentType;
+import org.capstone.job_fair.models.enums.Role;
 import org.capstone.job_fair.models.statuses.JobFairPlanStatus;
 import org.capstone.job_fair.repositories.company.CompanyEmployeeRepository;
 import org.capstone.job_fair.repositories.company.JobFairBoothRepository;
@@ -129,7 +130,7 @@ public class AssignmentServiceImpl implements AssignmentService {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.JOB_FAIR_NOT_FOUND));
         }
         List<AssignmentEntity> assignmentsInJobFair = assignmentRepository.findByJobFairBoothJobFairIdAndJobFairBoothJobFairCompanyId(jobFairId, companyId);
-        List<CompanyEmployeeEntity> companyEmployees = companyEmployeeRepository.findAllByCompanyId(companyId);
+        List<CompanyEmployeeEntity> companyEmployees = companyEmployeeRepository.findAllByCompanyIdAndAccountRoleId(companyId, Role.COMPANY_EMPLOYEE.ordinal());
 
         companyEmployees = companyEmployees.stream().filter(companyEmployee -> {
             boolean result = assignmentsInJobFair.stream().anyMatch(assignment -> assignment.getCompanyEmployee().getAccountId().equals(companyEmployee.getAccountId()));
