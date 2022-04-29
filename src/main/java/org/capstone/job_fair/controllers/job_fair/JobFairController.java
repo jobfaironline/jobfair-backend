@@ -11,12 +11,17 @@ import org.capstone.job_fair.controllers.payload.responses.RenderJobFairParkResp
 import org.capstone.job_fair.models.dtos.company.CompanyDTO;
 import org.capstone.job_fair.models.dtos.company.JobFairBoothDTO;
 import org.capstone.job_fair.models.dtos.company.JobFairBoothLayoutDTO;
+import org.capstone.job_fair.models.dtos.job_fair.AssignmentDTO;
 import org.capstone.job_fair.models.dtos.job_fair.JobFairDTO;
 import org.capstone.job_fair.models.dtos.job_fair.LayoutDTO;
+import org.capstone.job_fair.models.dtos.notification.NotificationMessageDTO;
+import org.capstone.job_fair.models.enums.NotificationType;
 import org.capstone.job_fair.services.interfaces.company.CompanyBoothLayoutService;
 import org.capstone.job_fair.services.interfaces.company.JobFairBoothService;
+import org.capstone.job_fair.services.interfaces.job_fair.AssignmentService;
 import org.capstone.job_fair.services.interfaces.job_fair.JobFairService;
 import org.capstone.job_fair.services.interfaces.job_fair.LayoutService;
+import org.capstone.job_fair.services.interfaces.notification.NotificationService;
 import org.capstone.job_fair.services.interfaces.util.FileStorageService;
 import org.capstone.job_fair.services.mappers.job_fair.JobFairMapper;
 import org.capstone.job_fair.utils.ImageUtil;
@@ -32,6 +37,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -55,6 +61,12 @@ public class JobFairController {
 
     @Autowired
     private FileStorageService fileStorageService;
+
+    @Autowired
+    private NotificationService notificationService;
+
+    @Autowired
+    private AssignmentService assignmentService;
 
     @GetMapping(ApiEndPoint.JobFair.FOR_3D_MAP + "/{id}")
     public ResponseEntity<?> getJobFairInformationFor3DMap(@PathVariable("id") String jobFairId) {
@@ -143,6 +155,19 @@ public class JobFairController {
     public ResponseEntity<?> publishJobFair(@PathVariable("jobFairId") String jobFairPlanId) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         jobFairService.publishJobFair(userDetails.getCompanyId(), jobFairPlanId);
+
+        List<AssignmentDTO> assignments = assignmentService.getAssignmentByJobFairId(jobFairPlanId, userDetails.getCompanyId());
+        assignments.forEach(assignment -> {
+            NotificationMessageDTO notificationMessage = NotificationMessageDTO.builder()
+                    .title(MessageUtil.getMessage(MessageConstant.NotificationMessage.ASSIGN_EMPLOYEE.TITLE))
+                    .message(MessageUtil.getMessage(MessageConstant.NotificationMessage.ASSIGN_EMPLOYEE.MESSAGE))
+                    .notificationType(NotificationType.NOTI)
+                    .userId(assignment.getCompanyEmployee().getAccountId()).build();
+            notificationService.createNotification(notificationMessage, assignment.getCompanyEmployee().getAccountId());
+        });
+
+
+
         return ResponseEntity.ok().build();
     }
 

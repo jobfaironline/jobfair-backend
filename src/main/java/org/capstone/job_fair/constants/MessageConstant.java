@@ -378,5 +378,14 @@ public final class MessageConstant {
         private Notification() {
         }
     }
+
+    public static final class NotificationMessage {
+        private NotificationMessage(){}
+        public static final class ASSIGN_EMPLOYEE {
+            private ASSIGN_EMPLOYEE(){}
+            public static final String TITLE = "notification-message.assign-employee.title";
+            public static final String MESSAGE = "notification-message.assign-employee.message";
+        }
+    }
 }
 
