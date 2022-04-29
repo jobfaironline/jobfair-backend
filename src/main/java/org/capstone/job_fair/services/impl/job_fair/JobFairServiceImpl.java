@@ -104,28 +104,28 @@ public class JobFairServiceImpl implements JobFairService {
     @Override
     @Transactional
     public void publishJobFair(String companyId, String jobFairId) {
-
+        //check existed job fair
         Optional<JobFairEntity> jobFairEntityOptional = jobFairRepository.findByIdAndCompanyId(jobFairId, companyId);
         if (!jobFairEntityOptional.isPresent()) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.JOB_FAIR_NOT_FOUND));
         }
         JobFairEntity jobFairEntity = jobFairEntityOptional.get();
         Long publicStartTime = jobFairEntity.getPublicStartTime();
+        //check job existed job fair in the same time
         List<JobFairEntity> listEntity = jobFairRepository.findByCompanyIdAndStatus(companyId, JobFairPlanStatus.PUBLISH);
         for(JobFairEntity entity : listEntity) {
             if (publicStartTime >= entity.getPublicStartTime()
                     && publicStartTime <= entity.getPublicEndTime())
                 throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.JOB_FAIR_ALREADY_PUBLISH));
         }
-
+        //check job fair basic fields
         JobFairDTO jobFairDTO = jobFairMapper.toDTO(jobFairEntity);
-
         Set<ConstraintViolation<JobFairDTO>> violations = validator.validate(jobFairDTO);
         if (!violations.isEmpty()) {
             throw new ConstraintViolationException(violations);
         }
         validateJobFairTime(jobFairDTO);
-
+        //check job fair is already existed
         if (!jobFairDTO.getStatus().equals(JobFairPlanStatus.DRAFT)) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.NOT_EDITABLE));
         }
