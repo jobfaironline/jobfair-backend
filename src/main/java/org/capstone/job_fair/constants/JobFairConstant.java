@@ -10,4 +10,6 @@ public class JobFairConstant {
     public static final String DEFAULT_SEARCH_SORT_BY_VALUE = "createTime";
     public static final String DEFAULT_SEARCH_SORT_DIRECTION = "ASC";
     public static final String DEFAULT_JOBFAIR_NAME = "";
+    public static final String DEFAULT_CATEGORY_ID = "";
+    public static final String DEFAULT_COUNTRY_ID = "";
 }

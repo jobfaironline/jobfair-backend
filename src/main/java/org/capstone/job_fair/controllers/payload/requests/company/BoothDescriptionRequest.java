@@ -49,20 +49,16 @@ public class BoothDescriptionRequest {
         @Min(DataConstraint.JobPosition.EMPLOYEE_MIN)
         @Max(DataConstraint.JobPosition.EMPLOYEE_MAX)
         private Integer numOfPosition;
-        @NotNull
         @Length(max = DataConstraint.JobPosition.NOTE_LENGTH)
         private String note;
-        @NotNull
         @NumberFormat
         @Min(DataConstraint.JobPosition.TEST_LENGTH_MIN)
         @Max(DataConstraint.JobPosition.TEST_LENGTH_MAX)
         private Integer testLength;
-        @NotNull
         @NumberFormat
         @Min(DataConstraint.JobPosition.NUM_OF_QUESTION_MIN)
         @Max(DataConstraint.JobPosition.NUM_OF_QUESTION_MAX)
         private Integer testNumOfQuestion;
-        @NotNull
         @NumberFormat
         @Min(DataConstraint.JobPosition.PASS_MARK_MIN)
         @Max(DataConstraint.JobPosition.PASS_MARK_MAX)

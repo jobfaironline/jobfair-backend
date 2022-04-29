@@ -8,8 +8,6 @@ import java.util.Optional;
 public interface CountryService {
     Integer getCountCountryById(int id);
 
-    List<CountryDTO> getAllCountries();
-
     Optional<CountryDTO> findById(int id);
 
     List<CountryDTO> getAll();

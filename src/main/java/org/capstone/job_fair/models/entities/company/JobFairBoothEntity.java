@@ -33,6 +33,9 @@ public class JobFairBoothEntity {
     @Column(name="description")
     private String description;
 
+    @Column(name="name")
+    private String name;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "job_fair_id")
     private JobFairEntity jobFair;

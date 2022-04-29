@@ -21,5 +21,5 @@ public interface JobFairService {
 
     JobFairDTO createOrUpdateJobFairThumbnail(String jobfairThumbnailFolder, String jobFairId, String companyId);
 
-    Page<JobFairDTO> findJobFairForAttendantByName(String name, Pageable pageable);
+    Page<JobFairDTO> findJobFairForAttendantByCriteria(String name, String countryId, String subCategoryId, Pageable pageable);
 }
