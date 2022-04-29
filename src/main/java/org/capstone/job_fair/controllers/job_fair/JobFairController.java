@@ -89,6 +89,7 @@ public class JobFairController {
                 boothData.setPosition(boothDTO.getX(), boothDTO.getY(), boothDTO.getZ());
                 boothData.setSlotName(boothDTO.getName());
                 boothData.setCompanyBoothId(companyBooth.getId());
+                boothData.setBoothName(companyBooth.getName());
 
                 Optional<JobFairBoothLayoutDTO> layoutDTOOptional = companyBoothLayoutService.getLatestVersionByCompanyBoothId(companyBooth.getId());
                 if (layoutDTOOptional.isPresent()) {

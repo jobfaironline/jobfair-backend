@@ -30,6 +30,7 @@ public class RenderJobFairParkResponse {
         private String slotName;
         private String boothUrl;
         private String companyBoothId;
+        private String boothName;
         private List<JobFairBoothLayoutVideoDTO> companyBoothLayoutVideos;
 
         public void setPosition(double x, double y, double z){
