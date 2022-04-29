@@ -64,7 +64,7 @@ public class JobFairBoothServiceImpl implements JobFairBoothService {
 
 
     private void validateUniqueJobPosition(List<BoothJobPositionDTO> jobPositions) {
-        jobPositions.sort(Comparator.comparing(BoothJobPositionDTO::getId));
+        jobPositions.sort(Comparator.comparing(BoothJobPositionDTO::getOriginJobPosition));
         for (int i = 0; i <= jobPositions.size() - 2; i++) {
             BoothJobPositionDTO currentDTO = jobPositions.get(i);
             BoothJobPositionDTO nextDTO = jobPositions.get(i + 1);
