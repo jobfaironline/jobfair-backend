@@ -5,12 +5,15 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.capstone.job_fair.constants.DataConstraint;
+import org.capstone.job_fair.validators.NameConstraint;
+import org.capstone.job_fair.validators.XSSConstraint;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.format.annotation.NumberFormat;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -24,7 +27,15 @@ public class BoothDescriptionRequest {
     private String boothId;
     @NotNull
     @Length(max= DataConstraint.JobPosition.DESCRIPTION_LENGTH)
+    @XSSConstraint
     private String description;
+    @NotNull
+    @XSSConstraint
+    @NotBlank
+    @NameConstraint
+    @Length(max = DataConstraint.JobPosition.NAME_MAX_LENGTH)
+    private String name;
+
     @Valid
     private List<JobPosition> jobPositions;
 
@@ -49,8 +60,9 @@ public class BoothDescriptionRequest {
         @Min(DataConstraint.JobPosition.EMPLOYEE_MIN)
         @Max(DataConstraint.JobPosition.EMPLOYEE_MAX)
         private Integer numOfPosition;
-        @Length(max = DataConstraint.JobPosition.NOTE_LENGTH)
-        private String note;
+
+        @NotNull
+        private Boolean isHaveTest;
         @NumberFormat
         @Min(DataConstraint.JobPosition.TEST_LENGTH_MIN)
         @Max(DataConstraint.JobPosition.TEST_LENGTH_MAX)
@@ -63,6 +75,8 @@ public class BoothDescriptionRequest {
         @Min(DataConstraint.JobPosition.PASS_MARK_MIN)
         @Max(DataConstraint.JobPosition.PASS_MARK_MAX)
         private Double passMark;
+        @Length(max = DataConstraint.JobPosition.NOTE_LENGTH)
+        private String note;
 
     }
 }

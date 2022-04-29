@@ -128,6 +128,7 @@ public final class DataConstraint {
         public static final int NUM_OF_QUESTION_MAX = 100;
         public static final int PASS_MARK_MIN = 0;
         public static final int PASS_MARK_MAX = 10;
+        public static final int NAME_MAX_LENGTH = 100;
     }
 
     public static final class Account {

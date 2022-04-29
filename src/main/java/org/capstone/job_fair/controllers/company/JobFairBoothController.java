@@ -47,6 +47,7 @@ public class JobFairBoothController {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         JobFairBoothDTO jobFairBoothDTO = new JobFairBoothDTO();
+        jobFairBoothDTO.setName(request.getName());
         jobFairBoothDTO.setDescription(request.getDescription());
         jobFairBoothDTO.setId(request.getBoothId());
 
@@ -57,9 +58,10 @@ public class JobFairBoothController {
                     .minSalary(jobPositionRequest.getMinSalary())
                     .maxSalary(jobPositionRequest.getMaxSalary())
                     .numOfPosition(jobPositionRequest.getNumOfPosition())
+                    .isHaveTest(jobPositionRequest.getIsHaveTest())
                     .note(jobPositionRequest.getNote())
                     .testTimeLength(jobPositionRequest.getTestLength())
-                    .numOfQuestion(jobPositionRequest.getNumOfPosition())
+                    .numOfQuestion(jobPositionRequest.getTestNumOfQuestion())
                     .passMark(jobPositionRequest.getPassMark())
                     .build();
             if (jobPositionRequest.getTestNumOfQuestion() != null){

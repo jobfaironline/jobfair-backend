@@ -41,7 +41,7 @@ public class BoothJobPositionEntity {
     @JoinColumn(name = "job_type_id")
     private JobTypeEntity jobTypeEntity;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "booth_job_category",
             joinColumns = @JoinColumn(name = "registration_job_position_id"),
@@ -50,7 +50,7 @@ public class BoothJobPositionEntity {
     @ToString.Exclude
     Set<SubCategoryEntity> categories;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "booth_job_skill_tag",
             joinColumns = @JoinColumn(name = "registration_job_position_id"),
