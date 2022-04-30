@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
 import org.capstone.job_fair.models.entities.company.job.BoothJobPositionEntity;
 import org.capstone.job_fair.models.enums.ApplicationStatus;
+import org.capstone.job_fair.models.enums.TestStatus;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -54,6 +55,10 @@ public class ApplicationEntity {
     @Column(name = "evaluate_date")
     private Long evaluateDate;
 
+
+    @Column(name = "test_status")
+    private TestStatus testStatus;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -69,10 +74,6 @@ public class ApplicationEntity {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "(" +
-                "id = " + id + ", " +
-                "summary = " + summary + ", " +
-                "createDate = " + createDate + ", " +
-                "status = " + status + ")";
+        return getClass().getSimpleName() + "(" + "id = " + id + ", " + "summary = " + summary + ", " + "createDate = " + createDate + ", " + "status = " + status + ")";
     }
 }

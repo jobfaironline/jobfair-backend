@@ -5,6 +5,7 @@ import lombok.*;
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
 import org.capstone.job_fair.models.dtos.company.job.BoothJobPositionDTO;
 import org.capstone.job_fair.models.enums.ApplicationStatus;
+import org.capstone.job_fair.models.enums.TestStatus;
 
 @Data
 @AllArgsConstructor
@@ -24,4 +25,5 @@ public class ApplicationDTO {
     private AccountDTO authorizer;
     private String evaluateMessage;
     private Long evaluateDate;
+    private TestStatus testStatus;
 }
