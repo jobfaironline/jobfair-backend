@@ -7,6 +7,8 @@ public interface JobFairVisitService {
 
     void visitBooth(String userId, String jobFairBoothId);
 
+    void leaveBooth(String userId, String jobFairBoothId);
+
     int getCurrentVisitOfJobFair(String jobFairId);
 
     int getCurrentVisitOfJobFairBooth(String jobFairBootId);
