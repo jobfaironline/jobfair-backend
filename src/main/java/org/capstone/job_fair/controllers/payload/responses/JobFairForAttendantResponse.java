@@ -3,53 +3,34 @@ package org.capstone.job_fair.controllers.payload.responses;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.capstone.job_fair.models.dtos.company.CompanyDTO;
+import org.capstone.job_fair.models.dtos.job_fair.JobFairDTO;
 import org.capstone.job_fair.models.statuses.JobFairAttendantStatus;
+import org.capstone.job_fair.models.statuses.JobFairPlanStatus;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class JobFairForAttendantResponse {
-    private String id;
+public class JobFairForAttendantResponse extends JobFairDTO {
+    public JobFairForAttendantResponse(JobFairDTO parent){
+        this.setId(parent.getId());
+        this.setCreateTime(parent.getCreateTime());
+        this.setDecorateStartTime(parent.getDecorateStartTime());
+        this.setDecorateEndTime(parent.getDecorateEndTime());
+        this.setPublicStartTime(parent.getPublicStartTime());
+        this.setPublicEndTime(parent.getPublicEndTime());
+        this.setName(parent.getName());
+        this.setDescription(parent.getDescription());
+        this.setTargetAttendant(parent.getTargetAttendant());
+        this.setThumbnailUrl(parent.getThumbnailUrl());
+        this.setStatus(parent.getStatus());
+        this.setCancelReason(parent.getCancelReason());
+        this.setHostName(parent.getHostName());
+        this.setCompany(parent.getCompany());
+    }
 
-    private Long companyRegisterStartTime;
-
-    private Long companyRegisterEndTime;
-
-    private Long companyBuyBoothStartTime;
-
-    private Long companyBuyBoothEndTime;
-
-    private Long attendantRegisterStartTime;
-
-    private Long startTime;
-
-    private Long endTime;
-
-    private String description;
-
-    private String layoutId;
-
-    private JobFairAttendantStatus status;
-
-    private String creatorId;
-
-    private String authorizerId;
-
-    private String cancelReason;
-
-    private String rejectReason;
-
-    private String thumbnail;
-
-    private String name;
-
-    private Integer estimateParticipant;
-
-    private String targetCompany;
-
-    private String targetAttendant;
-
-    private Long createTime;
-
-    private Long updateTime;
+    private int visitCount;
 }

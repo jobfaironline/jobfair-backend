@@ -2,9 +2,9 @@ package org.capstone.job_fair.controllers;
 
 import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import org.capstone.job_fair.constants.ApiEndPoint;
-import org.capstone.job_fair.models.dtos.notification.NotificationMessageDTO;
+import org.capstone.job_fair.models.dtos.dynamoDB.NotificationMessageDTO;
 import org.capstone.job_fair.models.enums.NotificationType;
-import org.capstone.job_fair.services.interfaces.notification.NotificationService;
+import org.capstone.job_fair.services.interfaces.dynamoDB.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;

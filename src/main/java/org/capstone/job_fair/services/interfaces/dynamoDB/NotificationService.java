@@ -1,6 +1,6 @@
-package org.capstone.job_fair.services.interfaces.notification;
+package org.capstone.job_fair.services.interfaces.dynamoDB;
 
-import org.capstone.job_fair.models.dtos.notification.NotificationMessageDTO;
+import org.capstone.job_fair.models.dtos.dynamoDB.NotificationMessageDTO;
 import org.capstone.job_fair.models.enums.Role;
 
 import java.util.List;

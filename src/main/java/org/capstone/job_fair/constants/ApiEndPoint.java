@@ -290,4 +290,11 @@ public final class ApiEndPoint {
         public static final String READ_ALL = NOTIFICATION + "/read-all";
 
     }
+
+    public static final class JobFairVisit {
+        private JobFairVisit(){}
+        public static final String JOB_FAIR_VISIT = ROOT_ENDPOINT + VERSION + "/visit";
+        public static final String ENTER_JOB_FAIR = JOB_FAIR_VISIT + "enter/job-fair";
+        public static final String LEAVE_JOB_FAIR = JOB_FAIR_VISIT + "leave/job-fair";
+    }
 }

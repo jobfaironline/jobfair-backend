@@ -1,4 +1,4 @@
-package org.capstone.job_fair.models.entities.notification;
+package org.capstone.job_fair.models.entities.dynamoDB;
 
 
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
