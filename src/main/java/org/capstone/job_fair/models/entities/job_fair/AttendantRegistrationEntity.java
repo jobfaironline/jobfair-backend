@@ -1,4 +1,4 @@
-package org.capstone.job_fair.models.entities.attendant;
+package org.capstone.job_fair.models.entities.job_fair;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,12 +23,16 @@ public class AttendantRegistrationEntity {
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "org.hibernate.id.UUIDGenerator")
     private String id;
-    @Basic
     @Column(name = "attendant_id")
     private String attendantId;
-    @Basic
     @Column(name = "job_fair_id")
     private String jobFairId;
+    @Column(name = "create_time")
+    private Long createTime;
+    @Column(name = "is_visit")
+    private Boolean isVisit;
+    @Column(name = "visit_time")
+    private Long visitTime;
 
 
     @Override

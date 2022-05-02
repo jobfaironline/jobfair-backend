@@ -3,6 +3,8 @@ package org.capstone.job_fair.controllers.job_fair;
 import lombok.extern.slf4j.Slf4j;
 import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import org.capstone.job_fair.constants.ApiEndPoint;
+import org.capstone.job_fair.models.enums.Role;
+import org.capstone.job_fair.services.interfaces.attendant.AttendantRegistrationService;
 import org.capstone.job_fair.services.interfaces.dynamoDB.JobFairVisitService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,10 +19,16 @@ public class VisitController {
     @Autowired
     private JobFairVisitService jobFairVisitService;
 
+    @Autowired
+    private AttendantRegistrationService attendantRegistrationService;
+
     @PostMapping(ApiEndPoint.JobFairVisit.ENTER_JOB_FAIR)
     public ResponseEntity<?> visitJobFair(@RequestParam String jobFairId) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         jobFairVisitService.visitJobFair(userDetails.getId(), jobFairId);
+        if (userDetails.getAuthorities().stream().anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals(Role.ATTENDANT.getAuthority()))){
+            attendantRegistrationService.visitJobFair(userDetails.getId(), jobFairId);
+        }
         return ResponseEntity.ok().build();
     }
 

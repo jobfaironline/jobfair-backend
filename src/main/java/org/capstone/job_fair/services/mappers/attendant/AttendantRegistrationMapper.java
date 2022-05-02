@@ -2,7 +2,7 @@ package org.capstone.job_fair.services.mappers.attendant;
 
 
 import org.capstone.job_fair.models.dtos.attendant.AttendantRegistrationDTO;
-import org.capstone.job_fair.models.entities.attendant.AttendantRegistrationEntity;
+import org.capstone.job_fair.models.entities.job_fair.AttendantRegistrationEntity;
 import org.mapstruct.CollectionMappingStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.NullValuePropertyMappingStrategy;

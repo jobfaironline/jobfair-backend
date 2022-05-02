@@ -73,11 +73,10 @@ public class JobFairVisitServiceImpl implements JobFairVisitService {
         Map<String, Object> payload = new HashMap<>();
         payload.put("jobFairId", jobFairId);
         payload.put("jobFairBoothId", jobFairBoothId);
-        payload.put("count", getCurrentVisitOfJobFair(jobFairId));
+        payload.put("count", getCurrentVisitOfJobFairBooth(jobFairBoothId));
 
         //get current connected user
         List<String> userIds = getConnectedUsers();
-        System.out.println(userIds);
 
         NotificationMessageDTO notificationMessage = NotificationMessageDTO.builder()
                 .title("Visit job fair booth")
