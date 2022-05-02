@@ -21,7 +21,7 @@ public class CreateApplicationRequest {
     private String summary;
     @XSSConstraint
     @NotEmpty
-    private String registrationJobPositionId;
+    private String boothJobPositionId;
     @NotEmpty
     private String cvId;
 }
