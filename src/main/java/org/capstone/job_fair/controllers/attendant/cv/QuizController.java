@@ -30,7 +30,7 @@ public class QuizController {
     public ResponseEntity<?> getInProgressQuizByIdForAttendant(@RequestParam(name = "applicationId") String applicationId, @PathVariable("id") String id) {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         UserDetailsImpl user = (UserDetailsImpl) securityContext.getAuthentication().getPrincipal();
-        Optional<QuizDTO> quizDTO = quizService.getQuizById(id, applicationId, user.getId());
+        Optional<QuizDTO> quizDTO = quizService.getQuizById(id, applicationId, user.getId(), true);
         return quizDTO.isPresent() ? ResponseEntity.ok(quizDTO.get()) : ResponseEntity.notFound().build();
     }
 
@@ -39,7 +39,7 @@ public class QuizController {
     public ResponseEntity<?> getDoneQuizByIdForAttendant(@RequestParam(name = "applicationId") String applicationId, @PathVariable("id") String id) {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         UserDetailsImpl user = (UserDetailsImpl) securityContext.getAuthentication().getPrincipal();
-        Optional<QuizDTO> quizDTO = quizService.getQuizById(id, applicationId, user.getId());
+        Optional<QuizDTO> quizDTO = quizService.getQuizById(id, applicationId, user.getId(), false);
         return quizDTO.isPresent() ? ResponseEntity.ok(quizDTO.get()) : ResponseEntity.notFound().build();
     }
 

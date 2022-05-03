@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface QuizService {
     QuizDTO createQuiz(String applicationId, String userId);
-    Optional<QuizDTO> getQuizById(String id, String applicationId, String userid);
+    Optional<QuizDTO> getQuizById(String id, String applicationId, String userid, boolean isDoing);
 
 
     QuizDTO saveQuiz(String applicationId, String userId, String quizId, HashMap<String, Boolean> answers);
