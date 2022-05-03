@@ -140,20 +140,30 @@ public class QuizServiceImpl implements QuizService {
         double oneQuestionPoint = 10 / entity.getQuestionList().size();
         int numberOfAnswer;
         int numberOfWrongAnswer;
+        int numberOfCorrectAnswer;
         for (QuizQuestionEntity question : entity.getQuestionList()) {
             numberOfAnswer = 0;
             numberOfWrongAnswer = 0;
+            numberOfCorrectAnswer = 0;
             for (QuizChoiceEntity choice : question.getChoiceList()) {
+                //If choice is correct then increase numberOfAnswer by 1
+                if (choice.getIsCorrect()) {
+                    ++numberOfAnswer;
+                    if (choice.getIsSelected()){
+                        ++numberOfCorrectAnswer;
+                    }
+                }
+                //If choice is selected but it is not correct then increase numberOfWrongAnswer by 1
                 if (choice.getIsSelected()) {
-                    if (choice.getIsCorrect()) {
-                        numberOfAnswer++;
-                    } else {
-                        numberOfWrongAnswer++;
+                    if (!choice.getIsCorrect()) {
+                        ++numberOfWrongAnswer;
                     }
                 }
             }
-            if (numberOfAnswer == 0 && numberOfWrongAnswer == 0) mark = oneQuestionPoint; else
-                if (numberOfWrongAnswer == 0) mark += oneQuestionPoint;
+            //if there is no correct answer and no wrong answer then answer is correct
+            if (numberOfAnswer == 0 && numberOfWrongAnswer == 0) mark = oneQuestionPoint;
+            //Answer only consider to be correct if there is no wrong answer and have correct answer euqal to number of answer
+            else if (numberOfWrongAnswer == 0 && numberOfCorrectAnswer == numberOfAnswer)  mark += oneQuestionPoint;
         }
         entity.setMark(mark);
         return entity;
