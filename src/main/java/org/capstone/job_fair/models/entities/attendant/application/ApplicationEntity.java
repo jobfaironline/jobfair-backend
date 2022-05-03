@@ -6,11 +6,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
 import org.capstone.job_fair.models.entities.attendant.AttendantEntity;
-import org.capstone.job_fair.models.entities.attendant.cv.CvEntity;
 import org.capstone.job_fair.models.entities.company.job.BoothJobPositionEntity;
 import org.capstone.job_fair.models.enums.ApplicationStatus;
-import org.capstone.job_fair.models.enums.TestStatus;
 import org.capstone.job_fair.models.enums.JobLevel;
+import org.capstone.job_fair.models.enums.TestStatus;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.GenericGenerator;
 

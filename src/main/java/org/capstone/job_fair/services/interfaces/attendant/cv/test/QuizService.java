@@ -1,19 +1,16 @@
 package org.capstone.job_fair.services.interfaces.attendant.cv.test;
 
 import org.capstone.job_fair.models.dtos.attendant.cv.test.QuizDTO;
-import org.capstone.job_fair.models.dtos.attendant.cv.test.QuizQuestionDTO;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.HashMap;
 
 public interface QuizService {
-    QuizDTO createQuiz(String applicationId, String jobPositionId,int numberOfQuestion);
+    QuizDTO getOrCreateQuiz(String applicationId, String userId);
 
-    Optional<QuizDTO> getQuiz(String applicationId);
 
-    QuizDTO saveQuiz(String applicationId, List<QuizQuestionDTO> answer);
+    QuizDTO saveQuiz(String applicationId, String userId, String quizId, HashMap<String, Boolean> answers);
 
-    void submitQuiz(String applicationId);
+    void submitQuiz(String applicationId, String userId, String quizId);
 
 
     }

@@ -2,9 +2,7 @@ package org.capstone.job_fair.controllers.company;
 
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.controllers.payload.requests.company.CreateSkillTagRequest;
-import org.capstone.job_fair.models.dtos.company.ProfessionCategoryDTO;
 import org.capstone.job_fair.models.dtos.company.SkillTagDTO;
-import org.capstone.job_fair.services.interfaces.company.ProfessionalCategoryService;
 import org.capstone.job_fair.services.interfaces.company.SkillService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

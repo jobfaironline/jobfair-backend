@@ -3,7 +3,7 @@ package org.capstone.job_fair.models.entities.attendant.cv.test;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.capstone.job_fair.models.entities.attendant.cv.ApplicationEntity;
+import org.capstone.job_fair.models.entities.attendant.application.ApplicationEntity;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;

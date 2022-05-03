@@ -4,7 +4,6 @@ import org.capstone.job_fair.models.dtos.attendant.cv.test.QuizDTO;
 import org.capstone.job_fair.models.dtos.attendant.cv.test.QuizQuestionDTO;
 import org.capstone.job_fair.models.entities.attendant.cv.test.QuizEntity;
 import org.capstone.job_fair.models.entities.attendant.cv.test.QuizQuestionEntity;
-import org.capstone.job_fair.models.entities.company.job.questions.QuestionsEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;

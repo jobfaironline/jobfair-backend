@@ -3,7 +3,6 @@ package org.capstone.job_fair.models.entities.attendant.cv.test;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.capstone.job_fair.models.entities.attendant.cv.ApplicationEntity;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -37,7 +36,7 @@ public class QuizChoiceEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        ApplicationEntity that = (ApplicationEntity) o;
+        QuizChoiceEntity that = (QuizChoiceEntity) o;
         return id != null && Objects.equals(id, that.getId());
     }
 

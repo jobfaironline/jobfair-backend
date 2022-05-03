@@ -2,7 +2,6 @@ package org.capstone.job_fair.services.interfaces.account;
 
 
 import org.capstone.job_fair.models.dtos.account.GenderDTO;
-import org.capstone.job_fair.models.entities.account.GenderEntity;
 
 import java.util.List;
 import java.util.Optional;

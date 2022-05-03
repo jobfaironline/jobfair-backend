@@ -1,12 +1,10 @@
 package org.capstone.job_fair.services.impl.util;
 
-import lombok.SneakyThrows;
 import org.capstone.job_fair.services.interfaces.util.FileStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.core.ResponseBytes;
 import software.amazon.awssdk.core.sync.RequestBody;
@@ -18,7 +16,6 @@ import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 
 @Service
 public class AWSFileStorageService implements FileStorageService {

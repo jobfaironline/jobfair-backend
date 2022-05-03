@@ -3,9 +3,7 @@ package org.capstone.job_fair.controllers.attendant;
 
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.controllers.payload.requests.attendant.CreateJobLevelRequest;
-import org.capstone.job_fair.models.dtos.account.GenderDTO;
 import org.capstone.job_fair.models.dtos.attendant.JobLevelDTO;
-import org.capstone.job_fair.services.interfaces.account.GenderService;
 import org.capstone.job_fair.services.interfaces.attendant.JobLevelService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

@@ -2,9 +2,7 @@ package org.capstone.job_fair.controllers.attendant.profile;
 
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.controllers.payload.requests.attendant.CreateQualificationRequest;
-import org.capstone.job_fair.models.dtos.attendant.JobLevelDTO;
 import org.capstone.job_fair.models.dtos.attendant.profile.QualificationDTO;
-import org.capstone.job_fair.services.interfaces.attendant.JobLevelService;
 import org.capstone.job_fair.services.interfaces.attendant.profile.QualificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

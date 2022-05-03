@@ -3,9 +3,7 @@ package org.capstone.job_fair.controllers.company;
 
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.controllers.payload.requests.company.CreateProfessionalCategoryRequest;
-import org.capstone.job_fair.models.dtos.attendant.JobLevelDTO;
 import org.capstone.job_fair.models.dtos.company.ProfessionCategoryDTO;
-import org.capstone.job_fair.services.interfaces.attendant.JobLevelService;
 import org.capstone.job_fair.services.interfaces.company.ProfessionalCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

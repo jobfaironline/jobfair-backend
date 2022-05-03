@@ -2,23 +2,20 @@ package org.capstone.job_fair.services.impl.attendant.cv;
 
 import org.capstone.job_fair.constants.DataConstraint;
 import org.capstone.job_fair.constants.MessageConstant;
-import org.capstone.job_fair.models.dtos.attendant.cv.ApplicationDTO;
-import org.capstone.job_fair.models.dtos.attendant.cv.CvDTO;
-import org.capstone.job_fair.models.entities.attendant.cv.ApplicationEntity;
-import org.capstone.job_fair.models.entities.company.job.BoothJobPositionEntity;
 import org.capstone.job_fair.models.dtos.attendant.application.ApplicationDTO;
+import org.capstone.job_fair.models.dtos.attendant.cv.CvDTO;
 import org.capstone.job_fair.models.entities.attendant.application.ApplicationEntity;
 import org.capstone.job_fair.models.entities.attendant.cv.CvEntity;
+import org.capstone.job_fair.models.entities.company.job.BoothJobPositionEntity;
 import org.capstone.job_fair.models.enums.ApplicationStatus;
 import org.capstone.job_fair.models.enums.TestStatus;
 import org.capstone.job_fair.repositories.attendant.cv.ApplicationRepository;
 import org.capstone.job_fair.repositories.attendant.cv.CvRepository;
 import org.capstone.job_fair.repositories.company.job.BoothJobPositionRepository;
 import org.capstone.job_fair.services.interfaces.attendant.ApplicationService;
-import org.capstone.job_fair.services.mappers.attendant.application.*;
 import org.capstone.job_fair.services.interfaces.attendant.cv.CvService;
 import org.capstone.job_fair.services.interfaces.attendant.cv.test.QuizService;
-import org.capstone.job_fair.services.mappers.attendant.cv.ApplicationMapper;
+import org.capstone.job_fair.services.mappers.attendant.application.*;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -137,7 +134,6 @@ public class ApplicationServiceImpl implements ApplicationService {
 
 
         ApplicationDTO result = applicationMapper.toDTO(resultEntity);
-        quizService.createQuiz(resultEntity.getId(), resultEntity.getBoothJobPosition().getOriginJobPosition(), resultEntity.getBoothJobPosition().getNumOfQuestion());
         return result;
     }
 
@@ -164,7 +160,6 @@ public class ApplicationServiceImpl implements ApplicationService {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Attendant.ATTENDANT_MISMATCH));
         }
 
-        List<ApplicationEntity> result = applicationRepository.findByCvIdAndBoothJobPositionIdAndStatusIn(entity.getCv().getId(), entity.getBoothJobPosition().getId(), Arrays.asList(ApplicationStatus.APPROVE, ApplicationStatus.PENDING, ApplicationStatus.REJECT));
         List<ApplicationEntity> result = applicationRepository.findByOriginCvIdAndBoothJobPositionIdAndStatusIn(
                 entity.getOriginCvId(),
                 entity.getBoothJobPosition().getId(),
