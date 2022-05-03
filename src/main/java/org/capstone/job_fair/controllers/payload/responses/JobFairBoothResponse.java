@@ -17,4 +17,5 @@ public class JobFairBoothResponse extends JobFairBoothDTO {
         this.setBoothJobPositions(parent.getBoothJobPositions());
     }
     private int visitCount;
+    private String companyId;
 }

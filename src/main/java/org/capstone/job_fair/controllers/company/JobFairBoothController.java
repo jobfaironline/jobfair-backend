@@ -48,6 +48,7 @@ public class JobFairBoothController {
             JobFairBoothResponse response = new JobFairBoothResponse(jobFairBoothDTO);
             int count = jobFairVisitService.getCurrentVisitOfJobFairBooth(jobFairBoothId);
             response.setVisitCount(count);
+            response.setCompanyId(jobFairBoothDTO.getJobFair().getCompany().getId());
             return response;
         }).get());
     }
