@@ -59,14 +59,8 @@ public class QuizServiceImpl implements QuizService {
     @Override
     public Optional<QuizDTO> getQuizById(String id, String applicationId, String userid, boolean isDoing) {
         Optional<QuizEntity> quizEntity = quizRepository.findByIdAndApplicationIdAndApplicationAttendantAccountId(id, applicationId, userid);
-        if (isDoing) {
-            if (!checkQuizTime(quizEntity.get())) {
+        if (isDoing ^ checkQuizTime(quizEntity.get())) {
                 return Optional.empty();
-            }
-        } else {
-            if (checkQuizTime(quizEntity.get())) {
-                return Optional.empty();
-            }
         }
         return quizEntity.map(quizMapper::toDTO);
     }
