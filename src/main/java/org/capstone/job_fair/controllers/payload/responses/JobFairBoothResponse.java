@@ -1,6 +1,9 @@
 package org.capstone.job_fair.controllers.payload.responses;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.capstone.job_fair.models.dtos.company.JobFairBoothDTO;
 
 @Data

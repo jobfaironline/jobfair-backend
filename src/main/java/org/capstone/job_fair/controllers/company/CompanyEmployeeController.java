@@ -6,7 +6,6 @@ import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.CompanyEmployeeConstant;
 import org.capstone.job_fair.constants.MessageConstant;
-import org.capstone.job_fair.constants.QuestionConstant;
 import org.capstone.job_fair.controllers.payload.requests.company.CompanyEmployeeRegisterRequest;
 import org.capstone.job_fair.controllers.payload.requests.company.CompanyManagerRegisterRequest;
 import org.capstone.job_fair.controllers.payload.requests.company.UpdateCompanyEmployeeProfileRequest;

@@ -58,6 +58,7 @@ public final class MessageConstant {
         public static final String METHOD_ARGUMENT_NOT_VALID = "error.exception.method-argument-not-valid";
         public static final String ENTITY_NOT_FOUND = "error.exception.entity-not-found";
         public static final String HTTP_MESSAGE_NOT_VALID = "error.exception.http-message-not-valid";
+
         private Exception() {
         }
     }
@@ -67,6 +68,7 @@ public final class MessageConstant {
         public static final String NOT_FOUND = "question.error.not-found";
         public static final String LACK_CORRECT_ANSWER = "question.error.lack-correct-answer";
         public static final String CSV_WRONG_FORMAT = "question.error.csv-wrong-format";
+
         private Question() {
 
 
@@ -83,6 +85,7 @@ public final class MessageConstant {
         public static final String INVALID_BUFFER_TIME = "job-fair.error.invalid-buffer-time";
         public static final String NOT_EDITABLE = "job-fair.error.not-editable";
         public static final String JOB_FAIR_ALREADY_PUBLISH = "job-fair.error.already-publish";
+
         private JobFair() {
         }
 
@@ -96,6 +99,7 @@ public final class MessageConstant {
         public static final String NOT_BLANK_FORMAT = "{error.format.blank-value}";
         public static final String XSS_MESSAGE = "{error.format.xss}";
         public static final String INVALID_NAME_MESSAGE = "{error.format.name}";
+
         //the value in this class belongs to Validator annotation
         //validator on default can use expression language to lookup message source
         //=> need to have {}
@@ -117,6 +121,7 @@ public final class MessageConstant {
         public static final String EXPIRED_TOKEN = "access-control.error.expired-account-verify-token";
         public static final String VERIFY_ACCOUNT_SUCCESSFULLY = "access-control.success.verify-account";
         public static final String UNAUTHORIZED_ACTION = "access-control.error.unauthorized-action";
+
         private AccessControlMessage() {
         }
     }
@@ -144,6 +149,7 @@ public final class MessageConstant {
         public static final String VERIFY_ACCOUNT_TOKEN_INTERVAL_ERROR = "account.verify.token-interval-error";
         public static final String ALREADY_VERIFIED = "account.verify.already-verified";
         public static final String NOT_VERIRIED = "account.verify.not-verified";
+
         private Account() {
         }
 
@@ -154,6 +160,7 @@ public final class MessageConstant {
         public static final String UPDATE_PROFILE_FAILED = "attendant.error.update-profile";
         public static final String REGISTER_SUCCESSFULLY = "attendant.success.create";
         public static final String ATTENDANT_MISMATCH = "attendant.error.mismatch";
+
         private Attendant() {
         }
     }
@@ -170,6 +177,7 @@ public final class MessageConstant {
         public static final String DELETE_FAILED = "company.error.delete";
         public static final String SIZE_INVALID = "company.error.size-invalid";
         public static final String COMPANY_MISSMATCH = "company.error.missmatch";
+
         private Company() {
         }
     }
@@ -191,6 +199,7 @@ public final class MessageConstant {
         public static final String EMPLOYEE_NOT_ACTIVE = "company-employee.error.not-active";
         public static final String MAX_QUOTA_FOR_COMPANY_EMPLOYEE = "company-employee.error.max-quota";
         public static final String COMPANY_ID_BLANK_ERROR = "company-employee.error.company-id-blank";
+
         private CompanyEmployee() {
         }
 
@@ -209,6 +218,7 @@ public final class MessageConstant {
 
         private Gender() {
         }
+
         public static final String DUPLICATED_GENDER = "gender.error.duplicated";
 
     }
@@ -223,6 +233,7 @@ public final class MessageConstant {
         public static final String INVALID_PAGE_NUMBER = "job-position.error.invalid-page-number";
         public static final String CSV_LINE_ERROR = "job-position.error.csv-line-error";
         public static final String CSV_FILE_ERROR = "job-position.error.csv-file-error";
+
         private Job() {
         }
     }
@@ -230,14 +241,17 @@ public final class MessageConstant {
     public static final class Skill {
         public static final String INVALID_SKILL = "skill.error.invalid";
         public static final String SKILL_NOT_FOUND = "skill.error.not-found";
+
         private Skill() {
         }
+
         public static final String DUPLICATED = "skill.error.duplicate";
     }
 
     public static final class WorkHistory {
         public static final String INVALID_WORK_HISTORY = "work-history.error.invalid";
         public static final String WORK_HISTORY_NOT_FOUND = "work-history.error.not-found";
+
         private WorkHistory() {
 
         }
@@ -246,6 +260,7 @@ public final class MessageConstant {
     public static final class Education {
         public static final String INVALID_EDUCATION = "education.error.invalid";
         public static final String EDUCATION_NOT_FOUND = "education.error.not-found";
+
         private Education() {
         }
     }
@@ -255,6 +270,7 @@ public final class MessageConstant {
         public static final String CERTIFICATION_NOT_FOUND = "certification.error.not-found";
         public static final String EXPIRED_DATE_NOT_FOUND = "certification.error.expired-date-not-found";
         public static final String ISSUE_DATE_AND_EXPIRED_DATE_RANGE_ERROR = "certification.error.issue-date-and-expired-date-range-error";
+
         private Certification() {
         }
 
@@ -263,6 +279,7 @@ public final class MessageConstant {
     public static final class Reference {
         public static final String INVALID_REFERENCE = "reference.error.invalid";
         public static final String REFERENCE_NOT_FOUND = "reference.error.not-found";
+
         private Reference() {
         }
     }
@@ -270,6 +287,7 @@ public final class MessageConstant {
     public static final class Activity {
         public static final String INVALID_ACTIVITY = "activity.error.invalid";
         public static final String ACTIVITY_NOT_FOUND = "activity.error.not-found";
+
         private Activity() {
         }
     }
@@ -298,6 +316,7 @@ public final class MessageConstant {
     public static final class Mail {
         public static final String NAME = "mail.sender.name";
         public static final String SEND_FAILED = "mail.error.send-failed";
+
         private Mail() {
         }
     }
@@ -313,6 +332,7 @@ public final class MessageConstant {
     public static final class DecoratedItem {
         public static final String NOT_FOUND = "decorated-item.error.not-found";
         public static final String UPDATE_SUCCESSFULLY = "decorated-item.success.update-item";
+
         private DecoratedItem() {
         }
     }
@@ -321,6 +341,7 @@ public final class MessageConstant {
         public static final String NOT_FOUND = "layout.error.not-found";
         public static final String UPDATE_SUCCESSFULLY = "layout.success.update-item";
         public static final String INVALID_GLB_FILE = "layout.error.invalid-glb-file";
+
         private Layout() {
         }
     }
@@ -346,9 +367,22 @@ public final class MessageConstant {
         public static final String INVALID_EVALUATE_STATUS = "application.error.invalid-evaluate-status";
         public static final String EVALUATE_MESSAGE_IS_EMPTY = "application.error.empty-evaluate-message";
         public static final String ALREADY_APPLY_CV = "application.error.already-apply-cv";
+        public static final String CV_NOT_HAVE_TEST = "application.error.cv-not-have-test";
+
         private Application() {
 
         }
+    }
+
+    public static final class Quiz {
+        private Quiz() {
+        }
+
+        public static final String NOT_FOUND = "quiz.error.not-found";
+        public static final String JOB_POSITION_NOT_ALLOW_QUIZ = "quiz.error.job-position-not-allow-quiz";
+        public static final String TIME_UP = "quiz.error.time-up";
+        public static final String TEST_ALREADY_TAKEN = "quiz.error.already-taken";
+        public static final String CURRENT_QUIZ_STILL_IN_PROGRESS = "quiz.error.current-quiz-still-in-progress";
     }
 
 
@@ -367,6 +401,7 @@ public final class MessageConstant {
     public static final class JobFairBooth {
         public static final String NOT_FOUND = "job-fair-booth.error.not-found";
         public static final String UNIQUE_JOB_POSITION_ERROR = "job-fair-booth.error.unique-job-position";
+
         private JobFairBooth() {
         }
 
@@ -380,9 +415,13 @@ public final class MessageConstant {
     }
 
     public static final class NotificationMessage {
-        private NotificationMessage(){}
+        private NotificationMessage() {
+        }
+
         public static final class ASSIGN_EMPLOYEE {
-            private ASSIGN_EMPLOYEE(){}
+            private ASSIGN_EMPLOYEE() {
+            }
+
             public static final String TITLE = "notification-message.assign-employee.title";
             public static final String MESSAGE = "notification-message.assign-employee.message";
         }

@@ -2,8 +2,6 @@ package org.capstone.job_fair.models.dtos.attendant.application;
 
 import lombok.*;
 
-import javax.persistence.Column;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

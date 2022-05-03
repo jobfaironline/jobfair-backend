@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.controllers.payload.requests.attendant.CreateCountryRequest;
 import org.capstone.job_fair.models.dtos.attendant.CountryDTO;
-import org.capstone.job_fair.models.dtos.company.ProfessionCategoryDTO;
 import org.capstone.job_fair.services.interfaces.attendant.CountryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
