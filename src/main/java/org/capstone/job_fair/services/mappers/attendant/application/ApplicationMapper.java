@@ -1,34 +1,45 @@
-package org.capstone.job_fair.services.mappers.attendant.cv;
+package org.capstone.job_fair.services.mappers.attendant.application;
 
 
 import org.capstone.job_fair.controllers.payload.responses.ApplicationForAttendantResponse;
 import org.capstone.job_fair.controllers.payload.responses.ApplicationForCompanyResponse;
 import org.capstone.job_fair.controllers.payload.responses.ApplicationWithGenralDataOfApplicantResponse;
-import org.capstone.job_fair.models.dtos.attendant.cv.ApplicationDTO;
+import org.capstone.job_fair.models.dtos.attendant.application.ApplicationDTO;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
-import org.capstone.job_fair.models.entities.attendant.cv.ApplicationEntity;
+import org.capstone.job_fair.models.entities.attendant.application.ApplicationEntity;
 import org.capstone.job_fair.models.enums.Gender;
 import org.capstone.job_fair.services.mappers.account.AccountMapper;
 import org.capstone.job_fair.services.mappers.attendant.AttendantMapper;
 import org.capstone.job_fair.services.mappers.attendant.CountryMapper;
+import org.capstone.job_fair.services.mappers.attendant.cv.CvMapper;
 import org.capstone.job_fair.services.mappers.company.BoothJobPositionMapper;
 import org.mapstruct.*;
 
-@Mapper(componentModel = "spring", uses = {AccountMapper.class, AttendantMapper.class, CvMapper.class, BoothJobPositionMapper.class, CountryMapper.class}, nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+@Mapper(componentModel = "spring", uses = {
+        AccountMapper.class,
+        AttendantMapper.class,
+        CvMapper.class,
+        BoothJobPositionMapper.class,
+        CountryMapper.class,
+        ApplicationActivityMapper.class,
+        ApplicationCertificationMapper.class,
+        ApplicationEducationMapper.class,
+        ApplicationReferenceMapper.class,
+        ApplicationSkillMapper.class,
+        ApplicationWorkHistoryMapper.class
+}, nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public abstract class ApplicationMapper {
 
     @Mapping(source = "boothJobPosition", target = "boothJobPositionDTO")
-    @Mapping(source = "cv", target = "cvDTO")
     public abstract ApplicationDTO toDTO(ApplicationEntity entity);
 
     @Mapping(target = "boothJobPosition", source = "boothJobPositionDTO")
-    @Mapping(target = "cv", source = "cvDTO")
     public abstract ApplicationEntity toEntity(ApplicationDTO dto);
 
     public abstract void updateFromDTO(@MappingTarget ApplicationEntity entity, ApplicationDTO dto);
 
 
-    @Mapping(target = "candidateName", source = "cv.attendant.account", qualifiedByName = "toFullName")
+    @Mapping(target = "candidateName", source = "attendant.account", qualifiedByName = "toFullName")
     @Mapping(target = "appliedDate", source = "createDate")
     @Mapping(target = "jobPositionTitle", source = "boothJobPosition.title")
     @Mapping(target = "jobPositionId", source = "boothJobPosition.id")
@@ -36,24 +47,24 @@ public abstract class ApplicationMapper {
 
 
     @Mapping(target = "appliedDate", source = "createDate")
-    @Mapping(target = "candidateName", source = "cv.attendant.account", qualifiedByName = "toFullName")
+    @Mapping(target = "candidateName", source = "attendant.account", qualifiedByName = "toFullName")
     @Mapping(target = "applicationSummary", source = "summary")
     @Mapping(target = "jobPositionTitle", source = "boothJobPosition.title")
     @Mapping(target = "jobPositionId", source = "boothJobPosition.id")
-    @Mapping(target = "candidateYearOfExp", source = "cv.yearOfExp")
-    @Mapping(target = "candidateJobLevel", source = "cv.jobLevel")
-    @Mapping(target = "candidateJobTitle", source = "cv.jobTitle")
-    @Mapping(target = "candidateSkills", source = "cv.skills")
-    @Mapping(target = "candidateActivities", source = "cv.activities")
-    @Mapping(target = "candidateCertifications", source = "cv.certifications")
-    @Mapping(target = "candidateEducation", source = "cv.educations")
-    @Mapping(target = "candidateReferences", source = "cv.references")
-    @Mapping(target = "candidateWorkHistories", source = "cv.workHistories")
-    @Mapping(target = "status", source="status")
-    @Mapping(target = "gender", source="cv.attendant.account" , qualifiedByName = "toGender")
-    @Mapping(target = "imageUrl", source="cv.attendant.account.profileImageUrl")
-    @Mapping(target = "country", source="cv.attendant.country.name")
-    @Mapping(target = "dob", source="cv.attendant.dob")
+    @Mapping(target = "candidateYearOfExp", source = "yearOfExp")
+    @Mapping(target = "candidateJobLevel", source = "jobLevel")
+    @Mapping(target = "candidateJobTitle", source = "jobTitle")
+    @Mapping(target = "candidateSkills", source = "skills")
+    @Mapping(target = "candidateActivities", source = "activities")
+    @Mapping(target = "candidateCertifications", source = "certifications")
+    @Mapping(target = "candidateEducation", source = "educations")
+    @Mapping(target = "candidateReferences", source = "references")
+    @Mapping(target = "candidateWorkHistories", source = "workHistories")
+    @Mapping(target = "status", source = "status")
+    @Mapping(target = "gender", source = "attendant.account", qualifiedByName = "toGender")
+    @Mapping(target = "imageUrl", source = "attendant.account.profileImageUrl")
+    @Mapping(target = "country", source = "attendant.country.name")
+    @Mapping(target = "dob", source = "attendant.dob")
     public abstract ApplicationWithGenralDataOfApplicantResponse toApplicationWithGenralDataOfApplicantResponse(ApplicationEntity entity);
 
     @Mapping(target = "authorizerName", source = "authorizer", qualifiedByName = "toFullName")

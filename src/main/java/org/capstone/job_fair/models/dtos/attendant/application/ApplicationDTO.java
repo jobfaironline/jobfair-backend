@@ -1,10 +1,12 @@
-package org.capstone.job_fair.models.dtos.attendant.cv;
+package org.capstone.job_fair.models.dtos.attendant.application;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
+import org.capstone.job_fair.models.dtos.attendant.AttendantDTO;
 import org.capstone.job_fair.models.dtos.company.job.BoothJobPositionDTO;
 import org.capstone.job_fair.models.enums.ApplicationStatus;
+import org.capstone.job_fair.models.enums.JobLevel;
 import org.capstone.job_fair.models.enums.TestStatus;
 
 @Data
@@ -17,8 +19,6 @@ public class ApplicationDTO {
     private String id;
     private String summary;
     private Long createDate;
-    @JsonBackReference
-    private CvDTO cvDTO;
     private ApplicationStatus status;
     @JsonBackReference
     private BoothJobPositionDTO boothJobPositionDTO;
@@ -26,4 +26,13 @@ public class ApplicationDTO {
     private String evaluateMessage;
     private Long evaluateDate;
     private TestStatus testStatus;
+    private String email;
+    private String phone;
+    private Integer yearOfExp;
+    private String jobTitle;
+    private JobLevel jobLevel;
+    private AttendantDTO attendant;
+    private String originCvId;
+
+
 }

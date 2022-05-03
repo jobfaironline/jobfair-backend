@@ -1,6 +1,6 @@
 package org.capstone.job_fair.repositories.attendant.cv;
 
-import org.capstone.job_fair.models.entities.attendant.cv.ApplicationEntity;
+import org.capstone.job_fair.models.entities.attendant.application.ApplicationEntity;
 import org.capstone.job_fair.models.enums.ApplicationStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,11 +16,11 @@ import java.util.Optional;
 public interface ApplicationRepository extends JpaRepository<ApplicationEntity, String> {
 
     @Query("select a from ApplicationEntity a " +
-            "where a.createDate between ?1 and ?2 and a.status = ?3 and a.cv.attendant.accountId = ?4")
+            "where a.createDate between ?1 and ?2 and a.status = ?3 and a.attendant.accountId = ?4")
     Page<ApplicationEntity> findAllByCreateDateBetweenAndStatusAndCvAttendantAccountId(long fromDate, long toDate, ApplicationStatus status, String id, Pageable pageable);
 
     @Query("select a from ApplicationEntity a " +
-            "where a.cv.attendant.accountId = :accountId and " +
+            "where a.attendant.accountId = :accountId and " +
             "a.createDate between :fromDate and :toDate and " +
             "a.status in :statusList and " +
             "a.boothJobPosition.title like concat('%',:jobPositionName,'%') and " +
@@ -63,5 +63,5 @@ public interface ApplicationRepository extends JpaRepository<ApplicationEntity, 
     Optional<ApplicationEntity> findByIdAndCompanyId(@Param("applicationId") String applicationId,
                                                      @Param("companyId") String companyId);
 
-    List<ApplicationEntity> findByCvIdAndBoothJobPositionIdAndStatusIn(String cv, String jobPositionId, List<ApplicationStatus> status);
+    List<ApplicationEntity> findByOriginCvIdAndBoothJobPositionIdAndStatusIn(String cv, String jobPositionId, List<ApplicationStatus> status);
 }

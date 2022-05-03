@@ -6,12 +6,16 @@ import org.capstone.job_fair.models.dtos.attendant.cv.ApplicationDTO;
 import org.capstone.job_fair.models.dtos.attendant.cv.CvDTO;
 import org.capstone.job_fair.models.entities.attendant.cv.ApplicationEntity;
 import org.capstone.job_fair.models.entities.company.job.BoothJobPositionEntity;
+import org.capstone.job_fair.models.dtos.attendant.application.ApplicationDTO;
+import org.capstone.job_fair.models.entities.attendant.application.ApplicationEntity;
+import org.capstone.job_fair.models.entities.attendant.cv.CvEntity;
 import org.capstone.job_fair.models.enums.ApplicationStatus;
 import org.capstone.job_fair.models.enums.TestStatus;
 import org.capstone.job_fair.repositories.attendant.cv.ApplicationRepository;
+import org.capstone.job_fair.repositories.attendant.cv.CvRepository;
 import org.capstone.job_fair.repositories.company.job.BoothJobPositionRepository;
-import org.capstone.job_fair.services.interfaces.account.AccountService;
 import org.capstone.job_fair.services.interfaces.attendant.ApplicationService;
+import org.capstone.job_fair.services.mappers.attendant.application.*;
 import org.capstone.job_fair.services.interfaces.attendant.cv.CvService;
 import org.capstone.job_fair.services.interfaces.attendant.cv.test.QuizService;
 import org.capstone.job_fair.services.mappers.attendant.cv.ApplicationMapper;
@@ -26,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -38,10 +43,25 @@ public class ApplicationServiceImpl implements ApplicationService {
     private BoothJobPositionRepository regisJobPosRepository;
 
     @Autowired
-    private AccountService accountService;
+    private ApplicationMapper applicationMapper;
 
     @Autowired
-    private ApplicationMapper applicationMapper;
+    private CvRepository cvRepository;
+
+    @Autowired
+    private ApplicationActivityMapper applicationActivityMapper;
+
+    @Autowired
+    private ApplicationCertificationMapper applicationCertificationMapper;
+
+    @Autowired
+    private ApplicationEducationMapper applicationEducationMapper;
+
+    @Autowired
+    private ApplicationReferenceMapper applicationReferenceMapper;
+
+    @Autowired
+    private ApplicationSkillMapper applicationSkillMapper;
 
     @Autowired
     private CvService cvService;
@@ -54,6 +74,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         Optional<CvDTO> cvDTOOptional = cvService.getByIdAndAttendantId(cvId, attendantId);
         return cvDTOOptional.isPresent();
     }
+    private ApplicationWorkHistoryMapper applicationWorkHistoryMapper;
 
     private TestStatus getTestStatus(String boothJobPositionId) {
         Optional<BoothJobPositionEntity> boothJobPositionEntityOptional = regisJobPosRepository.findById(boothJobPositionId);
@@ -88,9 +109,11 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Transactional
     public ApplicationDTO createNewApplication(ApplicationDTO dto) {
         //if attendantId not exist, throw error
-        if (!isCvExist(dto.getCvDTO().getId(), dto.getCvDTO().getAttendant().getAccount().getId())) {
+        Optional<CvEntity> cvOptional = cvRepository.findByIdAndAttendantAccountId(dto.getOriginCvId(), dto.getAttendant().getAccount().getId());
+        if (!cvOptional.isPresent()) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.CV_NOT_FOUND));
         }
+        CvEntity cvEntity = cvOptional.get();
         //if registration job position id not exist, throw  error
         TestStatus testStatus = getTestStatus(dto.getBoothJobPositionDTO().getId());
         if (testStatus == null) {
@@ -98,7 +121,21 @@ public class ApplicationServiceImpl implements ApplicationService {
         }
         dto.setTestStatus(testStatus);
         ApplicationEntity entity = applicationMapper.toEntity(dto);
+        entity.setEmail(cvEntity.getEmail());
+        entity.setPhone(cvEntity.getPhone());
+        entity.setYearOfExp(cvEntity.getYearOfExp());
+        entity.setJobTitle(cvEntity.getJobTitle());
+        entity.setJobLevel(cvEntity.getJobLevel());
+        entity.setActivities(cvEntity.getActivities().stream().map(applicationActivityMapper::toEntity).collect(Collectors.toList()));
+        entity.setCertifications(cvEntity.getCertifications().stream().map(applicationCertificationMapper::toEntity).collect(Collectors.toList()));
+        entity.setEducations(cvEntity.getEducations().stream().map(applicationEducationMapper::toEntity).collect(Collectors.toList()));
+        entity.setReferences(cvEntity.getReferences().stream().map(applicationReferenceMapper::toEntity).collect(Collectors.toList()));
+        entity.setSkills(cvEntity.getSkills().stream().map(applicationSkillMapper::toEntity).collect(Collectors.toList()));
+        entity.setWorkHistories(cvEntity.getWorkHistories().stream().map(applicationWorkHistoryMapper::toEntity).collect(Collectors.toList()));
+
         ApplicationEntity resultEntity = applicationRepository.save(entity);
+
+
         ApplicationDTO result = applicationMapper.toDTO(resultEntity);
         quizService.createQuiz(resultEntity.getId(), resultEntity.getBoothJobPosition().getOriginJobPosition(), resultEntity.getBoothJobPosition().getNumOfQuestion());
         return result;
@@ -123,11 +160,15 @@ public class ApplicationServiceImpl implements ApplicationService {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.APPLICATION_NOT_FOUND));
         }
         ApplicationEntity entity = entityOptional.get();
-        if (!entity.getCv().getAttendant().getAccount().getId().equals(userId)) {
+        if (!entity.getAttendant().getAccount().getId().equals(userId)) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Attendant.ATTENDANT_MISMATCH));
         }
 
         List<ApplicationEntity> result = applicationRepository.findByCvIdAndBoothJobPositionIdAndStatusIn(entity.getCv().getId(), entity.getBoothJobPosition().getId(), Arrays.asList(ApplicationStatus.APPROVE, ApplicationStatus.PENDING, ApplicationStatus.REJECT));
+        List<ApplicationEntity> result = applicationRepository.findByOriginCvIdAndBoothJobPositionIdAndStatusIn(
+                entity.getOriginCvId(),
+                entity.getBoothJobPosition().getId(),
+                Arrays.asList(ApplicationStatus.APPROVE, ApplicationStatus.PENDING, ApplicationStatus.REJECT));
 
         if (!result.isEmpty()) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.ALREADY_APPLY_CV));
