@@ -1,7 +1,7 @@
 package org.capstone.job_fair.services.interfaces.attendant;
 
-import org.capstone.job_fair.models.dtos.attendant.cv.ApplicationDTO;
-import org.capstone.job_fair.models.entities.attendant.cv.ApplicationEntity;
+import org.capstone.job_fair.models.dtos.attendant.application.ApplicationDTO;
+import org.capstone.job_fair.models.entities.attendant.application.ApplicationEntity;
 import org.capstone.job_fair.models.enums.ApplicationStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
@@ -11,7 +11,6 @@ import java.util.Optional;
 
 public interface ApplicationService {
     ApplicationDTO createNewApplication(ApplicationDTO dto);
-
 
     Page<ApplicationEntity> getApplicationOfCompanyByJobPositionIdAndStatus(String companyId, String jobPositionId, List<ApplicationStatus> statusList, int pageSize, int offset, String sortBy, Sort.Direction direction);
 
