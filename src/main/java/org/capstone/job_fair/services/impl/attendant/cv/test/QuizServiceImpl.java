@@ -190,6 +190,7 @@ public class QuizServiceImpl implements QuizService {
         }
         ApplicationEntity applicationEntity = applicationRepository.getById(applicationId);
         quizEntity.setMark(evaluateQuiz(quizEntity));
+        quizEntity.setSubmitTime(new Date().getTime());
         double passMark = applicationEntity.getBoothJobPosition().getPassMark();
         if (quizEntity.getMark() < passMark) {
             applicationEntity.setTestStatus(TestStatus.PASS);

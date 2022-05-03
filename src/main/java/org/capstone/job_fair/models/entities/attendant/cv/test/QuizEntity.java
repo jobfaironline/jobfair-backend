@@ -35,6 +35,9 @@ public class QuizEntity {
     @JoinColumn(name = "application_id")
     private ApplicationEntity application;
 
+    @Column(name = "submit_time")
+    private Long submitTime;
+
 
     @OneToMany(orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "quiz_id", referencedColumnName = "id")

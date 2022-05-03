@@ -33,4 +33,6 @@ public class QuizDTO implements Serializable {
     private String applicationId;
     @JsonView(Views.Public.class)
     private List<QuizQuestionDTO> questionList;
+    @JsonView(Views.Public.class)
+    private Long submitTime;
 }
