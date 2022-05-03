@@ -1,9 +1,11 @@
 package org.capstone.job_fair.models.dtos.attendant.cv.test;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.capstone.job_fair.constants.Views;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -14,6 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@JsonView(Views.Public.class)
 public class QuizQuestionDTO implements Serializable {
     @NotNull
     private String id;

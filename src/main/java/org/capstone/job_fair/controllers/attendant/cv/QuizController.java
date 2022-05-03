@@ -1,8 +1,10 @@
 package org.capstone.job_fair.controllers.attendant.cv;
 
 
+import com.fasterxml.jackson.annotation.JsonView;
 import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import org.capstone.job_fair.constants.ApiEndPoint;
+import org.capstone.job_fair.constants.Views;
 import org.capstone.job_fair.controllers.payload.requests.account.cv.SaveQuizRequest;
 import org.capstone.job_fair.models.dtos.attendant.cv.test.QuizDTO;
 import org.capstone.job_fair.services.interfaces.attendant.cv.test.QuizService;
@@ -22,6 +24,7 @@ public class QuizController {
     @Autowired
     private QuizService quizService;
 
+    @JsonView(Views.Public.class)
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ATTENDANT)")
     @GetMapping(ApiEndPoint.Quiz.QUIZ_ENDPOINT + "/{id}")
     public ResponseEntity<?> getQuizByIdForAttendant(@RequestParam(name = "applicationId") String applicationId, @PathVariable("id") String id) {
@@ -30,6 +33,7 @@ public class QuizController {
         Optional<QuizDTO> quizDTO = quizService.getQuizById(id, applicationId, user.getId());
         return quizDTO.isPresent() ? ResponseEntity.ok(quizDTO.get()) : ResponseEntity.notFound().build();
     }
+    @JsonView(Views.Public.class)
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ATTENDANT)")
     @PutMapping(ApiEndPoint.Quiz.QUIZ_ENDPOINT )
     public ResponseEntity<?> createQuizForAttendant(@RequestParam(name = "applicationId") String applicationId) {
@@ -52,7 +56,7 @@ public class QuizController {
     public ResponseEntity<?> submitQuiz(@PathVariable("id") String id, @RequestParam(name = "applicationId") String applicationId) {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         UserDetailsImpl user = (UserDetailsImpl) securityContext.getAuthentication().getPrincipal();
-        quizService.submitQuiz(applicationId, user.getId(), id);
-        return ResponseEntity.ok().build();
+        QuizDTO dto = quizService.submitQuiz(applicationId, user.getId(), id);
+        return ResponseEntity.ok(dto);
     }
 }

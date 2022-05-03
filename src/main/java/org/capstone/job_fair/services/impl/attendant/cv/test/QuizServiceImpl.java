@@ -5,7 +5,9 @@ import org.capstone.job_fair.constants.QuizConstant;
 import org.capstone.job_fair.models.dtos.attendant.cv.test.QuizChoiceDTO;
 import org.capstone.job_fair.models.dtos.attendant.cv.test.QuizDTO;
 import org.capstone.job_fair.models.entities.attendant.application.ApplicationEntity;
+import org.capstone.job_fair.models.entities.attendant.cv.test.QuizChoiceEntity;
 import org.capstone.job_fair.models.entities.attendant.cv.test.QuizEntity;
+import org.capstone.job_fair.models.entities.attendant.cv.test.QuizQuestionEntity;
 import org.capstone.job_fair.models.entities.company.job.questions.QuestionsEntity;
 import org.capstone.job_fair.models.enums.TestStatus;
 import org.capstone.job_fair.repositories.attendant.cv.ApplicationRepository;
@@ -52,7 +54,6 @@ public class QuizServiceImpl implements QuizService {
 
     @Autowired
     private QuizChoiceMapper quizChoiceMapper;
-
 
 
     @Override
@@ -107,7 +108,7 @@ public class QuizServiceImpl implements QuizService {
     private QuizEntity getQuizToSave(String quizId, String applicationId, String userId) {
         Long currentTime = new Date().getTime();
         //Check if quiz is exist
-        Optional<QuizEntity> quizEntityOptional = quizRepository.findQuizToSave(currentTime, applicationId,quizId, userId);
+        Optional<QuizEntity> quizEntityOptional = quizRepository.findQuizToSave(currentTime, applicationId, quizId, userId);
         if (!quizEntityOptional.isPresent()) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Quiz.NOT_FOUND));
         }
@@ -134,14 +135,44 @@ public class QuizServiceImpl implements QuizService {
         return quizMapper.toDTO(quizRepository.save(quizEntity));
     }
 
+    private QuizEntity evaluateQuiz(QuizEntity entity) {
+        double mark = 0;
+        double oneQuestionPoint = 10 / entity.getQuestionList().size();
+        int numberOfAnswer;
+        int numberOfWrongAnswer;
+        for (QuizQuestionEntity question : entity.getQuestionList()) {
+            numberOfAnswer = 0;
+            numberOfWrongAnswer = 0;
+            for (QuizChoiceEntity choice : question.getChoiceList()) {
+                if (choice.getIsSelected()) {
+                    if (choice.getIsCorrect()) {
+                        numberOfAnswer++;
+                    } else {
+                        numberOfWrongAnswer++;
+                    }
+                }
+            }
+            if (numberOfAnswer == 0 && numberOfWrongAnswer == 0) mark = oneQuestionPoint; else
+                if (numberOfWrongAnswer == 0) mark += oneQuestionPoint;
+        }
+        entity.setMark(mark);
+        return entity;
+    }
+
     @Override
     @Transactional
-    public void submitQuiz(String applicationId, String userId, String quizId) {
+    public QuizDTO submitQuiz(String applicationId, String userId, String quizId) {
         QuizEntity quizEntity = getQuizToSave(quizId, applicationId, userId);
         ApplicationEntity applicationEntity = applicationRepository.getById(applicationId);
-        applicationEntity.setTestStatus(TestStatus.DONE);
-        applicationRepository.save(applicationEntity);
+        quizEntity = evaluateQuiz(quizEntity);
+        double passMark = applicationEntity.getBoothJobPosition().getPassMark();
+        if (quizEntity.getMark() < passMark) {
+            applicationEntity.setTestStatus(TestStatus.PASS);
+        } else {
+            applicationEntity.setTestStatus(TestStatus.FAIL);
+        }
         quizEntity.setIsSubmitted(true);
-        quizRepository.save(quizEntity);
+        applicationRepository.save(applicationEntity);
+        return quizMapper.toDTO(quizRepository.save(quizEntity));
     }
 }

@@ -23,7 +23,7 @@ public class QuizChoiceEntity {
     @Column(name = "content")
     private String content;
     @Column(name = "is_correct")
-    private Boolean isCorrect = false;
+    private Boolean isCorrect;
     @Column(name = "is_selected")
     private Boolean isSelected = false;
     @JoinColumn(name = "quiz_question_id")

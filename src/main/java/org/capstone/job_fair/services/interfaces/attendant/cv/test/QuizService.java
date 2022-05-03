@@ -12,7 +12,7 @@ public interface QuizService {
 
     QuizDTO saveQuiz(String applicationId, String userId, String quizId, HashMap<String, Boolean> answers);
 
-    void submitQuiz(String applicationId, String userId, String quizId);
+    QuizDTO submitQuiz(String applicationId, String userId, String quizId);
 
 
     }
