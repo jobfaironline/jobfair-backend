@@ -3,13 +3,7 @@ package org.capstone.job_fair.controllers.payload.responses;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.capstone.job_fair.models.dtos.company.CompanyDTO;
 import org.capstone.job_fair.models.dtos.job_fair.JobFairDTO;
-import org.capstone.job_fair.models.statuses.JobFairAttendantStatus;
-import org.capstone.job_fair.models.statuses.JobFairPlanStatus;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 @Data
 @NoArgsConstructor

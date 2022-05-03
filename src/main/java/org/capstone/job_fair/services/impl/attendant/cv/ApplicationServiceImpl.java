@@ -3,13 +3,18 @@ package org.capstone.job_fair.services.impl.attendant.cv;
 import org.capstone.job_fair.constants.DataConstraint;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.models.dtos.attendant.application.ApplicationDTO;
+import org.capstone.job_fair.models.dtos.attendant.cv.CvDTO;
 import org.capstone.job_fair.models.entities.attendant.application.ApplicationEntity;
 import org.capstone.job_fair.models.entities.attendant.cv.CvEntity;
+import org.capstone.job_fair.models.entities.company.job.BoothJobPositionEntity;
 import org.capstone.job_fair.models.enums.ApplicationStatus;
+import org.capstone.job_fair.models.enums.TestStatus;
 import org.capstone.job_fair.repositories.attendant.cv.ApplicationRepository;
 import org.capstone.job_fair.repositories.attendant.cv.CvRepository;
 import org.capstone.job_fair.repositories.company.job.BoothJobPositionRepository;
 import org.capstone.job_fair.services.interfaces.attendant.ApplicationService;
+import org.capstone.job_fair.services.interfaces.attendant.cv.CvService;
+import org.capstone.job_fair.services.interfaces.attendant.cv.test.QuizService;
 import org.capstone.job_fair.services.mappers.attendant.application.*;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,10 +61,28 @@ public class ApplicationServiceImpl implements ApplicationService {
     private ApplicationSkillMapper applicationSkillMapper;
 
     @Autowired
+    private CvService cvService;
+
+    @Autowired
+    private QuizService quizService;
+
+    @Autowired
     private ApplicationWorkHistoryMapper applicationWorkHistoryMapper;
 
-    private boolean isJobPositionExist(String registrationId) {
-        return regisJobPosRepository.countById(registrationId) != 0;
+
+    private boolean isCvExist(String cvId, String attendantId) {
+        Optional<CvDTO> cvDTOOptional = cvService.getByIdAndAttendantId(cvId, attendantId);
+        return cvDTOOptional.isPresent();
+    }
+
+
+    private TestStatus getTestStatus(String boothJobPositionId) {
+        Optional<BoothJobPositionEntity> boothJobPositionEntityOptional = regisJobPosRepository.findById(boothJobPositionId);
+        if (!boothJobPositionEntityOptional.isPresent()) {
+            return null;
+        }
+        if (boothJobPositionEntityOptional.get().getIsHaveTest()) return TestStatus.NOT_TAKEN;
+        return TestStatus.NO_TEST;
     }
 
     private void validatePaging(int pageSize, int offset) {
@@ -93,9 +116,11 @@ public class ApplicationServiceImpl implements ApplicationService {
         }
         CvEntity cvEntity = cvOptional.get();
         //if registration job position id not exist, throw  error
-        if (!isJobPositionExist(dto.getBoothJobPositionDTO().getId())) {
+        TestStatus testStatus = getTestStatus(dto.getBoothJobPositionDTO().getId());
+        if (testStatus == null) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.NOT_FOUND_REGISTRATION_JOB_POSITION));
         }
+        dto.setTestStatus(testStatus);
         ApplicationEntity entity = applicationMapper.toEntity(dto);
         entity.setEmail(cvEntity.getEmail());
         entity.setPhone(cvEntity.getPhone());
@@ -159,8 +184,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         if (statusList == null || statusList.isEmpty()) {
             statusList = Arrays.asList(ApplicationStatus.FINISHED, ApplicationStatus.PENDING, ApplicationStatus.CANCEL, ApplicationStatus.APPROVE, ApplicationStatus.REJECT);
         }
-        Page<ApplicationEntity> applicationEntityPage = applicationRepository.findAllApplicationOfCompanyByJobPositionIdAndStatusIn
-                (companyId, jobPositionId, statusList, PageRequest.of(offset, pageSize).withSort(direction, sortBy));
+        Page<ApplicationEntity> applicationEntityPage = applicationRepository.findAllApplicationOfCompanyByJobPositionIdAndStatusIn(companyId, jobPositionId, statusList, PageRequest.of(offset, pageSize).withSort(direction, sortBy));
         return applicationEntityPage;
     }
 
@@ -172,8 +196,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             statusList = Arrays.asList(ApplicationStatus.FINISHED, ApplicationStatus.PENDING, ApplicationStatus.CANCEL, ApplicationStatus.APPROVE, ApplicationStatus.REJECT);
         }
 
-        Page<ApplicationEntity> applicationEntityPage = applicationRepository.findAllApplicationOfCompanyByJobFairIdAndStatusIn
-                (companyId, jobFairId, statusList, PageRequest.of(offset, pageSize).withSort(direction, sortBy));
+        Page<ApplicationEntity> applicationEntityPage = applicationRepository.findAllApplicationOfCompanyByJobFairIdAndStatusIn(companyId, jobFairId, statusList, PageRequest.of(offset, pageSize).withSort(direction, sortBy));
         return applicationEntityPage;
     }
 
@@ -186,9 +209,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             statusList = Arrays.asList(ApplicationStatus.FINISHED, ApplicationStatus.PENDING, ApplicationStatus.CANCEL, ApplicationStatus.APPROVE, ApplicationStatus.REJECT);
         }
 
-        Page<ApplicationEntity> applicationEntityPage = applicationRepository.
-                findAllApplicationOfCompanyByJobPositionTitleLikeAndJobFairNameLikeAndStatusIn
-                        (companyId, jobPositionName, jobFairName, statusList, PageRequest.of(offset, pageSize).withSort(direction, sortBy));
+        Page<ApplicationEntity> applicationEntityPage = applicationRepository.findAllApplicationOfCompanyByJobPositionTitleLikeAndJobFairNameLikeAndStatusIn(companyId, jobPositionName, jobFairName, statusList, PageRequest.of(offset, pageSize).withSort(direction, sortBy));
         return applicationEntityPage;
     }
 
@@ -204,10 +225,9 @@ public class ApplicationServiceImpl implements ApplicationService {
     public void evaluateApplication(ApplicationDTO dto) {
         String id = dto.getId();
         String companyId = dto.getBoothJobPositionDTO().getJobFairBooth().getJobFair().getCompany().getId();
-        Optional<ApplicationEntity> applicationEntityOptional =
-                applicationRepository.findByIdAndCompanyId(id, companyId);
-        if (!applicationEntityOptional.isPresent()) throw new
-                IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.APPLICATION_NOT_FOUND));
+        Optional<ApplicationEntity> applicationEntityOptional = applicationRepository.findByIdAndCompanyId(id, companyId);
+        if (!applicationEntityOptional.isPresent())
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.APPLICATION_NOT_FOUND));
         ApplicationEntity applicationEntity = applicationEntityOptional.get();
         if (!applicationEntity.getStatus().equals(ApplicationStatus.PENDING))
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.INVALID_EVALUATE_STATUS));

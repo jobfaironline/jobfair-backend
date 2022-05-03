@@ -6,10 +6,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
 import org.capstone.job_fair.models.entities.attendant.AttendantEntity;
-import org.capstone.job_fair.models.entities.attendant.cv.CvEntity;
 import org.capstone.job_fair.models.entities.company.job.BoothJobPositionEntity;
 import org.capstone.job_fair.models.enums.ApplicationStatus;
 import org.capstone.job_fair.models.enums.JobLevel;
+import org.capstone.job_fair.models.enums.TestStatus;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -101,6 +101,11 @@ public class ApplicationEntity {
     @Column(name = "origin_cv_id")
     private String originCvId;
 
+
+    @Column(name = "test_status")
+    @Enumerated(EnumType.ORDINAL)
+    private TestStatus testStatus;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -116,10 +121,6 @@ public class ApplicationEntity {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "(" +
-                "id = " + id + ", " +
-                "summary = " + summary + ", " +
-                "createDate = " + createDate + ", " +
-                "status = " + status + ")";
+        return getClass().getSimpleName() + "(" + "id = " + id + ", " + "summary = " + summary + ", " + "createDate = " + createDate + ", " + "status = " + status + ")";
     }
 }

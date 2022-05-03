@@ -3,7 +3,6 @@ package org.capstone.job_fair.services.impl.job_fair;
 import org.capstone.job_fair.constants.AWSConstant;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.models.dtos.job_fair.ThreeDimensionMediaDTO;
-import org.capstone.job_fair.models.entities.job_fair.LayoutEntity;
 import org.capstone.job_fair.models.entities.job_fair.ThreeDimensionMedia;
 import org.capstone.job_fair.models.statuses.ThreeDimensionMediaType;
 import org.capstone.job_fair.repositories.job_fair.DecoratedItemRepository;

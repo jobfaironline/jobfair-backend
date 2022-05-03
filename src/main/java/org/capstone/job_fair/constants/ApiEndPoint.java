@@ -31,45 +31,62 @@ public final class ApiEndPoint {
 
     }
 
-    public static final class JobLevel{
-        private JobLevel(){
+    public static final class Quiz {
+        private Quiz() {
 
         }
+
+        public static final String QUIZ_ENDPOINT = ROOT_ENDPOINT + VERSION + "/quiz";
+        public static final String SUBMIT = QUIZ_ENDPOINT + "/submit";
+        public static final String IN_PROGRESS = QUIZ_ENDPOINT + "/in-progress";
+        public static final String DONE = QUIZ_ENDPOINT + "/done";
+    }
+
+    public static final class JobLevel {
+        private JobLevel() {
+
+        }
+
         public static final String JOB_LEVEL_ENDPOINT = ROOT_ENDPOINT + VERSION + "/job-level";
     }
 
-    public static final class Residence{
-        private Residence(){
+    public static final class Residence {
+        private Residence() {
 
         }
+
         public static final String RESIDENCE_ENDPOINT = ROOT_ENDPOINT + VERSION + "/residence";
     }
 
-    public static final class ProfessionalCategory{
-        private ProfessionalCategory(){
+    public static final class ProfessionalCategory {
+        private ProfessionalCategory() {
 
         }
+
         public static final String PROFESSIONAL_CATEGORY_ENDPOINT = ROOT_ENDPOINT + VERSION + "/professional-category";
     }
 
-    public static final class Skill{
-        private Skill(){
+    public static final class Skill {
+        private Skill() {
 
         }
+
         public static final String SKILL_ENDPOINT = ROOT_ENDPOINT + VERSION + "/skill";
     }
 
-    public static final class Qualification{
-        private Qualification(){
+    public static final class Qualification {
+        private Qualification() {
 
         }
+
         public static final String PROFESSIONAL_CATEGORY_ENDPOINT = ROOT_ENDPOINT + VERSION + "/qualification";
     }
 
-    public static final class Role{
-        private Role(){
+    public static final class Role {
+        private Role() {
 
         }
+
         public static final String ROLE_ENDPOINT = ROOT_ENDPOINT + VERSION + "/role";
     }
 
@@ -89,6 +106,7 @@ public final class ApiEndPoint {
         private Questions() {
 
         }
+
         public static final String QUESTION = ROOT_ENDPOINT + VERSION + "/questions";
         public static final String BY_JOB_POSITION = QUESTION + "/job-position";
         public static final String UPLOAD_CSV = QUESTION + "/csv";

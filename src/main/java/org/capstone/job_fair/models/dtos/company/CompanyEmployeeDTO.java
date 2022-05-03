@@ -1,6 +1,5 @@
 package org.capstone.job_fair.models.dtos.company;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
 

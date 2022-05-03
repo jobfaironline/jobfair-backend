@@ -16,10 +16,6 @@ import java.util.Optional;
 public interface ApplicationRepository extends JpaRepository<ApplicationEntity, String> {
 
     @Query("select a from ApplicationEntity a " +
-            "where a.createDate between ?1 and ?2 and a.status = ?3 and a.attendant.accountId = ?4")
-    Page<ApplicationEntity> findAllByCreateDateBetweenAndStatusAndCvAttendantAccountId(long fromDate, long toDate, ApplicationStatus status, String id, Pageable pageable);
-
-    @Query("select a from ApplicationEntity a " +
             "where a.attendant.accountId = :accountId and " +
             "a.createDate between :fromDate and :toDate and " +
             "a.status in :statusList and " +
@@ -64,4 +60,6 @@ public interface ApplicationRepository extends JpaRepository<ApplicationEntity, 
                                                      @Param("companyId") String companyId);
 
     List<ApplicationEntity> findByOriginCvIdAndBoothJobPositionIdAndStatusIn(String cv, String jobPositionId, List<ApplicationStatus> status);
+
+    Optional<ApplicationEntity> findByIdAndAttendantAccountId(String applicationId, String attendantId);
 }
