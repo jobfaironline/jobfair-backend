@@ -1,7 +1,7 @@
-package org.capstone.job_fair.services.mappers.notification;
+package org.capstone.job_fair.services.mappers.dynamoDB;
 
-import org.capstone.job_fair.models.dtos.notification.NotificationMessageDTO;
-import org.capstone.job_fair.models.entities.notification.NotificationMessageEntity;
+import org.capstone.job_fair.models.dtos.dynamoDB.NotificationMessageDTO;
+import org.capstone.job_fair.models.entities.dynamoDB.NotificationMessageEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 

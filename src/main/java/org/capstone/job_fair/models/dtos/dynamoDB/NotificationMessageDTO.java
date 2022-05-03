@@ -1,4 +1,4 @@
-package org.capstone.job_fair.models.dtos.notification;
+package org.capstone.job_fair.models.dtos.dynamoDB;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
