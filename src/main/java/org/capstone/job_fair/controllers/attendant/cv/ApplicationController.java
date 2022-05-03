@@ -61,7 +61,7 @@ public class ApplicationController {
 
         //call registrationJobPositionDTO + setId from request
         BoothJobPositionDTO regisDTO = new BoothJobPositionDTO();
-        regisDTO.setId(request.getRegistrationJobPositionId());
+        regisDTO.setId(request.getBoothJobPositionId());
         //set summary, create date, status, attendantDTO, registrationJobPositionDTO for ApplicationDTO
         dto.setSummary(request.getSummary());
         dto.setCreateDate(new Date().getTime());
