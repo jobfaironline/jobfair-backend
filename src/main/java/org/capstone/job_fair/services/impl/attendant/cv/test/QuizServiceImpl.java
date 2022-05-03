@@ -59,6 +59,7 @@ public class QuizServiceImpl implements QuizService {
     @Override
     public Optional<QuizDTO> getQuizById(String id, String applicationId, String userid, boolean isDoing) {
         Optional<QuizEntity> quizEntity = quizRepository.findByIdAndApplicationIdAndApplicationAttendantAccountId(id, applicationId, userid);
+        //^ is XOR
         if (isDoing ^ checkQuizTime(quizEntity.get())) {
                 return Optional.empty();
         }
