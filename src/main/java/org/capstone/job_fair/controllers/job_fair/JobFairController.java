@@ -7,6 +7,7 @@ import org.capstone.job_fair.constants.*;
 import org.capstone.job_fair.controllers.payload.requests.job_fair.DraftJobFairRequest;
 import org.capstone.job_fair.controllers.payload.requests.job_fair.UpdateJobFairRequest;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
+import org.capstone.job_fair.controllers.payload.responses.JobFairForAttendantResponse;
 import org.capstone.job_fair.controllers.payload.responses.RenderJobFairParkResponse;
 import org.capstone.job_fair.models.dtos.company.CompanyDTO;
 import org.capstone.job_fair.models.dtos.company.JobFairBoothDTO;
@@ -14,14 +15,15 @@ import org.capstone.job_fair.models.dtos.company.JobFairBoothLayoutDTO;
 import org.capstone.job_fair.models.dtos.job_fair.AssignmentDTO;
 import org.capstone.job_fair.models.dtos.job_fair.JobFairDTO;
 import org.capstone.job_fair.models.dtos.job_fair.LayoutDTO;
-import org.capstone.job_fair.models.dtos.notification.NotificationMessageDTO;
+import org.capstone.job_fair.models.dtos.dynamoDB.NotificationMessageDTO;
 import org.capstone.job_fair.models.enums.NotificationType;
 import org.capstone.job_fair.services.interfaces.company.CompanyBoothLayoutService;
 import org.capstone.job_fair.services.interfaces.company.JobFairBoothService;
+import org.capstone.job_fair.services.interfaces.dynamoDB.JobFairVisitService;
 import org.capstone.job_fair.services.interfaces.job_fair.AssignmentService;
 import org.capstone.job_fair.services.interfaces.job_fair.JobFairService;
 import org.capstone.job_fair.services.interfaces.job_fair.LayoutService;
-import org.capstone.job_fair.services.interfaces.notification.NotificationService;
+import org.capstone.job_fair.services.interfaces.dynamoDB.NotificationService;
 import org.capstone.job_fair.services.interfaces.util.FileStorageService;
 import org.capstone.job_fair.services.mappers.job_fair.JobFairMapper;
 import org.capstone.job_fair.utils.ImageUtil;
@@ -67,6 +69,9 @@ public class JobFairController {
 
     @Autowired
     private AssignmentService assignmentService;
+
+    @Autowired
+    private JobFairVisitService jobFairVisitService;
 
     @GetMapping(ApiEndPoint.JobFair.FOR_3D_MAP + "/{id}")
     public ResponseEntity<?> getJobFairInformationFor3DMap(@PathVariable("id") String jobFairId) {
@@ -197,7 +202,12 @@ public class JobFairController {
             @RequestParam(value = "categoryId", defaultValue = JobFairConstant.DEFAULT_CATEGORY_ID) String categoryId,
             @RequestParam(value = "countryId", defaultValue = JobFairConstant.DEFAULT_COUNTRY_ID) String countryId) {
         Page<JobFairDTO> result = jobFairService.findJobFairForAttendantByCriteria(name, countryId, categoryId, PageRequest.of(offset, pageSize).withSort(Sort.by(direction, sortBy)));
-        return ResponseEntity.ok(result);
+        Page<JobFairForAttendantResponse> responses = result.map(JobFairForAttendantResponse::new).map(response -> {
+            int count = jobFairVisitService.getCurrentVisitOfJobFair(response.getId());
+            response.setVisitCount(count);
+            return response;
+        });
+        return ResponseEntity.ok(responses);
     }
 
 }

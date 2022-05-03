@@ -257,7 +257,7 @@ public final class ApiEndPoint {
         private JobFairBooth() {
         }
 
-        public static final String COMPANY_BOOTH = ROOT_ENDPOINT + VERSION + "/job-fair-booth";
+        public static final String JOB_FAIR_BOOTH = ROOT_ENDPOINT + VERSION + "/job-fair-booth";
     }
 
     public static final class Cv {
@@ -288,6 +288,16 @@ public final class ApiEndPoint {
         public static final String NOTIFICATION = ROOT_ENDPOINT + VERSION + "/notifications";
         public static final String READ = NOTIFICATION + "/read";
         public static final String READ_ALL = NOTIFICATION + "/read-all";
+
+    }
+
+    public static final class JobFairVisit {
+        private JobFairVisit(){}
+        public static final String JOB_FAIR_VISIT = ROOT_ENDPOINT + VERSION + "/visit";
+        public static final String ENTER_JOB_FAIR = JOB_FAIR_VISIT + "/enter/job-fair";
+        public static final String LEAVE_JOB_FAIR = JOB_FAIR_VISIT + "/leave/job-fair";
+        public static final String ENTER_BOOTH = JOB_FAIR_VISIT + "/enter/booth";
+        public static final String LEAVE_BOOTH = JOB_FAIR_VISIT + "/leave/booth";
 
     }
 }

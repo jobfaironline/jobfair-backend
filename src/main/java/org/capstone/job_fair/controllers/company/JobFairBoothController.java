@@ -3,9 +3,11 @@ package org.capstone.job_fair.controllers.company;
 import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.controllers.payload.requests.company.BoothDescriptionRequest;
+import org.capstone.job_fair.controllers.payload.responses.JobFairBoothResponse;
 import org.capstone.job_fair.models.dtos.company.JobFairBoothDTO;
 import org.capstone.job_fair.models.dtos.company.job.BoothJobPositionDTO;
 import org.capstone.job_fair.services.interfaces.company.JobFairBoothService;
+import org.capstone.job_fair.services.interfaces.dynamoDB.JobFairVisitService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,7 +24,10 @@ public class JobFairBoothController {
     @Autowired
     private JobFairBoothService boothService;
 
-    @GetMapping(ApiEndPoint.JobFairBooth.COMPANY_BOOTH)
+    @Autowired
+    private JobFairVisitService jobFairVisitService;
+
+    @GetMapping(ApiEndPoint.JobFairBooth.JOB_FAIR_BOOTH)
     public ResponseEntity<?> getByJobFairId(
             @RequestParam(value = "jobFairId") String jobFairId
     ) {
@@ -33,16 +38,21 @@ public class JobFairBoothController {
         return ResponseEntity.ok(jobFairBoothDTOList);
     }
 
-    @GetMapping(ApiEndPoint.JobFairBooth.COMPANY_BOOTH + "/{companyBoothId}")
-    public ResponseEntity<?> getCompanyBoothById(@PathVariable("companyBoothId") String companyBoothId) {
-        Optional<JobFairBoothDTO> result = boothService.getById(companyBoothId);
+    @GetMapping(ApiEndPoint.JobFairBooth.JOB_FAIR_BOOTH + "/{jobFairBoothId}")
+    public ResponseEntity<?> getCompanyBoothById(@PathVariable("jobFairBoothId") String jobFairBoothId) {
+        Optional<JobFairBoothDTO> result = boothService.getById(jobFairBoothId);
         if (!result.isPresent()) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(result.get());
+        return ResponseEntity.ok(result.map(jobFairBoothDTO -> {
+            JobFairBoothResponse response = new JobFairBoothResponse(jobFairBoothDTO);
+            int count = jobFairVisitService.getCurrentVisitOfJobFairBooth(jobFairBoothId);
+            response.setVisitCount(count);
+            return response;
+        }).get());
     }
 
-    @PostMapping(ApiEndPoint.JobFairBooth.COMPANY_BOOTH)
+    @PostMapping(ApiEndPoint.JobFairBooth.JOB_FAIR_BOOTH)
     public ResponseEntity<?> assignJobPositionToBooth(@RequestBody @Valid BoothDescriptionRequest request){
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 

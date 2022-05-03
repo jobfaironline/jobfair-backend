@@ -19,4 +19,11 @@ public class AttendantRegistrationDTO implements Serializable {
     private String attendantId;
 
     private String jobFairId;
+
+    private Long createTime;
+
+    private Boolean isVisit;
+
+    private Long visitTime;
+
 }

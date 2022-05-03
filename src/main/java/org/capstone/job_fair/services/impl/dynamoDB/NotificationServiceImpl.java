@@ -1,4 +1,4 @@
-package org.capstone.job_fair.services.impl.notification;
+package org.capstone.job_fair.services.impl.dynamoDB;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
@@ -7,12 +7,13 @@ import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.model.SendMessageRequest;
 import org.capstone.job_fair.constants.MessageConstant;
-import org.capstone.job_fair.models.dtos.notification.NotificationMessageDTO;
-import org.capstone.job_fair.models.entities.notification.NotificationMessageEntity;
+import org.capstone.job_fair.models.dtos.dynamoDB.NotificationMessageDTO;
+import org.capstone.job_fair.models.entities.dynamoDB.NotificationMessageEntity;
+import org.capstone.job_fair.models.enums.NotificationType;
 import org.capstone.job_fair.models.enums.Role;
 import org.capstone.job_fair.repositories.account.AccountRepository;
-import org.capstone.job_fair.services.interfaces.notification.NotificationService;
-import org.capstone.job_fair.services.mappers.notification.NotificationMessageMapper;
+import org.capstone.job_fair.services.interfaces.dynamoDB.NotificationService;
+import org.capstone.job_fair.services.mappers.dynamoDB.NotificationMessageMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -113,9 +114,10 @@ public class NotificationServiceImpl implements NotificationService {
 
         HashMap<String, AttributeValue> eav = new HashMap<>();
         eav.put(":userId", new AttributeValue().withS(id));
+        eav.put(":notificationType", new AttributeValue().withS(NotificationType.NOTI.name()));
 
         DynamoDBScanExpression scanExpression = new DynamoDBScanExpression()
-                .withFilterExpression("userId = :userId")
+                .withFilterExpression("userId = :userId AND notificationType = :notificationType")
                 .withExpressionAttributeValues(eav);
 
 
