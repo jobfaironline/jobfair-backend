@@ -36,7 +36,7 @@ public class QuizEntity {
     private ApplicationEntity application;
 
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "quiz_id", referencedColumnName = "id")
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
     private List<QuizQuestionEntity> questionList;

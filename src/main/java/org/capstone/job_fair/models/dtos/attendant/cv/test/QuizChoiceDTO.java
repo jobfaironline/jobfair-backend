@@ -21,7 +21,6 @@ public class QuizChoiceDTO implements Serializable {
     private Boolean isCorrect;
     @NotNull
     private Boolean isSelected;
-    private String quizQuestionId;
     @JsonIgnore
     private String originChoiceId;
 }

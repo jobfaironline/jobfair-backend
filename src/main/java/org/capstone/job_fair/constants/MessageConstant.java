@@ -379,8 +379,10 @@ public final class MessageConstant {
         }
 
         public static final String NOT_FOUND = "quiz.error.not-found";
+        public static final String JOB_POSITION_NOT_ALLOW_QUIZ = "quiz.error.job-position-not-allow-quiz";
         public static final String TIME_UP = "quiz.error.time-up";
         public static final String TEST_ALREADY_TAKEN = "quiz.error.already-taken";
+        public static final String CURRENT_QUIZ_STILL_IN_PROGRESS = "quiz.error.current-quiz-still-in-progress";
     }
 
 

@@ -23,11 +23,12 @@ public class QuizChoiceEntity {
     @Column(name = "content")
     private String content;
     @Column(name = "is_correct")
-    private Boolean isCorrect;
+    private Boolean isCorrect = false;
     @Column(name = "is_selected")
     private Boolean isSelected = false;
-    @Column(name = "quiz_question_id")
-    private String quizQuestionId;
+    @JoinColumn(name = "quiz_question_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private QuizQuestionEntity quizQuestion;
     @Column(name = "origin_choice_id")
     private String originChoiceId;
 

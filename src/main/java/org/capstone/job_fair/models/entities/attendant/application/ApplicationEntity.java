@@ -103,6 +103,7 @@ public class ApplicationEntity {
 
 
     @Column(name = "test_status")
+    @Enumerated(EnumType.ORDINAL)
     private TestStatus testStatus;
 
     @Override

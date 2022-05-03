@@ -1,6 +1,7 @@
 package org.capstone.job_fair.services.impl.attendant.cv.test;
 
 import org.capstone.job_fair.constants.MessageConstant;
+import org.capstone.job_fair.constants.QuizConstant;
 import org.capstone.job_fair.models.dtos.attendant.cv.test.QuizChoiceDTO;
 import org.capstone.job_fair.models.dtos.attendant.cv.test.QuizDTO;
 import org.capstone.job_fair.models.entities.attendant.application.ApplicationEntity;
@@ -53,9 +54,16 @@ public class QuizServiceImpl implements QuizService {
     private QuizChoiceMapper quizChoiceMapper;
 
 
+
+    @Override
+    public Optional<QuizDTO> getQuizById(String id, String applicationId, String userid) {
+        Optional<QuizEntity> quizEntity = quizRepository.findByIdAndApplicationIdAndApplicationAttendantAccountId(id, applicationId, userid);
+        return quizEntity.map(quizMapper::toDTO);
+    }
+
     @Override
     @Transactional
-    public QuizDTO getOrCreateQuiz(String applicationId, String userId) {
+    public QuizDTO createQuiz(String applicationId, String userId) {
         Optional<ApplicationEntity> applicationEntityOptional = applicationRepository.findByIdAndAttendantAccountId(applicationId, userId);
         if (!applicationEntityOptional.isPresent()) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.APPLICATION_NOT_FOUND));
@@ -63,18 +71,18 @@ public class QuizServiceImpl implements QuizService {
         //Check if this job position has any quiz
         ApplicationEntity applicationEntity = applicationEntityOptional.get();
         if (!applicationEntity.getBoothJobPosition().getIsHaveTest()) {
-            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Quiz.NOT_FOUND));
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Quiz.JOB_POSITION_NOT_ALLOW_QUIZ));
         }
         //Check if there is any quiz is in progress at current time
+        //By finding if there is any quiz that has start time < current time and end time > current time
         Long currentTime = new Date().getTime();
-        Optional<QuizEntity> quizEntityOptional = quizRepository.getQuiz(currentTime, applicationId);
-        //If there is, check if this quiz is in progress
+        Optional<QuizEntity> quizEntityOptional = quizRepository.getQuiz(currentTime, applicationId, userId);
+        //if there is => Quiz is in progress
         if (quizEntityOptional.isPresent()) {
-            return quizMapper.toDTO(quizEntityOptional.get());
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Quiz.CURRENT_QUIZ_STILL_IN_PROGRESS));
         }
         //If not, generate quiz
         QuizEntity quizEntity = new QuizEntity();
-        quizRepository.save(quizEntity);
         //Get number of question from job position
         int numberOfQuestion = applicationEntity.getBoothJobPosition().getNumOfQuestion();
         //Get duration from job position
@@ -86,7 +94,7 @@ public class QuizServiceImpl implements QuizService {
         //Set start time to now
         quizEntity.setBeginTime(currentTime);
         //Set end time to now + duration
-        quizEntity.setEndTime(currentTime + duration * 60 * 1000);
+        quizEntity.setEndTime(currentTime + duration * 60 * 1000 + QuizConstant.BUFFER_TIME);
         quizEntity.setApplication(applicationEntity);
         //Change test status to in progress
         applicationEntity.setTestStatus(TestStatus.IN_PROGRESS);
@@ -94,12 +102,12 @@ public class QuizServiceImpl implements QuizService {
         quizEntity = quizRepository.save(quizEntity);
         applicationRepository.save(applicationEntity);
         return quizMapper.toDTO(quizEntity);
-
     }
 
     private QuizEntity getQuizToSave(String quizId, String applicationId, String userId) {
+        Long currentTime = new Date().getTime();
         //Check if quiz is exist
-        Optional<QuizEntity> quizEntityOptional = quizRepository.findQuizByCriteria(applicationId, quizId, userId);
+        Optional<QuizEntity> quizEntityOptional = quizRepository.findQuizToSave(currentTime, applicationId,quizId, userId);
         if (!quizEntityOptional.isPresent()) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Quiz.NOT_FOUND));
         }
@@ -107,12 +115,6 @@ public class QuizServiceImpl implements QuizService {
         //Check if quiz is opening
         if (quizEntity.getIsSubmitted()) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Quiz.TEST_ALREADY_TAKEN));
-        }
-        //Validate time is not over
-        Long endTime = quizEntity.getEndTime();
-        Long currentTime = new Date().getTime();
-        if (currentTime > endTime) {
-            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Quiz.TIME_UP));
         }
         return quizEntity;
     }

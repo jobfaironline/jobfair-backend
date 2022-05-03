@@ -11,12 +11,14 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 public abstract class QuizChoiceMapper {
     public abstract QuizChoiceDTO toDTO(QuizChoiceEntity entity);
 
+    @Mapping(target = "quizQuestion", ignore = true)
     public abstract QuizChoiceEntity toEntity(QuizChoiceDTO dto);
 
     @Mapping(target = "originChoiceId", source = "id")
-    @Mapping(target = "quizQuestionId", source = "questionId", ignore = true)
+    @Mapping(target = "quizQuestion", source = "questionId", ignore = true)
     @Mapping(target = "isSelected", ignore = true)
     @Mapping(target = "isCorrect", ignore = true)
+    @Mapping(target = "id", ignore = true)
     public abstract QuizChoiceEntity toEntity(ChoicesEntity entity);
 
 

@@ -66,19 +66,23 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Autowired
     private QuizService quizService;
 
+    @Autowired
+    private ApplicationWorkHistoryMapper applicationWorkHistoryMapper;
+
 
     private boolean isCvExist(String cvId, String attendantId) {
         Optional<CvDTO> cvDTOOptional = cvService.getByIdAndAttendantId(cvId, attendantId);
         return cvDTOOptional.isPresent();
     }
-    private ApplicationWorkHistoryMapper applicationWorkHistoryMapper;
+
 
     private TestStatus getTestStatus(String boothJobPositionId) {
         Optional<BoothJobPositionEntity> boothJobPositionEntityOptional = regisJobPosRepository.findById(boothJobPositionId);
         if (!boothJobPositionEntityOptional.isPresent()) {
             return null;
         }
-        return TestStatus.NOT_TAKEN;
+        if (boothJobPositionEntityOptional.get().getIsHaveTest()) return TestStatus.NOT_TAKEN;
+        return TestStatus.NO_TEST;
     }
 
     private void validatePaging(int pageSize, int offset) {
