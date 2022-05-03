@@ -14,7 +14,6 @@ public abstract class QuizChoiceMapper {
     @Mapping(target = "quizQuestion", ignore = true)
     public abstract QuizChoiceEntity toEntity(QuizChoiceDTO dto);
 
-    @Mapping(target = "originChoiceId", source = "id")
     @Mapping(target = "quizQuestion", source = "questionId", ignore = true)
     @Mapping(target = "isSelected", ignore = true)
     @Mapping(target = "id", ignore = true)
