@@ -29,8 +29,7 @@ public class QuizChoiceEntity {
     @JoinColumn(name = "quiz_question_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private QuizQuestionEntity quizQuestion;
-    @Column(name = "origin_choice_id")
-    private String originChoiceId;
+    
 
 
     @Override

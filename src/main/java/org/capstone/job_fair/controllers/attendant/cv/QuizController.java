@@ -26,13 +26,24 @@ public class QuizController {
 
     @JsonView(Views.Public.class)
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ATTENDANT)")
-    @GetMapping(ApiEndPoint.Quiz.QUIZ_ENDPOINT + "/{id}")
-    public ResponseEntity<?> getQuizByIdForAttendant(@RequestParam(name = "applicationId") String applicationId, @PathVariable("id") String id) {
+    @GetMapping(ApiEndPoint.Quiz.IN_PROGRESS + "/{id}")
+    public ResponseEntity<?> getInProgressQuizByIdForAttendant(@RequestParam(name = "applicationId") String applicationId, @PathVariable("id") String id) {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         UserDetailsImpl user = (UserDetailsImpl) securityContext.getAuthentication().getPrincipal();
         Optional<QuizDTO> quizDTO = quizService.getQuizById(id, applicationId, user.getId());
         return quizDTO.isPresent() ? ResponseEntity.ok(quizDTO.get()) : ResponseEntity.notFound().build();
     }
+
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ATTENDANT)")
+    @GetMapping(ApiEndPoint.Quiz.DONE + "/{id}")
+    public ResponseEntity<?> getDoneQuizByIdForAttendant(@RequestParam(name = "applicationId") String applicationId, @PathVariable("id") String id) {
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        UserDetailsImpl user = (UserDetailsImpl) securityContext.getAuthentication().getPrincipal();
+        Optional<QuizDTO> quizDTO = quizService.getQuizById(id, applicationId, user.getId());
+        return quizDTO.isPresent() ? ResponseEntity.ok(quizDTO.get()) : ResponseEntity.notFound().build();
+    }
+
+
     @JsonView(Views.Public.class)
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ATTENDANT)")
     @PutMapping(ApiEndPoint.Quiz.QUIZ_ENDPOINT )
@@ -56,7 +67,7 @@ public class QuizController {
     public ResponseEntity<?> submitQuiz(@PathVariable("id") String id, @RequestParam(name = "applicationId") String applicationId) {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         UserDetailsImpl user = (UserDetailsImpl) securityContext.getAuthentication().getPrincipal();
-        QuizDTO dto = quizService.submitQuiz(applicationId, user.getId(), id);
+        QuizDTO dto = quizService.submitQuiz(applicationId, user.getId(), id, null);
         return ResponseEntity.ok(dto);
     }
 }

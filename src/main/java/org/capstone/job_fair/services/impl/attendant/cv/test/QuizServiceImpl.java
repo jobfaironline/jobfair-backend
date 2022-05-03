@@ -105,10 +105,14 @@ public class QuizServiceImpl implements QuizService {
         return quizMapper.toDTO(quizEntity);
     }
 
-    private QuizEntity getQuizToSave(String quizId, String applicationId, String userId) {
+    private boolean checkQuizTime(QuizEntity quizEntity) {
         Long currentTime = new Date().getTime();
+        return currentTime >= quizEntity.getBeginTime() && currentTime <= quizEntity.getEndTime();
+    }
+
+    private QuizEntity getQuizToSave(String quizId, String applicationId, String userId) {
         //Check if quiz is exist
-        Optional<QuizEntity> quizEntityOptional = quizRepository.findQuizToSave(currentTime, applicationId, quizId, userId);
+        Optional<QuizEntity> quizEntityOptional = quizRepository.findQuizToSave(applicationId, quizId, userId);
         if (!quizEntityOptional.isPresent()) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Quiz.NOT_FOUND));
         }
@@ -124,7 +128,9 @@ public class QuizServiceImpl implements QuizService {
     @Transactional
     public QuizDTO saveQuiz(String applicationId, String userId, String quizId, HashMap<String, Boolean> answers) {
         QuizEntity quizEntity = getQuizToSave(quizId, applicationId, userId);
-        List<QuizChoiceDTO> answerChoice = null;
+        if (!checkQuizTime(quizEntity)) {
+          return submitQuiz(applicationId, userId, quizId, quizEntity);
+        }
         quizEntity.getQuestionList().forEach(entity -> {
             entity.getChoiceList().forEach(choice -> {
                 if (answers.containsKey(choice.getId())) {
@@ -135,7 +141,7 @@ public class QuizServiceImpl implements QuizService {
         return quizMapper.toDTO(quizRepository.save(quizEntity));
     }
 
-    private QuizEntity evaluateQuiz(QuizEntity entity) {
+    private Double evaluateQuiz(QuizEntity entity) {
         double mark = 0;
         double oneQuestionPoint = 10 / entity.getQuestionList().size();
         int numberOfAnswer;
@@ -149,11 +155,11 @@ public class QuizServiceImpl implements QuizService {
                 //If choice is correct then increase numberOfAnswer by 1
                 if (choice.getIsCorrect()) {
                     ++numberOfAnswer;
-                    if (choice.getIsSelected()){
+                    if (choice.getIsSelected()) {
                         ++numberOfCorrectAnswer;
                     }
                 }
-                //If choice is selected but it is not correct then increase numberOfWrongAnswer by 1
+                //If choice is selected, but it is not correct then increase numberOfWrongAnswer by 1
                 if (choice.getIsSelected()) {
                     if (!choice.getIsCorrect()) {
                         ++numberOfWrongAnswer;
@@ -162,19 +168,24 @@ public class QuizServiceImpl implements QuizService {
             }
             //if there is no correct answer and no wrong answer then answer is correct
             if (numberOfAnswer == 0 && numberOfWrongAnswer == 0) mark = oneQuestionPoint;
-            //Answer only consider to be correct if there is no wrong answer and have correct answer euqal to number of answer
-            else if (numberOfWrongAnswer == 0 && numberOfCorrectAnswer == numberOfAnswer)  mark += oneQuestionPoint;
+                //Answer only consider to be correct if there is no wrong answer and have correct answer euqal to number of answer
+            else if (numberOfWrongAnswer == 0 && numberOfCorrectAnswer == numberOfAnswer) mark += oneQuestionPoint;
         }
-        entity.setMark(mark);
-        return entity;
+        return mark;
     }
 
     @Override
     @Transactional
-    public QuizDTO submitQuiz(String applicationId, String userId, String quizId) {
-        QuizEntity quizEntity = getQuizToSave(quizId, applicationId, userId);
+    public QuizDTO submitQuiz(String applicationId, String userId, String quizId, QuizEntity quizEntity) {
+        if (quizEntity == null) {
+            quizEntity = getQuizToSave(quizId, applicationId, userId);
+            //Validate that quiz still in progress
+            if (!checkQuizTime(quizEntity)) {
+                throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Quiz.TIME_UP));
+            }
+        }
         ApplicationEntity applicationEntity = applicationRepository.getById(applicationId);
-        quizEntity = evaluateQuiz(quizEntity);
+        quizEntity.setMark(evaluateQuiz(quizEntity));
         double passMark = applicationEntity.getBoothJobPosition().getPassMark();
         if (quizEntity.getMark() < passMark) {
             applicationEntity.setTestStatus(TestStatus.PASS);
