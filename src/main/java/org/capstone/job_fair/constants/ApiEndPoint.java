@@ -37,6 +37,7 @@ public final class ApiEndPoint {
         }
 
         public static final String QUIZ_ENDPOINT = ROOT_ENDPOINT + VERSION + "/quiz";
+        public static final String SAVE = QUIZ_ENDPOINT + "/save";
         public static final String SUBMIT = QUIZ_ENDPOINT + "/submit";
         public static final String IN_PROGRESS = QUIZ_ENDPOINT + "/in-progress";
         public static final String DONE = QUIZ_ENDPOINT + "/done";

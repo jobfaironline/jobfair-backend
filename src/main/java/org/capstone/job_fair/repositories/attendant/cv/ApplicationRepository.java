@@ -62,4 +62,5 @@ public interface ApplicationRepository extends JpaRepository<ApplicationEntity, 
     List<ApplicationEntity> findByOriginCvIdAndBoothJobPositionIdAndStatusIn(String cv, String jobPositionId, List<ApplicationStatus> status);
 
     Optional<ApplicationEntity> findByIdAndAttendantAccountId(String applicationId, String attendantId);
+
 }

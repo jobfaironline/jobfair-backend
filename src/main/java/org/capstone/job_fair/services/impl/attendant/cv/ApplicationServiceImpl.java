@@ -178,6 +178,11 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
+    public Optional<ApplicationDTO> getApplicationById(String applicationId, String userId) {
+        return applicationRepository.findByIdAndAttendantAccountId(applicationId, userId).map(applicationMapper::toDTO);
+    }
+
+    @Override
     public Page<ApplicationEntity> getApplicationOfCompanyByJobPositionIdAndStatus(String companyId, String jobPositionId, List<ApplicationStatus> statusList, int pageSize, int offset, String sortBy, Sort.Direction direction) {
         validatePaging(pageSize, offset);
         sortBy = applicationForCompanySortByMapper(sortBy);

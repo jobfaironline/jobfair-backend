@@ -41,6 +41,19 @@ public class ApplicationController {
     @Autowired
     private ApplicationMapper applicationMapper;
 
+    @GetMapping(ApiEndPoint.Application.APPLICATION_ENDPOINT + "/{id}")
+    public ResponseEntity<?> getApplicationById(@PathVariable("id") String id){
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        UserDetailsImpl user = (UserDetailsImpl) securityContext.getAuthentication().getPrincipal();
+        String accountId = user.getId();
+
+        Optional<ApplicationDTO> applicationOpt = applicationService.getApplicationById(id, accountId);
+        if (!applicationOpt.isPresent()){
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.APPLICATION_NOT_FOUND));
+        }
+        return ResponseEntity.ok(applicationOpt.get());
+
+    }
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ATTENDANT)")
     @PostMapping(ApiEndPoint.Application.DRAFT_APPLICATION)
@@ -63,7 +76,6 @@ public class ApplicationController {
         BoothJobPositionDTO regisDTO = new BoothJobPositionDTO();
         regisDTO.setId(request.getBoothJobPositionId());
         //set summary, create date, status, attendantDTO, registrationJobPositionDTO for ApplicationDTO
-        dto.setSummary(request.getSummary());
         dto.setCreateDate(new Date().getTime());
         dto.setStatus(ApplicationStatus.DRAFT);
         dto.setOriginCvId(request.getCvId());
