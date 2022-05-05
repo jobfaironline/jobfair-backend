@@ -57,11 +57,14 @@ public class QuizServiceImpl implements QuizService {
 
 
     @Override
-    public Optional<QuizDTO> getQuizById(String id, String applicationId, String userid, boolean isDoing) {
-        Optional<QuizEntity> quizEntity = quizRepository.findByIdAndApplicationIdAndApplicationAttendantAccountId(id, applicationId, userid);
+    public Optional<QuizDTO> getQuizById(String id, String userid, boolean isDoing) {
+        Optional<QuizEntity> quizEntity = quizRepository.findByIdAndApplicationAttendantAccountId(id, userid);
+        if (!quizEntity.isPresent()){
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Quiz.NOT_FOUND));
+        }
         //^ is XOR
         if (isDoing ^ checkQuizTime(quizEntity.get())) {
-                return Optional.empty();
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Quiz.TIME_UP));
         }
         return quizEntity.map(quizMapper::toDTO);
     }

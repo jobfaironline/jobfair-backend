@@ -1,9 +1,11 @@
 package org.capstone.job_fair.services.mappers.attendant.cv.test;
 
+import org.capstone.job_fair.controllers.payload.responses.InProgressQuizResponse;
 import org.capstone.job_fair.models.dtos.attendant.cv.test.QuizDTO;
 import org.capstone.job_fair.models.dtos.attendant.cv.test.QuizQuestionDTO;
 import org.capstone.job_fair.models.entities.attendant.cv.test.QuizEntity;
 import org.capstone.job_fair.models.entities.attendant.cv.test.QuizQuestionEntity;
+import org.capstone.job_fair.services.mappers.attendant.application.ApplicationMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -14,7 +16,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring",
-        uses = {QuizChoiceMapper.class, QuizQuestionMapper.class},
+        uses = {QuizChoiceMapper.class, QuizQuestionMapper.class, ApplicationMapper.class},
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public abstract class QuizMapper {
 
@@ -25,8 +27,9 @@ public abstract class QuizMapper {
     public abstract QuizEntity toEntity(QuizDTO dto);
 
     @Mapping(target = "questionList" , source = "questionList", qualifiedByName = "toQuestionListDTO")
-    @Mapping(target = "applicationId", source = "application.id")
     public abstract QuizDTO toDTO(QuizEntity entity);
+
+    public abstract InProgressQuizResponse toResponse(QuizDTO dto);
 
     @Named("toQuestionListEntity")
     public List<QuizQuestionEntity> toQuestionListEntity(List<QuizQuestionDTO> dto){

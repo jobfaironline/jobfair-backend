@@ -18,5 +18,5 @@ public interface QuizRepository extends JpaRepository<QuizEntity, String> {
     @Query("SELECT t FROM QuizEntity t WHERE t.application.id = :applicationId AND t.application.attendant.accountId = :userId AND t.id = :quizId")
     Optional<QuizEntity> findQuizToSave(String applicationId, String quizId, String userId);
 
-    Optional<QuizEntity> findByIdAndApplicationIdAndApplicationAttendantAccountId(String id, String applicationId, String accountId);
+    Optional<QuizEntity> findByIdAndApplicationAttendantAccountId(String id, String accountId);
 }

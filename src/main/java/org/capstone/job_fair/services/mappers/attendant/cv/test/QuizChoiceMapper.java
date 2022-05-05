@@ -1,6 +1,8 @@
 package org.capstone.job_fair.services.mappers.attendant.cv.test;
 
+import org.capstone.job_fair.controllers.payload.responses.InProgressQuizResponse;
 import org.capstone.job_fair.models.dtos.attendant.cv.test.QuizChoiceDTO;
+import org.capstone.job_fair.models.dtos.attendant.cv.test.QuizDTO;
 import org.capstone.job_fair.models.entities.attendant.cv.test.QuizChoiceEntity;
 import org.capstone.job_fair.models.entities.company.job.questions.ChoicesEntity;
 import org.mapstruct.Mapper;
@@ -18,6 +20,8 @@ public abstract class QuizChoiceMapper {
     @Mapping(target = "isSelected", ignore = true)
     @Mapping(target = "id", ignore = true)
     public abstract QuizChoiceEntity toEntity(ChoicesEntity entity);
+
+    public abstract InProgressQuizResponse.QuizChoiceResponse toResponse(QuizChoiceDTO dto);
 
 
 }
