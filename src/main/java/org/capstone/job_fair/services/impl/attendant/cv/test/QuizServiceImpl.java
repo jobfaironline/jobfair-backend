@@ -57,11 +57,18 @@ public class QuizServiceImpl implements QuizService {
 
 
     @Override
-    public Optional<QuizDTO> getQuizById(String id, String applicationId, String userid, boolean isDoing) {
-        Optional<QuizEntity> quizEntity = quizRepository.findByIdAndApplicationIdAndApplicationAttendantAccountId(id, applicationId, userid);
+    public Optional<QuizDTO> getQuizById(String id, String userid, boolean isDoing) {
+        Optional<QuizEntity> quizEntity = quizRepository.findByIdAndApplicationAttendantAccountId(id, userid);
+        if (!quizEntity.isPresent()){
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Quiz.NOT_FOUND));
+        }
         //^ is XOR
-        if (isDoing ^ checkQuizTime(quizEntity.get())) {
-                return Optional.empty();
+        if ((isDoing ^ checkQuizTime(quizEntity.get()))) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Quiz.TIME_UP));
+        }
+        System.out.println(quizEntity.get().getIsSubmitted());
+        if (quizEntity.get().getIsSubmitted()){
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Quiz.TEST_ALREADY_TAKEN));
         }
         return quizEntity.map(quizMapper::toDTO);
     }
@@ -114,9 +121,9 @@ public class QuizServiceImpl implements QuizService {
         return currentTime >= quizEntity.getBeginTime() && currentTime <= quizEntity.getEndTime();
     }
 
-    private QuizEntity getQuizToSave(String quizId, String applicationId, String userId) {
+    private QuizEntity getQuizToSave(String quizId,  String userId) {
         //Check if quiz is exist
-        Optional<QuizEntity> quizEntityOptional = quizRepository.findQuizToSave(applicationId, quizId, userId);
+        Optional<QuizEntity> quizEntityOptional = quizRepository.findQuizToSave(quizId, userId);
         if (!quizEntityOptional.isPresent()) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Quiz.NOT_FOUND));
         }
@@ -130,10 +137,10 @@ public class QuizServiceImpl implements QuizService {
 
     @Override
     @Transactional
-    public QuizDTO saveQuiz(String applicationId, String userId, String quizId, HashMap<String, Boolean> answers) {
-        QuizEntity quizEntity = getQuizToSave(quizId, applicationId, userId);
+    public QuizDTO saveQuiz(String userId, String quizId, HashMap<String, Boolean> answers) {
+        QuizEntity quizEntity = getQuizToSave(quizId, userId);
         if (!checkQuizTime(quizEntity)) {
-            return submitQuiz(applicationId, userId, quizId, quizEntity);
+            return submitQuiz(userId, quizId, quizEntity);
         }
         quizEntity.getQuestionList().forEach(entity -> {
             entity.getChoiceList().forEach(choice -> {
@@ -180,22 +187,22 @@ public class QuizServiceImpl implements QuizService {
 
     @Override
     @Transactional
-    public QuizDTO submitQuiz(String applicationId, String userId, String quizId, QuizEntity quizEntity) {
+    public QuizDTO submitQuiz(String userId, String quizId, QuizEntity quizEntity) {
         if (quizEntity == null) {
-            quizEntity = getQuizToSave(quizId, applicationId, userId);
+            quizEntity = getQuizToSave(quizId, userId);
             //Validate that quiz still in progress
             if (!checkQuizTime(quizEntity)) {
                 throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Quiz.TIME_UP));
             }
         }
-        ApplicationEntity applicationEntity = applicationRepository.getById(applicationId);
+        ApplicationEntity applicationEntity = quizEntity.getApplication();
         quizEntity.setMark(evaluateQuiz(quizEntity));
         quizEntity.setSubmitTime(new Date().getTime());
         double passMark = applicationEntity.getBoothJobPosition().getPassMark();
         if (quizEntity.getMark() < passMark) {
-            applicationEntity.setTestStatus(TestStatus.PASS);
-        } else {
             applicationEntity.setTestStatus(TestStatus.FAIL);
+        } else {
+            applicationEntity.setTestStatus(TestStatus.PASS);
         }
         quizEntity.setIsSubmitted(true);
         applicationRepository.save(applicationEntity);

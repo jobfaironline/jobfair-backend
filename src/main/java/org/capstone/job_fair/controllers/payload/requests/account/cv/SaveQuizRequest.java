@@ -12,10 +12,6 @@ import java.util.HashMap;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SaveQuizRequest {
-    @NotBlank
-    private String applicationId;
-    @NotBlank
-    private String quizId;
     @NotNull
     private HashMap<String, Boolean> answers;
 }

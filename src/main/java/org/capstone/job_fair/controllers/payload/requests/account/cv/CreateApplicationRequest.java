@@ -17,10 +17,6 @@ import javax.validation.constraints.Size;
 public class CreateApplicationRequest {
     @XSSConstraint
     @NotEmpty
-    @Size(max = DataConstraint.Application.SUMMARY_MAX_LENGTH)
-    private String summary;
-    @XSSConstraint
-    @NotEmpty
     private String boothJobPositionId;
     @NotEmpty
     private String cvId;
