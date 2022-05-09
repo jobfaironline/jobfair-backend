@@ -427,5 +427,15 @@ public final class MessageConstant {
             public static final String MESSAGE = "notification-message.assign-employee.message";
         }
     }
+
+    public static final class InterviewSchedule {
+        private InterviewSchedule(){
+        }
+
+        public static final String SCHEDULE_CONFLICT = "interview-schedule.error.schedule-conflict";
+        public static final String NOT_FOUND = "interview-schedule.error.not-found";
+        public static final String CANNOT_EDIT = "interview-schedule.error.cannot-edit";
+        public static final String INVALID_REQUEST_SCHEDULE = "interview-schedule.error.invalid-schedule";
+    }
 }
 

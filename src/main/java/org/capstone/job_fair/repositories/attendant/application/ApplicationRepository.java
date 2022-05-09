@@ -63,4 +63,28 @@ public interface ApplicationRepository extends JpaRepository<ApplicationEntity, 
 
     Optional<ApplicationEntity> findByIdAndAttendantAccountId(String applicationId, String attendantId);
 
+    //find application that has interview schedule that fit  entirely inside the time span
+    @Query("select a from ApplicationEntity a where a.interviewer is not null and a.interviewer.accountId = :employeeId and (a.beginTime >= :beginTime) and (a.endTime <= :endTime)")
+    List<ApplicationEntity> findWholeByInterviewerAndInTimeRange(@Param("employeeId") String employeeId,
+                                                                 @Param("beginTime") Long beginTime,
+                                                                 @Param("endTime") Long endTime);
+
+    //find application that has interview schedule that fit entirely inside the time span
+    @Query("select a from ApplicationEntity a where a.attendant.accountId = :attendantId and (a.beginTime >= :beginTime) and (a.endTime <= :endTime)")
+    List<ApplicationEntity> findWholeByAttendantAndInTimeRange(@Param("attendantId") String attendantId,
+                                                               @Param("beginTime") Long beginTime,
+                                                               @Param("endTime") Long endTime);
+
+    //find application that has interview schedule that fit inside the time span (no need to be entirely fit inside this time span)
+    @Query("select a from ApplicationEntity a where a.interviewer is not null and a.interviewer.accountId = :employeeId and ((a.beginTime >= :beginTime) and (a.endTime <= :endTime)) or (a.beginTime < :beginTime and a.endTime > :beginTime) or (a.beginTime < :endTime and a.endTime > :endTime)")
+    List<ApplicationEntity> findByInterviewerAndInTimeRange(@Param("employeeId") String employeeId,
+                                                            @Param("beginTime") Long beginTime,
+                                                            @Param("endTime") Long endTime);
+
+    //find application that has interview schedule that fit inside the time span (no need to be entirely fit inside this time span)
+    @Query("select a from ApplicationEntity a where a.attendant.accountId = :attendantId and ((a.beginTime >= :beginTime) and (a.endTime <= :endTime)) or (a.beginTime < :beginTime and a.endTime > :beginTime) or (a.beginTime < :endTime and a.endTime > :endTime)")
+    List<ApplicationEntity> findByAttendantAndInTimeRange(@Param("attendantId") String attendantId,
+                                                          @Param("beginTime") Long beginTime,
+                                                          @Param("endTime") Long endTime);
+
 }

@@ -319,4 +319,10 @@ public final class ApiEndPoint {
         public static final String LEAVE_BOOTH = JOB_FAIR_VISIT + "/leave/booth";
 
     }
+
+    public static final class Interview{
+        private Interview(){}
+        public static final String INTERVIEW = ROOT_ENDPOINT + VERSION + "/interview";
+        public static final String SCHEDULE = INTERVIEW + "/schedule";
+    }
 }
