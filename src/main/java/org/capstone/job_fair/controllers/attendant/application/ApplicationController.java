@@ -140,20 +140,15 @@ public class ApplicationController {
     @PostMapping(ApiEndPoint.Application.EVALUTATE)
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) OR hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE)")
     public ResponseEntity<?> evaluateApplication(@RequestBody @Validated EvaluateApplicationRequest request) {
-
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String userId = userDetails.getId();
+
         ApplicationDTO dto = new ApplicationDTO();
         dto.setId(request.getApplicationId());
-        AccountDTO authorizer = new AccountDTO();
-        dto.setAuthorizer(authorizer);
-        dto.getAuthorizer().setId(userDetails.getId());
         dto.setEvaluateMessage(request.getEvaluateMessage());
         dto.setStatus(request.getStatus());
-        dto.setEvaluateDate(new Date().getTime());
-        BoothJobPositionDTO boothJobPositionDTO = new BoothJobPositionDTO();
-        dto.setBoothJobPositionDTO(boothJobPositionDTO);
 
-        applicationService.evaluateApplication(dto);
+        applicationService.evaluateApplication(dto, userId);
 
         return ResponseEntity.ok().build();
 

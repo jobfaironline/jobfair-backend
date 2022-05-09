@@ -17,4 +17,6 @@ public class AssignEmployeeRequest {
     private String jobFairBoothId;
     @NotNull
     private AssignmentType type;
+    private Long beginTime;
+    private Long endTime;
 }

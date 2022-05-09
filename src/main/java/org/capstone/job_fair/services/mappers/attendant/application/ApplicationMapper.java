@@ -7,11 +7,14 @@ import org.capstone.job_fair.controllers.payload.responses.ApplicationWithGenral
 import org.capstone.job_fair.models.dtos.attendant.application.ApplicationDTO;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
 import org.capstone.job_fair.models.entities.attendant.application.ApplicationEntity;
+import org.capstone.job_fair.models.entities.company.CompanyEmployeeEntity;
 import org.capstone.job_fair.models.enums.Gender;
 import org.capstone.job_fair.services.mappers.account.AccountMapper;
 import org.capstone.job_fair.services.mappers.attendant.AttendantMapper;
-import org.capstone.job_fair.services.mappers.attendant.misc.CountryMapper;
 import org.capstone.job_fair.services.mappers.attendant.cv.CvMapper;
+import org.capstone.job_fair.services.mappers.attendant.misc.CountryMapper;
+import org.capstone.job_fair.services.mappers.company.CompanyEmployeeMapper;
+import org.capstone.job_fair.services.mappers.job_fair.booth.AssignmentMapper;
 import org.capstone.job_fair.services.mappers.job_fair.booth.BoothJobPositionMapper;
 import org.mapstruct.*;
 
@@ -26,7 +29,8 @@ import org.mapstruct.*;
         ApplicationEducationMapper.class,
         ApplicationReferenceMapper.class,
         ApplicationSkillMapper.class,
-        ApplicationWorkHistoryMapper.class
+        ApplicationWorkHistoryMapper.class,
+        CompanyEmployeeMapper.class
 }, nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public abstract class ApplicationMapper {
 
@@ -67,10 +71,16 @@ public abstract class ApplicationMapper {
     @Mapping(target = "dob", source = "attendant.dob")
     public abstract ApplicationWithGenralDataOfApplicantResponse toApplicationWithGenralDataOfApplicantResponse(ApplicationEntity entity);
 
-    @Mapping(target = "authorizerName", source = "authorizer", qualifiedByName = "toFullName")
+    @Mapping(target = "authorizerName", source = "interviewer", qualifiedByName = "toEmployeeFullName")
     @Mapping(target = "jobPositionId", source = "boothJobPosition.id")
     @Mapping(target = "jobPositionTitle", source = "boothJobPosition.title")
     public abstract ApplicationForAttendantResponse toApplicationForAttendantResponse(ApplicationEntity entity);
+
+    @Named("toEmployeeFullName")
+    public String toEmployeeFullName(CompanyEmployeeEntity employeeEntity) {
+        if (employeeEntity == null) return null;
+        return employeeEntity.getAccount().getFullname();
+    }
 
     @Named("toFullName")
     public String toFullName(AccountEntity accountEntity) {

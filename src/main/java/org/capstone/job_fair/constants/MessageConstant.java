@@ -368,6 +368,7 @@ public final class MessageConstant {
         public static final String EVALUATE_MESSAGE_IS_EMPTY = "application.error.empty-evaluate-message";
         public static final String ALREADY_APPLY_CV = "application.error.already-apply-cv";
         public static final String CV_NOT_HAVE_TEST = "application.error.cv-not-have-test";
+        public static final String MISS_MATCH_INTERVIEWER = "application.error.miss-match-interviewer";
 
         private Application() {
 

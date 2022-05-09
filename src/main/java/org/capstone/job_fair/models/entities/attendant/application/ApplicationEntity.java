@@ -1,12 +1,13 @@
 package org.capstone.job_fair.models.entities.attendant.application;
 
 import lombok.*;
-import org.capstone.job_fair.models.entities.account.AccountEntity;
 import org.capstone.job_fair.models.entities.attendant.AttendantEntity;
+import org.capstone.job_fair.models.entities.company.CompanyEmployeeEntity;
 import org.capstone.job_fair.models.entities.job_fair.booth.BoothJobPositionEntity;
 import org.capstone.job_fair.models.enums.ApplicationStatus;
 import org.capstone.job_fair.models.enums.JobLevel;
 import org.capstone.job_fair.models.enums.TestStatus;
+import org.capstone.job_fair.models.statuses.InterviewStatus;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -40,10 +41,6 @@ public class ApplicationEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "booth_job_position_id")
     private BoothJobPositionEntity boothJobPosition;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "authorizer_id")
-    private AccountEntity authorizer;
 
     @Column(name = "evaluate_message")
     private String evaluateMessage;
@@ -98,10 +95,33 @@ public class ApplicationEntity {
     @Column(name = "origin_cv_id")
     private String originCvId;
 
-
     @Column(name = "test_status")
     @Enumerated(EnumType.ORDINAL)
     private TestStatus testStatus;
+
+    @Column(name = "interview_name")
+    private String interviewName;
+
+    @Column(name = "interview_description")
+    private String interviewDescription;
+
+    @Column(name = "begin_time")
+    private Long beginTime;
+
+    @Column(name = "end_time")
+    private Long endTime;
+
+    @Column(name = "interview_status")
+    @Enumerated(EnumType.ORDINAL)
+    private InterviewStatus interviewStatus;
+
+    @Column(name = "interview_url")
+    private String interviewUrl;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "interviewer_id", referencedColumnName = "account_id")
+    private CompanyEmployeeEntity interviewer;
+
 
     @Override
     public boolean equals(Object o) {
