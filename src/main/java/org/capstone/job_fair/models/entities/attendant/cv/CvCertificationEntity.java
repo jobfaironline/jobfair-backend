@@ -1,9 +1,6 @@
 package org.capstone.job_fair.models.entities.attendant.cv;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.capstone.job_fair.models.entities.attendant.profile.CertificationEntity;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.GenericGenerator;
@@ -11,12 +8,12 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import java.util.Objects;
 
-@Entity
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "cv_certification", schema = "dbo", catalog = "")
+@Entity
+@Table(name = "cv_certification", schema = "dbo")
 public class CvCertificationEntity {
     @Id
     @Column(name = "id")

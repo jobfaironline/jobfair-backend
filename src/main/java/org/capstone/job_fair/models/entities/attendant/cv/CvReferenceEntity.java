@@ -8,13 +8,12 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import java.util.Objects;
 
-@Entity
 @Getter
 @Setter
-@ToString
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "cv_reference", schema = "dbo", catalog = "")
+@Entity
+@Table(name = "cv_reference", schema = "dbo")
 public class CvReferenceEntity {
     @Id
     @Column(name = "id")

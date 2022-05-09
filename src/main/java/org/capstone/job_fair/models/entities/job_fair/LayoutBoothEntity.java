@@ -1,9 +1,6 @@
 package org.capstone.job_fair.models.entities.job_fair;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.capstone.job_fair.models.statuses.BoothStatus;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.GenericGenerator;
@@ -11,12 +8,12 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import java.util.Objects;
 
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "layout_booth", schema = "dbo")
-@NoArgsConstructor
-@AllArgsConstructor
-@Setter
-@Getter
 public class LayoutBoothEntity {
     @Id
     @Column(name = "id", nullable = false, length = 36)

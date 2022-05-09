@@ -1,11 +1,11 @@
 package org.capstone.job_fair.models.entities.company.job;
 
 import lombok.*;
-import org.capstone.job_fair.models.entities.attendant.JobLevelEntity;
-import org.capstone.job_fair.models.entities.attendant.LanguageEntity;
+import org.capstone.job_fair.models.entities.attendant.misc.JobLevelEntity;
+import org.capstone.job_fair.models.entities.attendant.misc.LanguageEntity;
 import org.capstone.job_fair.models.entities.company.CompanyEntity;
-import org.capstone.job_fair.models.entities.company.SkillTagEntity;
-import org.capstone.job_fair.models.entities.company.SubCategoryEntity;
+import org.capstone.job_fair.models.entities.company.misc.SkillTagEntity;
+import org.capstone.job_fair.models.entities.company.misc.SubCategoryEntity;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -13,11 +13,11 @@ import javax.persistence.*;
 import java.util.Objects;
 import java.util.Set;
 
-@Entity
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity
 @Table(name = "job_position", schema = "dbo")
 public class JobPositionEntity {
     @Id

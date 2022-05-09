@@ -10,9 +10,9 @@ import org.capstone.job_fair.models.entities.attendant.application.ApplicationEn
 import org.capstone.job_fair.models.enums.Gender;
 import org.capstone.job_fair.services.mappers.account.AccountMapper;
 import org.capstone.job_fair.services.mappers.attendant.AttendantMapper;
-import org.capstone.job_fair.services.mappers.attendant.CountryMapper;
+import org.capstone.job_fair.services.mappers.attendant.misc.CountryMapper;
 import org.capstone.job_fair.services.mappers.attendant.cv.CvMapper;
-import org.capstone.job_fair.services.mappers.company.BoothJobPositionMapper;
+import org.capstone.job_fair.services.mappers.job_fair.booth.BoothJobPositionMapper;
 import org.mapstruct.*;
 
 @Mapper(componentModel = "spring", uses = {

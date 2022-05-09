@@ -4,7 +4,16 @@ package org.capstone.job_fair.services.mappers.company;
 import org.capstone.job_fair.controllers.payload.requests.company.CreateCompanyRequest;
 import org.capstone.job_fair.controllers.payload.requests.company.UpdateCompanyRequest;
 import org.capstone.job_fair.models.dtos.company.*;
+import org.capstone.job_fair.models.dtos.company.misc.BenefitDTO;
+import org.capstone.job_fair.models.dtos.company.misc.CompanyBenefitDTO;
+import org.capstone.job_fair.models.dtos.company.misc.SubCategoryDTO;
 import org.capstone.job_fair.models.entities.company.*;
+import org.capstone.job_fair.models.entities.company.misc.CompanyBenefitEntity;
+import org.capstone.job_fair.models.entities.company.misc.CompanySizeEntity;
+import org.capstone.job_fair.models.entities.company.misc.SubCategoryEntity;
+import org.capstone.job_fair.services.mappers.company.misc.BenefitEntityMapper;
+import org.capstone.job_fair.services.mappers.company.misc.CompanyBenefitMapper;
+import org.capstone.job_fair.services.mappers.company.misc.SubCategoryMapper;
 import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
 

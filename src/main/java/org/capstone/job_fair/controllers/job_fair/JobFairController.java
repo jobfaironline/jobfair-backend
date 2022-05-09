@@ -10,18 +10,18 @@ import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.controllers.payload.responses.JobFairForAttendantResponse;
 import org.capstone.job_fair.controllers.payload.responses.RenderJobFairParkResponse;
 import org.capstone.job_fair.models.dtos.company.CompanyDTO;
-import org.capstone.job_fair.models.dtos.company.JobFairBoothDTO;
-import org.capstone.job_fair.models.dtos.company.JobFairBoothLayoutDTO;
+import org.capstone.job_fair.models.dtos.job_fair.booth.JobFairBoothDTO;
+import org.capstone.job_fair.models.dtos.job_fair.booth.JobFairBoothLayoutDTO;
 import org.capstone.job_fair.models.dtos.dynamoDB.NotificationMessageDTO;
-import org.capstone.job_fair.models.dtos.job_fair.AssignmentDTO;
+import org.capstone.job_fair.models.dtos.job_fair.booth.AssignmentDTO;
 import org.capstone.job_fair.models.dtos.job_fair.JobFairDTO;
 import org.capstone.job_fair.models.dtos.job_fair.LayoutDTO;
 import org.capstone.job_fair.models.enums.NotificationType;
-import org.capstone.job_fair.services.interfaces.company.CompanyBoothLayoutService;
-import org.capstone.job_fair.services.interfaces.company.JobFairBoothService;
-import org.capstone.job_fair.services.interfaces.dynamoDB.JobFairVisitService;
-import org.capstone.job_fair.services.interfaces.dynamoDB.NotificationService;
-import org.capstone.job_fair.services.interfaces.job_fair.AssignmentService;
+import org.capstone.job_fair.services.interfaces.job_fair.booth.JobFairBoothLayoutService;
+import org.capstone.job_fair.services.interfaces.job_fair.booth.JobFairBoothService;
+import org.capstone.job_fair.services.interfaces.job_fair.JobFairVisitService;
+import org.capstone.job_fair.services.interfaces.notification.NotificationService;
+import org.capstone.job_fair.services.interfaces.job_fair.booth.AssignmentService;
 import org.capstone.job_fair.services.interfaces.job_fair.JobFairService;
 import org.capstone.job_fair.services.interfaces.job_fair.LayoutService;
 import org.capstone.job_fair.services.interfaces.util.FileStorageService;
@@ -50,7 +50,7 @@ public class JobFairController {
     private JobFairBoothService jobFairBoothService;
 
     @Autowired
-    private CompanyBoothLayoutService companyBoothLayoutService;
+    private JobFairBoothLayoutService jobFairBoothLayoutService;
 
     @Autowired
     private LayoutService layoutService;
@@ -96,7 +96,7 @@ public class JobFairController {
                 boothData.setCompanyBoothId(companyBooth.getId());
                 boothData.setBoothName(companyBooth.getName());
 
-                Optional<JobFairBoothLayoutDTO> layoutDTOOptional = companyBoothLayoutService.getLatestVersionByCompanyBoothId(companyBooth.getId());
+                Optional<JobFairBoothLayoutDTO> layoutDTOOptional = jobFairBoothLayoutService.getLatestVersionByCompanyBoothId(companyBooth.getId());
                 if (layoutDTOOptional.isPresent()) {
                     boothData.setBoothUrl(layoutDTOOptional.get().getUrl());
                     boothData.setCompanyBoothLayoutVideos(layoutDTOOptional.get().getCompanyBoothLayoutVideos());

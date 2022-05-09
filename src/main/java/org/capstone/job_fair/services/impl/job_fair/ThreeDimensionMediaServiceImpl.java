@@ -5,7 +5,7 @@ import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.models.dtos.job_fair.ThreeDimensionMediaDTO;
 import org.capstone.job_fair.models.entities.job_fair.ThreeDimensionMedia;
 import org.capstone.job_fair.models.statuses.ThreeDimensionMediaType;
-import org.capstone.job_fair.repositories.job_fair.DecoratedItemRepository;
+import org.capstone.job_fair.repositories.job_fair.ThreeDimesnionMediaRepository;
 import org.capstone.job_fair.services.interfaces.job_fair.ThreeDimensionMediaService;
 import org.capstone.job_fair.services.mappers.job_fair.ThreeDimensionMediaMapper;
 import org.capstone.job_fair.utils.AwsUtil;
@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 public class ThreeDimensionMediaServiceImpl implements ThreeDimensionMediaService {
 
     @Autowired
-    private DecoratedItemRepository decoratedItemRepository;
+    private ThreeDimesnionMediaRepository threeDimesnionMediaRepository;
 
     @Autowired
     private ThreeDimensionMediaMapper threeDimensionMediaMapper;
@@ -38,12 +38,12 @@ public class ThreeDimensionMediaServiceImpl implements ThreeDimensionMediaServic
 
     @Override
     public List<ThreeDimensionMediaDTO> getAll() {
-        return decoratedItemRepository.findAll().stream().map(threeDimensionMediaMapper::toDTO).collect(Collectors.toList());
+        return threeDimesnionMediaRepository.findAll().stream().map(threeDimensionMediaMapper::toDTO).collect(Collectors.toList());
     }
 
     @Override
     public Optional<ThreeDimensionMediaDTO> findById(String id) {
-        return decoratedItemRepository.findById(id).map(threeDimensionMediaMapper::toDTO);
+        return threeDimesnionMediaRepository.findById(id).map(threeDimensionMediaMapper::toDTO);
     }
 
     @Override
@@ -54,25 +54,25 @@ public class ThreeDimensionMediaServiceImpl implements ThreeDimensionMediaServic
         String url = awsUtil.generateAwsS3AccessString(AWSConstant.DECORATED_ITEMS_FOLDER, id);
         entity.setId(id);
         entity.setUrl(url);
-        entity = decoratedItemRepository.save(entity);
+        entity = threeDimesnionMediaRepository.save(entity);
         return threeDimensionMediaMapper.toDTO(entity);
     }
 
     @Override
     @Transactional
     public void update(ThreeDimensionMediaDTO dto) {
-        Optional<ThreeDimensionMedia> decoratedItemEntityOpt = decoratedItemRepository.findById(dto.getId());
+        Optional<ThreeDimensionMedia> decoratedItemEntityOpt = threeDimesnionMediaRepository.findById(dto.getId());
         if (!decoratedItemEntityOpt.isPresent()) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.DecoratedItem.NOT_FOUND));
         }
         ThreeDimensionMedia threeDimensionMedia = decoratedItemEntityOpt.get();
         threeDimensionMediaMapper.updateEntityFromDTO(dto, threeDimensionMedia);
-        decoratedItemRepository.save(threeDimensionMedia);
+        threeDimesnionMediaRepository.save(threeDimensionMedia);
     }
 
     @Override
     public Page<ThreeDimensionMediaDTO> findByType(ThreeDimensionMediaType type, int offset, int pageSize, String sortBy, Sort.Direction direction){
-        Page<ThreeDimensionMedia> threeDimensionMediaPage = decoratedItemRepository.findAllByType(type, PageRequest.of(offset, pageSize).withSort(direction, sortBy));
+        Page<ThreeDimensionMedia> threeDimensionMediaPage = threeDimesnionMediaRepository.findAllByType(type, PageRequest.of(offset, pageSize).withSort(direction, sortBy));
         return threeDimensionMediaPage.map(threeDimensionMedia -> threeDimensionMediaMapper.toDTO(threeDimensionMedia));
     }
 
@@ -80,12 +80,12 @@ public class ThreeDimensionMediaServiceImpl implements ThreeDimensionMediaServic
     @Override
     public ThreeDimensionMediaDTO createOrUpdateThumbnail(String decoratedThumbnailsFolder, String id){
         String url = awsUtil.generateAwsS3AccessString(decoratedThumbnailsFolder, id);
-        Optional<ThreeDimensionMedia> threeDimensionMediaOptional = decoratedItemRepository.findById(id);
+        Optional<ThreeDimensionMedia> threeDimensionMediaOptional = threeDimesnionMediaRepository.findById(id);
         if(!threeDimensionMediaOptional.isPresent()) throw new
                 IllegalArgumentException(MessageUtil.getMessage(MessageConstant.DecoratedItem.NOT_FOUND));
         ThreeDimensionMedia threeDimensionMedia = threeDimensionMediaOptional.get();
         threeDimensionMedia.setThumbnailUrl(url);
-        decoratedItemRepository.save(threeDimensionMedia);
+        threeDimesnionMediaRepository.save(threeDimensionMedia);
         return threeDimensionMediaMapper.toDTO(threeDimensionMedia);
 
     }

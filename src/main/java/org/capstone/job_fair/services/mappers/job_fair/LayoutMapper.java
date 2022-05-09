@@ -10,7 +10,7 @@ import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
-        uses = {BoothMapper.class})
+        uses = {LayoutBoothMapper.class})
 public abstract class LayoutMapper {
 
     public abstract LayoutEntity toEntity(LayoutDTO dto);
