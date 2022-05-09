@@ -9,10 +9,12 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public abstract class ApplicationWorkHistoryMapper {
+    @Mapping(target = "application", ignore = true)
     public abstract ApplicationWorkHistoryEntity toEntity(ApplicationWorkHistoryDTO dto);
 
     public abstract ApplicationWorkHistoryDTO toDTO(ApplicationWorkHistoryEntity entity);
 
     @Mapping(target = "id", source = "id", ignore = true)
+    @Mapping(target = "application", ignore = true)
     public abstract ApplicationWorkHistoryEntity toEntity(CvWorkHistoryEntity cvWorkHistory);
 }

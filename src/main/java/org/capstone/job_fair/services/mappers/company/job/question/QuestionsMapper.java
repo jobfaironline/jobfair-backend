@@ -26,6 +26,11 @@ public abstract class QuestionsMapper {
     public abstract QuestionsDTO toDTO(QuestionsEntity entity);
 
     @Mapping(target = "choicesList", source = "choicesList", qualifiedByName = "requestToDTO")
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "createDate", ignore = true)
+    @Mapping(target = "updateDate", ignore = true)
+    @Mapping(target = "status", ignore = true)
+    @Mapping(target = "jobPosition", ignore = true)
     public abstract QuestionsDTO toDTO(CreateQuestionsRequest request);
 
     public abstract void updateQuestion(QuestionsDTO dto, @MappingTarget QuestionsEntity entity);

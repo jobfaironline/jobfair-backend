@@ -46,9 +46,7 @@ public class QuestionsController {
         jobPositionDTO.setId(request.getJobPositionId());
         questionsDTO.setJobPosition(jobPositionDTO);
         questionsDTO.setContent(request.getContent());
-        List<ChoicesDTO> choicesDTOList = request.getChoicesList().stream().map(choice -> {
-            return new ChoicesDTO(null, choice.getContent(), choice.isCorrect(), null);
-        }).collect(Collectors.toList());
+        List<ChoicesDTO> choicesDTOList = request.getChoicesList().stream().map(choice -> new ChoicesDTO(null, choice.getContent(), choice.getIsCorrect(), null)).collect(Collectors.toList());
         questionsDTO.setChoicesList(choicesDTOList);
         questionsDTO = questionsService.createQuestion(questionsDTO, userDetails.getId(), userDetails.getCompanyId());
         return ResponseEntity.ok(questionsMapper.toResponse(questionsDTO));
@@ -65,9 +63,7 @@ public class QuestionsController {
         questionsDTO.setContent(request.getContent());
         questionsDTO.setId(request.getId());
         List<ChoicesDTO> choicesDTOList = null;
-        if (request.getChoicesList() != null) choicesDTOList = request.getChoicesList().stream().map(choice -> {
-            return new ChoicesDTO(null, choice.getContent(), choice.isCorrect(), null);
-        }).collect(Collectors.toList());
+        if (request.getChoicesList() != null) choicesDTOList = request.getChoicesList().stream().map(choice -> new ChoicesDTO(null, choice.getContent(), choice.isCorrect(), null)).collect(Collectors.toList());
 
         questionsDTO.setChoicesList(choicesDTOList);
         questionsDTO = questionsService.updateQuestion(questionsDTO, userDetails.getCompanyId());
@@ -126,7 +122,7 @@ public class QuestionsController {
 
     @PostMapping(ApiEndPoint.Questions.UPLOAD_CSV + "/{id}")
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
-    public ResponseEntity<?> createMultipleQuestionsFromCSVFile(@PathVariable("id") String jobPositionId, @RequestPart("file") MultipartFile file) throws IOException {
+    public ResponseEntity<?> createMultipleQuestionsFromCSVFile(@PathVariable("id") String jobPositionId, @RequestPart("file") MultipartFile file) {
         List<QuestionsDTO> result = questionsService.createNewQuestionsFromCSVFile(file, jobPositionId);
         return ResponseEntity.ok(result);
     }

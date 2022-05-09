@@ -19,9 +19,10 @@ public class AgoraTokenServiceImpl implements AgoraTokenService {
 
     @Override
     @SneakyThrows
+    @SuppressWarnings("unchecked")
     public String getRtmToken(String accountName) {
-        Integer currentTimestamp = Math.toIntExact(new Date().getTime() / 1000);
-        Integer expireTimestamp = Math.toIntExact(tokenExpiredDuration) + currentTimestamp;
+        int currentTimestamp = Math.toIntExact(new Date().getTime() / 1000);
+        int expireTimestamp = Math.toIntExact(tokenExpiredDuration) + currentTimestamp;
         RtmTokenBuilder builder = new RtmTokenBuilder();
         String result = builder.buildToken(appID, appCertificate, accountName, RtmTokenBuilder.Role.Rtm_User, expireTimestamp);
         return result;
@@ -29,8 +30,8 @@ public class AgoraTokenServiceImpl implements AgoraTokenService {
 
     @Override
     public String getRtcToken(String accountName, String channelName) {
-        Integer currentTimestamp = Math.toIntExact(new Date().getTime() / 1000);
-        Integer expireTimestamp = Math.toIntExact(tokenExpiredDuration) + currentTimestamp;
+        int currentTimestamp = Math.toIntExact(new Date().getTime() / 1000);
+        int expireTimestamp = Math.toIntExact(tokenExpiredDuration) + currentTimestamp;
         RtcTokenBuilder token = new RtcTokenBuilder();
         String result = token.buildTokenWithUserAccount(appID, appCertificate,
                 channelName, accountName, RtcTokenBuilder.Role.Role_Publisher, expireTimestamp);

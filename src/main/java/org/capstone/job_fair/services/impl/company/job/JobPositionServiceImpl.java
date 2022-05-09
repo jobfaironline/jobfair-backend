@@ -13,9 +13,9 @@ import org.capstone.job_fair.models.entities.company.CompanyEntity;
 import org.capstone.job_fair.models.entities.company.job.JobPositionEntity;
 import org.capstone.job_fair.models.enums.JobLevel;
 import org.capstone.job_fair.repositories.company.CompanyRepository;
+import org.capstone.job_fair.repositories.company.job.JobPositionRepository;
 import org.capstone.job_fair.repositories.company.misc.SkillTagRepository;
 import org.capstone.job_fair.repositories.company.misc.SubCategoryRepository;
-import org.capstone.job_fair.repositories.company.job.JobPositionRepository;
 import org.capstone.job_fair.services.interfaces.company.CompanyService;
 import org.capstone.job_fair.services.interfaces.company.job.JobPositionService;
 import org.capstone.job_fair.services.mappers.company.job.JobPositionMapper;
@@ -60,10 +60,6 @@ public class JobPositionServiceImpl implements JobPositionService {
 
     private boolean isSkillTagIdValid(int id) {
         return skillTagRepository.existsById(id);
-    }
-
-    private void createNewJobPositionPrivate(JobPositionDTO dto) {
-
     }
 
     @Override
@@ -152,7 +148,6 @@ public class JobPositionServiceImpl implements JobPositionService {
         if (offset < DataConstraint.Paging.OFFSET_MIN || pageSize < DataConstraint.Paging.PAGE_SIZE_MIN)
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Job.INVALID_PAGE_NUMBER));
         Integer jobLevelId = null;
-        if (jobLevelId != null) jobLevel.ordinal();
         Page<JobPositionEntity> jobPositionEntities = jobPositionRepository.findAllByCriteria(companyId, jobTypeId, jobLevelId, jobTitle, PageRequest.of(offset, pageSize).withSort(Sort.by(direction, sortBy)));
         return jobPositionEntities.map(entity -> mapper.toDTO(entity));
     }
@@ -160,6 +155,7 @@ public class JobPositionServiceImpl implements JobPositionService {
     @SneakyThrows
     @Override
     @Transactional
+    @SuppressWarnings("unchecked")
     public List<JobPositionDTO> createNewJobPositionsFromCSVFile(MultipartFile file, String companyId) {
         List<JobPositionDTO> result = new ArrayList<>();
         if (!CSVConstant.TYPE.equals(file.getContentType())) {

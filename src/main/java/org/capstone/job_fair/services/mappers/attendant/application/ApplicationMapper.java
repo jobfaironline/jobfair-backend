@@ -30,7 +30,8 @@ import org.mapstruct.*;
         ApplicationReferenceMapper.class,
         ApplicationSkillMapper.class,
         ApplicationWorkHistoryMapper.class,
-        CompanyEmployeeMapper.class
+        CompanyEmployeeMapper.class,
+        BoothJobPositionMapper.class
 }, nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public abstract class ApplicationMapper {
 
@@ -40,6 +41,7 @@ public abstract class ApplicationMapper {
     @Mapping(target = "boothJobPosition", source = "boothJobPositionDTO")
     public abstract ApplicationEntity toEntity(ApplicationDTO dto);
 
+    @Mapping(target = "boothJobPosition", source = "boothJobPositionDTO")
     public abstract void updateFromDTO(@MappingTarget ApplicationEntity entity, ApplicationDTO dto);
 
 
@@ -47,6 +49,8 @@ public abstract class ApplicationMapper {
     @Mapping(target = "appliedDate", source = "createDate")
     @Mapping(target = "jobPositionTitle", source = "boothJobPosition.title")
     @Mapping(target = "jobPositionId", source = "boothJobPosition.id")
+    @Mapping(target = "jobFairName", source = "boothJobPosition.jobFairBooth.jobFair.name")
+    @Mapping(target = "jobFairId", source = "boothJobPosition.jobFairBooth.jobFair.id")
     public abstract ApplicationForCompanyResponse toApplicationForCompanyResponse(ApplicationEntity entity);
 
 
@@ -69,11 +73,15 @@ public abstract class ApplicationMapper {
     @Mapping(target = "imageUrl", source = "attendant.account.profileImageUrl")
     @Mapping(target = "country", source = "attendant.country.name")
     @Mapping(target = "dob", source = "attendant.dob")
+    @Mapping(target = "jobFairName", source = "boothJobPosition.jobFairBooth.jobFair.name")
+    @Mapping(target = "jobFairId", source = "boothJobPosition.jobFairBooth.jobFair.id")
     public abstract ApplicationWithGenralDataOfApplicantResponse toApplicationWithGenralDataOfApplicantResponse(ApplicationEntity entity);
 
     @Mapping(target = "authorizerName", source = "interviewer", qualifiedByName = "toEmployeeFullName")
     @Mapping(target = "jobPositionId", source = "boothJobPosition.id")
     @Mapping(target = "jobPositionTitle", source = "boothJobPosition.title")
+    @Mapping(target = "jobFairName", source = "boothJobPosition.jobFairBooth.jobFair.name")
+    @Mapping(target = "jobFairId", source = "boothJobPosition.jobFairBooth.jobFair.id")
     public abstract ApplicationForAttendantResponse toApplicationForAttendantResponse(ApplicationEntity entity);
 
     @Named("toEmployeeFullName")

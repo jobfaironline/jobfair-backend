@@ -180,6 +180,7 @@ public class JobFairController {
     @PostMapping(ApiEndPoint.JobFair.UPLOAD_THUMBNAIL + "/{jobFairId}")
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) OR hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
     @SneakyThrows
+    @SuppressWarnings("unchecked")
     public ResponseEntity<?> uploadThumbnail(@PathVariable("jobFairId") String jobFairId, @RequestParam("file") MultipartFile file) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String companyId = userDetails.getCompanyId();

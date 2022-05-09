@@ -38,8 +38,6 @@ public class QuizController {
         if (quizDTOOpt.isPresent()){
             QuizDTO quizDTO = quizDTOOpt.get();
             InProgressQuizResponse response = quizMapper.toResponse(quizDTO);
-            response.setDuration(quizDTO.getApplication().getBoothJobPositionDTO().getTestTimeLength());
-            response.setJobPositionTitle(quizDTO.getApplication().getBoothJobPositionDTO().getTitle());
             return ResponseEntity.ok(response);
         } else {
             return ResponseEntity.notFound().build();
