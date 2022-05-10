@@ -36,7 +36,7 @@ public class UpdateQuestionsRequest {
         @NotBlank
         @XSSConstraint
         private String content;
-        private boolean isCorrect;
+        private Boolean isCorrect;
     }
 }
 

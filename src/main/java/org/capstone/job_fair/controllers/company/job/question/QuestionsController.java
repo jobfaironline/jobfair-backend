@@ -22,7 +22,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -63,8 +62,8 @@ public class QuestionsController {
         questionsDTO.setContent(request.getContent());
         questionsDTO.setId(request.getId());
         List<ChoicesDTO> choicesDTOList = null;
-        if (request.getChoicesList() != null) choicesDTOList = request.getChoicesList().stream().map(choice -> new ChoicesDTO(null, choice.getContent(), choice.isCorrect(), null)).collect(Collectors.toList());
-
+        if (request.getChoicesList() != null)
+            choicesDTOList = request.getChoicesList().stream().map(choice -> new ChoicesDTO(null, choice.getContent(), choice.getIsCorrect(), null)).collect(Collectors.toList());
         questionsDTO.setChoicesList(choicesDTOList);
         questionsDTO = questionsService.updateQuestion(questionsDTO, userDetails.getCompanyId());
         return ResponseEntity.ok(questionsMapper.toResponse(questionsDTO));
