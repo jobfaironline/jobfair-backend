@@ -21,4 +21,5 @@ public class InterviewScheduleDTO {
     private String url;
     private String interviewerId;
     private String attendantId;
+    private Long jobFairPublicEndTime;
 }
