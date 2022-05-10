@@ -2,11 +2,16 @@ package org.capstone.job_fair.services.impl.job_fair;
 
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.constants.ScheduleConstant;
+import org.capstone.job_fair.models.dtos.job_fair.InterviewRequestChangeDTO;
 import org.capstone.job_fair.models.dtos.job_fair.InterviewScheduleDTO;
 import org.capstone.job_fair.models.entities.attendant.application.ApplicationEntity;
+import org.capstone.job_fair.models.entities.job_fair.InterviewRequestChangeEntity;
+import org.capstone.job_fair.models.enums.InterviewRequestChangeStatus;
 import org.capstone.job_fair.models.statuses.InterviewStatus;
 import org.capstone.job_fair.repositories.attendant.application.ApplicationRepository;
+import org.capstone.job_fair.repositories.job_fair.InterviewRequestChangeRepository;
 import org.capstone.job_fair.services.interfaces.job_fair.InterviewService;
+import org.capstone.job_fair.services.mappers.job_fair.InterviewRequestChangeMapper;
 import org.capstone.job_fair.services.mappers.job_fair.InterviewScheduleMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +30,14 @@ public class InterviewServiceImpl implements InterviewService {
     private InterviewScheduleMapper interviewScheduleMapper;
 
     @Autowired
+    private InterviewRequestChangeMapper interviewRequestChangeMapper;
+
+    @Autowired
     private ApplicationRepository applicationRepository;
+
+    @Autowired
+    private InterviewRequestChangeRepository interviewRequestChangeRepository;
+
 
     @Override
     public List<InterviewScheduleDTO> getInterviewScheduleForCompanyEmployee(String employeeId, Long beginTime, Long endTime) {
@@ -44,7 +56,8 @@ public class InterviewServiceImpl implements InterviewService {
     }
 
     @Override
-    public void requestChangeSchedule(String applicationId, String userId, boolean isAttendant, String requestMessage, Long beginTime, Long endTime) {
+    @Transactional
+    public InterviewRequestChangeDTO requestChangeSchedule(String applicationId, String userId, boolean isAttendant, String requestMessage, Long beginTime, Long endTime) {
         Optional<ApplicationEntity> applicationOpt = applicationRepository.findById(applicationId);
         //check existed application
         if (!applicationOpt.isPresent()) {
@@ -82,10 +95,74 @@ public class InterviewServiceImpl implements InterviewService {
         if (!availableApplication.isEmpty()) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.InterviewSchedule.SCHEDULE_CONFLICT));
         }
-
-        application.setBeginTime(beginTime);
-        application.setEndTime(endTime);
+        application.setInterviewStatus(InterviewStatus.REQUEST_CHANGE);
+        InterviewRequestChangeEntity requestChange = new InterviewRequestChangeEntity();
+        requestChange.setApplication(application);
+        requestChange.setMessage(requestMessage);
+        requestChange.setBeginTime(beginTime);
+        requestChange.setEndTime(endTime);
+        requestChange.setStatus(InterviewRequestChangeStatus.PENDING);
+        requestChange.setCreateTime(now);
+        requestChange = interviewRequestChangeRepository.save(requestChange);
         applicationRepository.save(application);
+        return interviewRequestChangeMapper.toDTO(requestChange);
 
+    }
+
+    @Override
+    @Transactional
+    public InterviewRequestChangeDTO evaluateRequestChange(String requestChangeId, InterviewRequestChangeStatus status, String userId) {
+        Optional<InterviewRequestChangeEntity> requestOpt = interviewRequestChangeRepository.findById(requestChangeId);
+        if (!requestOpt.isPresent()) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.InterviewRequestChange.NOT_FOUND));
+        }
+        InterviewRequestChangeEntity requestChange = requestOpt.get();
+        if (status != InterviewRequestChangeStatus.REJECT && status != InterviewRequestChangeStatus.APPROVE) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.InterviewRequestChange.INVALID_STATUS));
+        }
+        if (requestChange.getStatus() != InterviewRequestChangeStatus.PENDING) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.InterviewRequestChange.CANNOT_EDIT));
+        }
+        if (!requestChange.getApplication().getInterviewer().getAccountId().equals(userId)){
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.InterviewRequestChange.NOT_FOUND));
+        }
+
+        ApplicationEntity application = requestChange.getApplication();
+        application.setInterviewStatus(InterviewStatus.NOT_YET);
+        requestChange.setStatus(status);
+        requestChange = interviewRequestChangeRepository.save(requestChange);
+        applicationRepository.save(application);
+        return interviewRequestChangeMapper.toDTO(requestChange);
+    }
+
+    private void checkApplicationValid(String applicationId, String userId, boolean isAttendant){
+        Optional<ApplicationEntity> applicationOpt = applicationRepository.findById(applicationId);
+        if (!applicationOpt.isPresent()){
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.APPLICATION_NOT_FOUND));
+        }
+        ApplicationEntity application = applicationOpt.get();
+        if (isAttendant){
+            if (!application.getAttendant().getAccountId().equals(userId)){
+                throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.APPLICATION_NOT_FOUND));
+            }
+        } else {
+            if (!application.getInterviewer().getAccountId().equals(userId)){
+                throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.APPLICATION_NOT_FOUND));
+            }
+        }
+    }
+
+    @Override
+    public Optional<InterviewRequestChangeDTO> getLatestRequestChangeByApplication(String applicationId, String userId, boolean isAttendant) {
+        checkApplicationValid(applicationId, userId, isAttendant);
+        Optional<InterviewRequestChangeEntity> requestChangeOpt = interviewRequestChangeRepository.findTopByApplicationIdOrderByCreateTimeDesc(applicationId);
+        return requestChangeOpt.map(interviewRequestChangeMapper::toDTO);
+    }
+
+    @Override
+    public List<InterviewRequestChangeDTO> getRequestChangesByApplication(String applicationId, String userId, boolean isAttendant) {
+        checkApplicationValid(applicationId, userId, isAttendant);
+        List<InterviewRequestChangeEntity> result = interviewRequestChangeRepository.findByApplicationIdOrderByCreateTimeDesc(applicationId);
+        return result.stream().map(interviewRequestChangeMapper::toDTO).collect(Collectors.toList());
     }
 }

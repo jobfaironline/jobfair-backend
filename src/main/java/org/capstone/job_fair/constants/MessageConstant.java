@@ -426,6 +426,12 @@ public final class MessageConstant {
             public static final String TITLE = "notification-message.assign-employee.title";
             public static final String MESSAGE = "notification-message.assign-employee.message";
         }
+
+        public static final class REQUEST_CHANGE_INTERVIEW {
+            private REQUEST_CHANGE_INTERVIEW(){}
+            public static final String TITLE = "notification-message.request-change-interview.title";
+            public static final String MESSAGE = "notification-message.request-change-interview.message";
+        }
     }
 
     public static final class InterviewSchedule {
@@ -436,6 +442,13 @@ public final class MessageConstant {
         public static final String NOT_FOUND = "interview-schedule.error.not-found";
         public static final String CANNOT_EDIT = "interview-schedule.error.cannot-edit";
         public static final String INVALID_REQUEST_SCHEDULE = "interview-schedule.error.invalid-schedule";
+    }
+
+    public static final class InterviewRequestChange {
+        private InterviewRequestChange(){}
+        public static final String NOT_FOUND = "interview-request-change.error.not-found";
+        public static final String INVALID_STATUS = "interview-request-change.error.invalid-status";
+        public static final String CANNOT_EDIT = "interview-request-change.error.cannot-edit";
     }
 }
 

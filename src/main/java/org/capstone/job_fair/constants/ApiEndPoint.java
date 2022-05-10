@@ -324,5 +324,8 @@ public final class ApiEndPoint {
         private Interview(){}
         public static final String INTERVIEW = ROOT_ENDPOINT + VERSION + "/interview";
         public static final String SCHEDULE = INTERVIEW + "/schedule";
+        public static final String REQUEST_CHANGE = SCHEDULE + "/change";
+        public static final String LATEST_REQUEST_CHANGE = REQUEST_CHANGE + "/latest";
+        public static final String EVALUATE_REQUEST_CHANGE = REQUEST_CHANGE + "/evaluate";
     }
 }

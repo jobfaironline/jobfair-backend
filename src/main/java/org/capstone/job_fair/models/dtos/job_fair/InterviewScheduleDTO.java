@@ -1,12 +1,17 @@
 package org.capstone.job_fair.models.dtos.job_fair;
 
-import lombok.Data;
+import lombok.*;
 import org.capstone.job_fair.models.dtos.attendant.AttendantDTO;
 import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
 import org.capstone.job_fair.models.statuses.InterviewStatus;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class InterviewScheduleDTO {
+    @EqualsAndHashCode.Include
     private String id;
     private Long endTime;
     private Long beginTime;
