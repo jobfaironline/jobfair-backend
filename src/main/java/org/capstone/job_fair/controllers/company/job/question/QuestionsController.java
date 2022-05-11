@@ -122,7 +122,7 @@ public class QuestionsController {
 
     @PostMapping(ApiEndPoint.Questions.UPLOAD_CSV + "/{id}")
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
-    public ResponseEntity<?> createMultipleQuestionsFromCSVFile(@PathVariable("id") String jobPositionId, @RequestPart("file") MultipartFile file) throws IOException {
+    public ResponseEntity<?> createMultipleQuestionsFromCSVFile(@PathVariable("id") String jobPositionId, @RequestPart("file") MultipartFile file) {
         ParseFileResult<QuestionsDTO> result = questionsService.createNewQuestionsFromFile(file, jobPositionId);
         if (!result.isHasError()) {
             return ResponseEntity.ok(result.getResult());
