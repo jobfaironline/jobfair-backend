@@ -51,7 +51,6 @@ public abstract class JobPositionMapper {
 
 
     @Mapping(source = "preferredLanguage", target = "language")
-    @Mapping(source = "companyId", target = "companyDTO.id")
     @Mapping(source = "subCategoryIds", target = "subCategoryDTOs", qualifiedByName = "fromSubCategoryIdsOfCreateJobPositionRequest")
     @Mapping(source = "skillTagIds", target = "skillTagDTOS", qualifiedByName = "fromSkillTagIdsOfCreateJobPositionRequest")
     @Mapping(target = "id", ignore = true)

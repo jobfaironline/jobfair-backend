@@ -1,6 +1,7 @@
 package org.capstone.job_fair.services.interfaces.company.job;
 
 import org.capstone.job_fair.models.dtos.company.job.JobPositionDTO;
+import org.capstone.job_fair.models.dtos.util.ParseFileResult;
 import org.capstone.job_fair.models.enums.JobLevel;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
@@ -18,7 +19,7 @@ public interface JobPositionService {
 
     Page<JobPositionDTO> getAllJobPositionOfCompany(String companyId, Integer jobTypeId, JobLevel jobLevelId, String jobTitle, int pageSize, int offset, String sortBy, Sort.Direction direction);
 
-    List<JobPositionDTO> createNewJobPositionsFromCSVFile(MultipartFile file, String companyId);
+    ParseFileResult<JobPositionDTO> createNewJobPositionsFromFile(MultipartFile file, String companyId);
 
     Optional<JobPositionDTO> getByIdAndCompanyId(String id, String companyId);
 

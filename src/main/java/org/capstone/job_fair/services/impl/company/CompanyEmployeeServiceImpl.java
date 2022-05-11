@@ -1,16 +1,18 @@
 package org.capstone.job_fair.services.impl.company;
 
-import com.opencsv.bean.CsvToBean;
-import com.opencsv.bean.CsvToBeanBuilder;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.capstone.job_fair.constants.AccountConstant;
-import org.capstone.job_fair.constants.CSVConstant;
+import org.capstone.job_fair.constants.CompanyEmployeeConstant;
+import org.capstone.job_fair.constants.FileConstant;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.controllers.payload.requests.company.CreateCompanyEmployeeCSVRequest;
-import org.capstone.job_fair.controllers.payload.requests.company.CreateJobPositionRequest;
 import org.capstone.job_fair.models.dtos.company.CompanyDTO;
 import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
+import org.capstone.job_fair.models.dtos.util.ParseFileResult;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
 import org.capstone.job_fair.models.entities.account.RoleEntity;
 import org.capstone.job_fair.models.entities.company.CompanyEmployeeEntity;
@@ -22,7 +24,7 @@ import org.capstone.job_fair.repositories.account.AccountRepository;
 import org.capstone.job_fair.repositories.company.CompanyEmployeeRepository;
 import org.capstone.job_fair.repositories.company.CompanyRepository;
 import org.capstone.job_fair.services.interfaces.company.CompanyEmployeeService;
-import org.capstone.job_fair.services.interfaces.util.MailService;
+import org.capstone.job_fair.services.interfaces.util.XSLSFileService;
 import org.capstone.job_fair.services.mappers.company.CompanyEmployeeMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.capstone.job_fair.utils.PasswordGenerator;
@@ -33,14 +35,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.BindException;
-import org.springframework.validation.Errors;
-import org.springframework.validation.Validator;
+import org.springframework.validation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityNotFoundException;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.util.*;
 
 @Service
@@ -66,7 +64,7 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
     private Validator validator;
 
     @Autowired
-    private MailService mailService;
+    private XSLSFileService xslsFileService;
 
 
     private boolean isEmailExist(String email) {
@@ -92,7 +90,7 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
 
     @Override
     @Transactional
-    public void createNewCompanyEmployeeAccount(CompanyEmployeeDTO dto) {
+    public CompanyEmployeeDTO createNewCompanyEmployeeAccount(CompanyEmployeeDTO dto) {
         if (isEmailExist(dto.getAccount().getEmail())) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMAIL_EXISTED));
         }
@@ -119,7 +117,8 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
         CompanyEmployeeEntity entity = mapper.toEntity(dto);
         String hashPassword = encoder.encode(password);
         entity.getAccount().setPassword(hashPassword);
-        employeeRepository.save(entity);
+        entity = employeeRepository.save(entity);
+        return mapper.toDTO(entity);
     }
 
     @Override
@@ -216,45 +215,102 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
         return employeeRepository.countByCompanyId(companyId);
     }
 
-    @Override
-    @Transactional
-    @SneakyThrows
-    public List<CompanyEmployeeDTO> createNewCompanyEmployeesFromCSVFile(MultipartFile file, String companyId) {
-        List<CompanyEmployeeDTO> result = new ArrayList<>();
-        if (!CSVConstant.TYPE.equals(file.getContentType())) {
-            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Job.CSV_FILE_ERROR));
-        }
-        Reader reader = new InputStreamReader(file.getInputStream());
-        CsvToBean<CreateCompanyEmployeeCSVRequest> csvToBean = new CsvToBeanBuilder(reader)
-                .withType(CreateCompanyEmployeeCSVRequest.class)
-                .withIgnoreLeadingWhiteSpace(true)
-                .build();
-        Iterator<CreateCompanyEmployeeCSVRequest> companyEmployeeCSVs = csvToBean.iterator();
-        int numberOfCreatedJob = 0;
-        while (companyEmployeeCSVs.hasNext()) {
-            numberOfCreatedJob++;
-            CreateCompanyEmployeeCSVRequest companyEmployeeCSVRequest = companyEmployeeCSVs.next();
-            Errors errors = new BindException(companyEmployeeCSVRequest, CreateJobPositionRequest.class.getSimpleName());
+
+    private ParseFileResult<CompanyEmployeeDTO> createNewEmployeeFromListString(List<List<String>> data, String companyId) {
+        ParseFileResult<CompanyEmployeeDTO> parseResult = new ParseFileResult();
+
+        int rowNum = data.size();
+        for (int i = 1; i < rowNum; i++) {
+            List<String> rowData = data.get(i);
+            String firstName = rowData.get(CompanyEmployeeConstant.XLSXFormat.FIRST_NAME_INDEX);
+            String middleName = rowData.get(CompanyEmployeeConstant.XLSXFormat.MIDDLE_NAME_INDEX);
+            String lastName = rowData.get(CompanyEmployeeConstant.XLSXFormat.LAST_NAME_INDEX);
+            String department = rowData.get(CompanyEmployeeConstant.XLSXFormat.DEPARTMENT_INDEX);
+            String employeeId = rowData.get(CompanyEmployeeConstant.XLSXFormat.EMPLOYEE_ID_INDEX);
+            String email = rowData.get(CompanyEmployeeConstant.XLSXFormat.EMAIL_INDEX);
+            CreateCompanyEmployeeCSVRequest companyEmployeeCSVRequest = new CreateCompanyEmployeeCSVRequest(firstName, middleName, lastName, department, employeeId, email);
+            Errors errors = new BindException(companyEmployeeCSVRequest, CreateCompanyEmployeeCSVRequest.class.getSimpleName());
             validator.validate(companyEmployeeCSVRequest, errors);
             if (errors.hasErrors()) {
-                String errorMessage = String.format(MessageUtil.getMessage(MessageConstant.Job.CSV_LINE_ERROR), numberOfCreatedJob);
-                throw new IllegalArgumentException(errorMessage);
+                StringBuilder message = new StringBuilder("");
+                for (ObjectError error : errors.getAllErrors()) {
+                    message.append(((FieldError) error).getField());
+                    message.append(" ");
+                    message.append(error.getDefaultMessage());
+                    message.append(".");
+                }
+                parseResult.addErrorMessage(i, message.toString());
+                continue;
             }
             CompanyDTO companyDTO = CompanyDTO.builder().id(companyId).build();
             CompanyEmployeeDTO companyEmployeeDTO = mapper.toDTO(companyEmployeeCSVRequest);
             companyEmployeeDTO.setCompanyDTO(companyDTO);
-            createNewCompanyEmployeeAccount(companyEmployeeDTO);
-            result.add(companyEmployeeDTO);
-            //send email
-            this.mailService.sendMail(companyEmployeeDTO.getAccount().getEmail(),
-                            MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMAIL_SUBJECT),
-                            MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMAIL_CONTENT) + companyEmployeeDTO.getAccount().getPassword())
-                    .exceptionally(throwable -> {
-                        log.error(throwable.getMessage());
-                        return null;
-                    });
+            parseResult.addToResult(companyEmployeeDTO);
         }
-        return result;
+        List<CompanyEmployeeDTO> insertResult = new ArrayList<>();
+        if (!parseResult.isHasError()) {
+            for (int i = 0; i < parseResult.getResult().size(); i++) {
+                CompanyEmployeeDTO companyEmployeeDTO = parseResult.getResult().get(i);
+                try {
+                    companyEmployeeDTO = this.createNewCompanyEmployeeAccount(companyEmployeeDTO);
+                    insertResult.add(companyEmployeeDTO);
+                } catch (IllegalArgumentException e) {
+                    //+1 because row start at 1
+                    parseResult.addErrorMessage(i + 1, e.getMessage());
+                }
+            }
+            parseResult.setResult(insertResult);
+        }
+        return parseResult;
+    }
+
+    @SneakyThrows
+    private ParseFileResult<CompanyEmployeeDTO> parseExcelFile(MultipartFile file, String companyId) {
+        ParseFileResult<CompanyEmployeeDTO> parseResult;
+        Workbook workbook = new XSSFWorkbook(file.getInputStream());
+        if (workbook.getNumberOfSheets() != 1) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.File.XSL_NO_SHEET));
+        }
+        Sheet sheet = workbook.getSheetAt(0);
+        List<List<String>> data = xslsFileService.readXSLSheet(sheet, CompanyEmployeeConstant.XLSXFormat.COLUMN_NUM);
+        parseResult = createNewEmployeeFromListString(data, companyId);
+
+        if (parseResult.isHasError()) {
+            String url = xslsFileService.uploadErrorXSLFile(workbook, parseResult.getErrors(), file.getOriginalFilename(), CompanyEmployeeConstant.XLSXFormat.ERROR_INDEX);
+            parseResult.setErrorFileUrl(url);
+        }
+        return parseResult;
+    }
+
+    @SneakyThrows
+    private ParseFileResult<CompanyEmployeeDTO> parseCsvFile(MultipartFile file, String companyId) {
+        ParseFileResult<CompanyEmployeeDTO> parseResult;
+        List<List<String>> data = xslsFileService.readCSVFile(file.getInputStream());
+        parseResult = createNewEmployeeFromListString(data, companyId);
+        if (parseResult.isHasError()) {
+            String url = xslsFileService.uploadErrorCSVFile(data, parseResult.getErrors(), file.getOriginalFilename());
+            parseResult.setErrorFileUrl(url);
+        }
+        return parseResult;
+    }
+
+    @Override
+    @Transactional
+    @SneakyThrows
+    public ParseFileResult<CompanyEmployeeDTO> createNewCompanyEmployeesFromFile(MultipartFile file, String companyId) {
+        //check for invalid type
+        List<String> allowTypes = Arrays.asList(FileConstant.CSV_CONSTANT.TYPE, FileConstant.XLS_CONSTANT.TYPE, FileConstant.XLSX_CONSTANT.TYPE);
+        String fileType = file.getContentType();
+        if (!allowTypes.contains(fileType)) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.File.NOT_ALLOWED));
+        }
+        ParseFileResult<CompanyEmployeeDTO> parseResult;
+        if (Objects.equals(fileType, FileConstant.XLSX_CONSTANT.TYPE) || Objects.equals(fileType, FileConstant.XLS_CONSTANT.TYPE)) {
+            parseResult = parseExcelFile(file, companyId);
+            return parseResult;
+        }
+        parseResult = parseCsvFile(file, companyId);
+        return parseResult;
     }
 
 

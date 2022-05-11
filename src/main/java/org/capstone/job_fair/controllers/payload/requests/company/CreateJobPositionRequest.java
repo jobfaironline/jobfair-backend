@@ -54,8 +54,6 @@ public class CreateJobPositionRequest {
     @CsvBindByName(column = "locationId")
     private String locationId;
     @NotNull
-    private String companyId;
-    @NotNull
     @Valid
     @Size(min = DataConstraint.JobPosition.CATEGORY_MIN, max = DataConstraint.JobPosition.CATEGORY_MAX)
     @CsvCustomBindByName(column = "subCategoryIds", converter = ListConverter.class)

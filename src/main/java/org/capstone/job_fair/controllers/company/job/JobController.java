@@ -9,6 +9,7 @@ import org.capstone.job_fair.controllers.payload.requests.company.UpdateJobPosit
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
 import org.capstone.job_fair.models.dtos.company.job.JobPositionDTO;
+import org.capstone.job_fair.models.dtos.util.ParseFileResult;
 import org.capstone.job_fair.models.enums.JobLevel;
 import org.capstone.job_fair.services.interfaces.company.CompanyEmployeeService;
 import org.capstone.job_fair.services.interfaces.company.job.JobPositionService;
@@ -61,10 +62,6 @@ public class JobController {
             Optional<CompanyEmployeeDTO> companyEmployeeDTOOpt = companyEmployeeService.getCompanyEmployeeByAccountId(userDetails.getId());
             if (!companyEmployeeDTOOpt.isPresent()) {
                 throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.AccessControlMessage.UNAUTHORIZED_ACTION));
-            }
-            String userCompanyID = companyEmployeeDTOOpt.get().getCompanyDTO().getId();
-            if (!userCompanyID.equals(request.getCompanyId())) {
-                throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Job.COMPANY_MISMATCH));
             }
 
             JobPositionDTO jobPositionDTO = jobPositionMapper.toDTO(request);
@@ -122,8 +119,13 @@ public class JobController {
     public ResponseEntity<?> createMultipleJobPositionFromCSVFile(@RequestParam("file") MultipartFile file) throws IOException {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String companyId = userDetails.getCompanyId();
-        List<JobPositionDTO> result = jobPositionService.createNewJobPositionsFromCSVFile(file, companyId);
-        return ResponseEntity.ok(result);
+
+        ParseFileResult<JobPositionDTO> result = jobPositionService.createNewJobPositionsFromFile(file, companyId);
+        if (!result.isHasError()) {
+            return ResponseEntity.ok(result.getResult());
+        } else {
+            return ResponseEntity.badRequest().body(result);
+        }
     }
 }
 

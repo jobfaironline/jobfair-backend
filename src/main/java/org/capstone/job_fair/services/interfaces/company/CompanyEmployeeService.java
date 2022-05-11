@@ -1,6 +1,7 @@
 package org.capstone.job_fair.services.interfaces.company;
 
 import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
+import org.capstone.job_fair.models.dtos.util.ParseFileResult;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.multipart.MultipartFile;
@@ -11,7 +12,7 @@ import java.util.Optional;
 public interface CompanyEmployeeService {
     CompanyEmployeeDTO createNewCompanyManagerAccount(CompanyEmployeeDTO dto);
 
-    void createNewCompanyEmployeeAccount(CompanyEmployeeDTO dto);
+    CompanyEmployeeDTO createNewCompanyEmployeeAccount(CompanyEmployeeDTO dto);
 
     void updateProfile(CompanyEmployeeDTO dto);
 
@@ -29,5 +30,5 @@ public interface CompanyEmployeeService {
 
     Integer getCompanyEmployeeCount(String companyId);
 
-    List<CompanyEmployeeDTO> createNewCompanyEmployeesFromCSVFile(MultipartFile file, String companyId);
+    ParseFileResult<CompanyEmployeeDTO> createNewCompanyEmployeesFromFile(MultipartFile file, String companyId);
 }

@@ -1,6 +1,7 @@
 package org.capstone.job_fair.controllers.company;
 
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import org.capstone.job_fair.constants.ApiEndPoint;
@@ -14,13 +15,13 @@ import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
 import org.capstone.job_fair.models.dtos.company.CompanyDTO;
 import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
+import org.capstone.job_fair.models.dtos.util.ParseFileResult;
 import org.capstone.job_fair.models.enums.Role;
 import org.capstone.job_fair.services.interfaces.account.AccountService;
 import org.capstone.job_fair.services.interfaces.company.CompanyEmployeeService;
 import org.capstone.job_fair.services.interfaces.company.CompanyService;
 import org.capstone.job_fair.services.interfaces.util.MailService;
 import org.capstone.job_fair.services.mappers.company.CompanyEmployeeMapper;
-import org.capstone.job_fair.services.mappers.company.CompanyMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.capstone.job_fair.validators.XSSConstraint;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +40,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.mail.MessagingException;
 import javax.validation.Valid;
 import java.io.UnsupportedEncodingException;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @RestController
@@ -60,9 +60,6 @@ public class CompanyEmployeeController {
 
     @Autowired
     private CompanyEmployeeMapper companyEmployeeMapper;
-
-    @Autowired
-    private CompanyMapper companyMapper;
 
     private boolean isEmailExist(String email) {
         return accountService.getCountAccountByEmail(email) != 0;
@@ -240,11 +237,27 @@ public class CompanyEmployeeController {
 
     @PostMapping(ApiEndPoint.CompanyEmployee.UPLOAD_CSV_ENDPOINT)
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
-    public ResponseEntity<?> createMultipleCompanyEmployeeFromCSVFile(@RequestPart("file") MultipartFile file){
+    @SneakyThrows
+    public ResponseEntity<?> createMultipleCompanyEmployeeFromCSVFile(@RequestPart("file") MultipartFile file) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String companyId = userDetails.getCompanyId();
-        List<CompanyEmployeeDTO> companyEmployeeDTOS = companyEmployeeService.createNewCompanyEmployeesFromCSVFile(file, companyId);
-        return ResponseEntity.ok(companyEmployeeDTOS);
+        ParseFileResult<CompanyEmployeeDTO> result = companyEmployeeService.createNewCompanyEmployeesFromFile(file, companyId);
+        if (!result.isHasError()) {
+            if (result.getResult() != null) {
+                for (CompanyEmployeeDTO companyEmployeeDTO : result.getResult()) {
+                    this.mailService.sendMail(companyEmployeeDTO.getAccount().getEmail(),
+                                    MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMAIL_SUBJECT),
+                                    MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMAIL_CONTENT) + companyEmployeeDTO.getAccount().getPassword())
+                            .exceptionally(throwable -> {
+                                log.error(throwable.getMessage());
+                                return null;
+                            });
+                }
+            }
+            return ResponseEntity.ok(result.getResult());
+        } else {
+            return ResponseEntity.badRequest().body(result);
+        }
     }
 
 }
