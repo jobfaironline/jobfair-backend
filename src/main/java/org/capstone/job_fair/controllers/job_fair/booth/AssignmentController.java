@@ -36,15 +36,13 @@ public class AssignmentController {
     @Autowired
     private JobFairBoothService jobFairBoothService;
 
-    @Autowired
-    private NotificationService notificationService;
 
 
     @PostMapping(ApiEndPoint.Assignment.ASSIGN)
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
     public ResponseEntity<?> assignEmployee(@Valid @RequestBody AssignEmployeeRequest request) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        AssignmentDTO dto = assignmentService.assignEmployee(request.getEmployeeId(), request.getJobFairBoothId(), request.getType(), userDetails.getCompanyId());
+        AssignmentDTO dto = assignmentService.assignEmployee(request.getEmployeeId(), request.getJobFairBoothId(), request.getType(), userDetails.getCompanyId(), request.getBeginTime(), request.getEndTime());
         return ResponseEntity.ok(dto);
     }
 
@@ -128,4 +126,5 @@ public class AssignmentController {
         }
         return ResponseEntity.ok(assignmentOpt.get());
     }
+
 }

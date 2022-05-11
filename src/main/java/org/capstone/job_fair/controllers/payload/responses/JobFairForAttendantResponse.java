@@ -2,9 +2,11 @@ package org.capstone.job_fair.controllers.payload.responses;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.capstone.job_fair.models.dtos.job_fair.JobFairDTO;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

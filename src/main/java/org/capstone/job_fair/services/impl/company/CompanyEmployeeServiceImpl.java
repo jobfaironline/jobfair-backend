@@ -48,7 +48,7 @@ import java.util.*;
 @Slf4j
 public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
     @Autowired
-    private CompanyEmployeeMapper mapper;
+    private CompanyEmployeeMapper companyEmployeeMapper;
 
     @Autowired
     private BCryptPasswordEncoder encoder;
@@ -78,7 +78,7 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
     public CompanyEmployeeDTO createNewCompanyManagerAccount(CompanyEmployeeDTO dto) {
         dto.getAccount().setRole(Role.COMPANY_MANAGER);
         dto.getAccount().setCreateTime(new Date().getTime());
-        CompanyEmployeeEntity entity = mapper.toEntity(dto);
+        CompanyEmployeeEntity entity = companyEmployeeMapper.toEntity(dto);
 
         AccountEntity accountEntity = entity.getAccount();
         accountEntity.setPassword(encoder.encode(accountEntity.getPassword()));
@@ -86,7 +86,7 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
         accountEntity.setStatus(AccountStatus.REGISTERED);
 
         employeeRepository.save(entity);
-        return mapper.toDTO(entity);
+        return companyEmployeeMapper.toDTO(entity);
     }
 
 
@@ -116,7 +116,7 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
         dto.getAccount().setCreateTime(new Date().getTime());
         dto.getAccount().setGender(Gender.MALE);
 
-        CompanyEmployeeEntity entity = mapper.toEntity(dto);
+        CompanyEmployeeEntity entity = companyEmployeeMapper.toEntity(dto);
         String hashPassword = encoder.encode(password);
         entity.getAccount().setPassword(hashPassword);
         employeeRepository.save(entity);
@@ -127,7 +127,7 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
     public void updateProfile(CompanyEmployeeDTO dto) {
         try {
             employeeRepository.findById(dto.getAccountId()).map((atd) -> {
-                mapper.updateCompanyEmployeeMapperFromDto(dto, atd);
+                companyEmployeeMapper.updateCompanyEmployeeMapperFromDto(dto, atd);
                 if (dto.getCompanyDTO() != null) {
                     CompanyEntity companyEntity = companyRepository.getById(dto.getCompanyDTO().getId());
                     atd.setCompany(companyEntity);
@@ -143,7 +143,7 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
     public Page<CompanyEmployeeDTO> getAllCompanyEmployees(String companyId, String searchContent, int pageSize, int offset, String sortBy, Sort.Direction direction) {
         return employeeRepository.findAllByAccountFirstnameContainsOrAccountMiddlenameContainsOrAccountLastnameContainsOrEmployeeIdContainsAndCompanyId
                         (searchContent, searchContent, searchContent, searchContent, companyId, PageRequest.of(offset, pageSize).withSort(Sort.by(direction, sortBy)))
-                .map(mapper::toDTO);
+                .map(companyEmployeeMapper::toDTO);
     }
 
     @Override
@@ -159,7 +159,11 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
     @Override
     @Transactional
     public void updateEmployeeStatus(String email) {
-        AccountEntity accountEntity = accountRepository.findByEmail(email).get();
+        Optional<AccountEntity> accountOpt =  accountRepository.findByEmail(email);
+        if (!accountOpt.isPresent()){
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Account.NOT_FOUND));
+        }
+        AccountEntity accountEntity = accountOpt.get();
         accountEntity.setStatus(AccountStatus.VERIFIED);
         accountRepository.save(accountEntity);
     }
@@ -196,19 +200,18 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
 
     @Override
     public Optional<CompanyEmployeeDTO> getCompanyEmployeeByAccountId(String accountID) {
-        return employeeRepository.findByAccountId(accountID).map(mapper::toDTO);
+        return employeeRepository.findByAccountId(accountID).map(companyEmployeeMapper::toDTO);
     }
 
     @Override
     public CompanyEmployeeDTO getCompanyEmployeeByAccountId(String employeeID, String companyID) {
-        Optional<CompanyEmployeeEntity> companyEmployeeEntityOpt = null;
+        Optional<CompanyEmployeeEntity> companyEmployeeEntityOpt;
         //if company id not null => the manager is performing the search, then find employee base on id and comany id to make sure that employee is belonged to their company, not the others
         //if company id is null => admin is performing the search, no need to check company id.
         if (companyID != null)
             companyEmployeeEntityOpt = employeeRepository.findByAccountIdAndCompanyId(employeeID, companyID);
         else companyEmployeeEntityOpt = employeeRepository.findById(employeeID);
-        if (!companyEmployeeEntityOpt.isPresent()) return null;
-        return mapper.toDTO(companyEmployeeEntityOpt.get());
+        return companyEmployeeEntityOpt.map(employeeEntity -> companyEmployeeMapper.toDTO(employeeEntity)).orElse(null);
     }
 
     @Override
@@ -219,6 +222,7 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
     @Override
     @Transactional
     @SneakyThrows
+    @SuppressWarnings("unchecked")
     public List<CompanyEmployeeDTO> createNewCompanyEmployeesFromCSVFile(MultipartFile file, String companyId) {
         List<CompanyEmployeeDTO> result = new ArrayList<>();
         if (!CSVConstant.TYPE.equals(file.getContentType())) {
@@ -241,7 +245,7 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
                 throw new IllegalArgumentException(errorMessage);
             }
             CompanyDTO companyDTO = CompanyDTO.builder().id(companyId).build();
-            CompanyEmployeeDTO companyEmployeeDTO = mapper.toDTO(companyEmployeeCSVRequest);
+            CompanyEmployeeDTO companyEmployeeDTO = companyEmployeeMapper.toDTO(companyEmployeeCSVRequest);
             companyEmployeeDTO.setCompanyDTO(companyDTO);
             createNewCompanyEmployeeAccount(companyEmployeeDTO);
             result.add(companyEmployeeDTO);

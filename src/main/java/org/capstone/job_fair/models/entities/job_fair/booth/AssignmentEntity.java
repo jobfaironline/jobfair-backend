@@ -37,6 +37,12 @@ public class AssignmentEntity {
     @JoinColumn(name = "job_fair_booth_id")
     private JobFairBoothEntity jobFairBooth;
 
+    @Column(name = "begin_time")
+    private Long beginTime;
+
+    @Column(name = "end_time")
+    private Long endTime;
+
 
     @Override
     public boolean equals(Object o) {

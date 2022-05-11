@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface AssignmentService {
-    AssignmentDTO assignEmployee(String employeeId, String jobFairBoothId, AssignmentType type, String companyId);
+    AssignmentDTO assignEmployee(String employeeId, String jobFairBoothId, AssignmentType type, String companyId, Long beginTime, Long endTime);
 
     AssignmentDTO unAssignEmployee(String employeeId, String jobFairBoothId, String companyId);
 

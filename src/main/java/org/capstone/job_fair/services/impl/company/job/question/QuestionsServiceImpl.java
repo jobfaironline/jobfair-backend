@@ -126,6 +126,7 @@ public class QuestionsServiceImpl implements QuestionsService {
     @Override
     @Transactional
     @SneakyThrows
+    @SuppressWarnings("unchecked")
     public List<QuestionsDTO> createNewQuestionsFromCSVFile(MultipartFile file, String jobPositionId) {
         List<QuestionsDTO> result = new ArrayList<>();
         if (!CSVConstant.TYPE.equals(file.getContentType())) {

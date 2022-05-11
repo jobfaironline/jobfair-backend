@@ -18,4 +18,7 @@ public class AssignmentDTO implements Serializable {
     private Long createTime;
     private CompanyEmployeeDTO companyEmployee;
     private JobFairBoothDTO jobFairBooth;
+    private Long beginTime;
+    private Long endTime;
+    
 }

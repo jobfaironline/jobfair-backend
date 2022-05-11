@@ -368,6 +368,7 @@ public final class MessageConstant {
         public static final String EVALUATE_MESSAGE_IS_EMPTY = "application.error.empty-evaluate-message";
         public static final String ALREADY_APPLY_CV = "application.error.already-apply-cv";
         public static final String CV_NOT_HAVE_TEST = "application.error.cv-not-have-test";
+        public static final String MISS_MATCH_INTERVIEWER = "application.error.miss-match-interviewer";
 
         private Application() {
 
@@ -425,6 +426,29 @@ public final class MessageConstant {
             public static final String TITLE = "notification-message.assign-employee.title";
             public static final String MESSAGE = "notification-message.assign-employee.message";
         }
+
+        public static final class REQUEST_CHANGE_INTERVIEW {
+            private REQUEST_CHANGE_INTERVIEW(){}
+            public static final String TITLE = "notification-message.request-change-interview.title";
+            public static final String MESSAGE = "notification-message.request-change-interview.message";
+        }
+    }
+
+    public static final class InterviewSchedule {
+        private InterviewSchedule(){
+        }
+
+        public static final String SCHEDULE_CONFLICT = "interview-schedule.error.schedule-conflict";
+        public static final String NOT_FOUND = "interview-schedule.error.not-found";
+        public static final String CANNOT_EDIT = "interview-schedule.error.cannot-edit";
+        public static final String INVALID_REQUEST_SCHEDULE = "interview-schedule.error.invalid-schedule";
+    }
+
+    public static final class InterviewRequestChange {
+        private InterviewRequestChange(){}
+        public static final String NOT_FOUND = "interview-request-change.error.not-found";
+        public static final String INVALID_STATUS = "interview-request-change.error.invalid-status";
+        public static final String CANNOT_EDIT = "interview-request-change.error.cannot-edit";
     }
 }
 

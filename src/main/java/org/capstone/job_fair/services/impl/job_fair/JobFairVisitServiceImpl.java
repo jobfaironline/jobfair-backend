@@ -48,6 +48,7 @@ public class JobFairVisitServiceImpl implements JobFairVisitService {
     }
 
     @SneakyThrows
+    @SuppressWarnings("unchecked")
     private void sendJobFairCountToConnectedUser(String jobFairId){
         Map<String, Object> payload = new HashMap<>();
         payload.put("jobFairId", jobFairId);
@@ -67,6 +68,7 @@ public class JobFairVisitServiceImpl implements JobFairVisitService {
     }
 
     @SneakyThrows
+    @SuppressWarnings("unchecked")
     private void sendBoothCountToConnectedUser(String jobFairId, String jobFairBoothId){
         Map<String, Object> payload = new HashMap<>();
         payload.put("jobFairId", jobFairId);
@@ -85,6 +87,7 @@ public class JobFairVisitServiceImpl implements JobFairVisitService {
         notificationService.createNotification(notificationMessage, userIds);
     }
 
+    @SuppressWarnings("unchecked")
     @SneakyThrows
     @Override
     public void visitJobFair(String userId, String jobFairId) {
@@ -99,13 +102,14 @@ public class JobFairVisitServiceImpl implements JobFairVisitService {
         sendJobFairCountToConnectedUser(jobFairId);
     }
 
+    @SuppressWarnings("unchecked")
     @SneakyThrows
     @Override
     public void leaveJobFair(String userId, String jobFairId) {
         //this is a shitty method this should be optimized
         DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(dynamoDBClient);
         //get visitation
-        Map<String, AttributeValue> eav = new HashMap<String, AttributeValue>();
+        Map<String, AttributeValue> eav = new HashMap<>();
         eav.put(":jobFairId",new AttributeValue().withS(jobFairId));
         eav.put(":userId", new AttributeValue().withS(userId));
         DynamoDBQueryExpression<JobFairVisitEntity> queryExpression = new DynamoDBQueryExpression<JobFairVisitEntity>()
@@ -152,7 +156,7 @@ public class JobFairVisitServiceImpl implements JobFairVisitService {
         JobFairBoothEntity jobFairBooth = jobFairBoothOpt.get();
 
         //get visitation
-        Map<String, AttributeValue> eav = new HashMap<String, AttributeValue>();
+        Map<String, AttributeValue> eav = new HashMap<>();
         eav.put(":jobFairId",new AttributeValue().withS(jobFairBooth.getJobFair().getId()));
         eav.put(":userId", new AttributeValue().withS(userId));
         eav.put(":jobFairBoothId", new AttributeValue().withS(jobFairBoothId));

@@ -20,7 +20,7 @@ public interface ApplicationService {
 
     Optional<ApplicationEntity> getApplicationWithGeneralDataByIdOfCompany(String companyId, String applicationId);
 
-    void evaluateApplication(ApplicationDTO dto);
+    void evaluateApplication(ApplicationDTO dto, String employeeId);
 
     Page<ApplicationEntity> getAllApplicationsOfAttendantByCriteria(String userId, String jobFairName, String jobPositionName, List<ApplicationStatus> statusList, Long fromTime, Long toTime, int offset, int pageSize, String sortBy, Sort.Direction direction);
 

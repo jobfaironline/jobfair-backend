@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
 import org.capstone.job_fair.models.entities.company.CompanyEntity;
+import org.capstone.job_fair.models.enums.Role;
 import org.capstone.job_fair.models.statuses.AccountStatus;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -47,7 +48,7 @@ public class UserDetailsImpl implements UserDetails {
 
     }
 
-    public static UserDetailsImpl build(AccountEntity account, CompanyEntity company){
+    public static UserDetailsImpl build(AccountEntity account, CompanyEntity company) {
         UserDetailsImpl userDetails = build(account);
         userDetails.setCompanyId(company.getId());
         return userDetails;
@@ -90,5 +91,9 @@ public class UserDetailsImpl implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public boolean hasRole(Role role) {
+        return this.getAuthorities().stream().anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals(role.getAuthority()));
     }
 }

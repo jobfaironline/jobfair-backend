@@ -32,6 +32,8 @@ public abstract class QuizMapper {
     @Mapping(target = "applicationId", source = "application.id")
     @Mapping(target = "cvId", source = "application.originCvId")
     @Mapping(target = "boothJobPositionId", source = "application.boothJobPositionDTO.id")
+    @Mapping(target = "duration", source = "application.boothJobPositionDTO.testTimeLength")
+    @Mapping(target = "jobPositionTitle", source = "application.boothJobPositionDTO.title")
     public abstract InProgressQuizResponse toResponse(QuizDTO dto);
 
     @Named("toQuestionListEntity")

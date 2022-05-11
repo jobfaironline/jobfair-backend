@@ -4,13 +4,16 @@ import org.capstone.job_fair.constants.DataConstraint;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.models.dtos.attendant.application.ApplicationDTO;
 import org.capstone.job_fair.models.dtos.attendant.cv.CvDTO;
+import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
 import org.capstone.job_fair.models.entities.attendant.application.ApplicationEntity;
 import org.capstone.job_fair.models.entities.attendant.cv.CvEntity;
 import org.capstone.job_fair.models.entities.job_fair.booth.BoothJobPositionEntity;
 import org.capstone.job_fair.models.enums.ApplicationStatus;
+import org.capstone.job_fair.models.enums.AssignmentType;
 import org.capstone.job_fair.models.enums.TestStatus;
 import org.capstone.job_fair.repositories.attendant.application.ApplicationRepository;
 import org.capstone.job_fair.repositories.attendant.cv.CvRepository;
+import org.capstone.job_fair.repositories.job_fair.job_fair_booth.AssignmentRepository;
 import org.capstone.job_fair.repositories.job_fair.job_fair_booth.BoothJobPositionRepository;
 import org.capstone.job_fair.services.interfaces.attendant.application.ApplicationService;
 import org.capstone.job_fair.services.interfaces.attendant.cv.CvService;
@@ -25,6 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -64,17 +68,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     private CvService cvService;
 
     @Autowired
-    private QuizService quizService;
-
-    @Autowired
     private ApplicationWorkHistoryMapper applicationWorkHistoryMapper;
-
-
-    private boolean isCvExist(String cvId, String attendantId) {
-        Optional<CvDTO> cvDTOOptional = cvService.getByIdAndAttendantId(cvId, attendantId);
-        return cvDTOOptional.isPresent();
-    }
-
 
     private TestStatus getTestStatus(String boothJobPositionId) {
         Optional<BoothJobPositionEntity> boothJobPositionEntityOptional = regisJobPosRepository.findById(boothJobPositionId);
@@ -227,20 +221,34 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     @Transactional
-    public void evaluateApplication(ApplicationDTO dto) {
-        String id = dto.getId();
-        String companyId = dto.getBoothJobPositionDTO().getJobFairBooth().getJobFair().getCompany().getId();
-        Optional<ApplicationEntity> applicationEntityOptional = applicationRepository.findByIdAndCompanyId(id, companyId);
+    public void evaluateApplication(ApplicationDTO dto, String userId) {
+        Optional<ApplicationEntity> applicationEntityOptional = applicationRepository.findById(dto.getId());
+        //check application existed
         if (!applicationEntityOptional.isPresent())
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.APPLICATION_NOT_FOUND));
         ApplicationEntity applicationEntity = applicationEntityOptional.get();
+
+        //check if this user is an interviwer assigned to the same booth
+        boolean isValidUser = applicationEntity
+                .getBoothJobPosition().getJobFairBooth().getAssignments()
+                .stream()
+                .anyMatch(assignmentEntity -> assignmentEntity.getCompanyEmployee().getAccountId().equals(userId) && assignmentEntity.getType() == AssignmentType.INTERVIEWER);
+        if (!isValidUser){
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.MISS_MATCH_INTERVIEWER));
+        }
         if (!applicationEntity.getStatus().equals(ApplicationStatus.PENDING))
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.INVALID_EVALUATE_STATUS));
         if (!dto.getStatus().equals(ApplicationStatus.APPROVE) && !dto.getStatus().equals(ApplicationStatus.REJECT))
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.INVALID_EVALUATE_STATUS));
         if (dto.getStatus().equals(ApplicationStatus.REJECT) && (dto.getEvaluateMessage() == null || dto.getEvaluateMessage().isEmpty()))
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.EVALUATE_MESSAGE_IS_EMPTY));
+
+        CompanyEmployeeDTO companyEmployeeDTO = new CompanyEmployeeDTO();
+        companyEmployeeDTO.setAccountId(userId);
+        dto.setInterviewer(companyEmployeeDTO);
+        dto.setEvaluateDate(new Date().getTime());
         applicationMapper.updateFromDTO(applicationEntity, dto);
         applicationRepository.save(applicationEntity);
+        //TODO: implement scheduler here
     }
 }
