@@ -7,13 +7,12 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import java.util.Objects;
 
-@Entity
-@Table(name = "account_verify_token", schema = "dbo")
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
-@ToString
+@AllArgsConstructor
+@NoArgsConstructor
+@Entity
+@Table(name = "account_verify_token", schema = "dbo")
 public class AccountVerifyTokenEntity {
     @Id
     @GeneratedValue(generator = "uuid")

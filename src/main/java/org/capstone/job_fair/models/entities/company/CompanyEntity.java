@@ -1,10 +1,10 @@
 package org.capstone.job_fair.models.entities.company;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.capstone.job_fair.models.entities.company.misc.CompanyBenefitEntity;
+import org.capstone.job_fair.models.entities.company.misc.CompanySizeEntity;
+import org.capstone.job_fair.models.entities.company.misc.SubCategoryEntity;
 import org.capstone.job_fair.models.statuses.CompanyStatus;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.GenericGenerator;
@@ -14,11 +14,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-@Entity
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity
 @Table(name = "company", schema = "dbo")
 public class CompanyEntity {
     @Id

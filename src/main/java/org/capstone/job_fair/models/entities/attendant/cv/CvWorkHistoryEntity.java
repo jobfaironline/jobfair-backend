@@ -1,18 +1,15 @@
 package org.capstone.job_fair.models.entities.attendant.cv;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 
-@Entity
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity
 @Table(name = "cv_work_history", schema = "dbo")
 public class CvWorkHistoryEntity {
     @Id

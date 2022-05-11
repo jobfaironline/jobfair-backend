@@ -1,12 +1,9 @@
 package org.capstone.job_fair.models.entities.attendant.application;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
 import org.capstone.job_fair.models.entities.attendant.AttendantEntity;
-import org.capstone.job_fair.models.entities.company.job.BoothJobPositionEntity;
+import org.capstone.job_fair.models.entities.job_fair.booth.BoothJobPositionEntity;
 import org.capstone.job_fair.models.enums.ApplicationStatus;
 import org.capstone.job_fair.models.enums.JobLevel;
 import org.capstone.job_fair.models.enums.TestStatus;
@@ -17,11 +14,11 @@ import javax.persistence.*;
 import java.util.List;
 import java.util.Objects;
 
-@Entity
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity
 @Table(name = "application", schema = "dbo")
 public class ApplicationEntity {
     @Id

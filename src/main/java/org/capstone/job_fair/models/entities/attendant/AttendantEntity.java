@@ -1,10 +1,9 @@
 package org.capstone.job_fair.models.entities.attendant;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
+import org.capstone.job_fair.models.entities.attendant.misc.CountryEntity;
+import org.capstone.job_fair.models.entities.attendant.misc.ResidenceEntity;
 import org.capstone.job_fair.models.entities.attendant.profile.*;
 import org.capstone.job_fair.models.enums.JobLevel;
 import org.capstone.job_fair.models.enums.Marital;
@@ -14,11 +13,11 @@ import javax.persistence.*;
 import java.util.List;
 import java.util.Objects;
 
-@Entity
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
+@Entity
 @Table(name = "attendant", schema = "dbo")
 public class AttendantEntity {
     @Id

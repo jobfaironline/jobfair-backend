@@ -1,9 +1,6 @@
 package org.capstone.job_fair.models.entities.token;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.GenericGenerator;
@@ -11,12 +8,12 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import java.util.Objects;
 
-@Entity
-@Table(name = "password_reset_token", schema = "dbo")
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Entity
+@Table(name = "password_reset_token", schema = "dbo")
 public class PasswordResetTokenEntity {
     @Id
     @Column(name = "id", updatable = false, nullable = false)
