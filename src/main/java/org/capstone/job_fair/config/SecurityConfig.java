@@ -17,7 +17,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.switchuser.SwitchUserFilter;
 import org.springframework.web.cors.CorsConfiguration;
 
 import java.util.Arrays;
@@ -101,12 +103,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests().antMatchers(ApiEndPoint.Authorization.NEW_VERIFY_LINK + "/**").permitAll().and()
                 //Attendant API Security: specific end point will be configured inside controller
                 .authorizeRequests().antMatchers(ApiEndPoint.CompanyEmployee.REGISTER_COMPANY_MANAGER).permitAll()
-                .anyRequest().authenticated().and().oauth2ResourceServer(oauth2 -> oauth2.jwt());
-        http.addFilterAfter(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+                .anyRequest().authenticated().and().oauth2ResourceServer().jwt() ;
+
+        http.addFilterAfter(jwtAuthenticationFilter(), SwitchUserFilter.class);
         http.headers().contentSecurityPolicy("script-src 'self'");
 
-//        //after logout success, invalidate session
-//        http.logout().logoutUrl(ApiEndPoint.Authentication.LOGOUT_ENDPOINT).invalidateHttpSession(true);
-//        //adding a filter to validate jwt token
+
     }
 }

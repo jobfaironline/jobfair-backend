@@ -32,9 +32,9 @@ public class RoleController {
 
         List<RoleDTO> dtoList = roleService.getAll();
 //        return dtoList.size() == 0 ? ResponseEntity.noContent().build() : ResponseEntity.ok(dtoList);
-//        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        return ResponseEntity.ok(SecurityContextHolder.getContext().getAuthentication());
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        System.out.println(userDetails.getId());
+        return ResponseEntity.ok(dtoList);
     }
 
 

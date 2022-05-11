@@ -2,11 +2,13 @@ package org.capstone.job_fair.config.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.*;
 import org.capstone.job_fair.config.jwt.details.UserDetailsServiceImpl;
+import org.springframework.http.*;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
@@ -19,7 +21,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -43,8 +44,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         return null;
     }
 
-
-    private String checkValid(String jwt) {
+    private String getEmailFromCognito(String jwt) {
         try {
             RestTemplate restTemplate = new RestTemplate();
 
@@ -66,40 +66,25 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
-            //get jwt from request
-            String jwt = getJwtFromRequest(request);
-            //
-            String email = checkValid(jwt);
-
-            if (email != null) {
+            SecurityContext context = SecurityContextHolder.getContext();
+            if (context.getAuthentication() != null && !(context.getAuthentication().getPrincipal() instanceof UserDetails)) {
+                //get email from jwt
+                String tokenValue = ((Jwt) context.getAuthentication().getPrincipal()).getTokenValue();
+                String email = getEmailFromCognito(tokenValue);
                 //get userDetails too
                 UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-                System.out.println(userDetails);
                 if (userDetails != null) {
                     //if userDetails is valid, set data into Security Context
-                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                    UsernamePasswordAuthenticationToken
+                            authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
-                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    authentication.setDetails(
+                            new WebAuthenticationDetailsSource()
+                                    .buildDetails(request));
 
-                    SecurityContextHolder.getContext().setAuthentication(null);
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
             }
-//            //
-//            //validate token if it exists
-//            if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
-//                //get email from jwt
-//                String email = tokenProvider.getUsernameFromJwt(jwt);
-//                //get userDetails too
-//                UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-//                if (userDetails != null) {
-//                    //if userDetails is valid, set data into Security Context
-//                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-//
-//                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-//
-//                    SecurityContextHolder.getContext().setAuthentication(authentication);
-//                }
-//            }
         } catch (Exception e) {
             log.error("Failed on set user authentication: {}", e);
         }
