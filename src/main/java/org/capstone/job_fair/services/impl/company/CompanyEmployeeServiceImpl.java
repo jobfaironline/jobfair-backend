@@ -29,6 +29,7 @@ import org.capstone.job_fair.services.mappers.company.CompanyEmployeeMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.capstone.job_fair.utils.PasswordGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -257,6 +258,8 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
                 } catch (IllegalArgumentException e) {
                     //+1 because row start at 1
                     parseResult.addErrorMessage(i + 1, e.getMessage());
+                } catch (DataIntegrityViolationException e){
+                    parseResult.addErrorMessage(i + 1, MessageUtil.getMessage(MessageConstant.Account.EMAIL_EXISTED));
                 }
             }
             parseResult.setResult(insertResult);
