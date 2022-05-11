@@ -42,6 +42,10 @@ public class JobFairApplication {
         return AmazonSQSClientBuilder.defaultClient();
     }
 
+//    @Bean
+//    public AWSCognitoIdentityProvider cognitoIdentityProvider() {
+//        return AWSCognitoIdentityProviderClientBuilder.defaultClient();}
+
 
     public static void main(String[] args) {
         SpringApplication.run(JobFairApplication.class, args);

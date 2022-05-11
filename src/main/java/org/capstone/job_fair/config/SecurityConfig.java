@@ -77,7 +77,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .cors().configurationSource(request -> {
                     CorsConfiguration configuration = new CorsConfiguration();
                     configuration.applyPermitDefaultValues();
-                    configuration.setAllowedMethods(Arrays.asList("GET","POST","PUT","DELETE"));
+                    configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
                     return configuration;
                 }).and()
                 .csrf().disable()
@@ -101,12 +101,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests().antMatchers(ApiEndPoint.Authorization.NEW_VERIFY_LINK + "/**").permitAll().and()
                 //Attendant API Security: specific end point will be configured inside controller
                 .authorizeRequests().antMatchers(ApiEndPoint.CompanyEmployee.REGISTER_COMPANY_MANAGER).permitAll()
-                .anyRequest().authenticated().and()
-                .headers().contentSecurityPolicy("script-src 'self'");
+                .anyRequest().authenticated().and().oauth2ResourceServer(oauth2 -> oauth2.jwt());
+        http.addFilterAfter(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.headers().contentSecurityPolicy("script-src 'self'");
 
-        //after logout success, invalidate session
-        http.logout().logoutUrl(ApiEndPoint.Authentication.LOGOUT_ENDPOINT).invalidateHttpSession(true);
-        //adding a filter to validate jwt token
-        http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+//        //after logout success, invalidate session
+//        http.logout().logoutUrl(ApiEndPoint.Authentication.LOGOUT_ENDPOINT).invalidateHttpSession(true);
+//        //adding a filter to validate jwt token
     }
 }
