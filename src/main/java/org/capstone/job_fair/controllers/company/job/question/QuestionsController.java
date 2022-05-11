@@ -8,6 +8,7 @@ import org.capstone.job_fair.controllers.payload.requests.company.UpdateQuestion
 import org.capstone.job_fair.models.dtos.company.job.JobPositionDTO;
 import org.capstone.job_fair.models.dtos.company.job.questions.ChoicesDTO;
 import org.capstone.job_fair.models.dtos.company.job.questions.QuestionsDTO;
+import org.capstone.job_fair.models.dtos.util.ParseFileResult;
 import org.capstone.job_fair.models.statuses.QuestionStatus;
 import org.capstone.job_fair.services.interfaces.company.job.question.QuestionsService;
 import org.capstone.job_fair.services.mappers.company.job.question.QuestionsMapper;
@@ -122,8 +123,12 @@ public class QuestionsController {
     @PostMapping(ApiEndPoint.Questions.UPLOAD_CSV + "/{id}")
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
     public ResponseEntity<?> createMultipleQuestionsFromCSVFile(@PathVariable("id") String jobPositionId, @RequestPart("file") MultipartFile file) {
-        List<QuestionsDTO> result = questionsService.createNewQuestionsFromCSVFile(file, jobPositionId);
-        return ResponseEntity.ok(result);
+        ParseFileResult<QuestionsDTO> result = questionsService.createNewQuestionsFromFile(file, jobPositionId);
+        if (!result.isHasError()) {
+            return ResponseEntity.ok(result.getResult());
+        } else {
+            return ResponseEntity.badRequest().body(result);
+        }
     }
 
 

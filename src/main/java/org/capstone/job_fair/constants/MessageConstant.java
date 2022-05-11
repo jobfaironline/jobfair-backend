@@ -450,5 +450,21 @@ public final class MessageConstant {
         public static final String INVALID_STATUS = "interview-request-change.error.invalid-status";
         public static final String CANNOT_EDIT = "interview-request-change.error.cannot-edit";
     }
+
+    public static final class File {
+        private File() {}
+        public static final String XSL_NO_SHEET = "file.error.xsl-no-sheet";
+        public static final String NOT_ALLOWED = "file.error.not-allowed";
+    }
+
+    public static final class Language {
+        private Language(){}
+        public static final String NOT_FOUND = "language.error.not-found";
+    }
+
+    public static final class JobType {
+        private JobType(){}
+        public static final String NOT_FOUND = "job-type.error.not-found";
+    }
 }
 

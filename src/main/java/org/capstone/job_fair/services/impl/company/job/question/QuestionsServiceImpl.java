@@ -1,22 +1,25 @@
 package org.capstone.job_fair.services.impl.company.job.question;
 
-import com.opencsv.bean.CsvToBean;
-import com.opencsv.bean.CsvToBeanBuilder;
 import lombok.SneakyThrows;
-import org.capstone.job_fair.constants.CSVConstant;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.capstone.job_fair.constants.DataConstraint;
+import org.capstone.job_fair.constants.FileConstant;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.constants.QuestionConstant;
 import org.capstone.job_fair.controllers.payload.requests.company.CreateQuestionCSVRequest;
 import org.capstone.job_fair.models.dtos.company.job.JobPositionDTO;
 import org.capstone.job_fair.models.dtos.company.job.questions.ChoicesDTO;
 import org.capstone.job_fair.models.dtos.company.job.questions.QuestionsDTO;
+import org.capstone.job_fair.models.dtos.util.ParseFileResult;
 import org.capstone.job_fair.models.entities.company.job.JobPositionEntity;
 import org.capstone.job_fair.models.entities.company.job.questions.QuestionsEntity;
 import org.capstone.job_fair.models.statuses.QuestionStatus;
 import org.capstone.job_fair.repositories.company.job.JobPositionRepository;
 import org.capstone.job_fair.repositories.company.job.questions.QuestionsRepository;
 import org.capstone.job_fair.services.interfaces.company.job.question.QuestionsService;
+import org.capstone.job_fair.services.interfaces.util.XSLSFileService;
 import org.capstone.job_fair.services.mappers.company.job.question.QuestionsMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,12 +29,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindException;
 import org.springframework.validation.Errors;
+import org.springframework.validation.FieldError;
 import org.springframework.validation.Validator;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -46,6 +48,9 @@ public class QuestionsServiceImpl implements QuestionsService {
 
     @Autowired
     private QuestionsMapper questionsMapper;
+
+    @Autowired
+    private XSLSFileService xslsFileService;
 
     @Autowired
     private Validator validator;
@@ -123,62 +128,122 @@ public class QuestionsServiceImpl implements QuestionsService {
         return questionsEntityPage.map(entity -> questionsMapper.toDTO(entity));
     }
 
-    @Override
-    @Transactional
-    @SneakyThrows
-    @SuppressWarnings("unchecked")
-    public List<QuestionsDTO> createNewQuestionsFromCSVFile(MultipartFile file, String jobPositionId) {
-        List<QuestionsDTO> result = new ArrayList<>();
-        if (!CSVConstant.TYPE.equals(file.getContentType())) {
-            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Job.CSV_FILE_ERROR));
-        }
-        //check existed job position
-        Optional<JobPositionEntity> jobPositionOpt = jobPositionRepository.findById(jobPositionId);
-        jobPositionOpt.orElseThrow(() -> new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Job.JOB_POSITION_NOT_FOUND)));
 
-        Reader reader = new InputStreamReader(file.getInputStream());
-        CsvToBean<CreateQuestionCSVRequest> csvToBean = new CsvToBeanBuilder(reader)
-                .withType(CreateQuestionCSVRequest.class)
-                .withIgnoreLeadingWhiteSpace(true)
-                .build();
-        Iterator<CreateQuestionCSVRequest> questionCSVs = csvToBean.iterator();
+    private ParseFileResult<QuestionsDTO> createNewQuestionsFromListString(List<List<String>> data, String jobPositionId) {
+        ParseFileResult<QuestionsDTO> parseResult = new ParseFileResult();
+
+        int rowNum = data.size();
         QuestionsDTO questionsDTO = null;
-        int numberOfCreatedJob = 0;
-        while (questionCSVs.hasNext()) {
-            numberOfCreatedJob++;
-            CreateQuestionCSVRequest csvRequest = questionCSVs.next();
+        for (int i = 1; i < rowNum; i++) {
+            List<String> rowData = data.get(i);
+            String content = rowData.get(QuestionConstant.XLSXFormat.CONTENT_INDEX);
+            Boolean isQuestion = null;
+            try {
+                isQuestion = Double.parseDouble(rowData.get(QuestionConstant.XLSXFormat.IS_QUESTION_INDEX)) != 0.0;
+            } catch (NumberFormatException e) {
+            }
+            Boolean isCorrect = null;
+            try {
+                isCorrect = Double.parseDouble(rowData.get(QuestionConstant.XLSXFormat.IS_CORRECT_INDEX)) == 1.0;
+            } catch (NumberFormatException e) {
+            }
+
+            CreateQuestionCSVRequest csvRequest = new CreateQuestionCSVRequest(content, isQuestion, isCorrect);
             Errors errors = new BindException(csvRequest, CreateQuestionCSVRequest.class.getSimpleName());
             validator.validate(csvRequest, errors);
             if (errors.hasErrors()) {
-                String errorMessage = String.format(MessageUtil.getMessage(MessageConstant.Job.CSV_LINE_ERROR), numberOfCreatedJob);
-                throw new IllegalArgumentException(errorMessage);
+                StringBuilder message = new StringBuilder("");
+                for (FieldError error : errors.getFieldErrors()) {
+                    message.append(error.getField());
+                    message.append(" ");
+                    message.append(error.getDefaultMessage());
+                    message.append(".");
+                }
+                parseResult.addErrorMessage(i, message.toString());
+                continue;
             }
-
             //if first line is not the question
-            if (questionsDTO == null && !csvRequest.getIsQuestion()) {
-                throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Question.CSV_WRONG_FORMAT));
+            if (questionsDTO == null && !isQuestion) {
+                parseResult.addErrorMessage(i, MessageUtil.getMessage(MessageConstant.Question.CSV_WRONG_FORMAT));
+                break;
             }
-
-            if (csvRequest.getIsQuestion()){
-                if (questionsDTO != null){
+            if (isQuestion) {
+                if (questionsDTO != null) {
                     //before create new question, check old question has at least 1 correct answer
                     long correctChoiceCount = questionsDTO.getChoicesList().stream().filter(ChoicesDTO::getIsCorrect).count();
                     if (correctChoiceCount == 0) {
-                        throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Question.LACK_CORRECT_ANSWER));
+                        parseResult.addErrorMessage(i, MessageUtil.getMessage(MessageConstant.Question.LACK_CORRECT_ANSWER));
+                        continue;
                     }
                 }
 
                 JobPositionDTO jobPositionDTO = JobPositionDTO.builder().id(jobPositionId).build();
-                questionsDTO = QuestionsDTO.builder().content(csvRequest.getContent()).jobPosition(jobPositionDTO).build();
+                questionsDTO = QuestionsDTO.builder().content(content).jobPosition(jobPositionDTO).build();
                 questionsDTO.setChoicesList(new ArrayList<>());
-                result.add(questionsDTO);
+                parseResult.addToResult(questionsDTO);
             } else {
-                ChoicesDTO choicesDTO = ChoicesDTO.builder().content(csvRequest.getContent()).isCorrect(csvRequest.getIsCorrect()).build();
+                ChoicesDTO choicesDTO = ChoicesDTO.builder().content(content).isCorrect(isCorrect).build();
                 questionsDTO.getChoicesList().add(choicesDTO);
             }
+
+
         }
-        result = result.stream().map(this::createQuestion).collect(Collectors.toList());
-        return result;
+        if (!parseResult.isHasError()) {
+            List<QuestionsDTO> insertResult = parseResult.getResult().parallelStream().map(this::createQuestion).collect(Collectors.toList());
+            parseResult.setResult(insertResult);
+        }
+        return parseResult;
+    }
+
+    @SneakyThrows
+    private ParseFileResult<QuestionsDTO> parseExcelFile(MultipartFile file, String jobPositionId) {
+        ParseFileResult<QuestionsDTO> parseResult;
+        Workbook workbook = new XSSFWorkbook(file.getInputStream());
+        if (workbook.getNumberOfSheets() != 1) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.File.XSL_NO_SHEET));
+        }
+        Sheet sheet = workbook.getSheetAt(0);
+        List<List<String>> data = xslsFileService.readXSLSheet(sheet, QuestionConstant.XLSXFormat.COLUMN_NUM);
+        parseResult = createNewQuestionsFromListString(data, jobPositionId);
+
+        if (parseResult.isHasError()) {
+            String url = xslsFileService.uploadErrorXSLFile(workbook, parseResult.getErrors(), file.getOriginalFilename(), QuestionConstant.XLSXFormat.ERROR_INDEX);
+            parseResult.setErrorFileUrl(url);
+        }
+
+        return parseResult;
+    }
+
+    @SneakyThrows
+    private ParseFileResult<QuestionsDTO> parseCsvFile(MultipartFile file, String jobPositionId) {
+        ParseFileResult<QuestionsDTO> parseResult;
+        List<List<String>> data = xslsFileService.readCSVFile(file.getInputStream());
+        parseResult = createNewQuestionsFromListString(data, jobPositionId);
+        if (parseResult.isHasError()) {
+            String url = xslsFileService.uploadErrorCSVFile(data, parseResult.getErrors(), file.getOriginalFilename());
+            parseResult.setErrorFileUrl(url);
+        }
+        return parseResult;
+    }
+
+
+    @Override
+    @Transactional
+    @SneakyThrows
+    public ParseFileResult<QuestionsDTO> createNewQuestionsFromFile(MultipartFile file, String jobPositionId) {
+        //check for invalid type
+        List<String> allowTypes = Arrays.asList(FileConstant.CSV_CONSTANT.TYPE, FileConstant.XLS_CONSTANT.TYPE, FileConstant.XLSX_CONSTANT.TYPE);
+        String fileType = file.getContentType();
+        if (!allowTypes.contains(fileType)) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.File.NOT_ALLOWED));
+        }
+        ParseFileResult<QuestionsDTO> parseResult;
+        if (Objects.equals(fileType, FileConstant.XLSX_CONSTANT.TYPE) || Objects.equals(fileType, FileConstant.XLS_CONSTANT.TYPE)) {
+            parseResult = parseExcelFile(file, jobPositionId);
+            return parseResult;
+        }
+        parseResult = parseCsvFile(file, jobPositionId);
+        return parseResult;
     }
 
 
