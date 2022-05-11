@@ -111,6 +111,7 @@ public class LayoutServiceImpl implements LayoutService {
 
     @Override
     @SneakyThrows
+    @SuppressWarnings("unchecked")
     @Transactional
     public void validateAndGenerateBoothSlot(MultipartFile file, String layoutId) {
         Optional<LayoutEntity> layoutEntityOpt = layoutRepository.findById(layoutId);
@@ -219,7 +220,7 @@ public class LayoutServiceImpl implements LayoutService {
     @Transactional
     public LayoutDTO createOrUpdateLayoutThumbnail(String layoutThumbnailFolder, String layoutId, String companyId) {
         String url = awsUtil.generateAwsS3AccessString(layoutThumbnailFolder, layoutId);
-        Optional<LayoutEntity> layoutEntityOptional = null;
+        Optional<LayoutEntity> layoutEntityOptional;
         if (companyId == null) layoutEntityOptional = layoutRepository.findById(layoutId);
         else
             layoutEntityOptional = layoutRepository.findByIdAndCompanyId(layoutId, companyId);

@@ -118,6 +118,7 @@ public class ThreeDimensionMediaController {
     @PostMapping(ApiEndPoint.ThreeDimensionMedia.UPLODAD_THUMBNAIL + "/{id}")
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
     @SneakyThrows
+    @SuppressWarnings("unchecked")
     public ResponseEntity<?> uploadThumbnail(@PathVariable("id") String id, @RequestParam("file") MultipartFile file) {
         byte[] image = ImageUtil.convertImage(file, DataConstraint.Layout.IMAGE_TYPE, DataConstraint.Layout.WIDTH_FACTOR,
                 DataConstraint.Layout.HEIGHT_FACTOR, DataConstraint.Layout.IMAGE_EXTENSION_TYPE);

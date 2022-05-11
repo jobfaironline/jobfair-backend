@@ -78,7 +78,7 @@ public class NotificationServiceImpl implements NotificationService {
 
         NotificationMessageEntity entity = notificationMessageMapper.toEntity(message);
         entity.setId(UUID.randomUUID().toString());
-        entity.setUserId(message.getUserId());
+        entity.setUserId(receiverId);
 
         dynamoDBMapper.save(entity);
 

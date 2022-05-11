@@ -26,7 +26,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
-        uses = {SubCategoryMapper.class})
+        uses = {SubCategoryMapper.class, JobFairBoothMapper.class})
 public abstract class BoothJobPositionMapper {
 
     @Autowired

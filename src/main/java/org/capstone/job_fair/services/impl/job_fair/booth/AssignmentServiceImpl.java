@@ -88,11 +88,13 @@ public class AssignmentServiceImpl implements AssignmentService {
 
     @Override
     @Transactional
-    public AssignmentDTO assignEmployee(String employeeId, String jobFairBoothId, AssignmentType type, String companyId) {
+    public AssignmentDTO assignEmployee(String employeeId, String jobFairBoothId, AssignmentType type, String companyId, Long beginTime, Long endTime) {
         Optional<AssignmentEntity> entityOpt = assignmentRepository.findByCompanyEmployeeAccountIdAndJobFairBoothId(employeeId, jobFairBoothId);
         if (entityOpt.isPresent()) {
             AssignmentEntity entity = entityOpt.get();
             entity.setType(type);
+            entity.setBeginTime(beginTime);
+            entity.setEndTime(endTime);
             return updateAssigment(entity, companyId);
         }
         return createAssignment(employeeId, jobFairBoothId, type, companyId);

@@ -111,7 +111,11 @@ public class AccountServiceImpl implements AccountService {
     @Override
     @Transactional
     public void activateAccount(String id) {
-        AccountEntity accountEntity = accountRepository.findById(id).get();
+        Optional<AccountEntity> accountOpt = accountRepository.findById(id);
+        if (!accountOpt.isPresent()){
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Account.NOT_FOUND));
+        }
+        AccountEntity accountEntity = accountOpt.get();
         accountEntity.setStatus(AccountStatus.VERIFIED);
         accountRepository.save(accountEntity);
     }
@@ -123,7 +127,11 @@ public class AccountServiceImpl implements AccountService {
         if (!encoder.matches(oldPassword, userDetails.getPassword())) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Account.OLD_PASSWORD_MISMATCH));
         }
-        AccountEntity entity = accountRepository.findById(userDetails.getId()).get();
+        Optional<AccountEntity> accountOpt = accountRepository.findById(userDetails.getId());
+        if (!accountOpt.isPresent()){
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Account.NOT_FOUND));
+        }
+        AccountEntity entity = accountOpt.get();
         String hashedPassword = encoder.encode(newPassword);
         entity.setPassword(hashedPassword);
         accountRepository.save(entity);
@@ -131,6 +139,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     @SneakyThrows
+    @SuppressWarnings("unchecked")
     @Transactional
     public void sendVerifyAccountEmail(String accountId) {
         AccountEntity entity = accountRepository.getById(accountId);

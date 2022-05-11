@@ -1,6 +1,7 @@
 package org.capstone.job_fair.models.dtos.attendant.application;
 
 import lombok.*;
+import org.capstone.job_fair.models.enums.Qualification;
 
 @Data
 @AllArgsConstructor
@@ -15,4 +16,5 @@ public class ApplicationEducationDTO {
     private Long fromDate;
     private Long toDate;
     private String achievement;
+    private Qualification qualificationId;
 }

@@ -25,6 +25,7 @@ public abstract class AccountMapper {
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "profileImageUrl", ignore = true)
     @Mapping(target = "role", ignore = true)
+    @Mapping(target = "createTime", ignore = true)
     public abstract AccountDTO toDTO(StaffRegisterRequest request);
 
     @Named("toAccountDTOGender")

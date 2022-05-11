@@ -3,20 +3,18 @@ package org.capstone.job_fair.controllers.payload.requests.job_fair;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.capstone.job_fair.models.enums.AssignmentType;
 
 import javax.validation.constraints.NotNull;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AssignEmployeeRequest {
+public class ChangeInterviewScheduleRequest {
     @NotNull
-    private String employeeId;
+    private String applicationId;
     @NotNull
-    private String jobFairBoothId;
-    @NotNull
-    private AssignmentType type;
     private Long beginTime;
+    @NotNull
     private Long endTime;
+    private String requestMessage;
 }

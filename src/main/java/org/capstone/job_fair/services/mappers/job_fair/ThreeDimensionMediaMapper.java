@@ -17,9 +17,13 @@ public abstract class ThreeDimensionMediaMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "url", ignore = true)
+    @Mapping(target = "type", ignore = true)
+    @Mapping(target = "thumbnailUrl", ignore = true)
     public abstract ThreeDimensionMediaDTO toDTO(CreateDecoratedItemMetaDataRequest request);
 
     @Mapping(target = "url", ignore = true)
+    @Mapping(target = "type", ignore = true)
+    @Mapping(target = "thumbnailUrl", ignore = true)
     public abstract ThreeDimensionMediaDTO toDTO(UpdateDecoratedItemMetaDataRequest request);
 
     public abstract void updateEntityFromDTO(ThreeDimensionMediaDTO dto, @MappingTarget ThreeDimensionMedia entity);

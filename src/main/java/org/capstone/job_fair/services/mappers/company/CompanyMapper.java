@@ -71,6 +71,7 @@ public abstract class CompanyMapper {
     @Mapping(source = "subCategoriesIds", target = "subCategoryDTOs", qualifiedByName = "fromSubCategoriesIdsOfCreateCompanyRequest")
     @Mapping(source = "taxId", target = "taxId")
     @Mapping(target = "companyLogoURL", ignore = true)
+    @Mapping(target = "id", ignore = true)
     public abstract CompanyDTO toDTO(UpdateCompanyRequest request);
 
 
