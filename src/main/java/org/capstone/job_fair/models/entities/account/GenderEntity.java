@@ -6,12 +6,11 @@ import org.hibernate.Hibernate;
 import javax.persistence.*;
 import java.util.Objects;
 
-@Entity
 @Getter
 @Setter
-@ToString
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity
 @Table(name = "gender", schema = "dbo")
 public class GenderEntity {
     @Id

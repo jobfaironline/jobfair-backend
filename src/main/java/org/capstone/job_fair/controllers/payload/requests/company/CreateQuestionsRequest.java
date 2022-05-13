@@ -32,6 +32,7 @@ public class CreateQuestionsRequest {
         @NotBlank
         @XSSConstraint
         private String content;
-        private boolean isCorrect;
+        @NotNull
+        private Boolean isCorrect;
     }
 }

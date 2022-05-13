@@ -1,9 +1,7 @@
 package org.capstone.job_fair.models.entities.company.job.questions;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.capstone.job_fair.models.entities.company.job.BoothJobPositionEntity;
+import lombok.*;
+import org.capstone.job_fair.models.entities.job_fair.booth.BoothJobPositionEntity;
 import org.capstone.job_fair.models.entities.company.job.JobPositionEntity;
 import org.capstone.job_fair.models.statuses.QuestionStatus;
 import org.hibernate.Hibernate;
@@ -14,11 +12,12 @@ import javax.persistence.*;
 import java.util.List;
 import java.util.Objects;
 
-@Entity
-@Table(name = "questions", schema = "dbo")
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity
+@Table(name = "questions", schema = "dbo")
 public class QuestionsEntity {
     @Id
     @Column(name = "id", nullable = false, length = 36)

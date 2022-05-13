@@ -7,12 +7,11 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import java.util.Objects;
 
-@Entity
 @Getter
 @Setter
-@ToString
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity
 @Table(name = "skill", schema = "dbo")
 public class SkillEntity {
     @Id

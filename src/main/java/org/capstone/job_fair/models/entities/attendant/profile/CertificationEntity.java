@@ -8,12 +8,11 @@ import javax.persistence.*;
 import java.util.Objects;
 
 
-@Entity
 @Getter
 @Setter
-@ToString
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity
 @Table(name = "certification", schema = "dbo")
 public class CertificationEntity {
     @Id

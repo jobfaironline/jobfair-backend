@@ -11,8 +11,10 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 public abstract class ApplicationEducationMapper {
     public abstract ApplicationEducationDTO toDTO(ApplicationEducationEntity entity);
 
+    @Mapping(target = "application", ignore = true)
     public abstract ApplicationEducationEntity toEntity(ApplicationEducationDTO dto);
 
+    @Mapping(target = "application", ignore = true)
     @Mapping(target = "id", source = "id", ignore = true)
     public abstract ApplicationEducationEntity toEntity(CvEducationEntity cvCertification);
 }

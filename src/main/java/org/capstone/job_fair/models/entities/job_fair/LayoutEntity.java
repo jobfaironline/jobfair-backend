@@ -1,9 +1,6 @@
 package org.capstone.job_fair.models.entities.job_fair;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.capstone.job_fair.models.entities.company.CompanyEntity;
 import org.hibernate.Hibernate;
 
@@ -11,12 +8,12 @@ import javax.persistence.*;
 import java.util.Objects;
 import java.util.Set;
 
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "layout", schema = "dbo")
-@NoArgsConstructor
-@AllArgsConstructor
-@Setter
-@Getter
 public class LayoutEntity {
 
     @Id

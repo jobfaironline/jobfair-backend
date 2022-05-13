@@ -1,9 +1,6 @@
 package org.capstone.job_fair.models.entities.attendant.cv;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.capstone.job_fair.models.entities.attendant.profile.CertificationEntity;
 import org.capstone.job_fair.models.enums.Qualification;
 import org.hibernate.Hibernate;

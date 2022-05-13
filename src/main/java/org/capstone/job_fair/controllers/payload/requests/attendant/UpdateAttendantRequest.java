@@ -181,6 +181,9 @@ public class UpdateAttendantRequest {
         @XSSConstraint
         @Size(min = DataConstraint.Certification.URL_MIN_LENGTH, max = DataConstraint.Certification.URL_MAX_LENGTH)
         private String certificationLink;
+        private Long issueDate;
+        private Long expiredDate;
+        private Boolean doesNotExpired;
     }
 
     @Data

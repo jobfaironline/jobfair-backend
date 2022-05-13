@@ -1,9 +1,6 @@
 package org.capstone.job_fair.models.entities.attendant.cv;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.capstone.job_fair.models.entities.attendant.AttendantEntity;
 import org.capstone.job_fair.models.entities.attendant.profile.CertificationEntity;
 import org.capstone.job_fair.models.enums.JobLevel;
@@ -14,11 +11,11 @@ import javax.persistence.*;
 import java.util.List;
 import java.util.Objects;
 
-@Entity
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity
 @Table(name = "cv", schema = "dbo")
 public class CvEntity {
     @Id

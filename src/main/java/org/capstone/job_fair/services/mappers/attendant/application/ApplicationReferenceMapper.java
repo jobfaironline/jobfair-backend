@@ -9,9 +9,11 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public abstract class ApplicationReferenceMapper {
+    @Mapping(target = "application", ignore = true)
     public abstract ApplicationReferenceEntity toEntity(ApplicationReferenceDTO dto);
     public abstract ApplicationReferenceDTO toDTO(ApplicationReferenceEntity entity);
 
     @Mapping(target = "id", source = "id", ignore = true)
+    @Mapping(target = "application", ignore = true)
     public abstract ApplicationReferenceEntity toEntity(CvReferenceEntity cvReferenceEntity);
 }

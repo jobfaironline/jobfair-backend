@@ -184,6 +184,18 @@
             <version>5.5.2</version>
         </dependency>
         <!--End Open CSV dependency-->
+        <!-- Apache POI -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>5.2.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>5.2.0</version>
+        </dependency>
+        <!-- End Apache POI -->
     </dependencies>
 
     <packaging>jar</packaging>

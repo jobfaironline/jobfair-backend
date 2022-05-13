@@ -5,6 +5,7 @@ import org.capstone.job_fair.models.dtos.attendant.cv.CvDTO;
 import org.capstone.job_fair.models.entities.attendant.cv.CvEntity;
 import org.capstone.job_fair.services.mappers.attendant.AttendantMapper;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
 @Mapper(componentModel = "spring",
@@ -17,5 +18,7 @@ public abstract class CvMapper {
 
     public abstract CvEntity toEntity(CvDTO dto);
 
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "attendant", ignore = true)
     public abstract CvDTO toDTO(DraftCvRequest request);
 }

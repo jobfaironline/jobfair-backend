@@ -6,8 +6,8 @@ import org.capstone.job_fair.controllers.payload.requests.attendant.UpdateAttend
 import org.capstone.job_fair.models.dtos.attendant.AttendantDTO;
 import org.capstone.job_fair.models.dtos.attendant.profile.*;
 import org.capstone.job_fair.models.entities.attendant.AttendantEntity;
-import org.capstone.job_fair.models.entities.attendant.CountryEntity;
-import org.capstone.job_fair.models.entities.attendant.ResidenceEntity;
+import org.capstone.job_fair.models.entities.attendant.misc.CountryEntity;
+import org.capstone.job_fair.models.entities.attendant.misc.ResidenceEntity;
 import org.capstone.job_fair.models.entities.attendant.profile.*;
 import org.capstone.job_fair.services.mappers.account.AccountMapper;
 import org.capstone.job_fair.services.mappers.attendant.profile.*;

@@ -14,7 +14,14 @@ public class QuestionConstant {
     public static final String DEFAULT_TO_DATE = "0";
     public static final String DEFAULT_QUESTION_STATUS = "ACTIVE";
 
-    public static final long ONE_YEAR = 60 * 60 * 24 * 365 * 1000;
+    public static final long ONE_YEAR = 60 * 60 * 24 * 365 * 1000L;
 
 
+    public static final class XLSXFormat {
+        public static final int COLUMN_NUM = 4;
+        public static final int CONTENT_INDEX = 0;
+        public static final int IS_QUESTION_INDEX = 1;
+        public static final int IS_CORRECT_INDEX = 2;
+        public static final int ERROR_INDEX = 3;
+    }
 }

@@ -8,12 +8,11 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import java.util.Objects;
 
-
-@Entity
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
+@Entity
 @Table(name = "company_employee", schema = "dbo")
 public class CompanyEmployeeEntity {
     @EqualsAndHashCode.Include

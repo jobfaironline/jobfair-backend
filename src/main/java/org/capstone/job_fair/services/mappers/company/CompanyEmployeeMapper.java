@@ -28,6 +28,7 @@ public abstract class CompanyEmployeeMapper {
     @Mapping(source = "middleName", target = "account.middlename")
     @Mapping(source = "lastName", target = "account.lastname")
     @Mapping(target = "accountId", ignore = true)
+    @Mapping(target = "companyDTO", ignore = true)
     public abstract CompanyEmployeeDTO toDTO(CompanyEmployeeRegisterRequest request);
 
     @Mapping(source = "companyDTO.id", target = "companyId")
@@ -37,5 +38,7 @@ public abstract class CompanyEmployeeMapper {
     @Mapping(source = "middleName", target = "account.middlename")
     @Mapping(source = "lastName", target = "account.lastname")
     @Mapping(source = "email", target = "account.email")
+    @Mapping(target = "accountId", ignore = true)
+    @Mapping(target = "companyDTO", ignore = true)
     public abstract CompanyEmployeeDTO toDTO(CreateCompanyEmployeeCSVRequest request);
 }

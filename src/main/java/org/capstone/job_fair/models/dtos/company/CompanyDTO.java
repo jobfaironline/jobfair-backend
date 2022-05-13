@@ -1,6 +1,8 @@
 package org.capstone.job_fair.models.dtos.company;
 
 import lombok.*;
+import org.capstone.job_fair.models.dtos.company.misc.CompanyBenefitDTO;
+import org.capstone.job_fair.models.dtos.company.misc.SubCategoryDTO;
 import org.capstone.job_fair.models.statuses.CompanyStatus;
 
 import java.util.List;

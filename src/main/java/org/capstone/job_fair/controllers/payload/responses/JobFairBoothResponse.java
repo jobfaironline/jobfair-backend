@@ -1,15 +1,10 @@
 package org.capstone.job_fair.controllers.payload.responses;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
-import org.capstone.job_fair.models.dtos.company.JobFairBoothDTO;
+import lombok.*;
+import org.capstone.job_fair.models.dtos.job_fair.booth.JobFairBoothDTO;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
-@AllArgsConstructor
-@ToString
-@NoArgsConstructor
 public class JobFairBoothResponse extends JobFairBoothDTO {
     public JobFairBoothResponse(JobFairBoothDTO parent){
         this.setId(parent.getId());

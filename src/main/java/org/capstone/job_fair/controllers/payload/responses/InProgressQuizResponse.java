@@ -1,14 +1,10 @@
 package org.capstone.job_fair.controllers.payload.responses;
 
-import com.fasterxml.jackson.annotation.JsonView;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.capstone.job_fair.constants.Views;
-import org.capstone.job_fair.models.dtos.attendant.cv.test.QuizQuestionDTO;
 import org.capstone.job_fair.models.enums.QuizQuestionType;
 
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Data

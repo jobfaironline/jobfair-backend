@@ -1,7 +1,7 @@
 package org.capstone.job_fair.controllers.payload.responses;
 
 import lombok.*;
-import org.capstone.job_fair.models.dtos.company.JobFairBoothLayoutVideoDTO;
+import org.capstone.job_fair.models.dtos.job_fair.booth.JobFairBoothLayoutVideoDTO;
 
 import java.util.ArrayList;
 import java.util.List;
