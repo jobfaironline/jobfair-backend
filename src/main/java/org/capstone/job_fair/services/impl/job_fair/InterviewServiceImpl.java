@@ -1,16 +1,26 @@
 package org.capstone.job_fair.services.impl.job_fair;
 
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.amazonaws.util.json.Jackson;
+import lombok.SneakyThrows;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.constants.ScheduleConstant;
+import org.capstone.job_fair.models.dtos.dynamoDB.NotificationMessageDTO;
 import org.capstone.job_fair.models.dtos.job_fair.InterviewRequestChangeDTO;
 import org.capstone.job_fair.models.dtos.job_fair.InterviewScheduleDTO;
 import org.capstone.job_fair.models.entities.attendant.application.ApplicationEntity;
+import org.capstone.job_fair.models.entities.dynamoDB.WaitingRoomVisitEntity;
 import org.capstone.job_fair.models.entities.job_fair.InterviewRequestChangeEntity;
 import org.capstone.job_fair.models.enums.InterviewRequestChangeStatus;
+import org.capstone.job_fair.models.enums.NotificationType;
 import org.capstone.job_fair.models.statuses.InterviewStatus;
 import org.capstone.job_fair.repositories.attendant.application.ApplicationRepository;
 import org.capstone.job_fair.repositories.job_fair.InterviewRequestChangeRepository;
 import org.capstone.job_fair.services.interfaces.job_fair.InterviewService;
+import org.capstone.job_fair.services.interfaces.notification.NotificationService;
 import org.capstone.job_fair.services.mappers.job_fair.InterviewRequestChangeMapper;
 import org.capstone.job_fair.services.mappers.job_fair.InterviewScheduleMapper;
 import org.capstone.job_fair.utils.MessageUtil;
@@ -18,9 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,6 +46,11 @@ public class InterviewServiceImpl implements InterviewService {
     @Autowired
     private InterviewRequestChangeRepository interviewRequestChangeRepository;
 
+    @Autowired
+    private AmazonDynamoDB dynamoDBClient;
+
+    @Autowired
+    private NotificationService notificationService;
 
     @Override
     public List<InterviewScheduleDTO> getInterviewScheduleForCompanyEmployee(String employeeId, Long beginTime, Long endTime) {
@@ -123,7 +136,7 @@ public class InterviewServiceImpl implements InterviewService {
         if (requestChange.getStatus() != InterviewRequestChangeStatus.PENDING) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.InterviewRequestChange.CANNOT_EDIT));
         }
-        if (!requestChange.getApplication().getInterviewer().getAccountId().equals(userId)){
+        if (!requestChange.getApplication().getInterviewer().getAccountId().equals(userId)) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.InterviewRequestChange.NOT_FOUND));
         }
 
@@ -135,18 +148,18 @@ public class InterviewServiceImpl implements InterviewService {
         return interviewRequestChangeMapper.toDTO(requestChange);
     }
 
-    private void checkApplicationValid(String applicationId, String userId, boolean isAttendant){
+    private void checkApplicationValid(String applicationId, String userId, boolean isAttendant) {
         Optional<ApplicationEntity> applicationOpt = applicationRepository.findById(applicationId);
-        if (!applicationOpt.isPresent()){
+        if (!applicationOpt.isPresent()) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.APPLICATION_NOT_FOUND));
         }
         ApplicationEntity application = applicationOpt.get();
-        if (isAttendant){
-            if (!application.getAttendant().getAccountId().equals(userId)){
+        if (isAttendant) {
+            if (!application.getAttendant().getAccountId().equals(userId)) {
                 throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.APPLICATION_NOT_FOUND));
             }
         } else {
-            if (!application.getInterviewer().getAccountId().equals(userId)){
+            if (!application.getInterviewer().getAccountId().equals(userId)) {
                 throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.APPLICATION_NOT_FOUND));
             }
         }
@@ -164,5 +177,68 @@ public class InterviewServiceImpl implements InterviewService {
         checkApplicationValid(applicationId, userId, isAttendant);
         List<InterviewRequestChangeEntity> result = interviewRequestChangeRepository.findByApplicationIdOrderByCreateTimeDesc(applicationId);
         return result.stream().map(interviewRequestChangeMapper::toDTO).collect(Collectors.toList());
+    }
+
+    @SneakyThrows
+    private void sendWaitingCountToConnectedUser(String channelId, String userId, boolean isLeaveRoom) {
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("userId", userId);
+
+        //get current connected user
+        List<String> userIds = getConnectedUserIds(channelId);
+        payload.put("connectedUserIds", userIds);
+        payload.put("isLeaveRoom", isLeaveRoom);
+
+        NotificationMessageDTO notificationMessage = NotificationMessageDTO.builder()
+                .title("Waiting room - Change in user id")
+                .message(Jackson.getObjectMapper().writeValueAsString(payload))
+                .notificationType(NotificationType.WAITING_ROOM).build();
+
+        notificationService.createNotification(notificationMessage, userIds);
+
+    }
+
+    @Override
+    public void visitWaitingRoom(String channelId, String userId, boolean isAttendant) {
+        DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(dynamoDBClient);
+        WaitingRoomVisitEntity entity = new WaitingRoomVisitEntity();
+        entity.setUserId(userId);
+        entity.setAttendant(isAttendant);
+        entity.setChannelId(channelId);
+        dynamoDBMapper.save(entity);
+        this.sendWaitingCountToConnectedUser(channelId, userId, false);
+    }
+
+    @Override
+    public void leaveWaitingRoom(String channelId, String userId, boolean isAttendant) {
+        DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(dynamoDBClient);
+
+        Map<String, AttributeValue> eav = new HashMap<>();
+        eav.put(":channelId", new AttributeValue().withS(channelId));
+        eav.put(":userId", new AttributeValue().withS(userId));
+
+        DynamoDBQueryExpression<WaitingRoomVisitEntity> queryExpression = new DynamoDBQueryExpression<WaitingRoomVisitEntity>()
+                .withKeyConditionExpression("channelId = :channelId AND userId = :userId")
+                .withExpressionAttributeValues(eav);
+
+        List<WaitingRoomVisitEntity> queryResult = dynamoDBMapper.query(WaitingRoomVisitEntity.class, queryExpression);
+        dynamoDBMapper.batchDelete(queryResult);
+        this.sendWaitingCountToConnectedUser(channelId, userId, true);
+    }
+
+    @Override
+    public List<String> getConnectedUserIds(String channelId) {
+        DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(dynamoDBClient);
+        Map<String, AttributeValue> eav = new HashMap<>();
+        eav.put(":channelId", new AttributeValue().withS(channelId));
+
+        DynamoDBQueryExpression<WaitingRoomVisitEntity> queryExpression = new DynamoDBQueryExpression<WaitingRoomVisitEntity>()
+                .withKeyConditionExpression("channelId = :channelId")
+                .withExpressionAttributeValues(eav);
+
+
+        List<WaitingRoomVisitEntity> scanResult = dynamoDBMapper.query(WaitingRoomVisitEntity.class, queryExpression);
+        List<String> userIds = scanResult.stream().map(WaitingRoomVisitEntity::getUserId).collect(Collectors.toList());
+        return userIds;
     }
 }

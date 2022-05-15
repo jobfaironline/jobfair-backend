@@ -8,6 +8,7 @@ import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.Select;
 import com.amazonaws.util.json.Jackson;
 import lombok.SneakyThrows;
+import org.capstone.job_fair.constants.AWSConstant;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.models.dtos.dynamoDB.NotificationMessageDTO;
 import org.capstone.job_fair.models.entities.job_fair.booth.JobFairBoothEntity;
@@ -21,10 +22,7 @@ import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -125,7 +123,9 @@ public class JobFairVisitServiceImpl implements JobFairVisitService {
     }
 
     @Override
+    @SneakyThrows
     public void visitBooth(String userId, String jobFairBoothId) {
+        Thread.sleep(AWSConstant.DYNAMO_DELAY_TIME);
         //this is a shitty method this should be optimized
         DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(dynamoDBClient);
 
