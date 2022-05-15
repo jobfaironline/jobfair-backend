@@ -20,4 +20,11 @@ public interface InterviewService {
     Optional<InterviewRequestChangeDTO> getLatestRequestChangeByApplication(String applicationId, String userId, boolean isAttendant);
 
     List<InterviewRequestChangeDTO> getRequestChangesByApplication(String applicationId, String userId, boolean isAttendant);
+
+    void visitWaitingRoom(String channelId, String userId, boolean isAttendant);
+
+    void leaveWaitingRoom(String channelId, String userId, boolean isAttendant);
+
+    List<String> getConnectedUserIds(String channelId);
+
 }

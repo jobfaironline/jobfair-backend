@@ -327,5 +327,8 @@ public final class ApiEndPoint {
         public static final String REQUEST_CHANGE = SCHEDULE + "/change";
         public static final String LATEST_REQUEST_CHANGE = REQUEST_CHANGE + "/latest";
         public static final String EVALUATE_REQUEST_CHANGE = REQUEST_CHANGE + "/evaluate";
+        public static final String WAITING_ROOM = INTERVIEW +  "/waiting-room";
+        public static final String VISIT_WAITING_ROOM = WAITING_ROOM + "/enter";
+        public static final String LEAVE_WAITING_ROOM = WAITING_ROOM + "/leave";
     }
 }

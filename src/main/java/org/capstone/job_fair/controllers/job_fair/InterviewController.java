@@ -98,4 +98,21 @@ public class InterviewController {
     }
 
 
+    @PostMapping(ApiEndPoint.Interview.VISIT_WAITING_ROOM)
+    public ResponseEntity<?> visitWaitingRoom(@RequestParam("channelId") String channelId){
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        boolean isAttendant = userDetails.hasRole(Role.ATTENDANT);
+        interviewService.visitWaitingRoom(channelId, userDetails.getId(), isAttendant);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping(ApiEndPoint.Interview.LEAVE_WAITING_ROOM)
+    public ResponseEntity<?> leaveWaitingRoom(@RequestParam("channelId") String channelId){
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        boolean isAttendant = userDetails.hasRole(Role.ATTENDANT);
+        interviewService.leaveWaitingRoom(channelId, userDetails.getId(), isAttendant);
+        return ResponseEntity.ok().build();
+    }
+
+
 }
