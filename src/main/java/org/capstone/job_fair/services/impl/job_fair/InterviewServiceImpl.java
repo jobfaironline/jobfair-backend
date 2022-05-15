@@ -248,7 +248,6 @@ public class InterviewServiceImpl implements InterviewService {
         if (!connectedUserIds.contains(attendantId)) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Interview.ATTENDANT_NOT_FOUND));
         }
-        System.out.println(connectedUserIds);
 
         NotificationMessageDTO notificationMessage = NotificationMessageDTO.builder()
                 .title("Review room - Invite to interview")
