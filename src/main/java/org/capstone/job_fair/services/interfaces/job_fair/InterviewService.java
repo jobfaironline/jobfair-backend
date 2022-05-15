@@ -27,4 +27,6 @@ public interface InterviewService {
 
     List<String> getConnectedUserIds(String channelId);
 
+    void requestInterviewAttendant(String attendantId, String waitingRoomId);
+
 }
