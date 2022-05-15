@@ -241,4 +241,20 @@ public class InterviewServiceImpl implements InterviewService {
         List<String> userIds = scanResult.stream().map(WaitingRoomVisitEntity::getUserId).collect(Collectors.toList());
         return userIds;
     }
+
+    @Override
+    public void requestInterviewAttendant(String attendantId, String waitingRoomId) {
+        List<String> connectedUserIds = this.getConnectedUserIds(waitingRoomId);
+        if (!connectedUserIds.contains(attendantId)) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Interview.ATTENDANT_NOT_FOUND));
+        }
+
+        NotificationMessageDTO notificationMessage = NotificationMessageDTO.builder()
+                .title("Review room - Invite to interview")
+                .message("Go to room please")
+                .notificationType(NotificationType.INTERVIEW_ROOM).build();
+
+        notificationService.createNotification(notificationMessage, attendantId);
+
+    }
 }

@@ -428,14 +428,16 @@ public final class MessageConstant {
         }
 
         public static final class REQUEST_CHANGE_INTERVIEW {
-            private REQUEST_CHANGE_INTERVIEW(){}
+            private REQUEST_CHANGE_INTERVIEW() {
+            }
+
             public static final String TITLE = "notification-message.request-change-interview.title";
             public static final String MESSAGE = "notification-message.request-change-interview.message";
         }
     }
 
     public static final class InterviewSchedule {
-        private InterviewSchedule(){
+        private InterviewSchedule() {
         }
 
         public static final String SCHEDULE_CONFLICT = "interview-schedule.error.schedule-conflict";
@@ -445,26 +447,41 @@ public final class MessageConstant {
     }
 
     public static final class InterviewRequestChange {
-        private InterviewRequestChange(){}
+        private InterviewRequestChange() {
+        }
+
         public static final String NOT_FOUND = "interview-request-change.error.not-found";
         public static final String INVALID_STATUS = "interview-request-change.error.invalid-status";
         public static final String CANNOT_EDIT = "interview-request-change.error.cannot-edit";
     }
 
     public static final class File {
-        private File() {}
+        private File() {
+        }
+
         public static final String XSL_NO_SHEET = "file.error.xsl-no-sheet";
         public static final String NOT_ALLOWED = "file.error.not-allowed";
     }
 
     public static final class Language {
-        private Language(){}
+        private Language() {
+        }
+
         public static final String NOT_FOUND = "language.error.not-found";
     }
 
     public static final class JobType {
-        private JobType(){}
+        private JobType() {
+        }
+
         public static final String NOT_FOUND = "job-type.error.not-found";
+    }
+
+    public static final class Interview {
+        private Interview() {
+        }
+
+        public static final String ATTENDANT_NOT_FOUND = "interview.error.attendant-not-found";
     }
 }
 
