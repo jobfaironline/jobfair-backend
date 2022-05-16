@@ -19,9 +19,9 @@ public abstract class InterviewScheduleMapper {
     @Mapping(source = "interviewName", target = "name")
     @Mapping(source = "interviewDescription", target = "description")
     @Mapping(source = "interviewStatus", target = "status")
-    @Mapping(source = "interviewUrl", target = "url")
     @Mapping(source = "interviewer.accountId", target = "interviewerId")
     @Mapping(source = "attendant.accountId", target = "attendantId")
     @Mapping(source = "boothJobPosition.jobFairBooth.jobFair.publicEndTime", target = "jobFairPublicEndTime")
+    @Mapping(source = "attendant.account.fullname", target = "attendantName")
     public abstract InterviewScheduleDTO toDTO(ApplicationEntity entity);
 }

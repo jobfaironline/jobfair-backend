@@ -1,6 +1,9 @@
 package org.capstone.job_fair.models.entities.attendant.application;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.capstone.job_fair.models.entities.attendant.AttendantEntity;
 import org.capstone.job_fair.models.entities.company.CompanyEmployeeEntity;
 import org.capstone.job_fair.models.entities.job_fair.booth.BoothJobPositionEntity;
@@ -48,16 +51,16 @@ public class ApplicationEntity {
     @Column(name = "evaluate_date")
     private Long evaluateDate;
 
-    @Column(name="email")
+    @Column(name = "email")
     private String email;
 
-    @Column(name="phone")
+    @Column(name = "phone")
     private String phone;
 
-    @Column(name="year_of_exp")
+    @Column(name = "year_of_exp")
     private Integer yearOfExp;
 
-    @Column(name="job_title")
+    @Column(name = "job_title")
     private String jobTitle;
 
     @Column(name = "job_level")
@@ -121,6 +124,12 @@ public class ApplicationEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "interviewer_id", referencedColumnName = "account_id")
     private CompanyEmployeeEntity interviewer;
+
+    @Column(name = "waiting_room_id")
+    private String waitingRoomId;
+
+    @Column(name = "interview_room_id")
+    private String interviewRoomId;
 
 
     @Override

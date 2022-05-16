@@ -330,6 +330,9 @@ public final class ApiEndPoint {
         public static final String WAITING_ROOM = INTERVIEW +  "/waiting-room";
         public static final String VISIT_WAITING_ROOM = WAITING_ROOM + "/enter";
         public static final String LEAVE_WAITING_ROOM = WAITING_ROOM + "/leave";
-        public static final String REQUEST_INTERVIEW_ROOM = INTERVIEW + "/request-attendant";
+        public static final String ASK_TO_JOIN_INTERVIEW_ROOM = INTERVIEW + "/ask-attendant";
+        public static final String GET_WAITING_ROOM_INFO = WAITING_ROOM + "/info";
+        public static final String FINISH_INTERVIEW = INTERVIEW + "/finish";
+        public static final String START_INTERVIEW = INTERVIEW + "/start";
     }
 }
