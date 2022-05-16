@@ -12,8 +12,10 @@ import org.capstone.job_fair.models.dtos.dynamoDB.NotificationMessageDTO;
 import org.capstone.job_fair.models.dtos.job_fair.InterviewRequestChangeDTO;
 import org.capstone.job_fair.models.dtos.job_fair.InterviewScheduleDTO;
 import org.capstone.job_fair.models.entities.attendant.application.ApplicationEntity;
+import org.capstone.job_fair.models.entities.company.CompanyEmployeeEntity;
 import org.capstone.job_fair.models.entities.dynamoDB.WaitingRoomVisitEntity;
 import org.capstone.job_fair.models.entities.job_fair.InterviewRequestChangeEntity;
+import org.capstone.job_fair.models.enums.ApplicationStatus;
 import org.capstone.job_fair.models.enums.InterviewRequestChangeStatus;
 import org.capstone.job_fair.models.enums.NotificationType;
 import org.capstone.job_fair.models.statuses.InterviewStatus;
@@ -342,5 +344,63 @@ public class InterviewServiceImpl implements InterviewService {
         application.setInterviewStatus(InterviewStatus.INTERVIEWING);
         applicationRepository.save(application);
     }
+
+
+    @Override
+    public InterviewScheduleDTO scheduleInterview(String applicationId, String interviewerId) {
+        Optional<ApplicationEntity> applicationOpt = applicationRepository.findById(applicationId);
+        if (!applicationOpt.isPresent()) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.APPLICATION_NOT_FOUND));
+        }
+        ApplicationEntity application = applicationOpt.get();
+        if (application.getStatus() != ApplicationStatus.APPROVE) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.InterviewSchedule.INVALID_APPLICATION_STATUS));
+        }
+        if (application.getInterviewStatus() != null) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.InterviewSchedule.ALREADY_SCHEDULE_INTERVIEW));
+        }
+        LocalDate localDate = LocalDate.now();
+        LocalDateTime endOfDay = localDate.atTime(LocalTime.MAX);
+        LocalDateTime startOfDay = localDate.atTime(LocalTime.MIN);
+        long endTime = endOfDay.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+        long beginTime = startOfDay.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+
+        List<ApplicationEntity> scheduleList = applicationRepository.findWholeByInterviewerAndInTimeRange(interviewerId, beginTime, endTime);
+        int lastIndex = scheduleList.size() - 1;
+
+        //TODO: get this from DB
+        long interviewLength = 45 * 60 * 1000L;
+        long bufferTime = 15 * 60 * 1000L;
+        LocalDateTime sevenHour = startOfDay.plusHours(19);
+        long endShiftTime = sevenHour.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+        long nextShiftTime = endShiftTime;
+        //END TODO
+
+        if (lastIndex > 0 && scheduleList.get(lastIndex).getEndTime() + interviewLength + bufferTime > endShiftTime) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.InterviewSchedule.MAXIMUM_SCHEDULE_ALLOW));
+        }
+
+
+        if (lastIndex > 0) {
+            application.setBeginTime(scheduleList.get(lastIndex).getEndTime() + bufferTime);
+        } else {
+            application.setBeginTime(nextShiftTime);
+        }
+
+        application.setInterviewName("Interview with " + application.getAttendant().getAccount().getFullname());
+        application.setInterviewDescription("Interview with " + application.getAttendant().getAccount().getFullname());
+        application.setEndTime(application.getBeginTime() + interviewLength);
+        application.setInterviewStatus(InterviewStatus.INTERVIEWING);
+        CompanyEmployeeEntity companyEmployee = new CompanyEmployeeEntity();
+        companyEmployee.setAccountId(interviewerId);
+        application.setInterviewer(companyEmployee);
+        String waitingRoomId = ScheduleConstant.WAITING_ROOM_PREFIX + UUID.randomUUID().toString();
+        String interviewRoomId = ScheduleConstant.INTERVIEW_ROOM_PREFIX + UUID.randomUUID().toString();
+        application.setWaitingRoomId(waitingRoomId);
+        application.setInterviewRoomId(interviewRoomId);
+        applicationRepository.save(application);
+        return interviewScheduleMapper.toDTO(application);
+    }
+
 
 }

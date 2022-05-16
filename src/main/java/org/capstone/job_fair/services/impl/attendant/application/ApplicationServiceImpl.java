@@ -3,7 +3,6 @@ package org.capstone.job_fair.services.impl.attendant.application;
 import org.capstone.job_fair.constants.DataConstraint;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.models.dtos.attendant.application.ApplicationDTO;
-import org.capstone.job_fair.models.dtos.attendant.cv.CvDTO;
 import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
 import org.capstone.job_fair.models.entities.attendant.application.ApplicationEntity;
 import org.capstone.job_fair.models.entities.attendant.cv.CvEntity;
@@ -13,11 +12,9 @@ import org.capstone.job_fair.models.enums.AssignmentType;
 import org.capstone.job_fair.models.enums.TestStatus;
 import org.capstone.job_fair.repositories.attendant.application.ApplicationRepository;
 import org.capstone.job_fair.repositories.attendant.cv.CvRepository;
-import org.capstone.job_fair.repositories.job_fair.job_fair_booth.AssignmentRepository;
 import org.capstone.job_fair.repositories.job_fair.job_fair_booth.BoothJobPositionRepository;
 import org.capstone.job_fair.services.interfaces.attendant.application.ApplicationService;
-import org.capstone.job_fair.services.interfaces.attendant.cv.CvService;
-import org.capstone.job_fair.services.interfaces.attendant.quiz.QuizService;
+import org.capstone.job_fair.services.interfaces.job_fair.InterviewService;
 import org.capstone.job_fair.services.mappers.attendant.application.*;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,11 +61,12 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Autowired
     private ApplicationSkillMapper applicationSkillMapper;
 
-    @Autowired
-    private CvService cvService;
 
     @Autowired
     private ApplicationWorkHistoryMapper applicationWorkHistoryMapper;
+
+    @Autowired
+    private InterviewService interviewService;
 
     private TestStatus getTestStatus(String boothJobPositionId) {
         Optional<BoothJobPositionEntity> boothJobPositionEntityOptional = regisJobPosRepository.findById(boothJobPositionId);
@@ -228,12 +226,12 @@ public class ApplicationServiceImpl implements ApplicationService {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.APPLICATION_NOT_FOUND));
         ApplicationEntity applicationEntity = applicationEntityOptional.get();
 
-        //check if this user is an interviwer assigned to the same booth
+        //check if this user is an interviewer assigned to the same booth
         boolean isValidUser = applicationEntity
                 .getBoothJobPosition().getJobFairBooth().getAssignments()
                 .stream()
                 .anyMatch(assignmentEntity -> assignmentEntity.getCompanyEmployee().getAccountId().equals(userId) && assignmentEntity.getType() == AssignmentType.INTERVIEWER);
-        if (!isValidUser){
+        if (!isValidUser) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.MISS_MATCH_INTERVIEWER));
         }
         if (!applicationEntity.getStatus().equals(ApplicationStatus.PENDING))
@@ -249,6 +247,6 @@ public class ApplicationServiceImpl implements ApplicationService {
         dto.setEvaluateDate(new Date().getTime());
         applicationMapper.updateFromDTO(applicationEntity, dto);
         applicationRepository.save(applicationEntity);
-        //TODO: implement scheduler here
+        interviewService.scheduleInterview(applicationEntity.getId(), userId);
     }
 }

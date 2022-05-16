@@ -444,6 +444,9 @@ public final class MessageConstant {
         public static final String NOT_FOUND = "interview-schedule.error.not-found";
         public static final String CANNOT_EDIT = "interview-schedule.error.cannot-edit";
         public static final String INVALID_REQUEST_SCHEDULE = "interview-schedule.error.invalid-schedule";
+        public static final String INVALID_APPLICATION_STATUS = "interview-schedule.error.invalid-application-status";
+        public static final String ALREADY_SCHEDULE_INTERVIEW = "interview-schedule.error.already-schedule-interview";
+        public static final String MAXIMUM_SCHEDULE_ALLOW = "interview-schedule.error.maximum-schedule-allow";
     }
 
     public static final class InterviewRequestChange {
