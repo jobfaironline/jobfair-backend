@@ -2,11 +2,13 @@ package org.capstone.job_fair.repositories.attendant.application;
 
 import org.capstone.job_fair.models.entities.attendant.application.ApplicationEntity;
 import org.capstone.job_fair.models.enums.ApplicationStatus;
+import org.capstone.job_fair.models.statuses.InterviewStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -86,5 +88,19 @@ public interface ApplicationRepository extends JpaRepository<ApplicationEntity, 
     List<ApplicationEntity> findByAttendantAndInTimeRange(@Param("attendantId") String attendantId,
                                                           @Param("beginTime") Long beginTime,
                                                           @Param("endTime") Long endTime);
+
+    @Query("select a from ApplicationEntity a where a.waitingRoomId = :waitingRoomId and a.interviewStatus = :interviewStatus and (a.endTime <= :endTime or a.beginTime >= :beginTime) ")
+    List<ApplicationEntity> findWaitingAttendant(
+            @Param("waitingRoomId") String waitingRoomId,
+            @Param("interviewStatus") InterviewStatus status,
+            @Param("endTime") long endTime,
+            @Param("beginTime") long beginTime);
+
+    @Query("select a from ApplicationEntity a where a.waitingRoomId = :waitingRoomId and (a.endTime <= :endTime or a.beginTime >= :beginTime) and a.interviewer.accountId = :employeeId")
+    List<ApplicationEntity> findWaitingAttendantByEmployeeId(
+            @Param("waitingRoomId") String waitingRoomId,
+            @Param("beginTime") long beginTime,
+            @Param("endTime") long endTime,
+            @Param("employeeId") String employeeId);
 
 }

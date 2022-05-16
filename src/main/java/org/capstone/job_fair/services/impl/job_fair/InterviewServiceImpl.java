@@ -28,6 +28,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -257,4 +261,30 @@ public class InterviewServiceImpl implements InterviewService {
         notificationService.createNotification(notificationMessage, attendantId);
 
     }
+
+    @Override
+    public int getAttendantTurnInWaitingRoom(String attendantId, String waitingRoomId) {
+        long now = new Date().getTime();
+        LocalDate localDate = LocalDate.now();
+        LocalDateTime endOfDay = localDate.atTime(LocalTime.MAX);
+        long endTime = endOfDay.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+        List<ApplicationEntity> applicationList = applicationRepository.findWaitingAttendant(waitingRoomId, InterviewStatus.INTERVIEWING, now, endTime);
+        return applicationList.size();
+    }
+
+    @Override
+    public List<InterviewScheduleDTO> getInterviewScheduleInWaitingRoom(String employeeId, String waitingRoomId) {
+        long now = new Date().getTime();
+        LocalDate localDate = LocalDate.now();
+        LocalDateTime endOfDay = localDate.atTime(LocalTime.MAX);
+        LocalDateTime startOfDay = localDate.atTime(LocalTime.MIN);
+        long endTime = endOfDay.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+        long beginTime = startOfDay.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+        System.out.println(beginTime);
+        System.out.println(endTime);
+        List<ApplicationEntity> applicationList = applicationRepository.findWaitingAttendantByEmployeeId(waitingRoomId, beginTime, endTime, employeeId);
+        return applicationList.stream().map(interviewScheduleMapper::toDTO).collect(Collectors.toList());
+
+    }
+
 }

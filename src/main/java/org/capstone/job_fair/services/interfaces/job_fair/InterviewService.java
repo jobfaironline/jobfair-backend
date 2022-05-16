@@ -29,4 +29,8 @@ public interface InterviewService {
 
     void requestInterviewAttendant(String attendantId, String waitingRoomId);
 
+    int getAttendantTurnInWaitingRoom(String attendantId, String waitingRoomId);
+
+    List<InterviewScheduleDTO> getInterviewScheduleInWaitingRoom(String employeeId, String waitingId);
+
 }
