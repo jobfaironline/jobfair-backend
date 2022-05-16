@@ -266,15 +266,19 @@ public class InterviewServiceImpl implements InterviewService {
     }
 
     @Override
-    public void requestInterviewAttendant(String attendantId, String waitingRoomId) {
-        List<String> connectedUserIds = this.getConnectedUserIds(waitingRoomId);
+    @SneakyThrows
+    public void askAttendantJoinInterviewRoom(String attendantId, String interviewRoomId) {
+        List<String> connectedUserIds = this.getConnectedUserIds(interviewRoomId);
         if (!connectedUserIds.contains(attendantId)) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Interview.ATTENDANT_NOT_FOUND));
         }
 
+        HashMap<String, String> payload = new HashMap<>();
+        payload.put("interviewRoomId", interviewRoomId);
+
         NotificationMessageDTO notificationMessage = NotificationMessageDTO.builder()
                 .title("Review room - Invite to interview")
-                .message("Go to room please")
+                .message(Jackson.getObjectMapper().writeValueAsString(payload))
                 .notificationType(NotificationType.INTERVIEW_ROOM).build();
 
         notificationService.createNotification(notificationMessage, attendantId);
@@ -301,6 +305,42 @@ public class InterviewServiceImpl implements InterviewService {
         List<ApplicationEntity> applicationList = applicationRepository.findWaitingAttendantByEmployeeId(waitingRoomId, beginTime, endTime, employeeId);
         return applicationList.stream().map(interviewScheduleMapper::toDTO).collect(Collectors.toList());
 
+    }
+
+
+    private ApplicationEntity getValidApplicationEntity(String attendantId, String interviewRoomId, String reviewerId) {
+        Optional<ApplicationEntity> applicationOpt = applicationRepository.findByInterviewRoomId(interviewRoomId);
+        if (!applicationOpt.isPresent()) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.APPLICATION_NOT_FOUND));
+        }
+        ApplicationEntity application = applicationOpt.get();
+        if (!application.getInterviewer().getAccountId().equals(reviewerId)
+        ) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Interview.REVIEWER_NOT_FOUND));
+        }
+        if (!application.getAttendant().getAccountId().equals(attendantId)) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Interview.ATTENDANT_NOT_FOUND));
+        }
+        if (application.getInterviewStatus() == null || application.getInterviewStatus() != InterviewStatus.INTERVIEWING) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Interview.INVALID_STATUS));
+        }
+        return application;
+    }
+
+    @Override
+    @Transactional
+    public void finishInterview(String attendantId, String interviewRoomId, String reviewerId) {
+        ApplicationEntity application = getValidApplicationEntity(attendantId, interviewRoomId, reviewerId);
+        application.setInterviewStatus(InterviewStatus.DONE);
+        applicationRepository.save(application);
+    }
+
+    @Override
+    @Transactional
+    public void startInterview(String attendantId, String interviewRoomId, String reviewerId) {
+        ApplicationEntity application = getValidApplicationEntity(attendantId, interviewRoomId, reviewerId);
+        application.setInterviewStatus(InterviewStatus.INTERVIEWING);
+        applicationRepository.save(application);
     }
 
 }

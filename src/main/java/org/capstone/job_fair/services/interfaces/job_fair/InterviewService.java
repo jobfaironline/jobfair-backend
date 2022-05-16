@@ -27,10 +27,14 @@ public interface InterviewService {
 
     List<String> getConnectedUserIds(String channelId);
 
-    void requestInterviewAttendant(String attendantId, String waitingRoomId);
+    void askAttendantJoinInterviewRoom(String attendantId, String interviewRoomId);
 
     int getAttendantTurnInWaitingRoom(String attendantId, String waitingRoomId);
 
     List<InterviewScheduleDTO> getInterviewScheduleInWaitingRoom(String employeeId, String waitingId);
+
+    void finishInterview(String attendantId, String interviewRoomId, String reviewerId);
+
+    void startInterview(String attendantId, String interviewRoomid, String reviewerId);
 
 }

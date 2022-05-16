@@ -118,14 +118,15 @@ public class InterviewController {
     }
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE)")
-    @PostMapping(ApiEndPoint.Interview.REQUEST_INTERVIEW_ROOM)
-    public ResponseEntity<?> interviewAttendant(
+    @PostMapping(ApiEndPoint.Interview.ASK_TO_JOIN_INTERVIEW_ROOM)
+    public ResponseEntity<?> askToJoinInterviewRoom(
             @RequestParam("attendantId") String attendantId,
-            @RequestParam("waitingRoomId") String waitingRoomId) {
-        interviewService.requestInterviewAttendant(attendantId, waitingRoomId);
+            @RequestParam("interviewRoomId") String interviewRoomId) {
+        interviewService.askAttendantJoinInterviewRoom(attendantId, interviewRoomId);
         return ResponseEntity.ok().build();
     }
 
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).ATTENDANT)")
     @GetMapping(ApiEndPoint.Interview.GET_WAITING_ROOM_INFO)
     public ResponseEntity<?> getWaitingRoomInformation(@RequestParam("waitingRoomId") String waitingRoomId) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -139,6 +140,24 @@ public class InterviewController {
             List<InterviewScheduleDTO> result = interviewService.getInterviewScheduleInWaitingRoom(userDetails.getId(), waitingRoomId);
             return ResponseEntity.ok(result);
         }
+    }
+
+    @PostMapping(ApiEndPoint.Interview.FINISH_INTERVIEW)
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE)")
+    public ResponseEntity<?> finishInterview(@RequestParam("attendantId") String attendantId,
+                                             @RequestParam("interviewRoomId") String interviewRoomId){
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        interviewService.finishInterview(attendantId, interviewRoomId, userDetails.getId());
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping(ApiEndPoint.Interview.START_INTERVIEW)
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE)")
+    public ResponseEntity<?> startInterview(@RequestParam("attendantId") String attendantId,
+                                             @RequestParam("interviewRoomId") String interviewRoomId){
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        interviewService.startInterview(attendantId, interviewRoomId, userDetails.getId());
+        return ResponseEntity.ok().build();
     }
 
 

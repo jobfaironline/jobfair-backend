@@ -104,4 +104,6 @@ public interface ApplicationRepository extends JpaRepository<ApplicationEntity, 
             @Param("employeeId") String employeeId);
 
     Optional<ApplicationEntity> findByWaitingRoomId(String waitingRoomId);
+
+    Optional<ApplicationEntity> findByInterviewRoomId(String interviewRoomId);
 }

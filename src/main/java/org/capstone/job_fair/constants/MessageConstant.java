@@ -482,6 +482,8 @@ public final class MessageConstant {
         }
 
         public static final String ATTENDANT_NOT_FOUND = "interview.error.attendant-not-found";
+        public static final String REVIEWER_NOT_FOUND = "interview.error.reviewer-not-found";
+        public static final String INVALID_STATUS = "interview.error.invalid-status";
     }
 }
 
