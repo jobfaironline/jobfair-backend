@@ -184,12 +184,16 @@ public class InterviewServiceImpl implements InterviewService {
     }
 
     @SneakyThrows
-    private void sendWaitingCountToConnectedUser(String channelId, String userId, boolean isLeaveRoom) {
+    private void sendWaitingCountToConnectedUser(String channelId, String userId, String interviewerId, boolean isLeaveRoom) {
         Map<String, Object> payload = new HashMap<>();
         payload.put("userId", userId);
 
         //get current connected user
         List<String> userIds = getConnectedUserIds(channelId);
+
+
+        userIds.add(interviewerId);
+
         payload.put("connectedUserIds", userIds);
         payload.put("isLeaveRoom", isLeaveRoom);
 
@@ -204,17 +208,32 @@ public class InterviewServiceImpl implements InterviewService {
 
     @Override
     public void visitWaitingRoom(String channelId, String userId, boolean isAttendant) {
+        Optional<ApplicationEntity> applicationOpt = applicationRepository.findByWaitingRoomId(channelId);
+        if (!applicationOpt.isPresent()) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.APPLICATION_NOT_FOUND));
+        }
+        ApplicationEntity application = applicationOpt.get();
+
         DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(dynamoDBClient);
         WaitingRoomVisitEntity entity = new WaitingRoomVisitEntity();
         entity.setUserId(userId);
         entity.setAttendant(isAttendant);
         entity.setChannelId(channelId);
         dynamoDBMapper.save(entity);
-        this.sendWaitingCountToConnectedUser(channelId, userId, false);
+
+
+        this.sendWaitingCountToConnectedUser(channelId, userId, application.getInterviewer().getAccountId(), false);
     }
 
     @Override
     public void leaveWaitingRoom(String channelId, String userId, boolean isAttendant) {
+        Optional<ApplicationEntity> applicationOpt = applicationRepository.findByWaitingRoomId(channelId);
+        if (!applicationOpt.isPresent()) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.APPLICATION_NOT_FOUND));
+        }
+        ApplicationEntity application = applicationOpt.get();
+
+
         DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(dynamoDBClient);
 
         Map<String, AttributeValue> eav = new HashMap<>();
@@ -227,7 +246,7 @@ public class InterviewServiceImpl implements InterviewService {
 
         List<WaitingRoomVisitEntity> queryResult = dynamoDBMapper.query(WaitingRoomVisitEntity.class, queryExpression);
         dynamoDBMapper.batchDelete(queryResult);
-        this.sendWaitingCountToConnectedUser(channelId, userId, true);
+        this.sendWaitingCountToConnectedUser(channelId, userId, application.getInterviewer().getAccountId(), true);
     }
 
     @Override
@@ -274,14 +293,11 @@ public class InterviewServiceImpl implements InterviewService {
 
     @Override
     public List<InterviewScheduleDTO> getInterviewScheduleInWaitingRoom(String employeeId, String waitingRoomId) {
-        long now = new Date().getTime();
         LocalDate localDate = LocalDate.now();
         LocalDateTime endOfDay = localDate.atTime(LocalTime.MAX);
         LocalDateTime startOfDay = localDate.atTime(LocalTime.MIN);
         long endTime = endOfDay.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
         long beginTime = startOfDay.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-        System.out.println(beginTime);
-        System.out.println(endTime);
         List<ApplicationEntity> applicationList = applicationRepository.findWaitingAttendantByEmployeeId(waitingRoomId, beginTime, endTime, employeeId);
         return applicationList.stream().map(interviewScheduleMapper::toDTO).collect(Collectors.toList());
 

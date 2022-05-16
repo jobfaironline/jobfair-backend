@@ -103,4 +103,5 @@ public interface ApplicationRepository extends JpaRepository<ApplicationEntity, 
             @Param("endTime") long endTime,
             @Param("employeeId") String employeeId);
 
+    Optional<ApplicationEntity> findByWaitingRoomId(String waitingRoomId);
 }
