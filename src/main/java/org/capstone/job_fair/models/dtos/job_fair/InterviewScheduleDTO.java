@@ -18,9 +18,10 @@ public class InterviewScheduleDTO {
     private String name;
     private String description;
     private InterviewStatus status;
-    private String url;
     private String interviewerId;
     private String attendantId;
     private Long jobFairPublicEndTime;
     private String attendantName;
+    private String interviewRoomId;
+    private String waitingRoomId;
 }
