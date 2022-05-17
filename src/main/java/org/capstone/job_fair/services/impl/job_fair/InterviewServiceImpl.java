@@ -343,4 +343,9 @@ public class InterviewServiceImpl implements InterviewService {
         applicationRepository.save(application);
     }
 
+    @Override
+    public Optional<InterviewScheduleDTO> getScheduleByInterviewRoomId(String interviewRoomId) {
+        return applicationRepository.findByInterviewRoomId(interviewRoomId).map(interviewScheduleMapper::toDTO);
+    }
+
 }

@@ -37,4 +37,6 @@ public interface InterviewService {
 
     void startInterview(String attendantId, String interviewRoomid, String reviewerId);
 
+    Optional<InterviewScheduleDTO> getScheduleByInterviewRoomId(String interviewRoomId);
+
 }
