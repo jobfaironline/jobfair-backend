@@ -42,4 +42,9 @@ public interface InterviewService {
     InterviewScheduleDTO scheduleInterview(String applicationId, String interviewerId);
 
     Optional<InterviewScheduleDTO> getScheduleById(String id);
+
+    Optional<InterviewScheduleDTO> getCurrentScheduleByEmployeeIdAndInterviewRoomId(String employeeId, String interviewRoomId);
+
+    void swapSchedule(String fromApplicationId, String toApplicationId);
+
 }

@@ -211,7 +211,13 @@ public class InterviewServiceImpl implements InterviewService {
 
     @Override
     public void visitWaitingRoom(String channelId, String userId, boolean isAttendant) {
-        Optional<ApplicationEntity> applicationOpt = applicationRepository.findByWaitingRoomIdAndAccountId(channelId, userId);
+        Optional<ApplicationEntity> applicationOpt;
+        if (isAttendant) {
+            applicationOpt = applicationRepository.findByWaitingRoomIdAndAttendantAccountId(channelId, userId);
+        } else {
+            applicationOpt = applicationRepository.findByWaitingRoomIdAndInterviewerAccountId(channelId, userId);
+        }
+
         if (!applicationOpt.isPresent()) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.APPLICATION_NOT_FOUND));
         }
@@ -230,7 +236,12 @@ public class InterviewServiceImpl implements InterviewService {
 
     @Override
     public void leaveWaitingRoom(String channelId, String userId, boolean isAttendant) {
-        Optional<ApplicationEntity> applicationOpt = applicationRepository.findByWaitingRoomIdAndAccountId(channelId, userId);
+        Optional<ApplicationEntity> applicationOpt;
+        if (isAttendant) {
+            applicationOpt = applicationRepository.findByWaitingRoomIdAndAttendantAccountId(channelId, userId);
+        } else {
+            applicationOpt = applicationRepository.findByWaitingRoomIdAndInterviewerAccountId(channelId, userId);
+        }
         if (!applicationOpt.isPresent()) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.APPLICATION_NOT_FOUND));
         }
@@ -271,7 +282,13 @@ public class InterviewServiceImpl implements InterviewService {
     @Override
     @SneakyThrows
     public void askAttendantJoinInterviewRoom(String attendantId, String interviewRoomId) {
-        List<String> connectedUserIds = this.getConnectedUserIds(interviewRoomId);
+        List<ApplicationEntity> applicationList = applicationRepository.findByInterviewRoomId(interviewRoomId);
+        if (applicationList.size() == 0){
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Interview.INTERVIEW_ROOM_NOT_FOUND));
+        }
+        ApplicationEntity firstApplication = applicationList.get(0);
+        String waitingRoomId = firstApplication.getWaitingRoomId();
+        List<String> connectedUserIds = this.getConnectedUserIds(waitingRoomId);
         if (!connectedUserIds.contains(attendantId)) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Interview.ATTENDANT_NOT_FOUND));
         }
@@ -403,6 +420,49 @@ public class InterviewServiceImpl implements InterviewService {
     @Override
     public Optional<InterviewScheduleDTO> getScheduleById(String id) {
         return applicationRepository.findById(id).map(interviewScheduleMapper::toDTO);
+    }
+
+    @Override
+    public Optional<InterviewScheduleDTO> getCurrentScheduleByEmployeeIdAndInterviewRoomId(String employeeId, String interviewRoomId) {
+        List<ApplicationEntity> applicationList = applicationRepository.findByInterviewRoomId(interviewRoomId);
+        long now = new Date().getTime();
+        for (ApplicationEntity application : applicationList) {
+            if (now < application.getEndTime() && now > application.getBeginTime()) {
+                return Optional.of(interviewScheduleMapper.toDTO(application));
+            }
+        }
+        return Optional.empty();
+    }
+
+    @Override
+    @Transactional
+    public void swapSchedule(String fromApplicationId, String toApplicationId) {
+        Optional<ApplicationEntity> fromApplicationOpt = applicationRepository.findById(fromApplicationId);
+        if (!fromApplicationOpt.isPresent()) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.APPLICATION_NOT_FOUND));
+        }
+        Optional<ApplicationEntity> toApplicationOpt = applicationRepository.findById(toApplicationId);
+        if (!toApplicationOpt.isPresent()) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.APPLICATION_NOT_FOUND));
+        }
+        ApplicationEntity fromApplication = fromApplicationOpt.get();
+        ApplicationEntity toApplication = toApplicationOpt.get();
+
+        if (fromApplication.getInterviewStatus() != InterviewStatus.NOT_YET || toApplication.getInterviewStatus() != InterviewStatus.NOT_YET) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Interview.INVALID_STATUS));
+        }
+
+        long fromBeginTime = fromApplication.getBeginTime();
+        long fromEndTime = fromApplication.getEndTime();
+
+        fromApplication.setBeginTime(toApplication.getBeginTime());
+        fromApplication.setEndTime(toApplication.getEndTime());
+
+        toApplication.setBeginTime(fromBeginTime);
+        toApplication.setEndTime(fromEndTime);
+
+        applicationRepository.save(fromApplication);
+        applicationRepository.save(toApplication);
     }
 
 

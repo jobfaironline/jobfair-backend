@@ -121,6 +121,15 @@ public class InterviewController {
     public ResponseEntity<?> askToJoinInterviewRoom(
             @RequestParam("attendantId") String attendantId,
             @RequestParam("interviewRoomId") String interviewRoomId) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Optional<InterviewScheduleDTO> currentSchedule = interviewService.getCurrentScheduleByEmployeeIdAndInterviewRoomId(
+                userDetails.getId(), interviewRoomId
+        );
+        if (currentSchedule.isPresent()) {
+            if (!currentSchedule.get().getAttendantId().equals(attendantId)) {
+                return ResponseEntity.accepted().build();
+            }
+        }
         interviewService.askAttendantJoinInterviewRoom(attendantId, interviewRoomId);
         return ResponseEntity.ok().build();
     }
@@ -176,10 +185,17 @@ public class InterviewController {
     @GetMapping(ApiEndPoint.Interview.SCHEDULE + "/{id}")
     public ResponseEntity<?> getScheduleById(@PathVariable("id") String id) {
         Optional<InterviewScheduleDTO> scheduleOpt = interviewService.getScheduleById(id);
-        if (!scheduleOpt.isPresent()){
+        if (!scheduleOpt.isPresent()) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(scheduleOpt.get());
+    }
+
+    @PostMapping(ApiEndPoint.Interview.SWAP_INTERVIEW)
+    public ResponseEntity<?> swapInterviewSlot(@RequestParam("fromApplicationId") String fromApplicationId,
+                                               @RequestParam("toApplicationId") String toApplicationId) {
+        interviewService.swapSchedule(fromApplicationId, toApplicationId);
+        return ResponseEntity.ok().build();
     }
 
 
