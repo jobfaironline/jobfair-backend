@@ -14,6 +14,7 @@ import org.capstone.job_fair.models.dtos.job_fair.booth.BoothJobPositionDTO;
 import org.capstone.job_fair.models.entities.attendant.application.ApplicationEntity;
 import org.capstone.job_fair.models.enums.ApplicationStatus;
 import org.capstone.job_fair.services.interfaces.attendant.application.ApplicationService;
+import org.capstone.job_fair.services.interfaces.job_fair.InterviewService;
 import org.capstone.job_fair.services.mappers.attendant.application.ApplicationMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.capstone.job_fair.validators.XSSConstraint;
@@ -41,14 +42,15 @@ public class ApplicationController {
     @Autowired
     private ApplicationMapper applicationMapper;
 
+
     @GetMapping(ApiEndPoint.Application.APPLICATION_ENDPOINT + "/{id}")
-    public ResponseEntity<?> getApplicationById(@PathVariable("id") String id){
+    public ResponseEntity<?> getApplicationById(@PathVariable("id") String id) {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         UserDetailsImpl user = (UserDetailsImpl) securityContext.getAuthentication().getPrincipal();
         String accountId = user.getId();
 
         Optional<ApplicationDTO> applicationOpt = applicationService.getApplicationById(id, accountId);
-        if (!applicationOpt.isPresent()){
+        if (!applicationOpt.isPresent()) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.APPLICATION_NOT_FOUND));
         }
         return ResponseEntity.ok(applicationOpt.get());
@@ -149,6 +151,7 @@ public class ApplicationController {
         dto.setStatus(request.getStatus());
 
         applicationService.evaluateApplication(dto, userId);
+
 
         return ResponseEntity.ok().build();
 
