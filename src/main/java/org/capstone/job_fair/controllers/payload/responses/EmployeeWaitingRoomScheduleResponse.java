@@ -22,7 +22,7 @@ public class EmployeeWaitingRoomScheduleResponse extends InterviewScheduleDTO {
         this.setAttendantId(parent.getAttendantId());
         this.setJobFairPublicEndTime(parent.getJobFairPublicEndTime());
         this.setAttendantName(parent.getAttendantName());
-        this.setInterviewerId(parent.getInterviewerId());
+        this.setInterviewRoomId(parent.getInterviewRoomId());
         this.setWaitingRoomId(parent.getWaitingRoomId());
     }
 }
