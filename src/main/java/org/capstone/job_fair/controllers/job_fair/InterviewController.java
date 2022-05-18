@@ -5,6 +5,7 @@ import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.constants.ScheduleConstant;
 import org.capstone.job_fair.controllers.payload.requests.job_fair.ChangeInterviewScheduleRequest;
+import org.capstone.job_fair.controllers.payload.responses.EmployeeWaitingRoomScheduleResponse;
 import org.capstone.job_fair.models.dtos.dynamoDB.NotificationMessageDTO;
 import org.capstone.job_fair.models.dtos.job_fair.InterviewRequestChangeDTO;
 import org.capstone.job_fair.models.dtos.job_fair.InterviewScheduleDTO;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 public class InterviewController {
@@ -134,7 +136,13 @@ public class InterviewController {
             response.put("turn", turn);
             return ResponseEntity.ok(response);
         } else {
-            List<InterviewScheduleDTO> result = interviewService.getInterviewScheduleInWaitingRoom(userDetails.getId(), waitingRoomId);
+            List<InterviewScheduleDTO> scheduleDTOS = interviewService.getInterviewScheduleInWaitingRoom(userDetails.getId(), waitingRoomId);
+            List<String> connectedUserId = interviewService.getConnectedUserIds(waitingRoomId);
+            List<EmployeeWaitingRoomScheduleResponse> result = scheduleDTOS.stream().map(dto -> {
+                EmployeeWaitingRoomScheduleResponse response = new EmployeeWaitingRoomScheduleResponse(dto);
+                response.setInWaitingRoom(connectedUserId.contains(dto.getAttendantId()));
+                return response;
+            }).collect(Collectors.toList());
             return ResponseEntity.ok(result);
         }
     }
