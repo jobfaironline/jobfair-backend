@@ -338,9 +338,6 @@ public class InterviewServiceImpl implements InterviewService {
         ) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Interview.REVIEWER_NOT_FOUND));
         }
-        if (application.getInterviewStatus() == null || application.getInterviewStatus() != InterviewStatus.INTERVIEWING) {
-            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Interview.INVALID_STATUS));
-        }
         return application;
     }
 
@@ -348,6 +345,9 @@ public class InterviewServiceImpl implements InterviewService {
     @Transactional
     public void finishInterview(String attendantId, String interviewRoomId, String reviewerId) {
         ApplicationEntity application = getValidApplicationEntity(attendantId, interviewRoomId, reviewerId);
+        if (application.getInterviewStatus() == null || application.getInterviewStatus() != InterviewStatus.INTERVIEWING) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Interview.INVALID_STATUS));
+        }
         application.setInterviewStatus(InterviewStatus.DONE);
         applicationRepository.save(application);
     }
@@ -356,6 +356,9 @@ public class InterviewServiceImpl implements InterviewService {
     @Transactional
     public void startInterview(String attendantId, String interviewRoomId, String reviewerId) {
         ApplicationEntity application = getValidApplicationEntity(attendantId, interviewRoomId, reviewerId);
+        if (application.getInterviewStatus() == null || application.getInterviewStatus() != InterviewStatus.NOT_YET) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Interview.INVALID_STATUS));
+        }
         application.setInterviewStatus(InterviewStatus.INTERVIEWING);
         applicationRepository.save(application);
     }
