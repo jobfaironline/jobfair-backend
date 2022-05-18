@@ -5,6 +5,7 @@ import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.constants.ScheduleConstant;
 import org.capstone.job_fair.controllers.payload.requests.job_fair.ChangeInterviewScheduleRequest;
+import org.capstone.job_fair.controllers.payload.responses.EmployeeWaitingRoomScheduleResponse;
 import org.capstone.job_fair.models.dtos.dynamoDB.NotificationMessageDTO;
 import org.capstone.job_fair.models.dtos.job_fair.InterviewRequestChangeDTO;
 import org.capstone.job_fair.models.dtos.job_fair.InterviewScheduleDTO;
@@ -21,10 +22,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 public class InterviewController {
@@ -137,7 +136,13 @@ public class InterviewController {
             response.put("turn", turn);
             return ResponseEntity.ok(response);
         } else {
-            List<InterviewScheduleDTO> result = interviewService.getInterviewScheduleInWaitingRoom(userDetails.getId(), waitingRoomId);
+            List<InterviewScheduleDTO> scheduleDTOS = interviewService.getInterviewScheduleInWaitingRoom(userDetails.getId(), waitingRoomId);
+            List<String> connectedUserId = interviewService.getConnectedUserIds(waitingRoomId);
+            List<EmployeeWaitingRoomScheduleResponse> result = scheduleDTOS.stream().map(dto -> {
+                EmployeeWaitingRoomScheduleResponse response = new EmployeeWaitingRoomScheduleResponse(dto);
+                response.setInWaitingRoom(connectedUserId.contains(dto.getAttendantId()));
+                return response;
+            }).collect(Collectors.toList());
             return ResponseEntity.ok(result);
         }
     }
@@ -145,7 +150,7 @@ public class InterviewController {
     @PostMapping(ApiEndPoint.Interview.FINISH_INTERVIEW)
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE)")
     public ResponseEntity<?> finishInterview(@RequestParam("attendantId") String attendantId,
-                                             @RequestParam("interviewRoomId") String interviewRoomId){
+                                             @RequestParam("interviewRoomId") String interviewRoomId) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         interviewService.finishInterview(attendantId, interviewRoomId, userDetails.getId());
         return ResponseEntity.ok().build();
@@ -154,10 +159,20 @@ public class InterviewController {
     @PostMapping(ApiEndPoint.Interview.START_INTERVIEW)
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE)")
     public ResponseEntity<?> startInterview(@RequestParam("attendantId") String attendantId,
-                                             @RequestParam("interviewRoomId") String interviewRoomId){
+                                            @RequestParam("interviewRoomId") String interviewRoomId) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         interviewService.startInterview(attendantId, interviewRoomId, userDetails.getId());
         return ResponseEntity.ok().build();
+    }
+
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE)")
+    @GetMapping(ApiEndPoint.Interview.INTERVIEW_ROOM + "/{id}")
+    public ResponseEntity<?> getScheduleByInterviewRoomId(@PathVariable("id") String id) {
+        Optional<InterviewScheduleDTO> scheduleOpt = interviewService.getScheduleByInterviewRoomId(id);
+        if (!scheduleOpt.isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(scheduleOpt.get());
     }
 
 
