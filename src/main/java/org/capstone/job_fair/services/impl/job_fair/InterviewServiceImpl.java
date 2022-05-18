@@ -211,7 +211,7 @@ public class InterviewServiceImpl implements InterviewService {
 
     @Override
     public void visitWaitingRoom(String channelId, String userId, boolean isAttendant) {
-        Optional<ApplicationEntity> applicationOpt = applicationRepository.findByWaitingRoomId(channelId);
+        Optional<ApplicationEntity> applicationOpt = applicationRepository.findByWaitingRoomIdAndAccountId(channelId, userId);
         if (!applicationOpt.isPresent()) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.APPLICATION_NOT_FOUND));
         }
@@ -230,7 +230,7 @@ public class InterviewServiceImpl implements InterviewService {
 
     @Override
     public void leaveWaitingRoom(String channelId, String userId, boolean isAttendant) {
-        Optional<ApplicationEntity> applicationOpt = applicationRepository.findByWaitingRoomId(channelId);
+        Optional<ApplicationEntity> applicationOpt = applicationRepository.findByWaitingRoomIdAndAccountId(channelId, userId);
         if (!applicationOpt.isPresent()) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.APPLICATION_NOT_FOUND));
         }
