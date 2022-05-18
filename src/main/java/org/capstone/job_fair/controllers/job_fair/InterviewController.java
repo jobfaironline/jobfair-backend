@@ -168,8 +168,15 @@ public class InterviewController {
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE)")
     @GetMapping(ApiEndPoint.Interview.INTERVIEW_ROOM + "/{id}")
     public ResponseEntity<?> getScheduleByInterviewRoomId(@PathVariable("id") String id) {
-        Optional<InterviewScheduleDTO> scheduleOpt = interviewService.getScheduleByInterviewRoomId(id);
-        if (!scheduleOpt.isPresent()) {
+        List<InterviewScheduleDTO> result = interviewService.getScheduleByInterviewRoomId(id);
+        return ResponseEntity.ok(result);
+    }
+
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).ATTENDANT)")
+    @GetMapping(ApiEndPoint.Interview.SCHEDULE + "/{id}")
+    public ResponseEntity<?> getScheduleById(@PathVariable("id") String id) {
+        Optional<InterviewScheduleDTO> scheduleOpt = interviewService.getScheduleById(id);
+        if (!scheduleOpt.isPresent()){
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(scheduleOpt.get());

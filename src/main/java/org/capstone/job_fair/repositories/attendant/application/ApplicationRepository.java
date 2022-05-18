@@ -105,6 +105,8 @@ public interface ApplicationRepository extends JpaRepository<ApplicationEntity, 
 
     Optional<ApplicationEntity> findByWaitingRoomId(String waitingRoomId);
 
-    Optional<ApplicationEntity> findByInterviewRoomId(String interviewRoomId);
+    List<ApplicationEntity> findByInterviewRoomId(String interviewRoomId);
+
+    Optional<ApplicationEntity> findByInterviewRoomIdAndAttendantAccountId(String interviewRoomId, String attendantId);
 
 }

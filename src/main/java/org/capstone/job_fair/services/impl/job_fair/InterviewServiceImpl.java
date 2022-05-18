@@ -40,6 +40,7 @@ import java.util.stream.Collectors;
 @Service
 @Transactional(readOnly = true)
 public class InterviewServiceImpl implements InterviewService {
+
     @Autowired
     private InterviewScheduleMapper interviewScheduleMapper;
 
@@ -311,7 +312,7 @@ public class InterviewServiceImpl implements InterviewService {
 
 
     private ApplicationEntity getValidApplicationEntity(String attendantId, String interviewRoomId, String reviewerId) {
-        Optional<ApplicationEntity> applicationOpt = applicationRepository.findByInterviewRoomId(interviewRoomId);
+        Optional<ApplicationEntity> applicationOpt = applicationRepository.findByInterviewRoomIdAndAttendantAccountId(interviewRoomId, attendantId);
         if (!applicationOpt.isPresent()) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.APPLICATION_NOT_FOUND));
         }
@@ -319,9 +320,6 @@ public class InterviewServiceImpl implements InterviewService {
         if (!application.getInterviewer().getAccountId().equals(reviewerId)
         ) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Interview.REVIEWER_NOT_FOUND));
-        }
-        if (!application.getAttendant().getAccountId().equals(attendantId)) {
-            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Interview.ATTENDANT_NOT_FOUND));
         }
         if (application.getInterviewStatus() == null || application.getInterviewStatus() != InterviewStatus.INTERVIEWING) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Interview.INVALID_STATUS));
@@ -402,10 +400,15 @@ public class InterviewServiceImpl implements InterviewService {
         return interviewScheduleMapper.toDTO(application);
     }
 
+    @Override
+    public Optional<InterviewScheduleDTO> getScheduleById(String id) {
+        return applicationRepository.findById(id).map(interviewScheduleMapper::toDTO);
+    }
+
 
     @Override
-    public Optional<InterviewScheduleDTO> getScheduleByInterviewRoomId(String interviewRoomId) {
-        return applicationRepository.findByInterviewRoomId(interviewRoomId).map(interviewScheduleMapper::toDTO);
+    public List<InterviewScheduleDTO> getScheduleByInterviewRoomId(String interviewRoomId) {
+        return applicationRepository.findByInterviewRoomId(interviewRoomId).stream().map(interviewScheduleMapper::toDTO).collect(Collectors.toList());
     }
 
 }
