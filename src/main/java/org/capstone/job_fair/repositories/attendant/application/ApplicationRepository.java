@@ -109,4 +109,7 @@ public interface ApplicationRepository extends JpaRepository<ApplicationEntity, 
 
     Optional<ApplicationEntity> findByInterviewRoomIdAndAttendantAccountId(String interviewRoomId, String attendantId);
 
+    @Query("select a from ApplicationEntity a where a.waitingRoomId = ?1 and a.attendant.accountId = ?2 or a.interviewer.accountId = ?2")
+    Optional<ApplicationEntity> findByWaitingRoomIdAndAccountId(String waitingRoomId, String attendantId);
+
 }
