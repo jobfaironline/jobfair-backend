@@ -8,6 +8,7 @@ import com.amazonaws.util.json.Jackson;
 import lombok.SneakyThrows;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.constants.ScheduleConstant;
+import org.capstone.job_fair.models.dtos.attendant.application.ApplicationDTO;
 import org.capstone.job_fair.models.dtos.dynamoDB.NotificationMessageDTO;
 import org.capstone.job_fair.models.dtos.job_fair.InterviewRequestChangeDTO;
 import org.capstone.job_fair.models.dtos.job_fair.InterviewScheduleDTO;
@@ -23,6 +24,7 @@ import org.capstone.job_fair.repositories.attendant.application.ApplicationRepos
 import org.capstone.job_fair.repositories.job_fair.InterviewRequestChangeRepository;
 import org.capstone.job_fair.services.interfaces.job_fair.InterviewService;
 import org.capstone.job_fair.services.interfaces.notification.NotificationService;
+import org.capstone.job_fair.services.mappers.attendant.application.ApplicationMapper;
 import org.capstone.job_fair.services.mappers.job_fair.InterviewRequestChangeMapper;
 import org.capstone.job_fair.services.mappers.job_fair.InterviewScheduleMapper;
 import org.capstone.job_fair.utils.MessageUtil;
@@ -58,6 +60,9 @@ public class InterviewServiceImpl implements InterviewService {
 
     @Autowired
     private NotificationService notificationService;
+
+    @Autowired
+    private ApplicationMapper applicationMapper;
 
     @Override
     public List<InterviewScheduleDTO> getInterviewScheduleForCompanyEmployee(String employeeId, Long beginTime, Long endTime) {
@@ -283,7 +288,7 @@ public class InterviewServiceImpl implements InterviewService {
     @SneakyThrows
     public void askAttendantJoinInterviewRoom(String attendantId, String interviewRoomId) {
         List<ApplicationEntity> applicationList = applicationRepository.findByInterviewRoomId(interviewRoomId);
-        if (applicationList.size() == 0){
+        if (applicationList.size() == 0) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Interview.INTERVIEW_ROOM_NOT_FOUND));
         }
         ApplicationEntity firstApplication = applicationList.get(0);
@@ -466,6 +471,26 @@ public class InterviewServiceImpl implements InterviewService {
 
         applicationRepository.save(fromApplication);
         applicationRepository.save(toApplication);
+    }
+
+    @Override
+    @Transactional
+    public ApplicationDTO createInterviewReport(String applicationId, String advantage, String disadvantage, String note) {
+        Optional<ApplicationEntity> applicationOpt = applicationRepository.findById(applicationId);
+        if (!applicationOpt.isPresent()) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.APPLICATION_NOT_FOUND));
+        }
+        ApplicationEntity application = applicationOpt.get();
+        InterviewStatus interviewStatus = application.getInterviewStatus();
+        if (interviewStatus == null || interviewStatus == InterviewStatus.NOT_YET) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Interview.INVALID_STATUS));
+        }
+        application.setAttendantAdvantage(advantage);
+        application.setAttendantDisadvantage(disadvantage);
+        application.setInterviewNote(note);
+        applicationRepository.save(application);
+        return applicationMapper.toDTO(application);
+
     }
 
 

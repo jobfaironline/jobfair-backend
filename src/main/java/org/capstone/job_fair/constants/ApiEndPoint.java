@@ -311,7 +311,9 @@ public final class ApiEndPoint {
     }
 
     public static final class JobFairVisit {
-        private JobFairVisit(){}
+        private JobFairVisit() {
+        }
+
         public static final String JOB_FAIR_VISIT = ROOT_ENDPOINT + VERSION + "/visit";
         public static final String ENTER_JOB_FAIR = JOB_FAIR_VISIT + "/enter/job-fair";
         public static final String LEAVE_JOB_FAIR = JOB_FAIR_VISIT + "/leave/job-fair";
@@ -320,14 +322,16 @@ public final class ApiEndPoint {
 
     }
 
-    public static final class Interview{
-        private Interview(){}
+    public static final class Interview {
+        private Interview() {
+        }
+
         public static final String INTERVIEW = ROOT_ENDPOINT + VERSION + "/interview";
         public static final String SCHEDULE = INTERVIEW + "/schedule";
         public static final String REQUEST_CHANGE = SCHEDULE + "/change";
         public static final String LATEST_REQUEST_CHANGE = REQUEST_CHANGE + "/latest";
         public static final String EVALUATE_REQUEST_CHANGE = REQUEST_CHANGE + "/evaluate";
-        public static final String WAITING_ROOM = INTERVIEW +  "/waiting-room";
+        public static final String WAITING_ROOM = INTERVIEW + "/waiting-room";
         public static final String VISIT_WAITING_ROOM = WAITING_ROOM + "/enter";
         public static final String LEAVE_WAITING_ROOM = WAITING_ROOM + "/leave";
         public static final String ASK_TO_JOIN_INTERVIEW_ROOM = INTERVIEW + "/ask-attendant";
@@ -337,5 +341,6 @@ public final class ApiEndPoint {
         public static final String INTERVIEW_ROOM = SCHEDULE + "/interview-room";
         public static final String SWAP_INTERVIEW = INTERVIEW + "/swap";
         public static final String KICK_USER = INTERVIEW + "/kick";
+        public static final String REPORT = INTERVIEW + "/report";
     }
 }
