@@ -47,6 +47,8 @@ public class ApplicationDTO {
     private Long endTime;
     private InterviewStatus interviewStatus;
     private String interviewUrl;
+    private String waitingRoomId;
+    private String interviewRoomId;
     private CompanyEmployeeDTO interviewer;
 
 

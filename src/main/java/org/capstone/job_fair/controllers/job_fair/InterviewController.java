@@ -1,5 +1,7 @@
 package org.capstone.job_fair.controllers.job_fair;
 
+import com.amazonaws.util.json.Jackson;
+import lombok.SneakyThrows;
 import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
@@ -192,9 +194,30 @@ public class InterviewController {
     }
 
     @PostMapping(ApiEndPoint.Interview.SWAP_INTERVIEW)
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE)")
     public ResponseEntity<?> swapInterviewSlot(@RequestParam("fromApplicationId") String fromApplicationId,
                                                @RequestParam("toApplicationId") String toApplicationId) {
         interviewService.swapSchedule(fromApplicationId, toApplicationId);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping(ApiEndPoint.Interview.KICK_USER)
+    @SneakyThrows
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE)")
+    public ResponseEntity<?> kickUser(@RequestParam("userId") String userId, @RequestParam("channelId") String channelId) {
+
+        Map<String, String> payload = new HashMap<>();
+        payload.put("userId", userId);
+        payload.put("channelId", channelId);
+
+
+        NotificationMessageDTO message = NotificationMessageDTO.builder()
+                .message(Jackson.getObjectMapper().writeValueAsString(payload))
+                .title("Kick user")
+                .notificationType(NotificationType.KICK_USER)
+                .build();
+
+        notificationService.createNotification(message, userId);
         return ResponseEntity.ok().build();
     }
 
