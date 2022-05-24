@@ -13,6 +13,7 @@ import org.capstone.job_fair.models.dtos.attendant.application.ApplicationDTO;
 import org.capstone.job_fair.models.dtos.job_fair.booth.BoothJobPositionDTO;
 import org.capstone.job_fair.models.entities.attendant.application.ApplicationEntity;
 import org.capstone.job_fair.models.enums.ApplicationStatus;
+import org.capstone.job_fair.models.enums.Role;
 import org.capstone.job_fair.services.interfaces.attendant.application.ApplicationService;
 import org.capstone.job_fair.services.interfaces.job_fair.InterviewService;
 import org.capstone.job_fair.services.mappers.attendant.application.ApplicationMapper;
@@ -48,8 +49,12 @@ public class ApplicationController {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         UserDetailsImpl user = (UserDetailsImpl) securityContext.getAuthentication().getPrincipal();
         String accountId = user.getId();
-
-        Optional<ApplicationDTO> applicationOpt = applicationService.getApplicationById(id, accountId);
+        Optional<ApplicationDTO> applicationOpt = Optional.empty();
+        if (user.hasRole(Role.ATTENDANT)){
+            applicationOpt = applicationService.getApplicationByIdForAttendant(id, accountId);
+        } else if (user.hasRole(Role.COMPANY_EMPLOYEE)){
+            applicationOpt = applicationService.getApplicationByIdForCompanyEmployee(id, accountId);
+        }
         if (!applicationOpt.isPresent()) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.APPLICATION_NOT_FOUND));
         }

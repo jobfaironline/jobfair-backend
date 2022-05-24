@@ -26,7 +26,7 @@ public class NotificationMessageEntity {
     @DynamoDBAttribute(attributeName = "isRead")
     private boolean isRead;
     @DynamoDBRangeKey(attributeName = "createDate")
-    private String createDate;
+    private Long createDate;
     @DynamoDBAttribute(attributeName = "userId")
     private String userId;
 

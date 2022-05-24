@@ -170,8 +170,14 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public Optional<ApplicationDTO> getApplicationById(String applicationId, String userId) {
+    public Optional<ApplicationDTO> getApplicationByIdForAttendant(String applicationId, String userId) {
         return applicationRepository.findByIdAndAttendantAccountId(applicationId, userId).map(applicationMapper::toDTO);
+    }
+
+    @Override
+    public Optional<ApplicationDTO> getApplicationByIdForCompanyEmployee(String applicationId, String userId) {
+        //TODO: check for company employee valid time
+        return applicationRepository.findById(applicationId).map(applicationMapper::toDTO);
     }
 
     @Override

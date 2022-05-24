@@ -19,6 +19,6 @@ public class NotificationMessageDTO implements Serializable {
     private String title;
     private String message;
     private boolean isRead;
-    private String createDate;
+    private Long createDate;
     private String userId;
 }
