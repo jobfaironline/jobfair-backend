@@ -26,6 +26,8 @@ public interface ApplicationService {
 
     void submitApplication(String applicationId, String userId);
 
-    Optional<ApplicationDTO> getApplicationById(String applicationId, String userId);
+    Optional<ApplicationDTO> getApplicationByIdForAttendant(String applicationId, String userId);
+
+    Optional<ApplicationDTO> getApplicationByIdForCompanyEmployee(String applicationId, String userId);
 
 }

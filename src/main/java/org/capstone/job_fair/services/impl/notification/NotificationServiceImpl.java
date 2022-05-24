@@ -53,7 +53,7 @@ public class NotificationServiceImpl implements NotificationService {
         message.setNotificationId(UUID.randomUUID().toString());
         message.setRead(false);
         Long now = new Date().getTime();
-        message.setCreateDate(now.toString());
+        message.setCreateDate(now);
 
         List<NotificationMessageEntity> notificationMessageEntityList = accountIdList.stream().map(s -> {
             NotificationMessageEntity entity = notificationMessageMapper.toEntity(message);
@@ -74,7 +74,7 @@ public class NotificationServiceImpl implements NotificationService {
         message.setNotificationId(UUID.randomUUID().toString());
         message.setRead(false);
         Long now = new Date().getTime();
-        message.setCreateDate(now.toString());
+        message.setCreateDate(now);
 
         NotificationMessageEntity entity = notificationMessageMapper.toEntity(message);
         entity.setId(UUID.randomUUID().toString());
@@ -93,7 +93,7 @@ public class NotificationServiceImpl implements NotificationService {
         message.setNotificationId(UUID.randomUUID().toString());
         message.setRead(false);
         Long now = new Date().getTime();
-        message.setCreateDate(now.toString());
+        message.setCreateDate(now);
 
         List<NotificationMessageEntity> notificationMessageEntityList = receiverIdList.stream().map(s -> {
             NotificationMessageEntity entity = notificationMessageMapper.toEntity(message);
