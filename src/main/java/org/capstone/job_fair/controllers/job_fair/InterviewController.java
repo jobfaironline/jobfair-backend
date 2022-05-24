@@ -7,7 +7,9 @@ import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.constants.ScheduleConstant;
 import org.capstone.job_fair.controllers.payload.requests.job_fair.ChangeInterviewScheduleRequest;
+import org.capstone.job_fair.controllers.payload.requests.job_fair.CreateInterviewReportRequest;
 import org.capstone.job_fair.controllers.payload.responses.EmployeeWaitingRoomScheduleResponse;
+import org.capstone.job_fair.models.dtos.attendant.application.ApplicationDTO;
 import org.capstone.job_fair.models.dtos.dynamoDB.NotificationMessageDTO;
 import org.capstone.job_fair.models.dtos.job_fair.InterviewRequestChangeDTO;
 import org.capstone.job_fair.models.dtos.job_fair.InterviewScheduleDTO;
@@ -219,6 +221,13 @@ public class InterviewController {
 
         notificationService.createNotification(message, userId);
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping(ApiEndPoint.Interview.REPORT)
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE)")
+    public ResponseEntity<?> createReport(@RequestBody CreateInterviewReportRequest request) {
+        ApplicationDTO application = interviewService.createInterviewReport(request.getApplicationId(), request.getAdvantage(), request.getDisadvantage(), request.getNote());
+        return ResponseEntity.ok(application);
     }
 
 

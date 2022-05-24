@@ -50,6 +50,7 @@ public class ApplicationDTO {
     private String waitingRoomId;
     private String interviewRoomId;
     private CompanyEmployeeDTO interviewer;
-
-
+    private String attendantAdvantage;
+    private String attendantDisadvantage;
+    private String interviewNote;
 }

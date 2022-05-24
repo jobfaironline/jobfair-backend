@@ -1,5 +1,6 @@
 package org.capstone.job_fair.services.interfaces.job_fair;
 
+import org.capstone.job_fair.models.dtos.attendant.application.ApplicationDTO;
 import org.capstone.job_fair.models.dtos.job_fair.InterviewRequestChangeDTO;
 import org.capstone.job_fair.models.dtos.job_fair.InterviewScheduleDTO;
 import org.capstone.job_fair.models.entities.attendant.application.ApplicationEntity;
@@ -46,5 +47,7 @@ public interface InterviewService {
     Optional<InterviewScheduleDTO> getCurrentScheduleByEmployeeIdAndInterviewRoomId(String employeeId, String interviewRoomId);
 
     void swapSchedule(String fromApplicationId, String toApplicationId);
+
+    ApplicationDTO createInterviewReport(String applicationId, String advantage, String disadvantage, String note);
 
 }

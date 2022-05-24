@@ -131,6 +131,15 @@ public class ApplicationEntity {
     @Column(name = "interview_room_id")
     private String interviewRoomId;
 
+    @Column(name = "attendant_advantage")
+    private String attendantAdvantage;
+
+    @Column(name = "attendant_disadvantage")
+    private String attendantDisadvantage;
+
+    @Column(name = "interview_note")
+    private String interviewNote;
+
 
     @Override
     public boolean equals(Object o) {
