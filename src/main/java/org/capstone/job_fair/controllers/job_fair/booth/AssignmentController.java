@@ -39,7 +39,6 @@ public class AssignmentController {
 
 
     @PostMapping(ApiEndPoint.Assignment.ASSIGN)
-    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
     public ResponseEntity<?> assignEmployee(@Valid @RequestBody AssignEmployeeRequest request) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         AssignmentDTO dto = assignmentService.assignEmployee(request.getEmployeeId(), request.getJobFairBoothId(), request.getType(), userDetails.getCompanyId(), request.getBeginTime(), request.getEndTime());
@@ -47,7 +46,6 @@ public class AssignmentController {
     }
 
     @DeleteMapping(ApiEndPoint.Assignment.UNASSIGN)
-    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
     public ResponseEntity<?> unassignEmployee(@Valid @RequestBody UnAssignEmployRequest request) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         AssignmentDTO dto = assignmentService.unAssignEmployee(request.getEmployeeId(), request.getJobFairBoothId(), userDetails.getCompanyId());
@@ -66,7 +64,6 @@ public class AssignmentController {
     }
 
     @GetMapping(ApiEndPoint.Assignment.JOB_FAIR_BOOTH + "/{id}")
-    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
     public ResponseEntity<?> getAssignmentByJobFairBooth(@PathVariable("id") String id) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         List<AssignmentDTO> result = assignmentService.getAssigmentByJobFairBoothId(id, userDetails.getCompanyId());
@@ -118,7 +115,6 @@ public class AssignmentController {
     }
 
     @GetMapping(ApiEndPoint.Assignment.ASSIGNMENT + "/{id}")
-    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) OR hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE)")
     public ResponseEntity<?> getAssignmentById(@PathVariable("id") String id) {
         Optional<AssignmentDTO> assignmentOpt = assignmentService.getAssignmentById(id);
         if (!assignmentOpt.isPresent()) {
