@@ -77,8 +77,7 @@ public class CompanyController {
     public ResponseEntity<?> create(@Validated @RequestBody CreateCompanyRequest request) {
         try {
             CompanyDTO dto = companyMapper.toDTO(request);
-            companyService.createCompany(dto);
-            return GenericResponse.build(MessageUtil.getMessage(MessageConstant.Company.CREATE_SUCCESSFULLY), HttpStatus.CREATED);
+            return new ResponseEntity<>(companyService.createCompany(dto), HttpStatus.CREATED);
         } catch (IllegalArgumentException ex) {
             return GenericResponse.build(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }

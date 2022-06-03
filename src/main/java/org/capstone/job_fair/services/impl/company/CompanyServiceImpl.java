@@ -112,7 +112,7 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     @Transactional
-    public void createCompany(CompanyDTO dto) {
+    public CompanyDTO createCompany(CompanyDTO dto) {
         if (isEmailExisted(dto.getEmail())) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Company.EMAIL_EXISTED));
         }
@@ -135,6 +135,8 @@ public class CompanyServiceImpl implements CompanyService {
         }
 
         companyRepository.save(entity);
+
+        return companyMapper.toDTO(entity);
     }
 
     @Override

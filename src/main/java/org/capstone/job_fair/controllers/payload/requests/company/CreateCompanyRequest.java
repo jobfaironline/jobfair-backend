@@ -39,7 +39,7 @@ public class CreateCompanyRequest {
     @NotNull
     @EmailConstraint
     @XSSConstraint
-    private String email;
+    private String companyEmail;
 
     @XSSConstraint
     private String url;
@@ -48,6 +48,7 @@ public class CreateCompanyRequest {
     @Size(min = DataConstraint.Company.DESCRIPTION_MIN_LENGTH, max = DataConstraint.Company.DESCRIPTION_MAX_LENGTH)
     private String companyDescription;
 
+    @NotNull
     private Integer sizeId;
 
     @Valid
