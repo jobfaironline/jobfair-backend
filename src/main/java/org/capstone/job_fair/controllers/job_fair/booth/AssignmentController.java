@@ -4,14 +4,12 @@ import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.AssignmentConstant;
 import org.capstone.job_fair.controllers.payload.requests.job_fair.AssignEmployeeRequest;
-import org.capstone.job_fair.controllers.payload.requests.job_fair.UnAssignEmployRequest;
 import org.capstone.job_fair.controllers.payload.responses.JobFairAssignmentStatisticsResponse;
 import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
 import org.capstone.job_fair.models.dtos.job_fair.booth.AssignmentDTO;
 import org.capstone.job_fair.services.interfaces.company.CompanyEmployeeService;
-import org.capstone.job_fair.services.interfaces.job_fair.booth.JobFairBoothService;
-import org.capstone.job_fair.services.interfaces.notification.NotificationService;
 import org.capstone.job_fair.services.interfaces.job_fair.booth.AssignmentService;
+import org.capstone.job_fair.services.interfaces.job_fair.booth.JobFairBoothService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,6 +20,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,7 +36,6 @@ public class AssignmentController {
     private JobFairBoothService jobFairBoothService;
 
 
-
     @PostMapping(ApiEndPoint.Assignment.ASSIGN)
     public ResponseEntity<?> assignEmployee(@Valid @RequestBody AssignEmployeeRequest request) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -45,10 +43,18 @@ public class AssignmentController {
         return ResponseEntity.ok(dto);
     }
 
-    @DeleteMapping(ApiEndPoint.Assignment.UNASSIGN)
-    public ResponseEntity<?> unassignEmployee(@Valid @RequestBody UnAssignEmployRequest request) {
+    @DeleteMapping(ApiEndPoint.Assignment.UNASSIGN + "/{id}")
+    public ResponseEntity<?> unassignEmployee(@PathVariable("id") String assignmentId) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        AssignmentDTO dto = assignmentService.unAssignEmployee(request.getEmployeeId(), request.getJobFairBoothId(), userDetails.getCompanyId());
+        AssignmentDTO dto = assignmentService.unAssignEmployee(assignmentId);
+        return ResponseEntity.ok(dto);
+    }
+
+    @PutMapping(ApiEndPoint.Assignment.ASSIGNMENT + "/{id}")
+    public ResponseEntity<?> updateAssignment(@PathVariable("id") String assignmentId,
+                                              @NotNull @RequestParam("beginTime") Long beginTime,
+                                              @NotNull @RequestParam("endTime") Long endTime) {
+        AssignmentDTO dto = assignmentService.updateAssignment(assignmentId, beginTime, endTime);
         return ResponseEntity.ok(dto);
     }
 

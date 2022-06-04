@@ -91,29 +91,43 @@ public class AssignmentServiceImpl implements AssignmentService {
     @Override
     @Transactional
     public AssignmentDTO assignEmployee(String employeeId, String jobFairBoothId, AssignmentType type, String companyId, Long beginTime, Long endTime) {
-        //Optional<AssignmentEntity> entityOpt = assignmentRepository.findByCompanyEmployeeAccountIdAndJobFairBoothId(employeeId, jobFairBoothId);
-        /*if (entityOpt.isPresent()) {
+        Optional<AssignmentEntity> entityOpt = assignmentRepository.findByCompanyEmployeeAccountIdAndJobFairBoothId(employeeId, jobFairBoothId);
+        if (entityOpt.isPresent() && type != AssignmentType.INTERVIEWER && type != AssignmentType.RECEPTION) {
             AssignmentEntity entity = entityOpt.get();
             entity.setType(type);
             entity.setBeginTime(beginTime);
             entity.setEndTime(endTime);
             return updateAssigment(entity, companyId);
-        }*/
+        }
         return createAssignment(employeeId, jobFairBoothId, type, companyId, beginTime, endTime);
     }
 
     @Override
     @Transactional
-    public AssignmentDTO unAssignEmployee(String employeeId, String jobFairBoothId, String companyId) {
-        Optional<AssignmentEntity> entityOpt = assignmentRepository.findByCompanyEmployeeAccountIdAndJobFairBoothId(employeeId, jobFairBoothId);
+    public AssignmentDTO unAssignEmployee(String assignmentId) {
+        Optional<AssignmentEntity> entityOpt = assignmentRepository.findById(assignmentId);
         if (!entityOpt.isPresent()) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Assignment.NOT_FOUND));
         }
         AssignmentEntity entity = entityOpt.get();
-        if (!entity.getCompanyEmployee().getCompany().getId().equals(companyId)) {
+        /*if (!entity.getCompanyEmployee().getCompany().getId().equals(companyId)) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Assignment.NOT_FOUND));
+        }*/
+        assignmentRepository.delete(entity);
+        return assignmentMapper.toDTO(entity);
+    }
+
+    @Override
+    @Transactional
+    public AssignmentDTO updateAssignment(String assignmentId, long beginTime, long endTime) {
+        Optional<AssignmentEntity> entityOpt = assignmentRepository.findById(assignmentId);
+        if (!entityOpt.isPresent()) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Assignment.NOT_FOUND));
         }
-        assignmentRepository.delete(entity);
+        AssignmentEntity entity = entityOpt.get();
+        entity.setBeginTime(beginTime);
+        entity.setEndTime(endTime);
+        entity = assignmentRepository.save(entity);
         return assignmentMapper.toDTO(entity);
     }
 
