@@ -74,13 +74,11 @@ public class CompanyController {
     }
 
     @PostMapping(ApiEndPoint.Company.COMPANY_ENDPOINT)
-    public ResponseEntity<?> create(@Validated @RequestBody CreateCompanyRequest request) {
-        try {
-            CompanyDTO dto = companyMapper.toDTO(request);
-            return new ResponseEntity<>(companyService.createCompany(dto), HttpStatus.CREATED);
-        } catch (IllegalArgumentException ex) {
-            return GenericResponse.build(ex.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<?> create(@Valid @RequestBody CreateCompanyRequest request) {
+        CompanyDTO dto = companyMapper.toDTO(request);
+        dto = companyService.createCompany(dto);
+        System.out.println(dto);
+        return ResponseEntity.ok(dto);
     }
 
     @PostMapping(ApiEndPoint.Company.COMPANY_LOGO_ENPOINT)

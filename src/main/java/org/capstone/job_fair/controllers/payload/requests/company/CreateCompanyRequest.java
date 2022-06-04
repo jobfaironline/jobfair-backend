@@ -27,16 +27,13 @@ public class CreateCompanyRequest {
     @Size(max = DataConstraint.Company.NAME_MAX_LENGTH)
     private String name;
 
-    @NotNull
     @Size(max = DataConstraint.Company.ADDRESS_MAX_LENGTH)
     @XSSConstraint
     private String address;
 
-    @NotNull
     @PhoneConstraint
     private String phone;
 
-    @NotNull
     @EmailConstraint
     @XSSConstraint
     private String companyEmail;

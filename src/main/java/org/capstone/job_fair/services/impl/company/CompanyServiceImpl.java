@@ -134,9 +134,9 @@ public class CompanyServiceImpl implements CompanyService {
             entity.getCompanyBenefits().forEach(companyBenefitEntity -> companyBenefitEntity.setCompany(entity));
         }
 
-        companyRepository.save(entity);
+        CompanyEntity result = companyRepository.save(entity);
 
-        return companyMapper.toDTO(entity);
+        return companyMapper.toDTO(result);
     }
 
     @Override
