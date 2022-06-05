@@ -67,6 +67,17 @@ public class DecoratorBoothLayoutController {
         return ResponseEntity.created(URI.create(dto.getUrl())).body(dto);
     }
 
+
+    @DeleteMapping(ApiEndPoint.DecoratorBoothLayout.DECORATOR_BOOTH_LAYOUT + "/{id}")
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE)")
+    public ResponseEntity<?> deleteLayout(@PathVariable("id") String id) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        DecoratorBoothLayoutDTO dto = decoratorBoothLayoutService.delete(userDetails.getId(), id);
+        return ResponseEntity.ok(dto);
+
+    }
+
+
     @PostMapping(ApiEndPoint.DecoratorBoothLayout.VIDEO_LAYOUT_WITH_FILE)
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE)")
     public ResponseEntity<?> createNewVideoForLayoutWithFile(

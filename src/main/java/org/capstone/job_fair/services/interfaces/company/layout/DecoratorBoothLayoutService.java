@@ -14,7 +14,10 @@ public interface DecoratorBoothLayoutService {
 
     DecoratorBoothLayoutDTO create(String companyEmployeeId, String name, MultipartFile file);
 
+    DecoratorBoothLayoutDTO delete(String companyeEmployeeId, String layoutId);
+
     DecoratorBoothLayoutVideoDTO createNewVideoWithFile(String layoutId, String itemName);
 
     DecoratorBoothLayoutVideoDTO createNewVideoWithUrl(String layoutId, String itemName, String url);
+
 }
