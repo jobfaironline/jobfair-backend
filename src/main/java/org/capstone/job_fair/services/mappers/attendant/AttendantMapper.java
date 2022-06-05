@@ -89,7 +89,7 @@ public abstract class AttendantMapper {
     @Mapping(source = "firstname", target = "account.firstname")
     @Mapping(source = "lastname", target = "account.lastname")
     @Mapping(source = "middlename", target = "account.middlename")
-    @Mapping(source = "gender", target = "account.gender")
+    @Mapping(target = "account.gender", ignore = true)
     @Mapping(target = "title", ignore = true)
     @Mapping(target = "address", ignore = true)
     @Mapping(target = "dob", ignore = true)

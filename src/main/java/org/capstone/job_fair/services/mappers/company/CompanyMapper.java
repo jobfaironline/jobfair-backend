@@ -63,6 +63,7 @@ public abstract class CompanyMapper {
     @Mapping(target = "employeeMaxNum", ignore = true)
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "companyLogoURL", ignore = true)
+    @Mapping(source = "companyEmail", target = "email", qualifiedByName = "fromCompanyEmailOfCreateCompanyRequest")
     public abstract CompanyDTO toDTO(CreateCompanyRequest request);
 
     @Mapping(source = "url", target = "websiteUrl")
@@ -192,5 +193,11 @@ public abstract class CompanyMapper {
         CompanySizeEntity companySize = new CompanySizeEntity();
         companySize.setId(sizeId);
         return companySize;
+    }
+
+    @Named("fromCompanyEmailOfCreateCompanyRequest")
+    public String fromCompanyEmailOfCreateCompanyRequest(String companyEmail) {
+        if (companyEmail == null) return null;
+        return companyEmail;
     }
 }

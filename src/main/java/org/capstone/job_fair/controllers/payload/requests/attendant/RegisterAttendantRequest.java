@@ -38,8 +38,6 @@ public class RegisterAttendantRequest {
     private String lastname;
     @Size(max = DataConstraint.Account.NAME_LENGTH)
     @XSSConstraint
-    @NotEmpty
     @NameConstraint
     private String middlename;
-    private Gender gender;
 }

@@ -5,6 +5,7 @@ import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.models.dtos.attendant.AttendantDTO;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
 import org.capstone.job_fair.models.entities.attendant.AttendantEntity;
+import org.capstone.job_fair.models.enums.Gender;
 import org.capstone.job_fair.models.enums.Role;
 import org.capstone.job_fair.models.statuses.AccountStatus;
 import org.capstone.job_fair.repositories.attendant.AttendantRepository;
@@ -107,6 +108,7 @@ public class AttendantServiceImpl implements AttendantService {
 
         dto.getAccount().setRole(Role.ATTENDANT);
         dto.getAccount().setStatus(AccountStatus.REGISTERED);
+        dto.getAccount().setGender(Gender.MALE);
         String hashPassword = encoder.encode(dto.getAccount().getPassword());
         dto.getAccount().setPassword(hashPassword);
         dto.getAccount().setProfileImageUrl(AccountConstant.DEFAULT_PROFILE_IMAGE_URL);
