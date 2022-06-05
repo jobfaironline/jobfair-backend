@@ -9,6 +9,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -17,6 +18,13 @@ import javax.validation.constraints.Size;
 @Setter
 @ToString
 public class UpdateJobFairRequest {
+    @Data
+    public static class ShiftRequest{
+        @NotNull
+        private Long beginTime;
+        @NotNull
+        private Long endTime;
+    }
 
     @NotBlank
     private String id;
@@ -58,4 +66,6 @@ public class UpdateJobFairRequest {
     @XSSConstraint
     @Size(max = DataConstraint.JobFair.HOST_NAME_MAX_LENGTH)
     private String hostName;
+
+    private List<ShiftRequest> shifts;
 }

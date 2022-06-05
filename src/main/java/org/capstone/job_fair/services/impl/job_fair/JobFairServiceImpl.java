@@ -6,6 +6,7 @@ import org.capstone.job_fair.models.dtos.job_fair.JobFairDTO;
 import org.capstone.job_fair.models.entities.job_fair.JobFairEntity;
 import org.capstone.job_fair.models.statuses.JobFairPlanStatus;
 import org.capstone.job_fair.repositories.job_fair.JobFairRepository;
+import org.capstone.job_fair.repositories.job_fair.ShiftRepository;
 import org.capstone.job_fair.services.interfaces.job_fair.JobFairService;
 import org.capstone.job_fair.services.mappers.job_fair.JobFairMapper;
 import org.capstone.job_fair.utils.AwsUtil;
@@ -37,9 +38,11 @@ public class JobFairServiceImpl implements JobFairService {
     @Autowired
     private Validator validator;
 
-
     @Autowired
     private AwsUtil awsUtil;
+
+    @Autowired
+    private ShiftRepository shiftRepository;
 
     @Override
     public Optional<JobFairDTO> getById(String id) {
@@ -79,6 +82,7 @@ public class JobFairServiceImpl implements JobFairService {
         }
         JobFairEntity entity = opt.get();
         jobFairMapper.updateFromDTO(entity, dto);
+        shiftRepository.saveAll(entity.getShifts());
         entity = jobFairRepository.save(entity);
         return jobFairMapper.toDTO(entity);
     }
