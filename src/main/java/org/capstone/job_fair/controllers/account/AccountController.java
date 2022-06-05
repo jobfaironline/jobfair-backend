@@ -7,6 +7,7 @@ import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.DataConstraint;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.controllers.payload.requests.account.ChangePasswordRequest;
+import org.capstone.job_fair.controllers.payload.responses.BasicInfoResponse;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
 import org.capstone.job_fair.models.dtos.token.AccountVerifyTokenDTO;
@@ -134,7 +135,10 @@ public class AccountController {
         if (accountOpt.isPresent()) {
             AccountEntity entity = accountOpt.get();
             AccountDTO dto = accountMapper.toDTO(entity);
-            return new ResponseEntity<>(dto, HttpStatus.OK);
+            BasicInfoResponse res = new BasicInfoResponse();
+            res.setEmail(dto.getEmail());
+            res.setProfileImageUrl(dto.getProfileImageUrl());
+            return new ResponseEntity<>(res, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
