@@ -16,6 +16,7 @@ import org.capstone.job_fair.models.dtos.account.AccountDTO;
 import org.capstone.job_fair.models.dtos.company.CompanyDTO;
 import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
 import org.capstone.job_fair.models.dtos.util.ParseFileResult;
+import org.capstone.job_fair.models.enums.Gender;
 import org.capstone.job_fair.models.enums.Role;
 import org.capstone.job_fair.services.interfaces.account.AccountService;
 import org.capstone.job_fair.services.interfaces.company.CompanyEmployeeService;
@@ -90,7 +91,8 @@ public class CompanyEmployeeController {
         accountDTO.setFirstname(request.getFirstName());
         accountDTO.setLastname(request.getLastName());
         accountDTO.setMiddlename(request.getMiddleName());
-        accountDTO.setGender(request.getGender());
+        //set default gender of company manager is MALE
+        accountDTO.setGender(Gender.MALE);
 
         CompanyEmployeeDTO dto = new CompanyEmployeeDTO();
         dto.setAccount(accountDTO);

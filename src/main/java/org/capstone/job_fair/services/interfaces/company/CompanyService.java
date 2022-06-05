@@ -11,7 +11,7 @@ public interface CompanyService {
 
     Optional<CompanyDTO> getCompanyById(String id);
 
-    void createCompany(CompanyDTO dto);
+    CompanyDTO createCompany(CompanyDTO dto);
 
     void updateCompany(CompanyDTO dto);
 

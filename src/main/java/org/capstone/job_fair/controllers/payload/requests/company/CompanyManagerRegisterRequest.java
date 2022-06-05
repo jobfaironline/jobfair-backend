@@ -38,10 +38,8 @@ public class CompanyManagerRegisterRequest {
     @Size(max = DataConstraint.Account.NAME_LENGTH)
     @NameConstraint
     private String middleName;
-    @NotNull
     private Gender gender;
     @NotNull
     private String companyId;
-    @NotBlank
     private String department;
 }
