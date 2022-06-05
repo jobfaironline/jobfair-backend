@@ -1,15 +1,14 @@
-package org.capstone.job_fair.models.entities.job_fair.booth;
+package org.capstone.job_fair.models.entities.company.layout;
+
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.Hibernate;
+import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Objects;
 
 @Getter
@@ -17,23 +16,25 @@ import java.util.Objects;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "job_fair_booth_layout_video", schema = "dbo")
-public class JobFairBoothLayoutVideoEntity {
+@Table(name = "decorator_booth_layout_video", schema = "dbo")
+public class DecoratorBoothLayoutVideoEntity {
     @Id
     @Column(name = "id", nullable = false, length = 36)
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "org.hibernate.id.UUIDGenerator")
     private String id;
     @Column(name = "url", nullable = false, length = 2048)
     private String url;
     @Column(name = "item_name", nullable = false, length = 100)
     private String itemName;
-    @Column(name = "job_fair_booth_layout_id", nullable = false, length = 36)
-    private String jobFairBoothLayoutId;
+    @Column(name = "decorator_booth_layout_id", nullable = false, length = 36)
+    private String decoratorBoothLayoutId;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        JobFairBoothLayoutVideoEntity that = (JobFairBoothLayoutVideoEntity) o;
+        DecoratorBoothLayoutVideoEntity that = (DecoratorBoothLayoutVideoEntity) o;
         return id != null && Objects.equals(id, that.getId());
     }
 

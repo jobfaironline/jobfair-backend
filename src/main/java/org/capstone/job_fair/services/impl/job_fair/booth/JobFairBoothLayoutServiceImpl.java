@@ -6,10 +6,10 @@ import org.capstone.job_fair.models.dtos.job_fair.booth.JobFairBoothLayoutDTO;
 import org.capstone.job_fair.models.dtos.job_fair.booth.JobFairBoothLayoutVideoDTO;
 import org.capstone.job_fair.models.entities.job_fair.booth.JobFairBoothLayoutEntity;
 import org.capstone.job_fair.models.entities.job_fair.booth.JobFairBoothLayoutVideoEntity;
-import org.capstone.job_fair.repositories.job_fair.job_fair_booth.CompanyBoothLayoutVideoRepository;
+import org.capstone.job_fair.repositories.job_fair.job_fair_booth.JobFairBoothLayoutVideoRepository;
 import org.capstone.job_fair.repositories.job_fair.job_fair_booth.JobFairBoothLayoutRepository;
 import org.capstone.job_fair.services.interfaces.job_fair.booth.JobFairBoothLayoutService;
-import org.capstone.job_fair.services.mappers.job_fair.booth.CompanyBoothLayoutVideoMapper;
+import org.capstone.job_fair.services.mappers.job_fair.booth.JobFairBoothLayoutVideoMapper;
 import org.capstone.job_fair.services.mappers.job_fair.booth.JobFairBoothLayoutMapper;
 import org.capstone.job_fair.utils.AwsUtil;
 import org.capstone.job_fair.utils.GLTFUtil;
@@ -35,13 +35,13 @@ public class JobFairBoothLayoutServiceImpl implements JobFairBoothLayoutService 
     private JobFairBoothLayoutRepository jobFairBoothLayoutRepository;
 
     @Autowired
-    private CompanyBoothLayoutVideoRepository companyBoothLayoutVideoRepository;
+    private JobFairBoothLayoutVideoRepository jobFairBoothLayoutVideoRepository;
 
     @Autowired
     private JobFairBoothLayoutMapper boothLayoutMapper;
 
     @Autowired
-    private CompanyBoothLayoutVideoMapper companyBoothLayoutVideoMapper;
+    private JobFairBoothLayoutVideoMapper jobFairBoothLayoutVideoMapper;
 
     @Autowired
     private AwsUtil awsUtil;
@@ -101,13 +101,13 @@ public class JobFairBoothLayoutServiceImpl implements JobFairBoothLayoutService 
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Layout.NOT_FOUND));
         }
 
-        JobFairBoothLayoutVideoEntity entity = companyBoothLayoutVideoMapper.toEntity(dto);
+        JobFairBoothLayoutVideoEntity entity = jobFairBoothLayoutVideoMapper.toEntity(dto);
         String id = UUID.randomUUID().toString();
         String url = awsUtil.generateAwsS3AccessString(AWSConstant.COMPANY_BOOTH_LAYOUT_VIDEO_FOLDER, id);
         entity.setId(id);
         entity.setUrl(url);
-        entity = companyBoothLayoutVideoRepository.save(entity);
-        return companyBoothLayoutVideoMapper.toDTO(entity);
+        entity = jobFairBoothLayoutVideoRepository.save(entity);
+        return jobFairBoothLayoutVideoMapper.toDTO(entity);
     }
 
     @Override
@@ -117,10 +117,10 @@ public class JobFairBoothLayoutServiceImpl implements JobFairBoothLayoutService 
         if (!layoutOpt.isPresent()){
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Layout.NOT_FOUND));
         }
-        JobFairBoothLayoutVideoEntity entity = companyBoothLayoutVideoMapper.toEntity(dto);
+        JobFairBoothLayoutVideoEntity entity = jobFairBoothLayoutVideoMapper.toEntity(dto);
         String id = UUID.randomUUID().toString();
         entity.setId(id);
-        entity = companyBoothLayoutVideoRepository.save(entity);
-        return companyBoothLayoutVideoMapper.toDTO(entity);
+        entity = jobFairBoothLayoutVideoRepository.save(entity);
+        return jobFairBoothLayoutVideoMapper.toDTO(entity);
     }
 }
