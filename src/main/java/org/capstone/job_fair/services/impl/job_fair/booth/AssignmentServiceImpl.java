@@ -71,7 +71,7 @@ public class AssignmentServiceImpl implements AssignmentService {
         return assignmentMapper.toDTO(entity);
     }
 
-    private AssignmentDTO createAssignment(String employeeId, String jobFairBoothId, AssignmentType type, String companyId) {
+    private AssignmentDTO createAssignment(String employeeId, String jobFairBoothId, AssignmentType type, String companyId, Long beginTime, Long endTime) {
         Optional<CompanyEmployeeEntity> employeeOpt = companyEmployeeRepository.findByAccountId(employeeId);
         if (!employeeOpt.isPresent()) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMPLOYEE_NOT_FOUND));
@@ -93,6 +93,8 @@ public class AssignmentServiceImpl implements AssignmentService {
         entity.setCompanyEmployee(employee);
         entity.setJobFairBooth(jobFairBooth);
         entity.setType(type);
+        entity.setBeginTime(beginTime);
+        entity.setEndTime(endTime);
         assignmentRepository.save(entity);
         return assignmentMapper.toDTO(entity);
     }
@@ -100,6 +102,9 @@ public class AssignmentServiceImpl implements AssignmentService {
     @Override
     @Transactional
     public AssignmentDTO assignEmployee(String employeeId, String jobFairBoothId, AssignmentType type, String companyId, Long beginTime, Long endTime) {
+        if (type == AssignmentType.INTERVIEWER || type == AssignmentType.RECEPTION){
+            return createAssignment(employeeId, jobFairBoothId, type, companyId, beginTime, endTime);
+        }
         Optional<AssignmentEntity> entityOpt = assignmentRepository.findByCompanyEmployeeAccountIdAndJobFairBoothId(employeeId, jobFairBoothId);
         if (entityOpt.isPresent()) {
             AssignmentEntity entity = entityOpt.get();
@@ -108,21 +113,36 @@ public class AssignmentServiceImpl implements AssignmentService {
             entity.setEndTime(endTime);
             return updateAssigment(entity, companyId);
         }
-        return createAssignment(employeeId, jobFairBoothId, type, companyId);
+        return createAssignment(employeeId, jobFairBoothId, type, companyId, beginTime, endTime);
     }
 
     @Override
     @Transactional
-    public AssignmentDTO unAssignEmployee(String employeeId, String jobFairBoothId, String companyId) {
-        Optional<AssignmentEntity> entityOpt = assignmentRepository.findByCompanyEmployeeAccountIdAndJobFairBoothId(employeeId, jobFairBoothId);
+    public AssignmentDTO unAssignEmployee(String assignmentId) {
+        Optional<AssignmentEntity> entityOpt = assignmentRepository.findById(assignmentId);
         if (!entityOpt.isPresent()) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Assignment.NOT_FOUND));
         }
         AssignmentEntity entity = entityOpt.get();
-        if (!entity.getCompanyEmployee().getCompany().getId().equals(companyId)) {
+        /*if (!entity.getCompanyEmployee().getCompany().getId().equals(companyId)) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Assignment.NOT_FOUND));
+        }*/
+        assignmentRepository.delete(entity);
+        return assignmentMapper.toDTO(entity);
+    }
+
+    @Override
+    @Transactional
+    public AssignmentDTO updateAssignment(String assignmentId, long beginTime, long endTime, AssignmentType type) {
+        Optional<AssignmentEntity> entityOpt = assignmentRepository.findById(assignmentId);
+        if (!entityOpt.isPresent()) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Assignment.NOT_FOUND));
         }
-        assignmentRepository.delete(entity);
+        AssignmentEntity entity = entityOpt.get();
+        entity.setBeginTime(beginTime);
+        entity.setEndTime(endTime);
+        entity.setType(type);
+        entity = assignmentRepository.save(entity);
         return assignmentMapper.toDTO(entity);
     }
 

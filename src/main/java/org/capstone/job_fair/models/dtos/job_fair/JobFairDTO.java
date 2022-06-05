@@ -7,6 +7,7 @@ import org.capstone.job_fair.models.statuses.JobFairPlanStatus;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -39,4 +40,5 @@ public class JobFairDTO implements Serializable {
     @NotNull
     private String hostName;
     private CompanyDTO company;
+    private List<ShiftDTO> shifts;
 }
