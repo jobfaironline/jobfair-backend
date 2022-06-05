@@ -1,8 +1,16 @@
 package org.capstone.job_fair.services.impl.job_fair.booth;
 
+import lombok.SneakyThrows;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.capstone.job_fair.constants.AssignmentConstant;
+import org.capstone.job_fair.constants.FileConstant;
+import org.capstone.job_fair.constants.JobPositionConstant;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
 import org.capstone.job_fair.models.dtos.job_fair.booth.AssignmentDTO;
+import org.capstone.job_fair.models.dtos.util.ParseFileResult;
 import org.capstone.job_fair.models.entities.company.CompanyEmployeeEntity;
 import org.capstone.job_fair.models.entities.job_fair.JobFairEntity;
 import org.capstone.job_fair.models.entities.job_fair.booth.AssignmentEntity;
@@ -15,6 +23,7 @@ import org.capstone.job_fair.repositories.job_fair.JobFairRepository;
 import org.capstone.job_fair.repositories.job_fair.job_fair_booth.AssignmentRepository;
 import org.capstone.job_fair.repositories.job_fair.job_fair_booth.JobFairBoothRepository;
 import org.capstone.job_fair.services.interfaces.job_fair.booth.AssignmentService;
+import org.capstone.job_fair.services.interfaces.util.XSLSFileService;
 import org.capstone.job_fair.services.mappers.company.CompanyEmployeeMapper;
 import org.capstone.job_fair.services.mappers.job_fair.booth.AssignmentMapper;
 import org.capstone.job_fair.utils.MessageUtil;
@@ -23,9 +32,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -50,6 +59,8 @@ public class AssignmentServiceImpl implements AssignmentService {
     @Autowired
     private CompanyEmployeeMapper companyEmployeeMapper;
 
+    @Autowired
+    private XSLSFileService xslsFileService;
 
     private AssignmentDTO updateAssigment(AssignmentEntity entity, String companyId) {
         CompanyEmployeeEntity companyEmployee = entity.getCompanyEmployee();
@@ -161,5 +172,112 @@ public class AssignmentServiceImpl implements AssignmentService {
     @Override
     public Optional<AssignmentDTO> getAssignmentById(String id) {
         return assignmentRepository.findById(id).map(assignmentMapper::toDTO);
+    }
+
+    private ParseFileResult<AssignmentDTO> createNewAssignmentsFromListString(List<List<String>> data, String jobFairId, String companyId) {
+        ParseFileResult<AssignmentDTO> parseResult = new ParseFileResult<>();
+        int rowNum = data.size();
+        List<AssignmentEntity> entities = new ArrayList<>();
+        for (int i = 1; i < rowNum; i++) {
+            List<String> rowData = data.get(i);
+
+            String employeeId = rowData.get(AssignmentConstant.XLSXFormat.EMPLOYEE_ID_INDEX);
+            String slotName = rowData.get(AssignmentConstant.XLSXFormat.SLOT_NAME_INDEX);
+            String boothName = rowData.get(AssignmentConstant.XLSXFormat.BOOTH_NAME_INDEX);
+            String assignmentTypeString = rowData.get(AssignmentConstant.XLSXFormat.ASSIGMENT_INDEX);
+            AssignmentType type = null;
+            try {
+                type = AssignmentType.valueOf(assignmentTypeString);
+                //when assign employee as manager there are no REVIEWER and RECEPTION
+                if (type == AssignmentType.INTERVIEWER || type == AssignmentType.RECEPTION) {
+                    parseResult.addErrorMessage(i, MessageUtil.getMessage(MessageConstant.Assignment.INVALID_ASSIGNMENT_ORGANIZE_JOB_FAIR));
+                }
+            } catch (IllegalArgumentException e) {
+                parseResult.addErrorMessage(i, MessageUtil.getMessage(MessageConstant.Assignment.WRONG_ASSIGNMENT_TYPE));
+            }
+
+            Optional<CompanyEmployeeEntity> companyEmployeeOpt = companyEmployeeRepository.findByEmployeeIdAndCompanyId(employeeId, companyId);
+            if (!companyEmployeeOpt.isPresent()){
+                parseResult.addErrorMessage(i, MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMPLOYEE_NOT_FOUND));
+            }
+            Optional<JobFairBoothEntity> jobFairBoothOpt = jobFairBoothRepository.findByJobFairIdAndBoothName(jobFairId, slotName);
+            if (!jobFairBoothOpt.isPresent()){
+                parseResult.addErrorMessage(i, MessageUtil.getMessage(MessageConstant.JobFairBooth.NOT_FOUND));
+            }
+            if (boothName.isEmpty() || boothName.length() > 100){
+                parseResult.addErrorMessage(i, MessageUtil.getMessage(MessageConstant.JobFairBooth.NAME_INVALID_LENGTH));
+            }
+
+            AssignmentEntity entity = new AssignmentEntity();
+            entity.setCompanyEmployee(companyEmployeeOpt.orElse(null));
+            entity.setJobFairBooth(jobFairBoothOpt.orElse(null));
+            entity.setType(type);
+
+            entities.add(entity);
+        }
+        if (!parseResult.isHasError()){
+            for (int i = 0; i < entities.size(); i++){
+                AssignmentEntity assignmentEntity = entities.get(i);
+                try {
+                    assignmentEntity = assignmentRepository.save(assignmentEntity);
+                    AssignmentDTO dto = assignmentMapper.toDTO(assignmentEntity);
+                    parseResult.addToResult(dto);
+                } catch (Exception e){
+                    //+1 because row start at 1
+                    parseResult.addErrorMessage(i + 1, e.getMessage());
+                }
+            }
+        }
+        return parseResult;
+    }
+
+    @SneakyThrows
+    private ParseFileResult<AssignmentDTO> parseExcelFile(MultipartFile file, String jobFairId, String companyId) {
+        ParseFileResult<AssignmentDTO> parseResult;
+        Workbook workbook = new XSSFWorkbook(file.getInputStream());
+        if (workbook.getNumberOfSheets() != 1) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.File.XSL_NO_SHEET));
+        }
+        Sheet sheet = workbook.getSheetAt(0);
+        List<List<String>> data = xslsFileService.readXSLSheet(sheet, AssignmentConstant.XLSXFormat.COLUMN_NUM);
+        parseResult = createNewAssignmentsFromListString(data, jobFairId, companyId);
+
+        if (parseResult.isHasError()) {
+            String url = xslsFileService.uploadErrorXSLFile(workbook, parseResult.getErrors(), file.getOriginalFilename(), AssignmentConstant.XLSXFormat.ERROR_INDEX);
+            parseResult.setErrorFileUrl(url);
+        }
+
+        return parseResult;
+    }
+
+    @SneakyThrows
+    private ParseFileResult<AssignmentDTO> parseCsvFile(MultipartFile file, String jobFairId, String companyId) {
+        ParseFileResult<AssignmentDTO> parseResult;
+        List<List<String>> data = xslsFileService.readCSVFile(file.getInputStream());
+        parseResult = createNewAssignmentsFromListString(data, jobFairId, companyId);
+        if (parseResult.isHasError()) {
+            String url = xslsFileService.uploadErrorCSVFile(data, parseResult.getErrors(), file.getOriginalFilename());
+            parseResult.setErrorFileUrl(url);
+        }
+        return parseResult;
+    }
+
+    @Override
+    @Transactional
+    @SneakyThrows
+    public ParseFileResult<AssignmentDTO> createNewAssignmentsFromFile(MultipartFile file, String jobFairId, String companyId) {
+        //check for invalid type
+        List<String> allowTypes = Arrays.asList(FileConstant.CSV_CONSTANT.TYPE, FileConstant.XLS_CONSTANT.TYPE, FileConstant.XLSX_CONSTANT.TYPE);
+        String fileType = file.getContentType();
+        if (!allowTypes.contains(fileType)) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.File.NOT_ALLOWED));
+        }
+        ParseFileResult<AssignmentDTO> parseResult;
+        if (Objects.equals(fileType, FileConstant.XLSX_CONSTANT.TYPE) || Objects.equals(fileType, FileConstant.XLS_CONSTANT.TYPE)) {
+            parseResult = parseExcelFile(file, jobFairId, companyId);
+            return parseResult;
+        }
+        parseResult = parseCsvFile(file, jobFairId, companyId);
+        return parseResult;
     }
 }

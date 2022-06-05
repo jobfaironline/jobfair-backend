@@ -8,10 +8,11 @@ import org.capstone.job_fair.controllers.payload.requests.job_fair.UnAssignEmplo
 import org.capstone.job_fair.controllers.payload.responses.JobFairAssignmentStatisticsResponse;
 import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
 import org.capstone.job_fair.models.dtos.job_fair.booth.AssignmentDTO;
+import org.capstone.job_fair.models.dtos.util.ParseFileResult;
 import org.capstone.job_fair.models.enums.AssignmentType;
 import org.capstone.job_fair.services.interfaces.company.CompanyEmployeeService;
-import org.capstone.job_fair.services.interfaces.job_fair.booth.JobFairBoothService;
 import org.capstone.job_fair.services.interfaces.job_fair.booth.AssignmentService;
+import org.capstone.job_fair.services.interfaces.job_fair.booth.JobFairBoothService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,6 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -35,7 +37,6 @@ public class AssignmentController {
 
     @Autowired
     private JobFairBoothService jobFairBoothService;
-
 
 
     @PostMapping(ApiEndPoint.Assignment.ASSIGN)
@@ -113,7 +114,7 @@ public class AssignmentController {
             @RequestParam(value = "sortBy", defaultValue = AssignmentConstant.DEFAULT_SEARCH_SORT_BY_VALUE) String sortBy,
             @RequestParam(value = "direction", required = false, defaultValue = AssignmentConstant.DEFAULT_SEARCH_SORT_DIRECTION) Sort.Direction direction,
             @RequestParam(value = "type", required = false) AssignmentType type
-            ) {
+    ) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Page<AssignmentDTO> result = assignmentService.getAssignmentByEmployeeIdAndType(userDetails.getId(), type, PageRequest.of(offset, pageSize).withSort(Sort.by(direction, sortBy)));
         return ResponseEntity.ok(result);
@@ -128,5 +129,21 @@ public class AssignmentController {
         }
         return ResponseEntity.ok(assignmentOpt.get());
     }
+
+    @PostMapping(ApiEndPoint.Assignment.CREATE_ASSIGMENT_UPLOAD_CSV)
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
+    public ResponseEntity<?> createMultipleAssignmentFromCSVFile(
+            @RequestParam("jobFairId") String jobFairId,
+            @RequestPart("file") MultipartFile file) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String companyId = userDetails.getCompanyId();
+        ParseFileResult<AssignmentDTO> result = assignmentService.createNewAssignmentsFromFile(file, jobFairId, companyId);
+        if (!result.isHasError()) {
+            return ResponseEntity.ok(result.getResult());
+        }
+        return ResponseEntity.badRequest().body(result);
+
+    }
+
 
 }
