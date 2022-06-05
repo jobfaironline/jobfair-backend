@@ -83,6 +83,17 @@ public class DecoratorBoothLayoutServiceImpl implements DecoratorBoothLayoutServ
 
     @Override
     @Transactional
+    public DecoratorBoothLayoutDTO delete(String companyeEmployeeId, String layoutId) {
+        Optional<DecoratorBoothLayoutEntity> layoutOpt = decoratorBoothLayoutRepository.findByIdAndCompanyEmployeeAccountId(layoutId, companyeEmployeeId);
+        if (!layoutOpt.isPresent()) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Layout.NOT_FOUND));
+        }
+        decoratorBoothLayoutRepository.delete(layoutOpt.get());
+        return decoratorBoothLayoutMapper.toDTO(layoutOpt.get());
+    }
+
+    @Override
+    @Transactional
     public DecoratorBoothLayoutVideoDTO createNewVideoWithFile(String layoutId, String itemName) {
         Optional<DecoratorBoothLayoutEntity> layoutOpt = decoratorBoothLayoutRepository.findById(layoutId);
         if (!layoutOpt.isPresent()) {
