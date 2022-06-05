@@ -77,7 +77,6 @@ public class CompanyController {
     public ResponseEntity<?> create(@Valid @RequestBody CreateCompanyRequest request) {
         CompanyDTO dto = companyMapper.toDTO(request);
         dto = companyService.createCompany(dto);
-        System.out.println(dto);
         return ResponseEntity.ok(dto);
     }
 

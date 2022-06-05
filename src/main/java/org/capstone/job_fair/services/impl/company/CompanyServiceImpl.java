@@ -113,11 +113,11 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     @Transactional
     public CompanyDTO createCompany(CompanyDTO dto) {
-        if (isEmailExisted(dto.getEmail())) {
-            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Company.EMAIL_EXISTED));
-        }
         if (isTaxIDExisted(dto.getTaxId())) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Company.TAX_ID_EXISTED));
+        }
+        if (isEmailExisted(dto.getEmail())) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Company.EMAIL_EXISTED));
         }
 
         if (!isSizeIdValid(dto.getSizeId())) {
