@@ -7,6 +7,7 @@ import org.capstone.job_fair.controllers.payload.requests.job_fair.AssignEmploye
 import org.capstone.job_fair.controllers.payload.responses.JobFairAssignmentStatisticsResponse;
 import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
 import org.capstone.job_fair.models.dtos.job_fair.booth.AssignmentDTO;
+import org.capstone.job_fair.models.enums.AssignmentType;
 import org.capstone.job_fair.services.interfaces.company.CompanyEmployeeService;
 import org.capstone.job_fair.services.interfaces.job_fair.booth.AssignmentService;
 import org.capstone.job_fair.services.interfaces.job_fair.booth.JobFairBoothService;
@@ -53,8 +54,9 @@ public class AssignmentController {
     @PutMapping(ApiEndPoint.Assignment.ASSIGNMENT + "/{id}")
     public ResponseEntity<?> updateAssignment(@PathVariable("id") String assignmentId,
                                               @NotNull @RequestParam("beginTime") Long beginTime,
-                                              @NotNull @RequestParam("endTime") Long endTime) {
-        AssignmentDTO dto = assignmentService.updateAssignment(assignmentId, beginTime, endTime);
+                                              @NotNull @RequestParam("endTime") Long endTime,
+                                              @NotNull @RequestParam("type")AssignmentType type) {
+        AssignmentDTO dto = assignmentService.updateAssignment(assignmentId, beginTime, endTime, type);
         return ResponseEntity.ok(dto);
     }
 

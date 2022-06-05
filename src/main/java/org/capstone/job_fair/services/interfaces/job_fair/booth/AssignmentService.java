@@ -14,7 +14,7 @@ public interface AssignmentService {
 
     AssignmentDTO unAssignEmployee(String assignmentId);
 
-    AssignmentDTO updateAssignment(String assignmentId, long beginTime, long endTime);
+    AssignmentDTO updateAssignment(String assignmentId, long beginTime, long endTime, AssignmentType type);
 
     List<AssignmentDTO> getAssignmentByJobFairId(String jobFairId, String companyId);
 

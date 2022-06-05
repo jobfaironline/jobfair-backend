@@ -91,8 +91,11 @@ public class AssignmentServiceImpl implements AssignmentService {
     @Override
     @Transactional
     public AssignmentDTO assignEmployee(String employeeId, String jobFairBoothId, AssignmentType type, String companyId, Long beginTime, Long endTime) {
+        if (type == AssignmentType.INTERVIEWER || type == AssignmentType.RECEPTION){
+            return createAssignment(employeeId, jobFairBoothId, type, companyId, beginTime, endTime);
+        }
         Optional<AssignmentEntity> entityOpt = assignmentRepository.findByCompanyEmployeeAccountIdAndJobFairBoothId(employeeId, jobFairBoothId);
-        if (entityOpt.isPresent() && type != AssignmentType.INTERVIEWER && type != AssignmentType.RECEPTION) {
+        if (entityOpt.isPresent()) {
             AssignmentEntity entity = entityOpt.get();
             entity.setType(type);
             entity.setBeginTime(beginTime);
@@ -119,7 +122,7 @@ public class AssignmentServiceImpl implements AssignmentService {
 
     @Override
     @Transactional
-    public AssignmentDTO updateAssignment(String assignmentId, long beginTime, long endTime) {
+    public AssignmentDTO updateAssignment(String assignmentId, long beginTime, long endTime, AssignmentType type) {
         Optional<AssignmentEntity> entityOpt = assignmentRepository.findById(assignmentId);
         if (!entityOpt.isPresent()) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Assignment.NOT_FOUND));
@@ -127,6 +130,7 @@ public class AssignmentServiceImpl implements AssignmentService {
         AssignmentEntity entity = entityOpt.get();
         entity.setBeginTime(beginTime);
         entity.setEndTime(endTime);
+        entity.setType(type);
         entity = assignmentRepository.save(entity);
         return assignmentMapper.toDTO(entity);
     }
