@@ -4,16 +4,16 @@ import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
 import org.capstone.job_fair.models.dtos.job_fair.booth.AssignmentDTO;
 import org.capstone.job_fair.models.entities.company.CompanyEmployeeEntity;
-import org.capstone.job_fair.models.entities.job_fair.booth.JobFairBoothEntity;
-import org.capstone.job_fair.models.entities.job_fair.booth.AssignmentEntity;
 import org.capstone.job_fair.models.entities.job_fair.JobFairEntity;
+import org.capstone.job_fair.models.entities.job_fair.booth.AssignmentEntity;
+import org.capstone.job_fair.models.entities.job_fair.booth.JobFairBoothEntity;
 import org.capstone.job_fair.models.enums.AssignmentType;
 import org.capstone.job_fair.models.enums.Role;
 import org.capstone.job_fair.models.statuses.JobFairPlanStatus;
 import org.capstone.job_fair.repositories.company.CompanyEmployeeRepository;
-import org.capstone.job_fair.repositories.job_fair.job_fair_booth.JobFairBoothRepository;
-import org.capstone.job_fair.repositories.job_fair.job_fair_booth.AssignmentRepository;
 import org.capstone.job_fair.repositories.job_fair.JobFairRepository;
+import org.capstone.job_fair.repositories.job_fair.job_fair_booth.AssignmentRepository;
+import org.capstone.job_fair.repositories.job_fair.job_fair_booth.JobFairBoothRepository;
 import org.capstone.job_fair.services.interfaces.job_fair.booth.AssignmentService;
 import org.capstone.job_fair.services.mappers.company.CompanyEmployeeMapper;
 import org.capstone.job_fair.services.mappers.job_fair.booth.AssignmentMapper;
@@ -152,8 +152,10 @@ public class AssignmentServiceImpl implements AssignmentService {
     }
 
     @Override
-    public Page<AssignmentDTO> getAssignmentByEmployeeId(String employeeId, Pageable pageable) {
-        return assignmentRepository.findByCompanyEmployeeAccountIdAndJobFairBoothJobFairStatus(employeeId, JobFairPlanStatus.PUBLISH, pageable).map(assignmentMapper::toDTO);
+    public Page<AssignmentDTO> getAssignmentByEmployeeIdAndType(String employeeId, AssignmentType type, Pageable pageable) {
+        if (type == null)
+            return assignmentRepository.findByCompanyEmployeeAccountIdAndJobFairBoothJobFairStatus(employeeId, JobFairPlanStatus.PUBLISH, pageable).map(assignmentMapper::toDTO);
+        return assignmentRepository.findByCompanyEmployeeAccountIdAndJobFairBoothJobFairStatusAndType(employeeId, JobFairPlanStatus.PUBLISH, type, pageable).map(assignmentMapper::toDTO);
     }
 
     @Override

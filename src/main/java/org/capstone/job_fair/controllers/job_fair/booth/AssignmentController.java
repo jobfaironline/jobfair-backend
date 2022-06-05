@@ -8,9 +8,9 @@ import org.capstone.job_fair.controllers.payload.requests.job_fair.UnAssignEmplo
 import org.capstone.job_fair.controllers.payload.responses.JobFairAssignmentStatisticsResponse;
 import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
 import org.capstone.job_fair.models.dtos.job_fair.booth.AssignmentDTO;
+import org.capstone.job_fair.models.enums.AssignmentType;
 import org.capstone.job_fair.services.interfaces.company.CompanyEmployeeService;
 import org.capstone.job_fair.services.interfaces.job_fair.booth.JobFairBoothService;
-import org.capstone.job_fair.services.interfaces.notification.NotificationService;
 import org.capstone.job_fair.services.interfaces.job_fair.booth.AssignmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -111,9 +111,11 @@ public class AssignmentController {
             @RequestParam(value = "offset", defaultValue = AssignmentConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset,
             @RequestParam(value = "pageSize", defaultValue = AssignmentConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize,
             @RequestParam(value = "sortBy", defaultValue = AssignmentConstant.DEFAULT_SEARCH_SORT_BY_VALUE) String sortBy,
-            @RequestParam(value = "direction", required = false, defaultValue = AssignmentConstant.DEFAULT_SEARCH_SORT_DIRECTION) Sort.Direction direction) {
+            @RequestParam(value = "direction", required = false, defaultValue = AssignmentConstant.DEFAULT_SEARCH_SORT_DIRECTION) Sort.Direction direction,
+            @RequestParam(value = "type", required = false) AssignmentType type
+            ) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Page<AssignmentDTO> result = assignmentService.getAssignmentByEmployeeId(userDetails.getId(), PageRequest.of(offset, pageSize).withSort(Sort.by(direction, sortBy)));
+        Page<AssignmentDTO> result = assignmentService.getAssignmentByEmployeeIdAndType(userDetails.getId(), type, PageRequest.of(offset, pageSize).withSort(Sort.by(direction, sortBy)));
         return ResponseEntity.ok(result);
     }
 
