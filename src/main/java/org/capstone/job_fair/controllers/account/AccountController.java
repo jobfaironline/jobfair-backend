@@ -7,12 +7,15 @@ import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.DataConstraint;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.controllers.payload.requests.account.ChangePasswordRequest;
+import org.capstone.job_fair.controllers.payload.responses.BasicInfoResponse;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
 import org.capstone.job_fair.models.dtos.token.AccountVerifyTokenDTO;
+import org.capstone.job_fair.models.entities.account.AccountEntity;
 import org.capstone.job_fair.services.interfaces.account.AccountService;
 import org.capstone.job_fair.services.interfaces.token.AccountVerifyTokenService;
 import org.capstone.job_fair.services.interfaces.util.FileStorageService;
+import org.capstone.job_fair.services.mappers.account.AccountMapper;
 import org.capstone.job_fair.services.mappers.token.AccountVerifyTokenMapper;
 import org.capstone.job_fair.utils.ImageUtil;
 import org.capstone.job_fair.utils.MessageUtil;
@@ -45,6 +48,9 @@ public class AccountController {
 
     @Autowired
     private FileStorageService fileStorageService;
+
+    @Autowired
+    private AccountMapper accountMapper;
 
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
@@ -121,6 +127,20 @@ public class AccountController {
     public ResponseEntity<?> getAccountInfo(){
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return ResponseEntity.ok(userDetails);
+    }
+
+    @GetMapping(ApiEndPoint.Account.GET_GENERAL_INFO)
+    public ResponseEntity<?> getGeneralAccountInfo(@RequestParam String email) {
+        Optional<AccountEntity> accountOpt = accountService.getActiveAccountByEmail(email);
+        if (accountOpt.isPresent()) {
+            AccountEntity entity = accountOpt.get();
+            AccountDTO dto = accountMapper.toDTO(entity);
+            BasicInfoResponse res = new BasicInfoResponse();
+            res.setEmail(dto.getEmail());
+            res.setProfileImageUrl(dto.getProfileImageUrl());
+            return new ResponseEntity<>(res, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
 }
