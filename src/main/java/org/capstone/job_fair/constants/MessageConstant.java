@@ -396,6 +396,7 @@ public final class MessageConstant {
         public static final String NOT_FOUND = "assignment.error.not-found";
         public static final String WRONG_ASSIGNMENT_TYPE = "assignment.error.wrong-assignment-type";
         public static final String INVALID_ASSIGNMENT_ORGANIZE_JOB_FAIR = "assignment.error.invalid-assignment-organize-job-fair";
+        public static final String UNAVAILABLE_EMPLOYEE = "assignment.error.unavailable-employee";
         private Assignment() {
         }
     }

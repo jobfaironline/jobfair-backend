@@ -228,6 +228,7 @@ public class AssignmentServiceImpl implements AssignmentService {
                 parseResult.addErrorMessage(i, MessageUtil.getMessage(MessageConstant.JobFairBooth.NAME_INVALID_LENGTH));
             }
 
+
             AssignmentEntity entity = new AssignmentEntity();
             entity.setCompanyEmployee(companyEmployeeOpt.orElse(null));
             entity.setJobFairBooth(jobFairBoothOpt.orElse(null));
@@ -239,6 +240,16 @@ public class AssignmentServiceImpl implements AssignmentService {
             for (int i = 0; i < entities.size(); i++){
                 AssignmentEntity assignmentEntity = entities.get(i);
                 try {
+
+                    List<CompanyEmployeeDTO> availableEmployees = this.getAvailableCompanyByJobFairId(jobFairId, companyId);
+                    CompanyEmployeeEntity companyEmployee = assignmentEntity.getCompanyEmployee();
+                    boolean isEmployeeAvailable = availableEmployees.stream()
+                            .anyMatch(dto -> dto.getAccountId().equals(companyEmployee.getAccountId()));
+                    if (!isEmployeeAvailable){
+                        parseResult.addErrorMessage(i + 1, MessageUtil.getMessage(MessageConstant.Assignment.UNAVAILABLE_EMPLOYEE));
+                        continue;
+                    }
+
                     assignmentEntity = assignmentRepository.save(assignmentEntity);
                     AssignmentDTO dto = assignmentMapper.toDTO(assignmentEntity);
                     parseResult.addToResult(dto);
