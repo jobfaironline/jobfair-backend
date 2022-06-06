@@ -226,6 +226,11 @@ public class AssignmentServiceImpl implements AssignmentService {
             }
             if (boothName.isEmpty() || boothName.length() > 100){
                 parseResult.addErrorMessage(i, MessageUtil.getMessage(MessageConstant.JobFairBooth.NAME_INVALID_LENGTH));
+            } else {
+                if (jobFairBoothOpt.isPresent()){
+                    JobFairBoothEntity jobFairBooth = jobFairBoothOpt.get();
+                    jobFairBooth.setName(boothName);
+                }
             }
 
 
@@ -249,7 +254,7 @@ public class AssignmentServiceImpl implements AssignmentService {
                         parseResult.addErrorMessage(i + 1, MessageUtil.getMessage(MessageConstant.Assignment.UNAVAILABLE_EMPLOYEE));
                         continue;
                     }
-
+                    jobFairBoothRepository.save(assignmentEntity.getJobFairBooth());
                     assignmentEntity = assignmentRepository.save(assignmentEntity);
                     AssignmentDTO dto = assignmentMapper.toDTO(assignmentEntity);
                     parseResult.addToResult(dto);
