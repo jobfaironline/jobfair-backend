@@ -220,7 +220,7 @@ public class AssignmentServiceImpl implements AssignmentService {
             if (!companyEmployeeOpt.isPresent()){
                 parseResult.addErrorMessage(i, MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMPLOYEE_NOT_FOUND));
             }
-            Optional<JobFairBoothEntity> jobFairBoothOpt = jobFairBoothRepository.findByJobFairIdAndBoothName(jobFairId, slotName);
+            Optional<JobFairBoothEntity> jobFairBoothOpt = jobFairBoothRepository.findFirstByJobFairIdAndBoothName(jobFairId, slotName);
             if (!jobFairBoothOpt.isPresent()){
                 parseResult.addErrorMessage(i, MessageUtil.getMessage(MessageConstant.JobFairBooth.NOT_FOUND));
             }
