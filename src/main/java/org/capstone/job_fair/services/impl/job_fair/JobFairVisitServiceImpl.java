@@ -2,6 +2,7 @@ package org.capstone.job_fair.services.impl.job_fair;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
@@ -20,6 +21,7 @@ import org.capstone.job_fair.services.interfaces.job_fair.JobFairVisitService;
 import org.capstone.job_fair.services.interfaces.notification.NotificationService;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -37,8 +39,11 @@ public class JobFairVisitServiceImpl implements JobFairVisitService {
     @Autowired
     private JobFairBoothRepository jobFairBoothRepository;
 
+    @Autowired
+    private DynamoDBMapperConfig dynamoDBMapperConfig;
+
     private List<String> getConnectedUsers(){
-        DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(dynamoDBClient);
+        DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(dynamoDBClient, dynamoDBMapperConfig);
         DynamoDBScanExpression scanExpression = new DynamoDBScanExpression();
         List<JobhubConnectionsEntity> scanResult = dynamoDBMapper.scan(JobhubConnectionsEntity.class, scanExpression);
         List<String> userIds = scanResult.stream().map(JobhubConnectionsEntity::getUserId).collect(Collectors.toList());
@@ -90,7 +95,7 @@ public class JobFairVisitServiceImpl implements JobFairVisitService {
     @Override
     public void visitJobFair(String userId, String jobFairId) {
         //this is a shitty method this should be optimized
-        DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(dynamoDBClient);
+        DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(dynamoDBClient, dynamoDBMapperConfig);
         //create new visit on dynamo
         JobFairVisitEntity entity = new JobFairVisitEntity();
         entity.setUserId(userId);
@@ -105,7 +110,7 @@ public class JobFairVisitServiceImpl implements JobFairVisitService {
     @Override
     public void leaveJobFair(String userId, String jobFairId) {
         //this is a shitty method this should be optimized
-        DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(dynamoDBClient);
+        DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(dynamoDBClient, dynamoDBMapperConfig);
         //get visitation
         Map<String, AttributeValue> eav = new HashMap<>();
         eav.put(":jobFairId",new AttributeValue().withS(jobFairId));
@@ -127,7 +132,7 @@ public class JobFairVisitServiceImpl implements JobFairVisitService {
     public void visitBooth(String userId, String jobFairBoothId) {
         Thread.sleep(AWSConstant.DYNAMO_DELAY_TIME);
         //this is a shitty method this should be optimized
-        DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(dynamoDBClient);
+        DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(dynamoDBClient, dynamoDBMapperConfig);
 
         Optional<JobFairBoothEntity> jobFairBoothOpt = jobFairBoothRepository.findById(jobFairBoothId);
         if (!jobFairBoothOpt.isPresent()){
@@ -147,7 +152,7 @@ public class JobFairVisitServiceImpl implements JobFairVisitService {
     @Override
     public void leaveBooth(String userId, String jobFairBoothId) {
         //this is a shitty method this should be optimized
-        DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(dynamoDBClient);
+        DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(dynamoDBClient, dynamoDBMapperConfig);
 
         Optional<JobFairBoothEntity> jobFairBoothOpt = jobFairBoothRepository.findById(jobFairBoothId);
         if (!jobFairBoothOpt.isPresent()){
@@ -175,7 +180,7 @@ public class JobFairVisitServiceImpl implements JobFairVisitService {
 
     @Override
     public int getCurrentVisitOfJobFair(String jobFairId) {
-        DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(dynamoDBClient);
+        DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(dynamoDBClient, dynamoDBMapperConfig);
 
         Map<String, AttributeValue> eav = new HashMap<>();
         eav.put(":jobFairId", new AttributeValue().withS(jobFairId));
@@ -197,7 +202,7 @@ public class JobFairVisitServiceImpl implements JobFairVisitService {
         }
         JobFairBoothEntity jobFairBooth = jobFairBoothOpt.get();
 
-        DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(dynamoDBClient);
+        DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(dynamoDBClient, dynamoDBMapperConfig);
 
         Map<String, AttributeValue> eav = new HashMap<>();
         eav.put(":jobFairId", new AttributeValue().withS(jobFairBooth.getJobFair().getId()));
