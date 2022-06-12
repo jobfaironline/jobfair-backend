@@ -57,6 +57,10 @@ public class JobFairEntity {
     @JoinColumn(name = "job_fair_id", referencedColumnName = "id")
     private List<JobFairBoothEntity> jobFairBoothList;
 
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "job_fair_id", referencedColumnName = "id")
+    private List<ShiftEntity> shifts;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

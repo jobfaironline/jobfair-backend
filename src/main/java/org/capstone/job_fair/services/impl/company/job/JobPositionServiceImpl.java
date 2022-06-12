@@ -5,13 +5,13 @@ import lombok.SneakyThrows;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.capstone.job_fair.constants.*;
-import org.capstone.job_fair.controllers.payload.requests.company.CreateCompanyEmployeeCSVRequest;
+import org.capstone.job_fair.constants.DataConstraint;
+import org.capstone.job_fair.constants.FileConstant;
+import org.capstone.job_fair.constants.JobPositionConstant;
+import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.controllers.payload.requests.company.CreateJobPositionRequest;
 import org.capstone.job_fair.models.dtos.company.CompanyDTO;
-import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
 import org.capstone.job_fair.models.dtos.company.job.JobPositionDTO;
-import org.capstone.job_fair.models.dtos.company.job.questions.QuestionsDTO;
 import org.capstone.job_fair.models.dtos.util.ParseFileResult;
 import org.capstone.job_fair.models.entities.company.CompanyEntity;
 import org.capstone.job_fair.models.entities.company.job.JobPositionEntity;
@@ -158,7 +158,7 @@ public class JobPositionServiceImpl implements JobPositionService {
         return jobPositionEntities.map(entity -> mapper.toDTO(entity));
     }
 
-    private ParseFileResult<JobPositionDTO> createNewJobPositionFromListString(List<List<String>> data, String companyId){
+    private ParseFileResult<JobPositionDTO> createNewJobPositionFromListString(List<List<String>> data, String companyId) {
         ParseFileResult<JobPositionDTO> parseResult = new ParseFileResult();
         int rowNum = data.size();
         for (int i = 1; i < rowNum; i++) {
@@ -178,21 +178,21 @@ public class JobPositionServiceImpl implements JobPositionService {
             Language preferredLanguage;
             try {
                 preferredLanguage = Language.valueOf(preferredLanguageString);
-            } catch (IllegalArgumentException e){
+            } catch (IllegalArgumentException e) {
                 parseResult.addErrorMessage(i, MessageUtil.getMessage(MessageConstant.Language.NOT_FOUND));
                 continue;
             }
             JobLevel level;
             try {
                 level = JobLevel.valueOf(levelString);
-            } catch (IllegalArgumentException e){
+            } catch (IllegalArgumentException e) {
                 parseResult.addErrorMessage(i, MessageUtil.getMessage(MessageConstant.JobLevel.NOT_FOUND));
                 continue;
             }
             JobType jobType;
             try {
                 jobType = JobType.valueOf(jobTypeString);
-            } catch (IllegalArgumentException e){
+            } catch (IllegalArgumentException e) {
                 parseResult.addErrorMessage(i, MessageUtil.getMessage(MessageConstant.JobType.NOT_FOUND));
                 continue;
             }
@@ -201,7 +201,7 @@ public class JobPositionServiceImpl implements JobPositionService {
                 Arrays.stream(subCategoryIdsString.split(FileConstant.CSV_CONSTANT.MULTIPLE_VALUE_DELIMITER)).forEach(valueString -> {
                     subCategoryIds.add((int) Double.parseDouble(valueString));
                 });
-            } catch (NumberFormatException e){
+            } catch (NumberFormatException e) {
                 parseResult.addErrorMessage(i, MessageUtil.getMessage(MessageConstant.SubCategory.NOT_FOUND));
                 continue;
             }
@@ -211,12 +211,12 @@ public class JobPositionServiceImpl implements JobPositionService {
                 Arrays.stream(skillTagIdsString.split(FileConstant.CSV_CONSTANT.MULTIPLE_VALUE_DELIMITER)).forEach(valueString -> {
                     skillTagIds.add((int) Double.parseDouble(valueString));
                 });
-            } catch (NumberFormatException e){
+            } catch (NumberFormatException e) {
                 parseResult.addErrorMessage(i, MessageUtil.getMessage(MessageConstant.SkillTag.NOT_FOUND));
                 continue;
             }
             CreateJobPositionRequest request = new CreateJobPositionRequest(title, contactPersonName, contactEmail, preferredLanguage
-            , level, jobType, locationId, subCategoryIds, skillTagIds, description, requirements);
+                    , level, jobType, locationId, subCategoryIds, skillTagIds, description, requirements);
             Errors errors = new BindException(request, CreateJobPositionRequest.class.getSimpleName());
             validator.validate(request, errors);
             if (errors.hasErrors()) {
@@ -253,7 +253,6 @@ public class JobPositionServiceImpl implements JobPositionService {
         return parseResult;
 
     }
-
 
     @SneakyThrows
     private ParseFileResult<JobPositionDTO> parseExcelFile(MultipartFile file, String companyId) {
