@@ -205,8 +205,7 @@ public class AssignmentServiceImpl implements AssignmentService {
         return assignmentRepository.findById(id).map(assignmentMapper::toDTO);
     }
 
-    @Transactional
-    protected ParseFileResult<AssignmentDTO> createNewAssignmentsFromListString(List<List<String>> data, String jobFairId, String companyId) throws ParseException{
+    private ParseFileResult<AssignmentDTO> createNewAssignmentsFromListString(List<List<String>> data, String jobFairId, String companyId) throws ParseException{
         ParseFileResult<AssignmentDTO> parseResult = new ParseFileResult<>();
         int rowNum = data.size();
         List<AssignmentEntity> entities = new ArrayList<>();
@@ -322,6 +321,7 @@ public class AssignmentServiceImpl implements AssignmentService {
 
     @Override
     @SneakyThrows
+    @Transactional
     public ParseFileResult<AssignmentDTO> createNewAssignmentsFromFile(MultipartFile file, String jobFairId, String companyId) {
         //check for invalid type
         List<String> allowTypes = Arrays.asList(FileConstant.CSV_CONSTANT.TYPE, FileConstant.XLS_CONSTANT.TYPE, FileConstant.XLSX_CONSTANT.TYPE);
