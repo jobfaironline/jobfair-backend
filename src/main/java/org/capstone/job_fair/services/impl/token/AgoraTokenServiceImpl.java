@@ -4,6 +4,7 @@ import lombok.SneakyThrows;
 import org.capstone.job_fair.services.interfaces.token.AgoraTokenService;
 import org.capstone.job_fair.third_party.io.agora.media.RtcTokenBuilder;
 import org.capstone.job_fair.third_party.io.agora.rtm.RtmTokenBuilder;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,8 +14,10 @@ import java.util.Date;
 @Transactional(readOnly = true)
 public class AgoraTokenServiceImpl implements AgoraTokenService {
 
-    private final String appID = "c99b02ecc0b940fe90959c6490af4d06";
-    private final String appCertificate = "62ab025daa5d4b78a25483ad33e29d7b";
+    @Value("${agora.app.id}")
+    private String appID;
+    @Value("${agora.app.certificate}")
+    private String appCertificate;
     private final Long tokenExpiredDuration = 60 * 60 * 1000L;
 
     @Override
