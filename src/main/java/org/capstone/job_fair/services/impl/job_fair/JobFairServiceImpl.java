@@ -20,10 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @Transactional(readOnly = true)
@@ -81,6 +78,8 @@ public class JobFairServiceImpl implements JobFairService {
             throw new IllegalArgumentException(MessageConstant.JobFair.JOB_FAIR_NOT_FOUND);
         }
         JobFairEntity entity = opt.get();
+        shiftRepository.deleteAll(entity.getShifts());
+        entity.setShifts(new ArrayList<>());
         jobFairMapper.updateFromDTO(entity, dto);
         shiftRepository.saveAll(entity.getShifts());
         entity = jobFairRepository.save(entity);
