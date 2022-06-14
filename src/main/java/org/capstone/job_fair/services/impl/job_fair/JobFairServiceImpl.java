@@ -72,14 +72,16 @@ public class JobFairServiceImpl implements JobFairService {
 
     @Override
     @Transactional
-    public JobFairDTO updateJobFair(JobFairDTO dto, String companyID) {
+        public JobFairDTO updateJobFair(JobFairDTO dto, String companyID) {
         Optional<JobFairEntity> opt = jobFairRepository.findByIdAndCompanyId(dto.getId(), companyID);
         if (!opt.isPresent()) {
             throw new IllegalArgumentException(MessageConstant.JobFair.JOB_FAIR_NOT_FOUND);
         }
         JobFairEntity entity = opt.get();
-        shiftRepository.deleteAll(entity.getShifts());
-        entity.setShifts(new ArrayList<>());
+        if (!dto.getShifts().isEmpty()){
+            shiftRepository.deleteAll(entity.getShifts());
+            entity.setShifts(new ArrayList<>());
+        }
         jobFairMapper.updateFromDTO(entity, dto);
         shiftRepository.saveAll(entity.getShifts());
         entity = jobFairRepository.save(entity);
