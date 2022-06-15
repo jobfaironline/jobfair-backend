@@ -10,10 +10,8 @@ import org.capstone.job_fair.models.dtos.job_fair.booth.JobFairBoothDTO;
 import org.capstone.job_fair.models.dtos.job_fair.booth.JobFairBoothLayoutDTO;
 import org.capstone.job_fair.models.dtos.job_fair.booth.JobFairBoothLayoutVideoDTO;
 import org.capstone.job_fair.services.interfaces.job_fair.booth.JobFairBoothLayoutService;
-import org.capstone.job_fair.services.interfaces.company.CompanyService;
 import org.capstone.job_fair.services.interfaces.job_fair.booth.JobFairBoothService;
 import org.capstone.job_fair.services.interfaces.util.FileStorageService;
-import org.capstone.job_fair.services.mappers.job_fair.booth.JobFairBoothLayoutMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -36,13 +34,7 @@ public class JobFairBoothLayoutController {
     private JobFairBoothLayoutService jobFairBoothLayoutService;
 
     @Autowired
-    private JobFairBoothLayoutMapper jobFairBoothLayoutMapper;
-
-    @Autowired
     private FileStorageService fileStorageService;
-
-    @Autowired
-    private CompanyService companyService;
 
     @Autowired
     private JobFairBoothService jobFairBoothService;
@@ -104,8 +96,8 @@ public class JobFairBoothLayoutController {
 
     @PostMapping(ApiEndPoint.JobFairBoothLayout.VIDEO_LAYOUT_WITH_FILE)
     public ResponseEntity<?> createNewVideoForLayoutWithFile(@RequestParam("layoutId") String layoutId,
-                                                     @RequestParam("itemName") String itemName,
-                                                     @RequestParam("file") MultipartFile file ){
+                                                             @RequestParam("itemName") String itemName,
+                                                             @RequestParam("file") MultipartFile file) {
         JobFairBoothLayoutVideoDTO dto = JobFairBoothLayoutVideoDTO.builder().itemName(itemName).jobFairBoothLayoutId(layoutId).build();
         dto = jobFairBoothLayoutService.createNewVideoWithFile(dto);
         try {
@@ -119,7 +111,7 @@ public class JobFairBoothLayoutController {
     @PostMapping(ApiEndPoint.JobFairBoothLayout.VIDEO_LAYOUT_WITH_URL)
     public ResponseEntity<?> createNewVideoForLayoutWithUrl(@RequestParam("layoutId") String layoutId,
                                                             @RequestParam("itemName") String itemName,
-                                                            @RequestParam("url") String url){
+                                                            @RequestParam("url") String url) {
         JobFairBoothLayoutVideoDTO dto = JobFairBoothLayoutVideoDTO.builder()
                 .itemName(itemName)
                 .jobFairBoothLayoutId(layoutId)

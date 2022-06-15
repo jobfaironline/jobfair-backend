@@ -6,4 +6,14 @@ final public class AssignmentConstant {
     public static final String DEFAULT_SEARCH_PAGE_SIZE_VALUE = "10";
     public static final String DEFAULT_SEARCH_SORT_BY_VALUE = "createTime";
     public static final String DEFAULT_SEARCH_SORT_DIRECTION = "ASC";
+
+    public static final class XLSXFormat {
+        private XLSXFormat(){}
+        public static final int COLUMN_NUM = 4;
+        public static final int EMPLOYEE_ID_INDEX = 0;
+        public static final int SLOT_NAME_INDEX = 1;
+        public static final int BOOTH_NAME_INDEX = 2;
+        public static final int ASSIGMENT_INDEX = 3;
+        public static final int ERROR_INDEX = 4;
+    }
 }

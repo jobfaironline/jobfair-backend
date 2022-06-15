@@ -300,6 +300,7 @@ public final class ApiEndPoint {
         public static final String JOB_FAIR_AVAILABLE = ASSIGNMENT + "/available";
         public static final String JOB_FAIR_STATISTICS = ASSIGNMENT + "/statistics";
         public static final String OF_EMPLOYEE = ASSIGNMENT + "/employee";
+        public static final String CREATE_ASSIGMENT_UPLOAD_CSV = ASSIGNMENT + "/csv";
     }
 
     public static final class Notification {
@@ -344,5 +345,16 @@ public final class ApiEndPoint {
         public static final String SWAP_INTERVIEW = INTERVIEW + "/swap";
         public static final String KICK_USER = INTERVIEW + "/kick";
         public static final String REPORT = INTERVIEW + "/report";
+    }
+
+    public static final class DecoratorBoothLayout {
+        private DecoratorBoothLayout() {
+        }
+
+        public static final String DECORATOR_BOOTH_LAYOUT = ROOT_ENDPOINT + VERSION + "/decorator-booth-layout";
+        public static final String VIDEO_LAYOUT_WITH_FILE = DECORATOR_BOOTH_LAYOUT + "/videos/file";
+        public static final String VIDEO_LAYOUT_WITH_URL = DECORATOR_BOOTH_LAYOUT + "/videos/url";
+
+
     }
 }

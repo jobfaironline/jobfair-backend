@@ -2,6 +2,7 @@ package org.capstone.job_fair.services.impl.job_fair;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.util.json.Jackson;
@@ -63,6 +64,10 @@ public class InterviewServiceImpl implements InterviewService {
 
     @Autowired
     private ApplicationMapper applicationMapper;
+
+    @Autowired
+    private DynamoDBMapperConfig dynamoDBMapperConfig;
+
 
     @Override
     public List<InterviewScheduleDTO> getInterviewScheduleForCompanyEmployee(String employeeId, Long beginTime, Long endTime) {
@@ -228,7 +233,7 @@ public class InterviewServiceImpl implements InterviewService {
         }
         ApplicationEntity application = applicationOpt.get();
 
-        DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(dynamoDBClient);
+        DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(dynamoDBClient, dynamoDBMapperConfig);
         WaitingRoomVisitEntity entity = new WaitingRoomVisitEntity();
         entity.setUserId(userId);
         entity.setAttendant(isAttendant);
@@ -253,7 +258,7 @@ public class InterviewServiceImpl implements InterviewService {
         ApplicationEntity application = applicationOpt.get();
 
 
-        DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(dynamoDBClient);
+        DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(dynamoDBClient, dynamoDBMapperConfig);
 
         Map<String, AttributeValue> eav = new HashMap<>();
         eav.put(":channelId", new AttributeValue().withS(channelId));
@@ -270,7 +275,7 @@ public class InterviewServiceImpl implements InterviewService {
 
     @Override
     public List<String> getConnectedUserIds(String channelId) {
-        DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(dynamoDBClient);
+        DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(dynamoDBClient, dynamoDBMapperConfig);
         Map<String, AttributeValue> eav = new HashMap<>();
         eav.put(":channelId", new AttributeValue().withS(channelId));
 

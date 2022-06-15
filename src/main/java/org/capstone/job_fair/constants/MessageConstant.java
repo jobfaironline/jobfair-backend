@@ -394,7 +394,9 @@ public final class MessageConstant {
 
     public static final class Assignment {
         public static final String NOT_FOUND = "assignment.error.not-found";
-
+        public static final String WRONG_ASSIGNMENT_TYPE = "assignment.error.wrong-assignment-type";
+        public static final String INVALID_ASSIGNMENT_ORGANIZE_JOB_FAIR = "assignment.error.invalid-assignment-organize-job-fair";
+        public static final String UNAVAILABLE_EMPLOYEE = "assignment.error.unavailable-employee";
         private Assignment() {
         }
     }
@@ -402,6 +404,7 @@ public final class MessageConstant {
     public static final class JobFairBooth {
         public static final String NOT_FOUND = "job-fair-booth.error.not-found";
         public static final String UNIQUE_JOB_POSITION_ERROR = "job-fair-booth.error.unique-job-position";
+        public static final String NAME_INVALID_LENGTH = "job-fair-booth.error.name-invalid-length";
 
         private JobFairBooth() {
         }
