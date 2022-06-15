@@ -2,6 +2,7 @@ package org.capstone.job_fair.services.impl.notification;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.sqs.AmazonSQS;
@@ -41,12 +42,15 @@ public class NotificationServiceImpl implements NotificationService {
     @Autowired
     private AccountRepository accountRepository;
 
+    @Autowired
+    private DynamoDBMapperConfig dynamoDBMapperConfig;
+
     @Value("${aws.sqs.url}")
     private String queueURL;
 
     @Override
     public void createNotification(NotificationMessageDTO message, Role role) {
-        DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(dynamoDBClient);
+        DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(dynamoDBClient, dynamoDBMapperConfig);
 
         List<String> accountIdList = accountRepository.findAccountByRole(role.ordinal());
 
@@ -69,7 +73,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public void createNotification(NotificationMessageDTO message, String receiverId) {
-        DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(dynamoDBClient);
+        DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(dynamoDBClient, dynamoDBMapperConfig);
 
         message.setNotificationId(UUID.randomUUID().toString());
         message.setRead(false);
@@ -88,7 +92,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public void createNotification(NotificationMessageDTO message, List<String> receiverIdList) {
-        DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(dynamoDBClient);
+        DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(dynamoDBClient, dynamoDBMapperConfig);
 
         message.setNotificationId(UUID.randomUUID().toString());
         message.setRead(false);
@@ -110,7 +114,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public List<NotificationMessageDTO> getNotificationByAccountId(String id) {
-        DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(dynamoDBClient);
+        DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(dynamoDBClient, dynamoDBMapperConfig);
 
         HashMap<String, AttributeValue> eav = new HashMap<>();
         eav.put(":userId", new AttributeValue().withS(id));
@@ -131,7 +135,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public void readNotification(String id, String userId) {
-        DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(dynamoDBClient);
+        DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(dynamoDBClient, dynamoDBMapperConfig);
         NotificationMessageEntity notification = dynamoDBMapper.load(NotificationMessageEntity.class, id);
         if (!notification.getUserId().equals(userId)){
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Notification.NOT_FOUND));
@@ -142,7 +146,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public void readAll(String userId) {
-        DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(dynamoDBClient);
+        DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(dynamoDBClient, dynamoDBMapperConfig);
 
         HashMap<String, AttributeValue> eav = new HashMap<>();
         eav.put(":userId", new AttributeValue().withS(userId));

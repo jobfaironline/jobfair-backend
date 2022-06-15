@@ -7,9 +7,8 @@ import org.capstone.job_fair.controllers.payload.requests.job_fair.AssignEmploye
 import org.capstone.job_fair.controllers.payload.responses.JobFairAssignmentStatisticsResponse;
 import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
 import org.capstone.job_fair.models.dtos.job_fair.booth.AssignmentDTO;
+import org.capstone.job_fair.models.enums.AssignmentType;
 import org.capstone.job_fair.models.dtos.util.ParseFileResult;
-import org.capstone.job_fair.models.enums.AssignmentType;
-import org.capstone.job_fair.models.enums.AssignmentType;
 import org.capstone.job_fair.services.interfaces.company.CompanyEmployeeService;
 import org.capstone.job_fair.services.interfaces.job_fair.booth.AssignmentService;
 import org.capstone.job_fair.services.interfaces.job_fair.booth.JobFairBoothService;
@@ -41,6 +40,7 @@ public class AssignmentController {
 
 
     @PostMapping(ApiEndPoint.Assignment.ASSIGN)
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
     public ResponseEntity<?> assignEmployee(@Valid @RequestBody AssignEmployeeRequest request) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         AssignmentDTO dto = assignmentService.assignEmployee(request.getEmployeeId(), request.getJobFairBoothId(), request.getType(), userDetails.getCompanyId(), request.getBeginTime(), request.getEndTime());
@@ -75,6 +75,7 @@ public class AssignmentController {
     }
 
     @GetMapping(ApiEndPoint.Assignment.JOB_FAIR_BOOTH + "/{id}")
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
     public ResponseEntity<?> getAssignmentByJobFairBooth(@PathVariable("id") String id) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         List<AssignmentDTO> result = assignmentService.getAssigmentByJobFairBoothId(id, userDetails.getCompanyId());
@@ -128,6 +129,7 @@ public class AssignmentController {
     }
 
     @GetMapping(ApiEndPoint.Assignment.ASSIGNMENT + "/{id}")
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) OR hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE)")
     public ResponseEntity<?> getAssignmentById(@PathVariable("id") String id) {
         Optional<AssignmentDTO> assignmentOpt = assignmentService.getAssignmentById(id);
         if (!assignmentOpt.isPresent()) {
