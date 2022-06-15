@@ -78,7 +78,7 @@ public class JobFairServiceImpl implements JobFairService {
             throw new IllegalArgumentException(MessageConstant.JobFair.JOB_FAIR_NOT_FOUND);
         }
         JobFairEntity entity = opt.get();
-        if (!dto.getShifts().isEmpty()){
+        if (dto.getShifts() != null && !dto.getShifts().isEmpty()){
             shiftRepository.deleteAll(entity.getShifts());
             entity.setShifts(new ArrayList<>());
         }
