@@ -70,10 +70,20 @@ public class LayoutServiceImpl implements LayoutService {
 
     @Override
     public Optional<LayoutDTO> findByIdAndCompanyId(String id, String companyId) {
+        Optional<LayoutEntity> layoutOpt = layoutRepository.findById(id);
+        return layoutOpt.map(layoutMapper::toDTO);
+        /*if (!layoutOpt.isPresent()){
+            return Optional.empty();
+        }
+        LayoutEntity layout = layoutOpt.get();
+        if ( companyId == null )
+            return layoutOpt.map(layoutMapper::toDTO);
+        if ( layout.getCompany() !== null  )
+
         if (companyId == null) {
             return layoutRepository.findById(id).map(layoutMapper::toDTO);
         }
-        return layoutRepository.findByIdAndCompanyId(id, companyId).map(layoutMapper::toDTO);
+        return layoutRepository.findByIdAndCompanyId(id, companyId).map(layoutMapper::toDTO);*/
     }
 
     @Override

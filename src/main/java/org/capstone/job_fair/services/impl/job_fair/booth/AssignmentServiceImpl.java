@@ -1,5 +1,8 @@
 package org.capstone.job_fair.services.impl.job_fair.booth;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.SneakyThrows;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -61,6 +64,14 @@ public class AssignmentServiceImpl implements AssignmentService {
 
     @Autowired
     private XSLSFileService xslsFileService;
+
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    private static class ParseException extends Exception{
+        private ParseFileResult result;
+    }
 
     private AssignmentDTO updateAssigment(AssignmentEntity entity, String companyId) {
         CompanyEmployeeEntity companyEmployee = entity.getCompanyEmployee();
@@ -194,7 +205,7 @@ public class AssignmentServiceImpl implements AssignmentService {
         return assignmentRepository.findById(id).map(assignmentMapper::toDTO);
     }
 
-    private ParseFileResult<AssignmentDTO> createNewAssignmentsFromListString(List<List<String>> data, String jobFairId, String companyId) {
+    private ParseFileResult<AssignmentDTO> createNewAssignmentsFromListString(List<List<String>> data, String jobFairId, String companyId) throws ParseException{
         ParseFileResult<AssignmentDTO> parseResult = new ParseFileResult<>();
         int rowNum = data.size();
         List<AssignmentEntity> entities = new ArrayList<>();
@@ -252,12 +263,14 @@ public class AssignmentServiceImpl implements AssignmentService {
                             .anyMatch(dto -> dto.getAccountId().equals(companyEmployee.getAccountId()));
                     if (!isEmployeeAvailable){
                         parseResult.addErrorMessage(i + 1, MessageUtil.getMessage(MessageConstant.Assignment.UNAVAILABLE_EMPLOYEE));
-                        continue;
+                        throw new ParseException(parseResult);
                     }
-                    jobFairBoothRepository.save(assignmentEntity.getJobFairBooth());
-                    assignmentEntity = assignmentRepository.save(assignmentEntity);
-                    AssignmentDTO dto = assignmentMapper.toDTO(assignmentEntity);
-                    parseResult.addToResult(dto);
+                    if (!parseResult.isHasError()){
+                        jobFairBoothRepository.save(assignmentEntity.getJobFairBooth());
+                        assignmentEntity = assignmentRepository.save(assignmentEntity);
+                        AssignmentDTO dto = assignmentMapper.toDTO(assignmentEntity);
+                        parseResult.addToResult(dto);
+                    }
                 } catch (Exception e){
                     //+1 because row start at 1
                     parseResult.addErrorMessage(i + 1, e.getMessage());
@@ -276,7 +289,11 @@ public class AssignmentServiceImpl implements AssignmentService {
         }
         Sheet sheet = workbook.getSheetAt(0);
         List<List<String>> data = xslsFileService.readXSLSheet(sheet, AssignmentConstant.XLSXFormat.COLUMN_NUM);
-        parseResult = createNewAssignmentsFromListString(data, jobFairId, companyId);
+        try {
+            parseResult = createNewAssignmentsFromListString(data, jobFairId, companyId);
+        } catch (ParseException e){
+            parseResult = e.getResult();
+        }
 
         if (parseResult.isHasError()) {
             String url = xslsFileService.uploadErrorXSLFile(workbook, parseResult.getErrors(), file.getOriginalFilename(), AssignmentConstant.XLSXFormat.ERROR_INDEX);
@@ -290,7 +307,11 @@ public class AssignmentServiceImpl implements AssignmentService {
     private ParseFileResult<AssignmentDTO> parseCsvFile(MultipartFile file, String jobFairId, String companyId) {
         ParseFileResult<AssignmentDTO> parseResult;
         List<List<String>> data = xslsFileService.readCSVFile(file.getInputStream());
-        parseResult = createNewAssignmentsFromListString(data, jobFairId, companyId);
+        try {
+            parseResult = createNewAssignmentsFromListString(data, jobFairId, companyId);
+        } catch (ParseException e){
+            parseResult = e.getResult();
+        }
         if (parseResult.isHasError()) {
             String url = xslsFileService.uploadErrorCSVFile(data, parseResult.getErrors(), file.getOriginalFilename());
             parseResult.setErrorFileUrl(url);
@@ -299,8 +320,8 @@ public class AssignmentServiceImpl implements AssignmentService {
     }
 
     @Override
-    @Transactional
     @SneakyThrows
+    @Transactional
     public ParseFileResult<AssignmentDTO> createNewAssignmentsFromFile(MultipartFile file, String jobFairId, String companyId) {
         //check for invalid type
         List<String> allowTypes = Arrays.asList(FileConstant.CSV_CONSTANT.TYPE, FileConstant.XLS_CONSTANT.TYPE, FileConstant.XLSX_CONSTANT.TYPE);
