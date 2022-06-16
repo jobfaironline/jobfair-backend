@@ -1,6 +1,7 @@
 package org.capstone.job_fair.services.interfaces.job_fair;
 
 import org.capstone.job_fair.models.dtos.job_fair.JobFairDTO;
+import org.capstone.job_fair.models.statuses.JobFairPlanStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -15,7 +16,7 @@ public interface JobFairService {
 
     JobFairDTO deleteJobFair(String jobFairId, String companyID);
 
-    Page<JobFairDTO> findByNameAndCompanyId(String name, String companyId, Pageable pageable);
+    Page<JobFairDTO> findByNameAndCompanyIdAndStatus(String name, String companyId, JobFairPlanStatus status, Pageable pageable);
 
     void publishJobFair(String companyId, String jobFairId);
 

@@ -17,6 +17,7 @@ import org.capstone.job_fair.models.dtos.job_fair.booth.AssignmentDTO;
 import org.capstone.job_fair.models.dtos.job_fair.JobFairDTO;
 import org.capstone.job_fair.models.dtos.job_fair.LayoutDTO;
 import org.capstone.job_fair.models.enums.NotificationType;
+import org.capstone.job_fair.models.statuses.JobFairPlanStatus;
 import org.capstone.job_fair.services.interfaces.job_fair.booth.JobFairBoothLayoutService;
 import org.capstone.job_fair.services.interfaces.job_fair.booth.JobFairBoothService;
 import org.capstone.job_fair.services.interfaces.job_fair.JobFairVisitService;
@@ -148,9 +149,15 @@ public class JobFairController {
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
     @GetMapping(ApiEndPoint.JobFair.JOB_FAIR)
-    public ResponseEntity<?> getJobFair(@RequestParam(value = "offset", defaultValue = JobFairConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset, @RequestParam(value = "pageSize", defaultValue = JobFairConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize, @RequestParam(value = "sortBy", defaultValue = JobFairConstant.DEFAULT_SEARCH_SORT_BY_VALUE) String sortBy, @RequestParam(value = "direction", required = false, defaultValue = JobFairConstant.DEFAULT_SEARCH_SORT_DIRECTION) Sort.Direction direction, @RequestParam(value = "name", defaultValue = JobFairConstant.DEFAULT_JOBFAIR_NAME) String name) {
+    public ResponseEntity<?> getJobFair(@RequestParam(value = "offset", defaultValue = JobFairConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset,
+                                        @RequestParam(value = "pageSize", defaultValue = JobFairConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize,
+                                        @RequestParam(value = "sortBy", defaultValue = JobFairConstant.DEFAULT_SEARCH_SORT_BY_VALUE) String sortBy,
+                                        @RequestParam(value = "direction", required = false, defaultValue = JobFairConstant.DEFAULT_SEARCH_SORT_DIRECTION) Sort.Direction direction,
+                                        @RequestParam(value = "name", defaultValue = JobFairConstant.DEFAULT_JOBFAIR_NAME) String name,
+                                        @RequestParam(value = "status", required = false) JobFairPlanStatus status
+                                        ) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Page<JobFairDTO> result = jobFairService.findByNameAndCompanyId(name, userDetails.getCompanyId(), PageRequest.of(offset, pageSize).withSort(Sort.by(direction, sortBy)));
+        Page<JobFairDTO> result = jobFairService.findByNameAndCompanyIdAndStatus(name, userDetails.getCompanyId(), status, PageRequest.of(offset, pageSize).withSort(Sort.by(direction, sortBy)));
         return ResponseEntity.ok(result);
 
     }

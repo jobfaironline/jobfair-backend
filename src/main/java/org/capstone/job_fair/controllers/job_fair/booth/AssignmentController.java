@@ -96,7 +96,7 @@ public class AssignmentController {
     }
 
     @GetMapping(ApiEndPoint.Assignment.JOB_FAIR_STATISTICS + "/{id}")
-    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) OR hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE)")
     public ResponseEntity<?> getAssignmentStatistics(@PathVariable("id") String jobFairId) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         int boothTotal = jobFairBoothService.getBoothCountByJobFair(jobFairId);
