@@ -5,6 +5,7 @@ import lombok.SneakyThrows;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import org.capstone.job_fair.constants.DataConstraint;
 import org.capstone.job_fair.constants.FileConstant;
 import org.capstone.job_fair.constants.JobPositionConstant;
@@ -31,6 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.*;
@@ -70,6 +72,8 @@ public class JobPositionServiceImpl implements JobPositionService {
     @Override
     @Transactional
     public JobPositionDTO createNewJobPosition(JobPositionDTO dto) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String companyId = userDetails.getCompanyId();
         if (dto.getSubCategoryDTOs() != null) {
             dto.getSubCategoryDTOs().forEach(subCategoryDTO -> {
                 if (!isSubCategoryIdValid(subCategoryDTO.getId())) {
@@ -84,11 +88,14 @@ public class JobPositionServiceImpl implements JobPositionService {
                 }
             });
         }
-        if (companyService.getCountById(dto.getCompanyDTO().getId()) == 0) {
+        if (companyService.getCountById(companyId) == 0) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Company.NOT_FOUND));
         }
         long currentTime = new Date().getTime();
         dto.setCreatedDate(currentTime);
+        CompanyDTO companyDTO = new CompanyDTO();
+        companyDTO.setId(companyId);
+        dto.setCompanyDTO(companyDTO);
         JobPositionEntity entity = mapper.toEntity(dto);
         entity = jobPositionRepository.save(entity);
         return mapper.toDTO(entity);
