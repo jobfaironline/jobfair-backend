@@ -82,12 +82,19 @@ public class AssignmentServiceImpl implements AssignmentService {
         return assignmentMapper.toDTO(entity);
     }
 
-    private AssignmentDTO createAssignment(String employeeId, String jobFairBoothId, AssignmentType type, String companyId, Long beginTime, Long endTime) {
+    private AssignmentDTO createAssignment(String assignerId, String employeeId, String jobFairBoothId, AssignmentType type, String companyId, Long beginTime, Long endTime) {
         Optional<CompanyEmployeeEntity> employeeOpt = companyEmployeeRepository.findByAccountId(employeeId);
         if (!employeeOpt.isPresent()) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMPLOYEE_NOT_FOUND));
         }
         CompanyEmployeeEntity employee = employeeOpt.get();
+
+        Optional<CompanyEmployeeEntity> assignerOpt = companyEmployeeRepository.findByAccountId(assignerId);
+        if (!assignerOpt.isPresent()) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMPLOYEE_NOT_FOUND));
+        }
+        CompanyEmployeeEntity assigner = assignerOpt.get();
+
         if (!employee.getCompany().getId().equals(companyId)) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Assignment.NOT_FOUND));
         }
@@ -106,15 +113,17 @@ public class AssignmentServiceImpl implements AssignmentService {
         entity.setType(type);
         entity.setBeginTime(beginTime);
         entity.setEndTime(endTime);
+        entity.setCreateTime(new Date().getTime());
+        entity.setAssigner(assigner);
         assignmentRepository.save(entity);
         return assignmentMapper.toDTO(entity);
     }
 
     @Override
     @Transactional
-    public AssignmentDTO assignEmployee(String employeeId, String jobFairBoothId, AssignmentType type, String companyId, Long beginTime, Long endTime) {
+    public AssignmentDTO assignEmployee(String assignerId, String employeeId, String jobFairBoothId, AssignmentType type, String companyId, Long beginTime, Long endTime) {
         if (type == AssignmentType.INTERVIEWER || type == AssignmentType.RECEPTION){
-            return createAssignment(employeeId, jobFairBoothId, type, companyId, beginTime, endTime);
+            return createAssignment(assignerId, employeeId, jobFairBoothId, type, companyId, beginTime, endTime);
         }
         Optional<AssignmentEntity> entityOpt = assignmentRepository.findByCompanyEmployeeAccountIdAndJobFairBoothId(employeeId, jobFairBoothId);
         if (entityOpt.isPresent()) {
@@ -124,7 +133,7 @@ public class AssignmentServiceImpl implements AssignmentService {
             entity.setEndTime(endTime);
             return updateAssigment(entity, companyId);
         }
-        return createAssignment(employeeId, jobFairBoothId, type, companyId, beginTime, endTime);
+        return createAssignment(assignerId, employeeId, jobFairBoothId, type, companyId, beginTime, endTime);
     }
 
     @Override
@@ -205,7 +214,7 @@ public class AssignmentServiceImpl implements AssignmentService {
         return assignmentRepository.findById(id).map(assignmentMapper::toDTO);
     }
 
-    private ParseFileResult<AssignmentDTO> createNewAssignmentsFromListString(List<List<String>> data, String jobFairId, String companyId) throws ParseException{
+    private ParseFileResult<AssignmentDTO> createNewAssignmentsFromListString(List<List<String>> data, String jobFairId, String companyId,  CompanyEmployeeEntity assigner) throws ParseException{
         ParseFileResult<AssignmentDTO> parseResult = new ParseFileResult<>();
         int rowNum = data.size();
         List<AssignmentEntity> entities = new ArrayList<>();
@@ -249,6 +258,8 @@ public class AssignmentServiceImpl implements AssignmentService {
             entity.setCompanyEmployee(companyEmployeeOpt.orElse(null));
             entity.setJobFairBooth(jobFairBoothOpt.orElse(null));
             entity.setType(type);
+            entity.setCreateTime(new Date().getTime());
+            entity.setAssigner(assigner);
 
             entities.add(entity);
         }
@@ -281,7 +292,7 @@ public class AssignmentServiceImpl implements AssignmentService {
     }
 
     @SneakyThrows
-    private ParseFileResult<AssignmentDTO> parseExcelFile(MultipartFile file, String jobFairId, String companyId) {
+    private ParseFileResult<AssignmentDTO> parseExcelFile(MultipartFile file, String jobFairId, String companyId, CompanyEmployeeEntity assigner) {
         ParseFileResult<AssignmentDTO> parseResult;
         Workbook workbook = new XSSFWorkbook(file.getInputStream());
         if (workbook.getNumberOfSheets() != 1) {
@@ -290,7 +301,7 @@ public class AssignmentServiceImpl implements AssignmentService {
         Sheet sheet = workbook.getSheetAt(0);
         List<List<String>> data = xslsFileService.readXSLSheet(sheet, AssignmentConstant.XLSXFormat.COLUMN_NUM);
         try {
-            parseResult = createNewAssignmentsFromListString(data, jobFairId, companyId);
+            parseResult = createNewAssignmentsFromListString(data, jobFairId, companyId, assigner);
         } catch (ParseException e){
             parseResult = e.getResult();
         }
@@ -304,11 +315,11 @@ public class AssignmentServiceImpl implements AssignmentService {
     }
 
     @SneakyThrows
-    private ParseFileResult<AssignmentDTO> parseCsvFile(MultipartFile file, String jobFairId, String companyId) {
+    private ParseFileResult<AssignmentDTO> parseCsvFile(MultipartFile file, String jobFairId, String companyId,  CompanyEmployeeEntity assigner) {
         ParseFileResult<AssignmentDTO> parseResult;
         List<List<String>> data = xslsFileService.readCSVFile(file.getInputStream());
         try {
-            parseResult = createNewAssignmentsFromListString(data, jobFairId, companyId);
+            parseResult = createNewAssignmentsFromListString(data, jobFairId, companyId, assigner);
         } catch (ParseException e){
             parseResult = e.getResult();
         }
@@ -322,7 +333,12 @@ public class AssignmentServiceImpl implements AssignmentService {
     @Override
     @SneakyThrows
     @Transactional
-    public ParseFileResult<AssignmentDTO> createNewAssignmentsFromFile(MultipartFile file, String jobFairId, String companyId) {
+    public ParseFileResult<AssignmentDTO> createNewAssignmentsFromFile(MultipartFile file, String jobFairId, String companyId, String assignerId) {
+        Optional<CompanyEmployeeEntity> assignerOpt = companyEmployeeRepository.findByAccountId(assignerId);
+        if (!assignerOpt.isPresent()) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMPLOYEE_NOT_FOUND));
+        }
+        CompanyEmployeeEntity assigner = assignerOpt.get();
         //check for invalid type
         List<String> allowTypes = Arrays.asList(FileConstant.CSV_CONSTANT.TYPE, FileConstant.XLS_CONSTANT.TYPE, FileConstant.XLSX_CONSTANT.TYPE);
         String fileType = file.getContentType();
@@ -331,10 +347,10 @@ public class AssignmentServiceImpl implements AssignmentService {
         }
         ParseFileResult<AssignmentDTO> parseResult;
         if (Objects.equals(fileType, FileConstant.XLSX_CONSTANT.TYPE) || Objects.equals(fileType, FileConstant.XLS_CONSTANT.TYPE)) {
-            parseResult = parseExcelFile(file, jobFairId, companyId);
+            parseResult = parseExcelFile(file, jobFairId, companyId, assigner);
             return parseResult;
         }
-        parseResult = parseCsvFile(file, jobFairId, companyId);
+        parseResult = parseCsvFile(file, jobFairId, companyId, assigner);
         return parseResult;
     }
 }

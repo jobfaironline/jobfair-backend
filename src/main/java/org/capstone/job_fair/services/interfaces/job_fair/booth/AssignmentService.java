@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface AssignmentService {
-    AssignmentDTO assignEmployee(String employeeId, String jobFairBoothId, AssignmentType type, String companyId, Long beginTime, Long endTime);
+    AssignmentDTO assignEmployee(String assignerId, String employeeId, String jobFairBoothId, AssignmentType type, String companyId, Long beginTime, Long endTime);
 
     AssignmentDTO unAssignEmployee(String assignmentId);
 
@@ -32,5 +32,5 @@ public interface AssignmentService {
 
     Optional<AssignmentDTO> getAssignmentById(String id);
 
-    ParseFileResult<AssignmentDTO> createNewAssignmentsFromFile(MultipartFile file, String jobFairId, String companyId);
+    ParseFileResult<AssignmentDTO> createNewAssignmentsFromFile(MultipartFile file, String jobFairId, String companyId, String assignerId);
 }

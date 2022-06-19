@@ -7,8 +7,8 @@ import org.capstone.job_fair.controllers.payload.requests.job_fair.AssignEmploye
 import org.capstone.job_fair.controllers.payload.responses.JobFairAssignmentStatisticsResponse;
 import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
 import org.capstone.job_fair.models.dtos.job_fair.booth.AssignmentDTO;
-import org.capstone.job_fair.models.enums.AssignmentType;
 import org.capstone.job_fair.models.dtos.util.ParseFileResult;
+import org.capstone.job_fair.models.enums.AssignmentType;
 import org.capstone.job_fair.services.interfaces.company.CompanyEmployeeService;
 import org.capstone.job_fair.services.interfaces.job_fair.booth.AssignmentService;
 import org.capstone.job_fair.services.interfaces.job_fair.booth.JobFairBoothService;
@@ -42,7 +42,7 @@ public class AssignmentController {
     @PostMapping(ApiEndPoint.Assignment.ASSIGN)
     public ResponseEntity<?> assignEmployee(@Valid @RequestBody AssignEmployeeRequest request) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        AssignmentDTO dto = assignmentService.assignEmployee(request.getEmployeeId(), request.getJobFairBoothId(), request.getType(), userDetails.getCompanyId(), request.getBeginTime(), request.getEndTime());
+        AssignmentDTO dto = assignmentService.assignEmployee(userDetails.getId(), request.getEmployeeId(), request.getJobFairBoothId(), request.getType(), userDetails.getCompanyId(), request.getBeginTime(), request.getEndTime());
         return ResponseEntity.ok(dto);
     }
 
@@ -57,7 +57,7 @@ public class AssignmentController {
     public ResponseEntity<?> updateAssignment(@PathVariable("id") String assignmentId,
                                               @NotNull @RequestParam("beginTime") Long beginTime,
                                               @NotNull @RequestParam("endTime") Long endTime,
-                                              @NotNull @RequestParam("type")AssignmentType type) {
+                                              @NotNull @RequestParam("type") AssignmentType type) {
         AssignmentDTO dto = assignmentService.updateAssignment(assignmentId, beginTime, endTime, type);
         return ResponseEntity.ok(dto);
     }
@@ -144,7 +144,7 @@ public class AssignmentController {
             @RequestPart("file") MultipartFile file) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String companyId = userDetails.getCompanyId();
-        ParseFileResult<AssignmentDTO> result = assignmentService.createNewAssignmentsFromFile(file, jobFairId, companyId);
+        ParseFileResult<AssignmentDTO> result = assignmentService.createNewAssignmentsFromFile(file, jobFairId, companyId, userDetails.getId());
         if (!result.isHasError()) {
             return ResponseEntity.ok(result.getResult());
         }

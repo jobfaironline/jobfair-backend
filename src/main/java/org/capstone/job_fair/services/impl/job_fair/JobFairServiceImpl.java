@@ -102,7 +102,6 @@ public class JobFairServiceImpl implements JobFairService {
 
     @Override
     public Page<JobFairDTO> findByNameAndCompanyIdAndStatus(String name, String companyId, JobFairPlanStatus status, Pageable pageable) {
-        System.out.println("AAAAAAAAAAA");
         return jobFairRepository.findByNameLikeOrNameIsNullAndCompanyIdAndStatus("%" + name + "%", companyId, status, pageable).map(jobFairMapper::toDTO);
     }
 

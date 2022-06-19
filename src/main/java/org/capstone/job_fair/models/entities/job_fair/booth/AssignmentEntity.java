@@ -43,6 +43,10 @@ public class AssignmentEntity {
     @Column(name = "end_time")
     private Long endTime;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "assigner")
+    private CompanyEmployeeEntity assigner;
+
 
     @Override
     public boolean equals(Object o) {
