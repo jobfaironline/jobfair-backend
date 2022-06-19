@@ -72,13 +72,13 @@ public class JobFairServiceImpl implements JobFairService {
 
     @Override
     @Transactional
-        public JobFairDTO updateJobFair(JobFairDTO dto, String companyID) {
+    public JobFairDTO updateJobFair(JobFairDTO dto, String companyID) {
         Optional<JobFairEntity> opt = jobFairRepository.findByIdAndCompanyId(dto.getId(), companyID);
         if (!opt.isPresent()) {
             throw new IllegalArgumentException(MessageConstant.JobFair.JOB_FAIR_NOT_FOUND);
         }
         JobFairEntity entity = opt.get();
-        if (dto.getShifts() != null && !dto.getShifts().isEmpty()){
+        if (dto.getShifts() != null && !dto.getShifts().isEmpty()) {
             shiftRepository.deleteAll(entity.getShifts());
             entity.setShifts(new ArrayList<>());
         }
@@ -106,9 +106,16 @@ public class JobFairServiceImpl implements JobFairService {
     }
 
 
+
     @Override
     @Transactional
     public void publishJobFair(String companyId, String jobFairId) {
+        JobFairEntity jobFairEntity = validateJobFair(companyId, jobFairId);
+        jobFairEntity.setStatus(JobFairPlanStatus.PUBLISH);
+        jobFairRepository.save(jobFairEntity);
+    }
+
+    private JobFairEntity validateJobFair(String companyId, String jobFairId){
         //check existed job fair
         Optional<JobFairEntity> jobFairEntityOptional = jobFairRepository.findByIdAndCompanyId(jobFairId, companyId);
         if (!jobFairEntityOptional.isPresent()) {
@@ -118,7 +125,7 @@ public class JobFairServiceImpl implements JobFairService {
         Long publicStartTime = jobFairEntity.getPublicStartTime();
         //check job existed job fair in the same time
         List<JobFairEntity> listEntity = jobFairRepository.findByCompanyIdAndStatus(companyId, JobFairPlanStatus.PUBLISH);
-        for(JobFairEntity entity : listEntity) {
+        for (JobFairEntity entity : listEntity) {
             if (publicStartTime >= entity.getPublicStartTime()
                     && publicStartTime <= entity.getPublicEndTime())
                 throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.JOB_FAIR_ALREADY_PUBLISH));
@@ -134,10 +141,13 @@ public class JobFairServiceImpl implements JobFairService {
         if (!jobFairDTO.getStatus().equals(JobFairPlanStatus.DRAFT)) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.NOT_EDITABLE));
         }
+        return jobFairEntity;
+    }
 
-        jobFairEntity.setStatus(JobFairPlanStatus.PUBLISH);
-
-        jobFairRepository.save(jobFairEntity);
+    @Override
+    public JobFairDTO validateJobFairForPublish(String companyId, String jobFairId) {
+        JobFairEntity jobFairEntity = validateJobFair(companyId, jobFairId);
+        return jobFairMapper.toDTO(jobFairEntity);
     }
 
     @Override
@@ -151,7 +161,7 @@ public class JobFairServiceImpl implements JobFairService {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.JOB_FAIR_NOT_FOUND));
         }
         JobFairEntity jobFairEntity = jobFairEntityOptional.get();
-        if (!jobFairEntity.getStatus().equals(JobFairPlanStatus.DRAFT)){
+        if (!jobFairEntity.getStatus().equals(JobFairPlanStatus.DRAFT)) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.NOT_EDITABLE));
         }
         jobFairEntity.setThumbnailUrl(url);
