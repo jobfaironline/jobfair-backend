@@ -90,7 +90,8 @@ public class AuthController {
                     isEmployeeFirstTime,
                     userDetails.getId(),
                     companyId,
-                    userDetails.getFullname()
+                    userDetails.getFullname(),
+                    userDetails.getProfileUrl()
             );
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
