@@ -115,7 +115,6 @@ public class JobFairController {
 
     @GetMapping(ApiEndPoint.JobFair.JOB_FAIR + "/{id}")
     public ResponseEntity<?> getJobFairDetailById(@PathVariable("id") String id) {
-        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Optional<JobFairDTO> result = jobFairService.getById(id);
         if (!result.isPresent()) {
             return ResponseEntity.notFound().build();

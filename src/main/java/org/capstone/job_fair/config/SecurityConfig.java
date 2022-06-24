@@ -101,6 +101,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests().antMatchers(ApiEndPoint.Attendant.ATTENDANT_ENDPOINT).permitAll().and()
                 .authorizeRequests().antMatchers(ApiEndPoint.Authorization.VERIFY_USER + "/**").permitAll().and()
                 .authorizeRequests().antMatchers(ApiEndPoint.Authorization.NEW_VERIFY_LINK + "/**").permitAll().and()
+                //Job Fair API Security: specific end point for get job fair detail
+                .authorizeRequests().antMatchers(ApiEndPoint.JobFair.JOB_FAIR + "/**").permitAll().and()
                 //Attendant API Security: specific end point will be configured inside controller
                 .authorizeRequests().antMatchers(ApiEndPoint.CompanyEmployee.REGISTER_COMPANY_MANAGER).permitAll()
                 .anyRequest().authenticated().and()
