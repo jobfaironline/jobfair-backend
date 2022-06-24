@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@DynamoDBTable(tableName = "JobhubConnections")
+@DynamoDBTable(tableName = "JobHubConnections")
 public class JobhubConnectionsEntity {
     @DynamoDBHashKey(attributeName = "connectionId")
     private String connectionId;
