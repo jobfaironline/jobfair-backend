@@ -370,6 +370,8 @@ public final class MessageConstant {
         public static final String CV_NOT_HAVE_TEST = "application.error.cv-not-have-test";
         public static final String MISS_MATCH_INTERVIEWER = "application.error.miss-match-interviewer";
 
+        public static final String EVALUATE_MESSAGE_TO_ATTENDANT = "application.success.evaluate-message-to-attendant";
+
         private Application() {
 
         }
