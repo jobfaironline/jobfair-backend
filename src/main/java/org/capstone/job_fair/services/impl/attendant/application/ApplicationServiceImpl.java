@@ -71,8 +71,6 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Autowired
     private InterviewService interviewService;
 
-    @Autowired
-    private NotificationService notificationService;
 
     private TestStatus getTestStatus(String boothJobPositionId) {
         Optional<BoothJobPositionEntity> boothJobPositionEntityOptional = regisJobPosRepository.findById(boothJobPositionId);
@@ -231,7 +229,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     @Transactional
-    public void evaluateApplication(ApplicationDTO dto, String userId) {
+    public ApplicationDTO evaluateApplication(ApplicationDTO dto, String userId) {
         Optional<ApplicationEntity> applicationEntityOptional = applicationRepository.findById(dto.getId());
         //check application existed
         if (!applicationEntityOptional.isPresent())
@@ -257,18 +255,12 @@ public class ApplicationServiceImpl implements ApplicationService {
         companyEmployeeDTO.setAccountId(userId);
         dto.setInterviewer(companyEmployeeDTO);
         dto.setEvaluateDate(new Date().getTime());
-        //create notification message
-        NotificationMessageDTO notificationMessageDTO = new NotificationMessageDTO();
-        notificationMessageDTO.setMessage(MessageUtil.getMessage(MessageConstant.Application.EVALUATE_MESSAGE_TO_ATTENDANT));
-        notificationMessageDTO.setNotificationType(NotificationType.NOTI);
 
 
         applicationMapper.updateFromDTO(applicationEntity, dto);
-        applicationRepository.save(applicationEntity);
+        applicationEntity = applicationRepository.save(applicationEntity);
         interviewService.scheduleInterview(applicationEntity.getId(), userId);
-        //Because send notification is not transactional
-        //To prevent sending notification to user when anything wrong happens
-        //Send noti is placed at the end of this
-        notificationService.createNotification(notificationMessageDTO, applicationEntity.getAttendant().getAccountId());
+
+        return applicationMapper.toDTO(applicationEntity);
     }
 }

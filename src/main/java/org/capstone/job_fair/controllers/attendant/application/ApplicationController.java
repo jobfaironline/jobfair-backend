@@ -10,12 +10,15 @@ import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
 import org.capstone.job_fair.models.dtos.attendant.AttendantDTO;
 import org.capstone.job_fair.models.dtos.attendant.application.ApplicationDTO;
+import org.capstone.job_fair.models.dtos.dynamoDB.NotificationMessageDTO;
 import org.capstone.job_fair.models.dtos.job_fair.booth.BoothJobPositionDTO;
 import org.capstone.job_fair.models.entities.attendant.application.ApplicationEntity;
 import org.capstone.job_fair.models.enums.ApplicationStatus;
+import org.capstone.job_fair.models.enums.NotificationType;
 import org.capstone.job_fair.models.enums.Role;
 import org.capstone.job_fair.services.interfaces.attendant.application.ApplicationService;
 import org.capstone.job_fair.services.interfaces.job_fair.InterviewService;
+import org.capstone.job_fair.services.interfaces.notification.NotificationService;
 import org.capstone.job_fair.services.mappers.attendant.application.ApplicationMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.capstone.job_fair.validators.XSSConstraint;
@@ -42,6 +45,9 @@ public class ApplicationController {
 
     @Autowired
     private ApplicationMapper applicationMapper;
+
+    @Autowired
+    private NotificationService notificationService;
 
 
     @GetMapping(ApiEndPoint.Application.APPLICATION_ENDPOINT + "/{id}")
@@ -155,11 +161,17 @@ public class ApplicationController {
         dto.setEvaluateMessage(request.getEvaluateMessage());
         dto.setStatus(request.getStatus());
 
-        applicationService.evaluateApplication(dto, userId);
+        dto = applicationService.evaluateApplication(dto, userId);
 
+        //create notification message
+        NotificationMessageDTO notificationMessageDTO = new NotificationMessageDTO();
+        notificationMessageDTO.setMessage(MessageUtil.getMessage(MessageConstant.Application.EVALUATE_MESSAGE_TO_ATTENDANT));
+        notificationMessageDTO.setNotificationType(NotificationType.NOTI);
+
+        //send notification to attendant
+        notificationService.createNotification(notificationMessageDTO, dto.getAttendant().getAccount().getId());
 
         return ResponseEntity.ok().build();
-
     }
 
 
