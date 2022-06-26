@@ -19,4 +19,5 @@ public class LoginResponse {
     private String userId;
     private String companyId;
     private String fullName;
+    private String profileUrl;
 }

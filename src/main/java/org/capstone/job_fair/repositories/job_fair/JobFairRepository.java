@@ -18,8 +18,8 @@ public interface JobFairRepository extends JpaRepository<JobFairEntity, String> 
 
     List<JobFairEntity> findByCompanyIdAndStatus(String companyId, JobFairPlanStatus status);
 
-    @Query("select j from JobFairEntity j where (j.name like ?1 or j.name is null) and j.company.id = ?2")
-    Page<JobFairEntity> findByNameLikeOrNameIsNullAndCompanyId(String name, String companyId, Pageable pageable);
+    @Query("select j from JobFairEntity j where (j.name like :name or j.name is null) and j.company.id = :companyId and (j.status = :status or :status is null)")
+    Page<JobFairEntity> findByNameLikeOrNameIsNullAndCompanyIdAndStatus(@Param("name") String name, @Param("companyId") String companyId, @Param("status") JobFairPlanStatus status, Pageable pageable);
 
     @Query("select DISTINCT j from JobFairEntity j JOIN j.company.subCategories as c where (j.name like :name or j.name is null) and j.status = :status and (j.publicStartTime <= :currentTime and j.publicEndTime >= :currentTime) and (CAST(:subCategoryId as int ) = c.id OR :subCategoryId='')")
     Page<JobFairEntity> findJobFairForAttendant(

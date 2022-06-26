@@ -4,17 +4,20 @@ import org.capstone.job_fair.constants.DataConstraint;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.models.dtos.attendant.application.ApplicationDTO;
 import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
+import org.capstone.job_fair.models.dtos.dynamoDB.NotificationMessageDTO;
 import org.capstone.job_fair.models.entities.attendant.application.ApplicationEntity;
 import org.capstone.job_fair.models.entities.attendant.cv.CvEntity;
 import org.capstone.job_fair.models.entities.job_fair.booth.BoothJobPositionEntity;
 import org.capstone.job_fair.models.enums.ApplicationStatus;
 import org.capstone.job_fair.models.enums.AssignmentType;
+import org.capstone.job_fair.models.enums.NotificationType;
 import org.capstone.job_fair.models.enums.TestStatus;
 import org.capstone.job_fair.repositories.attendant.application.ApplicationRepository;
 import org.capstone.job_fair.repositories.attendant.cv.CvRepository;
 import org.capstone.job_fair.repositories.job_fair.job_fair_booth.BoothJobPositionRepository;
 import org.capstone.job_fair.services.interfaces.attendant.application.ApplicationService;
 import org.capstone.job_fair.services.interfaces.job_fair.InterviewService;
+import org.capstone.job_fair.services.interfaces.notification.NotificationService;
 import org.capstone.job_fair.services.mappers.attendant.application.*;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,6 +70,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Autowired
     private InterviewService interviewService;
+
 
     private TestStatus getTestStatus(String boothJobPositionId) {
         Optional<BoothJobPositionEntity> boothJobPositionEntityOptional = regisJobPosRepository.findById(boothJobPositionId);
@@ -225,7 +229,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     @Transactional
-    public void evaluateApplication(ApplicationDTO dto, String userId) {
+    public ApplicationDTO evaluateApplication(ApplicationDTO dto, String userId) {
         Optional<ApplicationEntity> applicationEntityOptional = applicationRepository.findById(dto.getId());
         //check application existed
         if (!applicationEntityOptional.isPresent())
@@ -251,8 +255,12 @@ public class ApplicationServiceImpl implements ApplicationService {
         companyEmployeeDTO.setAccountId(userId);
         dto.setInterviewer(companyEmployeeDTO);
         dto.setEvaluateDate(new Date().getTime());
+
+
         applicationMapper.updateFromDTO(applicationEntity, dto);
-        applicationRepository.save(applicationEntity);
+        applicationEntity = applicationRepository.save(applicationEntity);
         interviewService.scheduleInterview(applicationEntity.getId(), userId);
+
+        return applicationMapper.toDTO(applicationEntity);
     }
 }

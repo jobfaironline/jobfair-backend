@@ -29,6 +29,7 @@ public class UserDetailsImpl implements UserDetails {
     private String id;
     private AccountStatus status;
     private String companyId;
+    private String profileUrl;
 
     private Collection<? extends GrantedAuthority> authorities;
 
@@ -43,6 +44,7 @@ public class UserDetailsImpl implements UserDetails {
                 account.getId(),
                 account.getStatus(),
                 null,
+                account.getProfileImageUrl(),
                 authorities
         );
 
