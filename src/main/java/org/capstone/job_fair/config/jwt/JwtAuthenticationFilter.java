@@ -1,13 +1,14 @@
 package org.capstone.job_fair.config.jwt;
 
+import com.amazonaws.util.json.Jackson;
 import lombok.extern.slf4j.Slf4j;
 import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import org.capstone.job_fair.config.jwt.details.UserDetailsServiceImpl;
-import org.capstone.job_fair.constants.MessageConstant;
+import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.statuses.AccountStatus;
-import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,7 +21,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.nio.file.AccessDeniedException;
+import java.io.PrintWriter;
 
 @Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -58,7 +59,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     //Check if user is deactivated
                     if (((UserDetailsImpl) userDetails).getStatus().equals(AccountStatus.INACTIVE)){
                         response.setStatus(HttpStatus.UNAUTHORIZED.value());
-                        //TODO: add message to response
+                        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                        try (PrintWriter writer = response.getWriter()){
+                            ResponseEntity<?> payload = GenericResponse.build("Account is inactive", HttpStatus.UNAUTHORIZED);
+                            writer.print(Jackson.getObjectMapper().writeValueAsString(payload.getBody()));
+                        }
                         return;
                     }
                     //if userDetails is valid, set data into Security Context
