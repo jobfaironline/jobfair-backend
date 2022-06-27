@@ -148,8 +148,8 @@ public class AccountController {
     public ResponseEntity<?> deactivateOwnAccount(){
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String userId = userDetails.getId();
-        accountService.deactivateOwnAccount(userId);
-        return new ResponseEntity<>(HttpStatus.OK);
+        AccountDTO account = accountService.deactivateOwnAccount(userId);
+        return ResponseEntity.ok(account);
     }
 
 
