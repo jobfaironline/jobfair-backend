@@ -143,4 +143,16 @@ public class AccountController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
+
+    @GetMapping(ApiEndPoint.Account.DEACTIVATE_OWN_ACCOUNT)
+    public ResponseEntity<?> deactivateOwnAccount(){
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String userId = userDetails.getId();
+        AccountDTO account = accountService.deactivateOwnAccount(userId);
+        return ResponseEntity.ok(account);
+    }
+
+
+
+
 }

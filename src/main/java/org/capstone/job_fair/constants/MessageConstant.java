@@ -128,6 +128,8 @@ public final class MessageConstant {
 
     public static final class Account {
         public static final String NOT_FOUND = "account.error.not-found";
+        public static final String ACCOUNT_INACTIVE = "account.error.inactive";
+
         public static final String EXISTED = "account.error.existed";
         public static final String EMAIL_EXISTED = "account.error.email-existed";
         public static final String NOT_FOUND_COUNTRY = "account.error.not-found-country";

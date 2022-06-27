@@ -43,7 +43,7 @@ public class ExceptionHandlerController {
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<?> unauthorizedException(AccessDeniedException ex) {
-        return buildErrorResponse(ex, MessageUtil.getMessage(MessageConstant.Exception.NO_PERMISSION), HttpStatus.UNAUTHORIZED);
+        return GenericResponse.build(ex.getMessage(), HttpStatus.UNAUTHORIZED);
     }
 
 
