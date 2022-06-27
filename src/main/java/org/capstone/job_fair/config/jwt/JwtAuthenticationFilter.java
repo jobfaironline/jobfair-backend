@@ -4,8 +4,10 @@ import com.amazonaws.util.json.Jackson;
 import lombok.extern.slf4j.Slf4j;
 import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import org.capstone.job_fair.config.jwt.details.UserDetailsServiceImpl;
+import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.statuses.AccountStatus;
+import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -61,7 +63,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         response.setStatus(HttpStatus.UNAUTHORIZED.value());
                         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
                         try (PrintWriter writer = response.getWriter()){
-                            ResponseEntity<?> payload = GenericResponse.build("Account is inactive", HttpStatus.UNAUTHORIZED);
+                            ResponseEntity<?> payload = GenericResponse.build(MessageUtil.getMessage(MessageConstant.Account.ACCOUNT_INACTIVE), HttpStatus.UNAUTHORIZED);
                             writer.print(Jackson.getObjectMapper().writeValueAsString(payload.getBody()));
                         }
                         return;
