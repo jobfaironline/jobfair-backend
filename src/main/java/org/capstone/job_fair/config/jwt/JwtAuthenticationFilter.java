@@ -58,7 +58,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     //Check if user is deactivated
                     if (((UserDetailsImpl) userDetails).getStatus().equals(AccountStatus.INACTIVE)){
                         response.setStatus(HttpStatus.UNAUTHORIZED.value());
-                        //TO-DO: add message to response
+                        //TODO: add message to response
                         return;
                     }
                     //if userDetails is valid, set data into Security Context
