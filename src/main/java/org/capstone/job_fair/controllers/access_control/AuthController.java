@@ -65,6 +65,11 @@ public class AuthController {
             String refreshToken = tokenProvider.generateRefreshToken(authentication);
             //get user principle from authentication obj
             UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+            //If account status is deactivated then reactivate it
+            if (userDetails.getStatus().equals(AccountStatus.INACTIVE)) {
+                accountService.reactivateOwnAccount(userDetails.getId());
+                userDetails.setStatus(AccountStatus.VERIFIED);
+            }
             //check if the Company Employee first time login with provided password
             boolean isEmployeeFirstTime = false;
             if (isAccountHasRole(userDetails, Role.COMPANY_EMPLOYEE) && userDetails.getStatus().equals(AccountStatus.REGISTERED)) {

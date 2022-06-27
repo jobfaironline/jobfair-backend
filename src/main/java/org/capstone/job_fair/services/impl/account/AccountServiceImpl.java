@@ -192,4 +192,21 @@ public class AccountServiceImpl implements AccountService {
         return accountMapper.toDTO(account);
     }
 
+    @Override
+    @Transactional
+    public void deactivateOwnAccount(String userId){
+        AccountEntity account = accountRepository.getById(userId);
+        account.setStatus(AccountStatus.INACTIVE);
+        accountRepository.save(account);
+    }
+
+    @Override
+    @Transactional
+    public void reactivateOwnAccount(String userId){
+        AccountEntity account = accountRepository.getById(userId);
+        account.setStatus(AccountStatus.VERIFIED);
+        accountRepository.save(account);
+    }
+
+
 }

@@ -187,7 +187,8 @@ public final class ApiEndPoint {
         public static final String CHANGE_PASSWORD_ENDPOINT = ACCOUNT_ENDPOINT + "/change-password";
         public static final String PICTURE_PROFILE_ENDPOINT = ACCOUNT_ENDPOINT + "/upload-picture-profile";
         public static final String GET_INFO = ACCOUNT_ENDPOINT + "/get-info";
-
+        public static final String DEACTIVATE_OWN_ACCOUNT = ACCOUNT_ENDPOINT + "/deactivate-own-account";
+        public static final String REDEACTIVATE_OWN_ACCOUNT = ACCOUNT_ENDPOINT + "/reactivate-own-account";
         public static final String GET_GENERAL_INFO = ACCOUNT_ENDPOINT + "/get-general-info";
     }
 
