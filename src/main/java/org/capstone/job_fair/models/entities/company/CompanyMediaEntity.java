@@ -1,6 +1,9 @@
 package org.capstone.job_fair.models.entities.company;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.GenericGenerator;
 

@@ -1,15 +1,15 @@
 package org.capstone.job_fair.services.impl.job_fair.booth;
 
 import org.capstone.job_fair.constants.MessageConstant;
-import org.capstone.job_fair.models.dtos.job_fair.booth.JobFairBoothDTO;
 import org.capstone.job_fair.models.dtos.job_fair.booth.BoothJobPositionDTO;
-import org.capstone.job_fair.models.entities.job_fair.booth.JobFairBoothEntity;
+import org.capstone.job_fair.models.dtos.job_fair.booth.JobFairBoothDTO;
 import org.capstone.job_fair.models.entities.company.job.JobPositionEntity;
 import org.capstone.job_fair.models.entities.job_fair.JobFairEntity;
+import org.capstone.job_fair.models.entities.job_fair.booth.JobFairBoothEntity;
 import org.capstone.job_fair.models.statuses.JobFairPlanStatus;
-import org.capstone.job_fair.repositories.job_fair.job_fair_booth.JobFairBoothRepository;
 import org.capstone.job_fair.repositories.company.job.JobPositionRepository;
 import org.capstone.job_fair.repositories.job_fair.JobFairRepository;
+import org.capstone.job_fair.repositories.job_fair.job_fair_booth.JobFairBoothRepository;
 import org.capstone.job_fair.services.interfaces.job_fair.booth.JobFairBoothService;
 import org.capstone.job_fair.services.mappers.job_fair.booth.JobFairBoothMapper;
 import org.capstone.job_fair.utils.MessageUtil;

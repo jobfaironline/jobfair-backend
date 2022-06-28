@@ -1,8 +1,6 @@
 package org.capstone.job_fair.models.dtos.job_fair;
 
 import lombok.*;
-import org.capstone.job_fair.models.dtos.attendant.AttendantDTO;
-import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
 import org.capstone.job_fair.models.statuses.InterviewStatus;
 
 @Data

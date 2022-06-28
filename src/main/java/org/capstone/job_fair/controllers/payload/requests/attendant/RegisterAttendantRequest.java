@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.capstone.job_fair.constants.DataConstraint;
-import org.capstone.job_fair.models.enums.Gender;
 import org.capstone.job_fair.validators.*;
 
 import javax.validation.constraints.NotEmpty;

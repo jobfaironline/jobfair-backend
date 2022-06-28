@@ -1,6 +1,9 @@
 package org.capstone.job_fair.models.entities.token;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.GenericGenerator;

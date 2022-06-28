@@ -9,7 +9,6 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.capstone.job_fair.constants.AssignmentConstant;
 import org.capstone.job_fair.constants.FileConstant;
-import org.capstone.job_fair.constants.JobPositionConstant;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
 import org.capstone.job_fair.models.dtos.job_fair.booth.AssignmentDTO;

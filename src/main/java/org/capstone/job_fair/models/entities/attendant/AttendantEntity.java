@@ -1,6 +1,9 @@
 package org.capstone.job_fair.models.entities.attendant;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
 import org.capstone.job_fair.models.entities.attendant.misc.CountryEntity;
 import org.capstone.job_fair.models.entities.attendant.misc.ResidenceEntity;

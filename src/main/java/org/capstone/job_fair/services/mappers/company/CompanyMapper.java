@@ -3,11 +3,13 @@ package org.capstone.job_fair.services.mappers.company;
 
 import org.capstone.job_fair.controllers.payload.requests.company.CreateCompanyRequest;
 import org.capstone.job_fair.controllers.payload.requests.company.UpdateCompanyRequest;
-import org.capstone.job_fair.models.dtos.company.*;
+import org.capstone.job_fair.models.dtos.company.CompanyDTO;
+import org.capstone.job_fair.models.dtos.company.CompanyMediaDTO;
 import org.capstone.job_fair.models.dtos.company.misc.BenefitDTO;
 import org.capstone.job_fair.models.dtos.company.misc.CompanyBenefitDTO;
 import org.capstone.job_fair.models.dtos.company.misc.SubCategoryDTO;
-import org.capstone.job_fair.models.entities.company.*;
+import org.capstone.job_fair.models.entities.company.CompanyEntity;
+import org.capstone.job_fair.models.entities.company.CompanyMediaEntity;
 import org.capstone.job_fair.models.entities.company.misc.CompanyBenefitEntity;
 import org.capstone.job_fair.models.entities.company.misc.CompanySizeEntity;
 import org.capstone.job_fair.models.entities.company.misc.SubCategoryEntity;

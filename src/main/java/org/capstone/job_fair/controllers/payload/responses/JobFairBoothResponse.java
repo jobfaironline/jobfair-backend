@@ -1,6 +1,7 @@
 package org.capstone.job_fair.controllers.payload.responses;
 
-import lombok.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.capstone.job_fair.models.dtos.job_fair.booth.JobFairBoothDTO;
 
 @EqualsAndHashCode(callSuper = true)
