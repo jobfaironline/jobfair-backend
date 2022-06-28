@@ -8,5 +8,6 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public abstract class RoleMapper {
     public abstract RoleDTO toDTO(RoleEntity entity);
+
     public abstract RoleEntity toEntity(RoleDTO dto);
 }

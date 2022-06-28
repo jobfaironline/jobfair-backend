@@ -1,6 +1,9 @@
 package org.capstone.job_fair.models.entities.job_fair.booth;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.capstone.job_fair.models.entities.company.CompanyEmployeeEntity;
 import org.capstone.job_fair.models.enums.AssignmentType;
 import org.hibernate.Hibernate;

@@ -1,9 +1,10 @@
 package org.capstone.job_fair.constants;
 
 public class ThreeDimensionMediaConstant {
-    private ThreeDimensionMediaConstant(){
+    private ThreeDimensionMediaConstant() {
 
     }
+
     public static final String DEFAULT_SEARCH_TYPE = "BOOTH_TEMPLATE";
     public static final String DEFAULT_SEARCH_OFFSET_VALUE = "0";
     public static final String DEFAULT_SEARCH_PAGE_SIZE_VALUE = "10";

@@ -10,5 +10,6 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 )
 public abstract class MediaEntityMapper {
     public abstract CompanyMediaEntity toEntity(CompanyMediaDTO dto);
+
     public abstract CompanyMediaDTO toDTO(CompanyMediaEntity entity);
 }

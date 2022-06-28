@@ -1,6 +1,9 @@
 package org.capstone.job_fair.models.entities.job_fair.booth;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.capstone.job_fair.models.entities.job_fair.JobFairEntity;
 import org.capstone.job_fair.models.entities.job_fair.LayoutBoothEntity;
 import org.hibernate.Hibernate;
@@ -25,10 +28,10 @@ public class JobFairBoothEntity {
     @GenericGenerator(name = "uuid", strategy = "org.hibernate.id.UUIDGenerator")
     private String id;
 
-    @Column(name="description")
+    @Column(name = "description")
     private String description;
 
-    @Column(name="name")
+    @Column(name = "name")
     private String name;
 
     @ManyToOne(fetch = FetchType.LAZY)

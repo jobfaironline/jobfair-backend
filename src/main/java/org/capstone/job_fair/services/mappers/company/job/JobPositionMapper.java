@@ -2,21 +2,21 @@ package org.capstone.job_fair.services.mappers.company.job;
 
 import org.capstone.job_fair.controllers.payload.requests.company.CreateJobPositionRequest;
 import org.capstone.job_fair.controllers.payload.requests.company.UpdateJobPositionRequest;
+import org.capstone.job_fair.models.dtos.company.job.JobPositionDTO;
 import org.capstone.job_fair.models.dtos.company.misc.SkillTagDTO;
 import org.capstone.job_fair.models.dtos.company.misc.SubCategoryDTO;
-import org.capstone.job_fair.models.dtos.company.job.JobPositionDTO;
 import org.capstone.job_fair.models.entities.attendant.misc.JobLevelEntity;
 import org.capstone.job_fair.models.entities.attendant.misc.LanguageEntity;
-import org.capstone.job_fair.models.entities.company.misc.SkillTagEntity;
-import org.capstone.job_fair.models.entities.company.misc.SubCategoryEntity;
 import org.capstone.job_fair.models.entities.company.job.JobPositionEntity;
 import org.capstone.job_fair.models.entities.company.job.JobTypeEntity;
+import org.capstone.job_fair.models.entities.company.misc.SkillTagEntity;
+import org.capstone.job_fair.models.entities.company.misc.SubCategoryEntity;
 import org.capstone.job_fair.models.enums.JobLevel;
 import org.capstone.job_fair.models.enums.JobType;
 import org.capstone.job_fair.models.enums.Language;
 import org.capstone.job_fair.services.mappers.company.CompanyMapper;
-import org.capstone.job_fair.services.mappers.company.misc.SubCategoryMapper;
 import org.capstone.job_fair.services.mappers.company.misc.SkillTagMapper;
+import org.capstone.job_fair.services.mappers.company.misc.SubCategoryMapper;
 import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
 

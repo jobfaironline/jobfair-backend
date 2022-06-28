@@ -71,17 +71,17 @@ public class ThreeDimensionMediaServiceImpl implements ThreeDimensionMediaServic
     }
 
     @Override
-    public Page<ThreeDimensionMediaDTO> findByType(ThreeDimensionMediaType type, int offset, int pageSize, String sortBy, Sort.Direction direction){
+    public Page<ThreeDimensionMediaDTO> findByType(ThreeDimensionMediaType type, int offset, int pageSize, String sortBy, Sort.Direction direction) {
         Page<ThreeDimensionMedia> threeDimensionMediaPage = threeDimesnionMediaRepository.findAllByType(type, PageRequest.of(offset, pageSize).withSort(direction, sortBy));
         return threeDimensionMediaPage.map(threeDimensionMedia -> threeDimensionMediaMapper.toDTO(threeDimensionMedia));
     }
 
     @Transactional
     @Override
-    public ThreeDimensionMediaDTO createOrUpdateThumbnail(String decoratedThumbnailsFolder, String id){
+    public ThreeDimensionMediaDTO createOrUpdateThumbnail(String decoratedThumbnailsFolder, String id) {
         String url = awsUtil.generateAwsS3AccessString(decoratedThumbnailsFolder, id);
         Optional<ThreeDimensionMedia> threeDimensionMediaOptional = threeDimesnionMediaRepository.findById(id);
-        if(!threeDimensionMediaOptional.isPresent()) throw new
+        if (!threeDimensionMediaOptional.isPresent()) throw new
                 IllegalArgumentException(MessageUtil.getMessage(MessageConstant.DecoratedItem.NOT_FOUND));
         ThreeDimensionMedia threeDimensionMedia = threeDimensionMediaOptional.get();
         threeDimensionMedia.setThumbnailUrl(url);

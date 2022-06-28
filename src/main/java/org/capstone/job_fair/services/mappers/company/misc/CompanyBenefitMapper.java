@@ -3,7 +3,6 @@ package org.capstone.job_fair.services.mappers.company.misc;
 import org.capstone.job_fair.models.dtos.company.misc.CompanyBenefitDTO;
 import org.capstone.job_fair.models.entities.company.misc.CompanyBenefitEntity;
 import org.capstone.job_fair.services.mappers.company.CompanyMapper;
-import org.capstone.job_fair.services.mappers.company.misc.BenefitEntityMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;

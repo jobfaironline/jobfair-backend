@@ -40,7 +40,7 @@ public class JobLevelServiceImpl implements JobLevelService {
     @Transactional
     public JobLevelDTO delete(int id) {
         Optional<JobLevelEntity> entityOptional = jobLevelRepository.findById(id);
-        if(!entityOptional.isPresent()) throw new
+        if (!entityOptional.isPresent()) throw new
                 IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobLevel.NOT_FOUND));
         jobLevelRepository.delete(entityOptional.get());
         return jobLevelMapper.toDTO(entityOptional.get());
@@ -57,7 +57,7 @@ public class JobLevelServiceImpl implements JobLevelService {
     @Transactional
     public JobLevelDTO update(JobLevelDTO dto) {
         Optional<JobLevelEntity> entityOptional = jobLevelRepository.findById(Integer.parseInt(dto.getId()));
-        if(!entityOptional.isPresent()) throw new
+        if (!entityOptional.isPresent()) throw new
                 IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobLevel.NOT_FOUND));
         JobLevelEntity entity = jobLevelRepository.save(jobLevelMapper.toEntity(dto));
         return jobLevelMapper.toDTO(entity);

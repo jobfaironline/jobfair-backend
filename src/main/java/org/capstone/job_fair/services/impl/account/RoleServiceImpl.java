@@ -39,7 +39,8 @@ public class RoleServiceImpl implements RoleService {
     @Transactional
     public RoleDTO delete(int id) {
         Optional<RoleEntity> roleEntityOptional = roleRepository.findById(id);
-        if(!roleEntityOptional.isPresent()) throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Role.NOT_FOUND));
+        if (!roleEntityOptional.isPresent())
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Role.NOT_FOUND));
         roleRepository.deleteById(id);
         return roleMapper.toDTO(roleEntityOptional.get());
     }
@@ -48,7 +49,8 @@ public class RoleServiceImpl implements RoleService {
     @Transactional
     public RoleDTO create(RoleDTO dto) {
         Optional<RoleEntity> roleEntityOptional = roleRepository.findById(dto.getId());
-        if(roleEntityOptional.isPresent()) throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Role.DUPLICATED));
+        if (roleEntityOptional.isPresent())
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Role.DUPLICATED));
         RoleEntity entity = roleRepository.save(roleMapper.toEntity(dto));
         return roleMapper.toDTO(entity);
     }
@@ -57,7 +59,8 @@ public class RoleServiceImpl implements RoleService {
     @Transactional
     public RoleDTO update(RoleDTO dto) {
         Optional<RoleEntity> roleEntityOptional = roleRepository.findById(dto.getId());
-        if(!roleEntityOptional.isPresent()) throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Role.NOT_FOUND));
+        if (!roleEntityOptional.isPresent())
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Role.NOT_FOUND));
         RoleEntity entity = roleRepository.save(roleMapper.toEntity(dto));
         return roleMapper.toDTO(entity);
     }

@@ -3,7 +3,6 @@ package org.capstone.job_fair.services.interfaces.job_fair;
 import org.capstone.job_fair.models.dtos.attendant.application.ApplicationDTO;
 import org.capstone.job_fair.models.dtos.job_fair.InterviewRequestChangeDTO;
 import org.capstone.job_fair.models.dtos.job_fair.InterviewScheduleDTO;
-import org.capstone.job_fair.models.entities.attendant.application.ApplicationEntity;
 import org.capstone.job_fair.models.enums.InterviewRequestChangeStatus;
 
 import java.util.List;

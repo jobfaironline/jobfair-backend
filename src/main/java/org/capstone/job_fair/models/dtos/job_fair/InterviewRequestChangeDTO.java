@@ -1,7 +1,6 @@
 package org.capstone.job_fair.models.dtos.job_fair;
 
 import lombok.*;
-import org.capstone.job_fair.models.dtos.account.AccountDTO;
 import org.capstone.job_fair.models.dtos.attendant.application.ApplicationDTO;
 import org.capstone.job_fair.models.enums.InterviewRequestChangeStatus;
 

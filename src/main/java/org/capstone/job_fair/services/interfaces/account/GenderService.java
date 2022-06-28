@@ -8,11 +8,14 @@ import java.util.Optional;
 
 public interface GenderService {
     Optional<GenderDTO> findById(int id);
+
     List<GenderDTO> getAll();
+
     GenderDTO createGender(GenderDTO dto);
+
     GenderDTO deleteGender(int id);
+
     GenderDTO updateGender(GenderDTO dto);
 
 
-
-    }
+}

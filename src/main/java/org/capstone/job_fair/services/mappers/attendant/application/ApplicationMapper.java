@@ -14,7 +14,6 @@ import org.capstone.job_fair.services.mappers.attendant.AttendantMapper;
 import org.capstone.job_fair.services.mappers.attendant.cv.CvMapper;
 import org.capstone.job_fair.services.mappers.attendant.misc.CountryMapper;
 import org.capstone.job_fair.services.mappers.company.CompanyEmployeeMapper;
-import org.capstone.job_fair.services.mappers.job_fair.booth.AssignmentMapper;
 import org.capstone.job_fair.services.mappers.job_fair.booth.BoothJobPositionMapper;
 import org.mapstruct.*;
 

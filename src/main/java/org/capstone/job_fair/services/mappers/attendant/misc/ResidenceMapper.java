@@ -8,6 +8,7 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public abstract class ResidenceMapper {
     public abstract ResidenceEntity toEntity(ResidenceDTO dto);
+
     public abstract ResidenceDTO toDTO(ResidenceEntity entity);
 
 }

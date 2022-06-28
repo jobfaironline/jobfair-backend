@@ -4,7 +4,6 @@ import org.capstone.job_fair.controllers.payload.requests.attendant.UpdateAttend
 import org.capstone.job_fair.models.dtos.attendant.profile.CertificationDTO;
 import org.capstone.job_fair.models.entities.attendant.profile.CertificationEntity;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 

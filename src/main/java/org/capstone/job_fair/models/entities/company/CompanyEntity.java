@@ -1,7 +1,10 @@
 package org.capstone.job_fair.models.entities.company;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.capstone.job_fair.models.entities.company.misc.CompanyBenefitEntity;
 import org.capstone.job_fair.models.entities.company.misc.CompanySizeEntity;
 import org.capstone.job_fair.models.entities.company.misc.SubCategoryEntity;

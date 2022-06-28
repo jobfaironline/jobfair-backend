@@ -10,7 +10,7 @@ public class RtmTokenBuilderSample {
     private static int expireTimestamp = 0;
 
     public static void main(String[] args) throws Exception {
-    	RtmTokenBuilder token = new RtmTokenBuilder();
+        RtmTokenBuilder token = new RtmTokenBuilder();
         String result = token.buildToken(appId, appCertificate, userId, Role.Rtm_User, expireTimestamp);
         System.out.println(result);
     }

@@ -81,7 +81,7 @@ public class LayoutController {
     public ResponseEntity<LayoutDTO> uploadMetaData(@Valid @RequestBody CreateLayoutMetaDataRequest request) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         LayoutDTO dto = layoutMapper.toDTO(request);
-        if (userDetails.getCompanyId() != null){
+        if (userDetails.getCompanyId() != null) {
             dto.setCompany(CompanyDTO.builder().id(userDetails.getCompanyId()).build());
         }
         dto = layoutService.createNew(dto);
@@ -137,7 +137,7 @@ public class LayoutController {
     }
 
     @GetMapping(ApiEndPoint.Layout.LAYOUT_BY_JOB_FAIR + "/{id}")
-    public ResponseEntity<?> getLayoutByJobFairId(@PathVariable("id") String jobFairId){
+    public ResponseEntity<?> getLayoutByJobFairId(@PathVariable("id") String jobFairId) {
         return layoutService.getByJobFairId(jobFairId).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
 
     }

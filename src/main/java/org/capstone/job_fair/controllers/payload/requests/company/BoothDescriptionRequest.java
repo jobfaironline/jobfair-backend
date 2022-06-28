@@ -26,7 +26,7 @@ public class BoothDescriptionRequest {
     @NotNull
     private String boothId;
     @NotNull
-    @Length(max= DataConstraint.JobPosition.DESCRIPTION_LENGTH)
+    @Length(max = DataConstraint.JobPosition.DESCRIPTION_LENGTH)
     @XSSConstraint
     private String description;
     @NotNull

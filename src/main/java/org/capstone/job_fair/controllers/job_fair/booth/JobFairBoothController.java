@@ -4,10 +4,10 @@ import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.controllers.payload.requests.company.BoothDescriptionRequest;
 import org.capstone.job_fair.controllers.payload.responses.JobFairBoothResponse;
-import org.capstone.job_fair.models.dtos.job_fair.booth.JobFairBoothDTO;
 import org.capstone.job_fair.models.dtos.job_fair.booth.BoothJobPositionDTO;
-import org.capstone.job_fair.services.interfaces.job_fair.booth.JobFairBoothService;
+import org.capstone.job_fair.models.dtos.job_fair.booth.JobFairBoothDTO;
 import org.capstone.job_fair.services.interfaces.job_fair.JobFairVisitService;
+import org.capstone.job_fair.services.interfaces.job_fair.booth.JobFairBoothService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -54,7 +54,7 @@ public class JobFairBoothController {
     }
 
     @PostMapping(ApiEndPoint.JobFairBooth.JOB_FAIR_BOOTH)
-    public ResponseEntity<?> assignJobPositionToBooth(@RequestBody @Valid BoothDescriptionRequest request){
+    public ResponseEntity<?> assignJobPositionToBooth(@RequestBody @Valid BoothDescriptionRequest request) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         JobFairBoothDTO jobFairBoothDTO = new JobFairBoothDTO();
@@ -75,7 +75,7 @@ public class JobFairBoothController {
                     .numOfQuestion(jobPositionRequest.getTestNumOfQuestion())
                     .passMark(jobPositionRequest.getPassMark())
                     .build();
-            if (jobPositionRequest.getTestNumOfQuestion() != null){
+            if (jobPositionRequest.getTestNumOfQuestion() != null) {
                 jobPosition.setIsHaveTest(true);
             }
             return jobPosition;

@@ -258,7 +258,7 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
                 } catch (IllegalArgumentException e) {
                     //+1 because row start at 1
                     parseResult.addErrorMessage(i + 1, e.getMessage());
-                } catch (DataIntegrityViolationException e){
+                } catch (DataIntegrityViolationException e) {
                     parseResult.addErrorMessage(i + 1, MessageUtil.getMessage(MessageConstant.Account.EMAIL_EXISTED));
                 }
             }

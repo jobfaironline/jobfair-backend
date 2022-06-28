@@ -25,7 +25,7 @@ public class DynamicKey5 {
     public DynamicKey5Content content;
 
     public boolean fromString(String key) {
-        if (! key.substring(0, 3).equals(version)) {
+        if (!key.substring(0, 3).equals(version)) {
             return false;
         }
 
@@ -46,7 +46,7 @@ public class DynamicKey5 {
         byte[] rawAppID = hex.decode(appID.getBytes());
         byte[] rawAppCertificate = hex.decode(appCertificate.getBytes());
 
-        Message m = new Message(service, rawAppID, unixTs, salt, channelName, (int)(uid & 0xFFFFFFFFL), expiredTs, extra);
+        Message m = new Message(service, rawAppID, unixTs, salt, channelName, (int) (uid & 0xFFFFFFFFL), expiredTs, extra);
         byte[] toSign = pack(m);
         return new String(Hex.encodeHex(DynamicKeyUtil.encodeHMAC(rawAppCertificate, toSign), false));
     }
