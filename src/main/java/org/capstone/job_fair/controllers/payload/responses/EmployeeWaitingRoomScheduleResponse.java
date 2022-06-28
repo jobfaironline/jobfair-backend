@@ -14,7 +14,7 @@ public class EmployeeWaitingRoomScheduleResponse extends InterviewScheduleDTO {
 
     private boolean isInWaitingRoom;
 
-    public EmployeeWaitingRoomScheduleResponse(InterviewScheduleDTO parent){
+    public EmployeeWaitingRoomScheduleResponse(InterviewScheduleDTO parent) {
         this.setId(parent.getId());
         this.setEndTime(parent.getEndTime());
         this.setBeginTime(parent.getBeginTime());

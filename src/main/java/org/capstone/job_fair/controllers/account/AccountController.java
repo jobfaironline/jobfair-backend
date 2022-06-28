@@ -124,7 +124,7 @@ public class AccountController {
     }
 
     @GetMapping(ApiEndPoint.Account.GET_INFO)
-    public ResponseEntity<?> getAccountInfo(){
+    public ResponseEntity<?> getAccountInfo() {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return ResponseEntity.ok(userDetails);
     }
@@ -145,14 +145,12 @@ public class AccountController {
 
 
     @GetMapping(ApiEndPoint.Account.DEACTIVATE_OWN_ACCOUNT)
-    public ResponseEntity<?> deactivateOwnAccount(){
+    public ResponseEntity<?> deactivateOwnAccount() {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String userId = userDetails.getId();
         AccountDTO account = accountService.deactivateOwnAccount(userId);
         return ResponseEntity.ok(account);
     }
-
-
 
 
 }

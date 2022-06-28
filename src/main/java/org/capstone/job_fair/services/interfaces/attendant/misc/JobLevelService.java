@@ -7,8 +7,12 @@ import java.util.Optional;
 
 public interface JobLevelService {
     Optional<JobLevelDTO> findById(int id);
+
     List<JobLevelDTO> getAll();
+
     JobLevelDTO delete(int id);
+
     JobLevelDTO create(JobLevelDTO dto);
+
     JobLevelDTO update(JobLevelDTO dto);
 }

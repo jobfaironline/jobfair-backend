@@ -11,7 +11,9 @@ public class JobPositionConstant {
     public static final String DEFAULT_SEARCH_SORT_DIRECTION = "ASC";
 
     public static final class XLSXFormat {
-        private XLSXFormat(){}
+        private XLSXFormat() {
+        }
+
         public static final int COLUMN_NUM = 11;
         public static final int TITLE_INDEX = 0;
         public static final int CONTACT_PERSON_NAME_INDEX = 1;

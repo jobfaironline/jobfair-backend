@@ -54,7 +54,7 @@ public class JobFairBoothController {
     }
 
     @PostMapping(ApiEndPoint.JobFairBooth.JOB_FAIR_BOOTH)
-    public ResponseEntity<?> assignJobPositionToBooth(@RequestBody @Valid BoothDescriptionRequest request){
+    public ResponseEntity<?> assignJobPositionToBooth(@RequestBody @Valid BoothDescriptionRequest request) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         JobFairBoothDTO jobFairBoothDTO = new JobFairBoothDTO();
@@ -75,7 +75,7 @@ public class JobFairBoothController {
                     .numOfQuestion(jobPositionRequest.getTestNumOfQuestion())
                     .passMark(jobPositionRequest.getPassMark())
                     .build();
-            if (jobPositionRequest.getTestNumOfQuestion() != null){
+            if (jobPositionRequest.getTestNumOfQuestion() != null) {
                 jobPosition.setIsHaveTest(true);
             }
             return jobPosition;

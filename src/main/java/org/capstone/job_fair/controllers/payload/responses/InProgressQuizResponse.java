@@ -23,7 +23,6 @@ public class InProgressQuizResponse {
     private List<QuizQuestionResponse> questionList;
 
 
-
     @Data
     @NoArgsConstructor
     @AllArgsConstructor

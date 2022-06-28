@@ -43,7 +43,7 @@ public class JobFairBoothServiceImpl implements JobFairBoothService {
     @Override
     public List<JobFairBoothDTO> getCompanyBoothByJobFairId(String jobFairId) {
         Optional<JobFairEntity> jobFairOpt = jobFairRepository.findById(jobFairId);
-        if (!jobFairOpt.isPresent()){
+        if (!jobFairOpt.isPresent()) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.JOB_FAIR_NOT_FOUND));
         }
         return jobFairBoothRepository.findByJobFairId(jobFairId)
@@ -79,7 +79,7 @@ public class JobFairBoothServiceImpl implements JobFairBoothService {
     public JobFairBoothDTO updateJobFairBooth(JobFairBoothDTO jobFairBooth, String companyId) {
         //check for valid job fair booth
         Optional<JobFairBoothEntity> jobFairBoothOpt = jobFairBoothRepository.findByIdAndJobFairCompanyId(jobFairBooth.getId(), companyId);
-        if (!jobFairBoothOpt.isPresent()){
+        if (!jobFairBoothOpt.isPresent()) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFairBooth.NOT_FOUND));
         }
         JobFairBoothEntity jobFairBoothEntity = jobFairBoothOpt.get();
@@ -87,22 +87,22 @@ public class JobFairBoothServiceImpl implements JobFairBoothService {
         validateUniqueJobPosition(jobFairBooth.getBoothJobPositions());
         //check job fair status
         JobFairEntity jobFairEntity = jobFairBoothEntity.getJobFair();
-        if (jobFairEntity.getStatus() == JobFairPlanStatus.DRAFT){
+        if (jobFairEntity.getStatus() == JobFairPlanStatus.DRAFT) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.NOT_EDITABLE));
         }
         //check decorate time
         long now = new Date().getTime();
-        if (now < jobFairEntity.getDecorateStartTime() || now > jobFairEntity.getDecorateEndTime()){
+        if (now < jobFairEntity.getDecorateStartTime() || now > jobFairEntity.getDecorateEndTime()) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.NOT_EDITABLE));
         }
         //check job position belongs in company
         jobFairBooth.getBoothJobPositions().forEach(boothJobPositionDTO -> {
             Optional<JobPositionEntity> jobPositionOpt = jobPositionRepository.findById(boothJobPositionDTO.getOriginJobPosition());
-            if (!jobPositionOpt.isPresent()){
+            if (!jobPositionOpt.isPresent()) {
                 throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Job.JOB_POSITION_NOT_FOUND));
             }
             JobPositionEntity jobPosition = jobPositionOpt.get();
-            if (!jobPosition.getCompany().getId().equals(companyId)){
+            if (!jobPosition.getCompany().getId().equals(companyId)) {
                 throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Job.COMPANY_MISMATCH));
             }
         });

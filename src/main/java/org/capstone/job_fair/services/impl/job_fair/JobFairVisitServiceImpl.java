@@ -44,14 +44,14 @@ public class JobFairVisitServiceImpl implements JobFairVisitService {
     @Autowired
     private DynamoDBMapperConfig dynamoDBMapperConfig;
 
-    private List<String> getConnectedUsers(){
+    private List<String> getConnectedUsers() {
         try {
             DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(dynamoDBClient, dynamoDBMapperConfig);
             DynamoDBScanExpression scanExpression = new DynamoDBScanExpression();
             List<JobhubConnectionsEntity> scanResult = dynamoDBMapper.scan(JobhubConnectionsEntity.class, scanExpression);
             List<String> userIds = scanResult.stream().map(JobhubConnectionsEntity::getUserId).collect(Collectors.toList());
             return userIds;
-        } catch (SdkClientException ex){
+        } catch (SdkClientException ex) {
             log.error(JobFairVisitServiceImpl.class.getSimpleName() + ": " + ex.getMessage());
             return Collections.EMPTY_LIST;
         }
@@ -59,7 +59,7 @@ public class JobFairVisitServiceImpl implements JobFairVisitService {
 
     @SneakyThrows
     @SuppressWarnings("unchecked")
-    private void sendJobFairCountToConnectedUser(String jobFairId){
+    private void sendJobFairCountToConnectedUser(String jobFairId) {
         Map<String, Object> payload = new HashMap<>();
         payload.put("jobFairId", jobFairId);
         payload.put("count", getCurrentVisitOfJobFair(jobFairId));
@@ -79,7 +79,7 @@ public class JobFairVisitServiceImpl implements JobFairVisitService {
 
     @SneakyThrows
     @SuppressWarnings("unchecked")
-    private void sendBoothCountToConnectedUser(String jobFairId, String jobFairBoothId){
+    private void sendBoothCountToConnectedUser(String jobFairId, String jobFairBoothId) {
         Map<String, Object> payload = new HashMap<>();
         payload.put("jobFairId", jobFairId);
         payload.put("jobFairBoothId", jobFairBoothId);
@@ -120,13 +120,13 @@ public class JobFairVisitServiceImpl implements JobFairVisitService {
         DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(dynamoDBClient, dynamoDBMapperConfig);
         //get visitation
         Map<String, AttributeValue> eav = new HashMap<>();
-        eav.put(":jobFairId",new AttributeValue().withS(jobFairId));
+        eav.put(":jobFairId", new AttributeValue().withS(jobFairId));
         eav.put(":userId", new AttributeValue().withS(userId));
         DynamoDBQueryExpression<JobFairVisitEntity> queryExpression = new DynamoDBQueryExpression<JobFairVisitEntity>()
                 .withKeyConditionExpression("jobFairId = :jobFairId AND userId = :userId")
                 .withExpressionAttributeValues(eav);
 
-        List<JobFairVisitEntity> queryResult = dynamoDBMapper.query(JobFairVisitEntity.class,queryExpression);
+        List<JobFairVisitEntity> queryResult = dynamoDBMapper.query(JobFairVisitEntity.class, queryExpression);
         //delete visitation
         dynamoDBMapper.batchDelete(queryResult);
         //send data
@@ -142,7 +142,7 @@ public class JobFairVisitServiceImpl implements JobFairVisitService {
         DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(dynamoDBClient, dynamoDBMapperConfig);
 
         Optional<JobFairBoothEntity> jobFairBoothOpt = jobFairBoothRepository.findById(jobFairBoothId);
-        if (!jobFairBoothOpt.isPresent()){
+        if (!jobFairBoothOpt.isPresent()) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFairBooth.NOT_FOUND));
         }
         JobFairBoothEntity jobFairBooth = jobFairBoothOpt.get();
@@ -162,14 +162,14 @@ public class JobFairVisitServiceImpl implements JobFairVisitService {
         DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(dynamoDBClient, dynamoDBMapperConfig);
 
         Optional<JobFairBoothEntity> jobFairBoothOpt = jobFairBoothRepository.findById(jobFairBoothId);
-        if (!jobFairBoothOpt.isPresent()){
+        if (!jobFairBoothOpt.isPresent()) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFairBooth.NOT_FOUND));
         }
         JobFairBoothEntity jobFairBooth = jobFairBoothOpt.get();
 
         //get visitation
         Map<String, AttributeValue> eav = new HashMap<>();
-        eav.put(":jobFairId",new AttributeValue().withS(jobFairBooth.getJobFair().getId()));
+        eav.put(":jobFairId", new AttributeValue().withS(jobFairBooth.getJobFair().getId()));
         eav.put(":userId", new AttributeValue().withS(userId));
         eav.put(":jobFairBoothId", new AttributeValue().withS(jobFairBoothId));
 
@@ -178,7 +178,7 @@ public class JobFairVisitServiceImpl implements JobFairVisitService {
                 .withFilterExpression("jobFairBoothId = :jobFairBoothId")
                 .withExpressionAttributeValues(eav);
 
-        List<JobFairVisitEntity> queryResult = dynamoDBMapper.query(JobFairVisitEntity.class,queryExpression);
+        List<JobFairVisitEntity> queryResult = dynamoDBMapper.query(JobFairVisitEntity.class, queryExpression);
         //delete visitation
         dynamoDBMapper.batchDelete(queryResult);
         //send data
@@ -199,7 +199,7 @@ public class JobFairVisitServiceImpl implements JobFairVisitService {
                     .withExpressionAttributeValues(eav).withSelect(Select.COUNT);
 
             return dynamoDBMapper.count(JobFairVisitEntity.class, queryExpression);
-        } catch (SdkClientException ex){
+        } catch (SdkClientException ex) {
             log.error(JobFairVisitServiceImpl.class.getSimpleName() + ": " + ex.getMessage());
             return 0;
         }
@@ -209,7 +209,7 @@ public class JobFairVisitServiceImpl implements JobFairVisitService {
     public int getCurrentVisitOfJobFairBooth(String jobFairBoothId) {
         try {
             Optional<JobFairBoothEntity> jobFairBoothOpt = jobFairBoothRepository.findById(jobFairBoothId);
-            if (!jobFairBoothOpt.isPresent()){
+            if (!jobFairBoothOpt.isPresent()) {
                 throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFairBooth.NOT_FOUND));
             }
             JobFairBoothEntity jobFairBooth = jobFairBoothOpt.get();
@@ -228,7 +228,7 @@ public class JobFairVisitServiceImpl implements JobFairVisitService {
 
 
             return dynamoDBMapper.count(JobFairVisitEntity.class, queryExpression);
-        } catch (SdkClientException ex){
+        } catch (SdkClientException ex) {
             log.error(JobFairVisitServiceImpl.class.getSimpleName() + ": " + ex.getMessage());
             return 0;
         }

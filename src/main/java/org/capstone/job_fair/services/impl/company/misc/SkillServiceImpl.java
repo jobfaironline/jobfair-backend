@@ -41,7 +41,8 @@ public class SkillServiceImpl implements SkillService {
     @Transactional
     public SkillTagDTO delete(int id) {
         Optional<SkillTagEntity> entityOptional = skillTagRepository.findById(id);
-        if(!entityOptional.isPresent()) throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.SkillTag.NOT_FOUND));
+        if (!entityOptional.isPresent())
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.SkillTag.NOT_FOUND));
         skillTagRepository.deleteById(id);
         return skillTagMapper.toDTO(entityOptional.get());
     }
@@ -57,7 +58,8 @@ public class SkillServiceImpl implements SkillService {
     @Transactional
     public SkillTagDTO update(SkillTagDTO dto) {
         Optional<SkillTagEntity> entityOptional = skillTagRepository.findById(dto.getId());
-        if(!entityOptional.isPresent()) throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.SkillTag.NOT_FOUND));
+        if (!entityOptional.isPresent())
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.SkillTag.NOT_FOUND));
         SkillTagEntity entity = skillTagRepository.save(skillTagMapper.toEntity(dto));
         return skillTagMapper.toDTO(entity);
     }

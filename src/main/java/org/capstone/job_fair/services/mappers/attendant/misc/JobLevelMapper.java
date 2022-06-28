@@ -9,5 +9,6 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public abstract class JobLevelMapper {
     public abstract JobLevelDTO toDTO(JobLevelEntity entity);
+
     public abstract JobLevelEntity toEntity(JobLevelDTO dto);
 }

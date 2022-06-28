@@ -19,6 +19,6 @@ public class CreateQuestionCSVRequest {
     private String content;
     @NotNull
     private Boolean isQuestion;
-    
+
     private Boolean isCorrect;
 }

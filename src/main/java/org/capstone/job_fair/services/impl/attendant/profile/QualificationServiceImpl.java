@@ -39,16 +39,18 @@ public class QualificationServiceImpl implements QualificationService {
     @Transactional
     public QualificationDTO delete(int id) {
         Optional<QualificationEntity> entityOptional = qualificationRepository.findById(id);
-        if(!entityOptional.isPresent()) throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Qualification.NOT_FOUND));
+        if (!entityOptional.isPresent())
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Qualification.NOT_FOUND));
         qualificationRepository.delete(entityOptional.get());
         return qualificationMapper.toDTO(entityOptional.get());
-     }
+    }
 
     @Override
     @Transactional
     public QualificationDTO create(QualificationDTO dto) {
         Optional<QualificationEntity> entityOptional = qualificationRepository.findById(Integer.parseInt(dto.getId()));
-        if(entityOptional.isPresent()) throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Qualification.DUPLICATED));
+        if (entityOptional.isPresent())
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Qualification.DUPLICATED));
         QualificationEntity entity = qualificationMapper.toEntity(dto);
         qualificationRepository.save(entity);
         return qualificationMapper.toDTO(entity);
@@ -59,7 +61,8 @@ public class QualificationServiceImpl implements QualificationService {
     @Transactional
     public QualificationDTO update(QualificationDTO dto) {
         Optional<QualificationEntity> entityOptional = qualificationRepository.findById(Integer.parseInt(dto.getId()));
-        if(!entityOptional.isPresent()) throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Qualification.NOT_FOUND));
+        if (!entityOptional.isPresent())
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Qualification.NOT_FOUND));
         QualificationEntity entity = qualificationRepository.save(qualificationMapper.toEntity(dto));
         return qualificationMapper.toDTO(entity);
     }

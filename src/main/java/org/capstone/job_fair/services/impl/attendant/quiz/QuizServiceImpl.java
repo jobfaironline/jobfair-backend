@@ -58,7 +58,7 @@ public class QuizServiceImpl implements QuizService {
     @Override
     public Optional<QuizDTO> getQuizById(String id, String userid, boolean isDoing) {
         Optional<QuizEntity> quizEntity = quizRepository.findByIdAndApplicationAttendantAccountId(id, userid);
-        if (!quizEntity.isPresent()){
+        if (!quizEntity.isPresent()) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Quiz.NOT_FOUND));
         }
         //^ is XOR
@@ -66,7 +66,7 @@ public class QuizServiceImpl implements QuizService {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Quiz.TIME_UP));
         }
         System.out.println(quizEntity.get().getIsSubmitted());
-        if (quizEntity.get().getIsSubmitted()){
+        if (quizEntity.get().getIsSubmitted()) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Quiz.TEST_ALREADY_TAKEN));
         }
         return quizEntity.map(quizMapper::toDTO);
@@ -120,7 +120,7 @@ public class QuizServiceImpl implements QuizService {
         return currentTime >= quizEntity.getBeginTime() && currentTime <= quizEntity.getEndTime();
     }
 
-    private QuizEntity getQuizToSave(String quizId,  String userId) {
+    private QuizEntity getQuizToSave(String quizId, String userId) {
         //Check if quiz is exist
         Optional<QuizEntity> quizEntityOptional = quizRepository.findQuizToSave(quizId, userId);
         if (!quizEntityOptional.isPresent()) {

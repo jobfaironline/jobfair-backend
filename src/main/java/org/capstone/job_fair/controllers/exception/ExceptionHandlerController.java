@@ -75,7 +75,6 @@ public class ExceptionHandlerController {
     }
 
 
-
     private ResponseEntity<?> buildErrorResponse(Exception exception, String message, HttpStatus httpStatus) {
         return ErrorResponse.build(httpStatus, message, exception.getClass().getSimpleName() + ": " + exception.getMessage());
     }

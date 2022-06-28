@@ -10,6 +10,7 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public abstract class CvSkillMapper {
     public abstract CvSkillDTO toDTO(CvSkillEntity entity);
+
     @Mapping(target = "cv", ignore = true)
     public abstract CvSkillEntity toEntity(CvSkillDTO dto);
 

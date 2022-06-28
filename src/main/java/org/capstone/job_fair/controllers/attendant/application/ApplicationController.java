@@ -55,9 +55,9 @@ public class ApplicationController {
         UserDetailsImpl user = (UserDetailsImpl) securityContext.getAuthentication().getPrincipal();
         String accountId = user.getId();
         Optional<ApplicationDTO> applicationOpt = Optional.empty();
-        if (user.hasRole(Role.ATTENDANT)){
+        if (user.hasRole(Role.ATTENDANT)) {
             applicationOpt = applicationService.getApplicationByIdForAttendant(id, accountId);
-        } else if (user.hasRole(Role.COMPANY_EMPLOYEE)){
+        } else if (user.hasRole(Role.COMPANY_EMPLOYEE)) {
             applicationOpt = applicationService.getApplicationByIdForCompanyEmployee(id, accountId);
         }
         if (!applicationOpt.isPresent()) {

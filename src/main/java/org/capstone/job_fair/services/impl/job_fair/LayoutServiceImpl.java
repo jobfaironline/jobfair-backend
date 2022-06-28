@@ -166,7 +166,7 @@ public class LayoutServiceImpl implements LayoutService {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.JOB_FAIR_NOT_FOUND));
         }
         JobFairEntity jobFairEntity = jobFairEntityOpt.get();
-        if (jobFairEntity.getJobFairBoothList().size() == 0){
+        if (jobFairEntity.getJobFairBoothList().size() == 0) {
             return Optional.empty();
         }
         return layoutRepository.findById(jobFairEntity.getJobFairBoothList().get(0).getBooth().getLayout().getId()).map(layoutMapper::toDTO);
@@ -208,11 +208,11 @@ public class LayoutServiceImpl implements LayoutService {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.NOT_EDITABLE));
 
         //check new layout's id == jobFair's layout's id
-        if (jobFairEntity.getJobFairBoothList().size() != 0 && jobFairEntity.getJobFairBoothList().get(0).getBooth().getLayout().getId().equals(layoutId)){
+        if (jobFairEntity.getJobFairBoothList().size() != 0 && jobFairEntity.getJobFairBoothList().get(0).getBooth().getLayout().getId().equals(layoutId)) {
             return;
         }
 
-        for (JobFairBoothEntity booth : jobFairEntity.getJobFairBoothList()){
+        for (JobFairBoothEntity booth : jobFairEntity.getJobFairBoothList()) {
             assignmentRepository.deleteByJobFairBoothId(booth.getId());
         }
 

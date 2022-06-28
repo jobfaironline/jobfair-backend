@@ -68,7 +68,7 @@ public class AssignmentServiceImpl implements AssignmentService {
     @Getter
     @Setter
     @AllArgsConstructor
-    private static class ParseException extends Exception{
+    private static class ParseException extends Exception {
         private ParseFileResult result;
     }
 
@@ -121,7 +121,7 @@ public class AssignmentServiceImpl implements AssignmentService {
     @Override
     @Transactional
     public AssignmentDTO assignEmployee(String assignerId, String employeeId, String jobFairBoothId, AssignmentType type, String companyId, Long beginTime, Long endTime) {
-        if (type == AssignmentType.INTERVIEWER || type == AssignmentType.RECEPTION){
+        if (type == AssignmentType.INTERVIEWER || type == AssignmentType.RECEPTION) {
             return createAssignment(assignerId, employeeId, jobFairBoothId, type, companyId, beginTime, endTime);
         }
         Optional<AssignmentEntity> entityOpt = assignmentRepository.findByCompanyEmployeeAccountIdAndJobFairBoothId(employeeId, jobFairBoothId);
@@ -213,7 +213,7 @@ public class AssignmentServiceImpl implements AssignmentService {
         return assignmentRepository.findById(id).map(assignmentMapper::toDTO);
     }
 
-    private ParseFileResult<AssignmentDTO> createNewAssignmentsFromListString(List<List<String>> data, String jobFairId, String companyId,  CompanyEmployeeEntity assigner) throws ParseException{
+    private ParseFileResult<AssignmentDTO> createNewAssignmentsFromListString(List<List<String>> data, String jobFairId, String companyId, CompanyEmployeeEntity assigner) throws ParseException {
         ParseFileResult<AssignmentDTO> parseResult = new ParseFileResult<>();
         int rowNum = data.size();
         List<AssignmentEntity> entities = new ArrayList<>();
@@ -236,17 +236,17 @@ public class AssignmentServiceImpl implements AssignmentService {
             }
 
             Optional<CompanyEmployeeEntity> companyEmployeeOpt = companyEmployeeRepository.findByEmployeeIdAndCompanyId(employeeId, companyId);
-            if (!companyEmployeeOpt.isPresent()){
+            if (!companyEmployeeOpt.isPresent()) {
                 parseResult.addErrorMessage(i, MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMPLOYEE_NOT_FOUND));
             }
             Optional<JobFairBoothEntity> jobFairBoothOpt = jobFairBoothRepository.findFirstByJobFairIdAndBoothName(jobFairId, slotName);
-            if (!jobFairBoothOpt.isPresent()){
+            if (!jobFairBoothOpt.isPresent()) {
                 parseResult.addErrorMessage(i, MessageUtil.getMessage(MessageConstant.JobFairBooth.NOT_FOUND));
             }
-            if (boothName.isEmpty() || boothName.length() > 100){
+            if (boothName.isEmpty() || boothName.length() > 100) {
                 parseResult.addErrorMessage(i, MessageUtil.getMessage(MessageConstant.JobFairBooth.NAME_INVALID_LENGTH));
             } else {
-                if (jobFairBoothOpt.isPresent()){
+                if (jobFairBoothOpt.isPresent()) {
                     JobFairBoothEntity jobFairBooth = jobFairBoothOpt.get();
                     jobFairBooth.setName(boothName);
                 }
@@ -262,8 +262,8 @@ public class AssignmentServiceImpl implements AssignmentService {
 
             entities.add(entity);
         }
-        if (!parseResult.isHasError()){
-            for (int i = 0; i < entities.size(); i++){
+        if (!parseResult.isHasError()) {
+            for (int i = 0; i < entities.size(); i++) {
                 AssignmentEntity assignmentEntity = entities.get(i);
                 try {
 
@@ -271,17 +271,17 @@ public class AssignmentServiceImpl implements AssignmentService {
                     CompanyEmployeeEntity companyEmployee = assignmentEntity.getCompanyEmployee();
                     boolean isEmployeeAvailable = availableEmployees.stream()
                             .anyMatch(dto -> dto.getAccountId().equals(companyEmployee.getAccountId()));
-                    if (!isEmployeeAvailable){
+                    if (!isEmployeeAvailable) {
                         parseResult.addErrorMessage(i + 1, MessageUtil.getMessage(MessageConstant.Assignment.UNAVAILABLE_EMPLOYEE));
                         throw new ParseException(parseResult);
                     }
-                    if (!parseResult.isHasError()){
+                    if (!parseResult.isHasError()) {
                         jobFairBoothRepository.save(assignmentEntity.getJobFairBooth());
                         assignmentEntity = assignmentRepository.save(assignmentEntity);
                         AssignmentDTO dto = assignmentMapper.toDTO(assignmentEntity);
                         parseResult.addToResult(dto);
                     }
-                } catch (Exception e){
+                } catch (Exception e) {
                     //+1 because row start at 1
                     parseResult.addErrorMessage(i + 1, e.getMessage());
                 }
@@ -301,7 +301,7 @@ public class AssignmentServiceImpl implements AssignmentService {
         List<List<String>> data = xslsFileService.readXSLSheet(sheet, AssignmentConstant.XLSXFormat.COLUMN_NUM);
         try {
             parseResult = createNewAssignmentsFromListString(data, jobFairId, companyId, assigner);
-        } catch (ParseException e){
+        } catch (ParseException e) {
             parseResult = e.getResult();
         }
 
@@ -314,12 +314,12 @@ public class AssignmentServiceImpl implements AssignmentService {
     }
 
     @SneakyThrows
-    private ParseFileResult<AssignmentDTO> parseCsvFile(MultipartFile file, String jobFairId, String companyId,  CompanyEmployeeEntity assigner) {
+    private ParseFileResult<AssignmentDTO> parseCsvFile(MultipartFile file, String jobFairId, String companyId, CompanyEmployeeEntity assigner) {
         ParseFileResult<AssignmentDTO> parseResult;
         List<List<String>> data = xslsFileService.readCSVFile(file.getInputStream());
         try {
             parseResult = createNewAssignmentsFromListString(data, jobFairId, companyId, assigner);
-        } catch (ParseException e){
+        } catch (ParseException e) {
             parseResult = e.getResult();
         }
         if (parseResult.isHasError()) {

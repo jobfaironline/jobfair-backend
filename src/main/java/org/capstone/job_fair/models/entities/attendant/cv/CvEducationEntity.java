@@ -48,7 +48,6 @@ public class CvEducationEntity {
     private Qualification qualificationId;
 
 
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

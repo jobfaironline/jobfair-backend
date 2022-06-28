@@ -35,7 +35,7 @@ public class QuizController {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         UserDetailsImpl user = (UserDetailsImpl) securityContext.getAuthentication().getPrincipal();
         Optional<QuizDTO> quizDTOOpt = quizService.getQuizById(id, user.getId(), true);
-        if (quizDTOOpt.isPresent()){
+        if (quizDTOOpt.isPresent()) {
             QuizDTO quizDTO = quizDTOOpt.get();
             InProgressQuizResponse response = quizMapper.toResponse(quizDTO);
             return ResponseEntity.ok(response);
@@ -56,7 +56,7 @@ public class QuizController {
 
     @JsonView(Views.Public.class)
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ATTENDANT)")
-    @PostMapping(ApiEndPoint.Quiz.QUIZ_ENDPOINT )
+    @PostMapping(ApiEndPoint.Quiz.QUIZ_ENDPOINT)
     public ResponseEntity<?> createQuizForAttendant(@RequestParam(name = "applicationId") String applicationId) {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         UserDetailsImpl user = (UserDetailsImpl) securityContext.getAuthentication().getPrincipal();
@@ -65,7 +65,7 @@ public class QuizController {
     }
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ATTENDANT)")
-    @PostMapping(ApiEndPoint.Quiz.SAVE + "/{id}" )
+    @PostMapping(ApiEndPoint.Quiz.SAVE + "/{id}")
     public ResponseEntity<?> saveQuiz(@PathVariable("id") String quizId, @Validated @RequestBody SaveQuizRequest saveQuizRequest) {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         UserDetailsImpl user = (UserDetailsImpl) securityContext.getAuthentication().getPrincipal();

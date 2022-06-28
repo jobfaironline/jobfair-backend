@@ -19,7 +19,7 @@ import java.util.List;
 @ToString
 public class UpdateJobFairRequest {
     @Data
-    public static class ShiftRequest{
+    public static class ShiftRequest {
         @NotNull
         private Long beginTime;
         @NotNull

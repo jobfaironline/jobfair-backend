@@ -34,6 +34,7 @@ public class GenderServiceImpl implements GenderService {
     public List<GenderDTO> getAll() {
         return genderRepository.findAll().stream().map(entity -> mapper.toDTO(entity)).collect(Collectors.toList());
     }
+
     @Override
     @Transactional
     public GenderDTO createGender(GenderDTO dto) {
@@ -41,6 +42,7 @@ public class GenderServiceImpl implements GenderService {
         entity = genderRepository.save(entity);
         return mapper.toDTO(entity);
     }
+
     @Override
     @Transactional
     public GenderDTO deleteGender(int id) {
@@ -50,6 +52,7 @@ public class GenderServiceImpl implements GenderService {
         genderRepository.delete(entityOptional.get());
         return mapper.toDTO(entityOptional.get());
     }
+
     @Override
     @Transactional
     public GenderDTO updateGender(GenderDTO dto) {

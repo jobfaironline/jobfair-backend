@@ -28,10 +28,10 @@ public class JobFairBoothEntity {
     @GenericGenerator(name = "uuid", strategy = "org.hibernate.id.UUIDGenerator")
     private String id;
 
-    @Column(name="description")
+    @Column(name = "description")
     private String description;
 
-    @Column(name="name")
+    @Column(name = "name")
     private String name;
 
     @ManyToOne(fetch = FetchType.LAZY)

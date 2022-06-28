@@ -29,7 +29,7 @@ public class DecoratorBoothLayoutEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_employee_id", nullable = false)
     private CompanyEmployeeEntity companyEmployee;
-    @OneToMany(fetch = FetchType.LAZY, cascade=CascadeType.ALL, orphanRemoval=true)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "decorator_booth_layout_id", referencedColumnName = "id")
     private List<DecoratorBoothLayoutVideoEntity> decoratorBoothLayoutVideos;
 

@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface InterviewRequestChangeRepository extends JpaRepository<InterviewRequestChangeEntity, String > {
+public interface InterviewRequestChangeRepository extends JpaRepository<InterviewRequestChangeEntity, String> {
     Optional<InterviewRequestChangeEntity> findTopByApplicationIdOrderByCreateTimeDesc(String applicationId);
 
     List<InterviewRequestChangeEntity> findByApplicationIdOrderByCreateTimeDesc(String applicationId);

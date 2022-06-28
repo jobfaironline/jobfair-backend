@@ -11,7 +11,7 @@ import org.capstone.job_fair.models.dtos.job_fair.JobFairDTO;
 @NoArgsConstructor
 @AllArgsConstructor
 public class JobFairForAttendantResponse extends JobFairDTO {
-    public JobFairForAttendantResponse(JobFairDTO parent){
+    public JobFairForAttendantResponse(JobFairDTO parent) {
         this.setId(parent.getId());
         this.setCreateTime(parent.getCreateTime());
         this.setDecorateStartTime(parent.getDecorateStartTime());

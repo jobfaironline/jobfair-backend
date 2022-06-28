@@ -111,7 +111,7 @@ public abstract class CompanyMapper {
             CompanyBenefitEntity entity = companyBenefitMapper.toEntity(dto);
             entities.add(entity);
         });
-        entities.removeIf(entity -> dtos.stream().noneMatch(dto -> Objects.equals(entity.getBenefit().getId(),dto.getBenefitDTO().getId())));
+        entities.removeIf(entity -> dtos.stream().noneMatch(dto -> Objects.equals(entity.getBenefit().getId(), dto.getBenefitDTO().getId())));
     }
 
     @Named("fromBenefitsOfUpdateCompanyRequest")

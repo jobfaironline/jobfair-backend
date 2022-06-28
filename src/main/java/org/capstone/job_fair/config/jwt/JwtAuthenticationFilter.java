@@ -59,10 +59,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 UserDetails userDetails = userDetailsService.loadUserByUsername(email);
                 if (userDetails != null) {
                     //Check if user is deactivated
-                    if (((UserDetailsImpl) userDetails).getStatus().equals(AccountStatus.INACTIVE)){
+                    if (((UserDetailsImpl) userDetails).getStatus().equals(AccountStatus.INACTIVE)) {
                         response.setStatus(HttpStatus.UNAUTHORIZED.value());
                         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-                        try (PrintWriter writer = response.getWriter()){
+                        try (PrintWriter writer = response.getWriter()) {
                             ResponseEntity<?> payload = GenericResponse.build(MessageUtil.getMessage(MessageConstant.Account.ACCOUNT_INACTIVE), HttpStatus.UNAUTHORIZED);
                             writer.print(Jackson.getObjectMapper().writeValueAsString(payload.getBody()));
                         }

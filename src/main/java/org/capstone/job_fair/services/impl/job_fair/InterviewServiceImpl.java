@@ -290,7 +290,7 @@ public class InterviewServiceImpl implements InterviewService {
             List<WaitingRoomVisitEntity> scanResult = dynamoDBMapper.query(WaitingRoomVisitEntity.class, queryExpression);
             List<String> userIds = scanResult.stream().map(WaitingRoomVisitEntity::getUserId).collect(Collectors.toList());
             return userIds;
-        } catch (SdkClientException ex){
+        } catch (SdkClientException ex) {
             log.error(InterviewServiceImpl.class.getSimpleName() + ": " + ex.getMessage());
             return Collections.EMPTY_LIST;
         }
