@@ -1,12 +1,15 @@
 package org.capstone.job_fair.services.impl.job_fair;
 
+import com.amazonaws.SdkClientException;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
+import com.amazonaws.services.dynamodbv2.model.AmazonDynamoDBException;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.util.json.Jackson;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.constants.ScheduleConstant;
 import org.capstone.job_fair.models.dtos.attendant.application.ApplicationDTO;
@@ -42,6 +45,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
+@Slf4j
 public class InterviewServiceImpl implements InterviewService {
 
     @Autowired
@@ -216,7 +220,6 @@ public class InterviewServiceImpl implements InterviewService {
                 .notificationType(NotificationType.WAITING_ROOM).build();
 
         notificationService.createNotification(notificationMessage, userIds);
-
     }
 
     @Override
@@ -275,18 +278,23 @@ public class InterviewServiceImpl implements InterviewService {
 
     @Override
     public List<String> getConnectedUserIds(String channelId) {
-        DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(dynamoDBClient, dynamoDBMapperConfig);
-        Map<String, AttributeValue> eav = new HashMap<>();
-        eav.put(":channelId", new AttributeValue().withS(channelId));
+        try {
+            DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(dynamoDBClient, dynamoDBMapperConfig);
+            Map<String, AttributeValue> eav = new HashMap<>();
+            eav.put(":channelId", new AttributeValue().withS(channelId));
 
-        DynamoDBQueryExpression<WaitingRoomVisitEntity> queryExpression = new DynamoDBQueryExpression<WaitingRoomVisitEntity>()
-                .withKeyConditionExpression("channelId = :channelId")
-                .withExpressionAttributeValues(eav);
+            DynamoDBQueryExpression<WaitingRoomVisitEntity> queryExpression = new DynamoDBQueryExpression<WaitingRoomVisitEntity>()
+                    .withKeyConditionExpression("channelId = :channelId")
+                    .withExpressionAttributeValues(eav);
 
 
-        List<WaitingRoomVisitEntity> scanResult = dynamoDBMapper.query(WaitingRoomVisitEntity.class, queryExpression);
-        List<String> userIds = scanResult.stream().map(WaitingRoomVisitEntity::getUserId).collect(Collectors.toList());
-        return userIds;
+            List<WaitingRoomVisitEntity> scanResult = dynamoDBMapper.query(WaitingRoomVisitEntity.class, queryExpression);
+            List<String> userIds = scanResult.stream().map(WaitingRoomVisitEntity::getUserId).collect(Collectors.toList());
+            return userIds;
+        } catch (SdkClientException ex){
+            log.error(InterviewServiceImpl.class.getSimpleName() + ": " + ex.getMessage());
+            return Collections.EMPTY_LIST;
+        }
     }
 
     @Override

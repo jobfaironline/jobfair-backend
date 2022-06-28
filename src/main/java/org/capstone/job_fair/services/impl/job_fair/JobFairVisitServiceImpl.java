@@ -1,14 +1,17 @@
 package org.capstone.job_fair.services.impl.job_fair;
 
+import com.amazonaws.SdkClientException;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
+import com.amazonaws.services.dynamodbv2.model.AmazonDynamoDBException;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.Select;
 import com.amazonaws.util.json.Jackson;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.capstone.job_fair.constants.AWSConstant;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.models.dtos.dynamoDB.NotificationMessageDTO;
@@ -17,6 +20,7 @@ import org.capstone.job_fair.models.entities.dynamoDB.JobFairVisitEntity;
 import org.capstone.job_fair.models.entities.dynamoDB.JobhubConnectionsEntity;
 import org.capstone.job_fair.models.enums.NotificationType;
 import org.capstone.job_fair.repositories.job_fair.job_fair_booth.JobFairBoothRepository;
+import org.capstone.job_fair.services.impl.notification.NotificationServiceImpl;
 import org.capstone.job_fair.services.interfaces.job_fair.JobFairVisitService;
 import org.capstone.job_fair.services.interfaces.notification.NotificationService;
 import org.capstone.job_fair.utils.MessageUtil;
@@ -28,6 +32,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class JobFairVisitServiceImpl implements JobFairVisitService {
 
     @Autowired
@@ -43,11 +48,16 @@ public class JobFairVisitServiceImpl implements JobFairVisitService {
     private DynamoDBMapperConfig dynamoDBMapperConfig;
 
     private List<String> getConnectedUsers(){
-        DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(dynamoDBClient, dynamoDBMapperConfig);
-        DynamoDBScanExpression scanExpression = new DynamoDBScanExpression();
-        List<JobhubConnectionsEntity> scanResult = dynamoDBMapper.scan(JobhubConnectionsEntity.class, scanExpression);
-        List<String> userIds = scanResult.stream().map(JobhubConnectionsEntity::getUserId).collect(Collectors.toList());
-        return userIds;
+        try {
+            DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(dynamoDBClient, dynamoDBMapperConfig);
+            DynamoDBScanExpression scanExpression = new DynamoDBScanExpression();
+            List<JobhubConnectionsEntity> scanResult = dynamoDBMapper.scan(JobhubConnectionsEntity.class, scanExpression);
+            List<String> userIds = scanResult.stream().map(JobhubConnectionsEntity::getUserId).collect(Collectors.toList());
+            return userIds;
+        } catch (SdkClientException ex){
+            log.error(JobFairVisitServiceImpl.class.getSimpleName() + ": " + ex.getMessage());
+            return Collections.EMPTY_LIST;
+        }
     }
 
     @SneakyThrows
@@ -180,41 +190,50 @@ public class JobFairVisitServiceImpl implements JobFairVisitService {
 
     @Override
     public int getCurrentVisitOfJobFair(String jobFairId) {
-        DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(dynamoDBClient, dynamoDBMapperConfig);
+        try {
+            DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(dynamoDBClient, dynamoDBMapperConfig);
 
-        Map<String, AttributeValue> eav = new HashMap<>();
-        eav.put(":jobFairId", new AttributeValue().withS(jobFairId));
+            Map<String, AttributeValue> eav = new HashMap<>();
+            eav.put(":jobFairId", new AttributeValue().withS(jobFairId));
 
 
-        DynamoDBQueryExpression<JobFairVisitEntity> queryExpression = new DynamoDBQueryExpression<JobFairVisitEntity>()
-                .withKeyConditionExpression("jobFairId = :jobFairId")
-                .withExpressionAttributeValues(eav).withSelect(Select.COUNT);
+            DynamoDBQueryExpression<JobFairVisitEntity> queryExpression = new DynamoDBQueryExpression<JobFairVisitEntity>()
+                    .withKeyConditionExpression("jobFairId = :jobFairId")
+                    .withExpressionAttributeValues(eav).withSelect(Select.COUNT);
 
-        return dynamoDBMapper.count(JobFairVisitEntity.class, queryExpression);
+            return dynamoDBMapper.count(JobFairVisitEntity.class, queryExpression);
+        } catch (SdkClientException ex){
+            log.error(JobFairVisitServiceImpl.class.getSimpleName() + ": " + ex.getMessage());
+            return 0;
+        }
     }
 
     @Override
     public int getCurrentVisitOfJobFairBooth(String jobFairBoothId) {
+        try {
+            Optional<JobFairBoothEntity> jobFairBoothOpt = jobFairBoothRepository.findById(jobFairBoothId);
+            if (!jobFairBoothOpt.isPresent()){
+                throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFairBooth.NOT_FOUND));
+            }
+            JobFairBoothEntity jobFairBooth = jobFairBoothOpt.get();
 
-        Optional<JobFairBoothEntity> jobFairBoothOpt = jobFairBoothRepository.findById(jobFairBoothId);
-        if (!jobFairBoothOpt.isPresent()){
-            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFairBooth.NOT_FOUND));
+            DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(dynamoDBClient, dynamoDBMapperConfig);
+
+            Map<String, AttributeValue> eav = new HashMap<>();
+            eav.put(":jobFairId", new AttributeValue().withS(jobFairBooth.getJobFair().getId()));
+            eav.put(":jobFairBoothId", new AttributeValue().withS(jobFairBoothId));
+
+
+            DynamoDBQueryExpression<JobFairVisitEntity> queryExpression = new DynamoDBQueryExpression<JobFairVisitEntity>()
+                    .withIndexName("jobFairBoothId-index")
+                    .withKeyConditionExpression("jobFairId = :jobFairId AND jobFairBoothId = :jobFairBoothId ")
+                    .withExpressionAttributeValues(eav).withSelect(Select.COUNT);
+
+
+            return dynamoDBMapper.count(JobFairVisitEntity.class, queryExpression);
+        } catch (SdkClientException ex){
+            log.error(JobFairVisitServiceImpl.class.getSimpleName() + ": " + ex.getMessage());
+            return 0;
         }
-        JobFairBoothEntity jobFairBooth = jobFairBoothOpt.get();
-
-        DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(dynamoDBClient, dynamoDBMapperConfig);
-
-        Map<String, AttributeValue> eav = new HashMap<>();
-        eav.put(":jobFairId", new AttributeValue().withS(jobFairBooth.getJobFair().getId()));
-        eav.put(":jobFairBoothId", new AttributeValue().withS(jobFairBoothId));
-
-
-        DynamoDBQueryExpression<JobFairVisitEntity> queryExpression = new DynamoDBQueryExpression<JobFairVisitEntity>()
-                .withIndexName("jobFairBoothId-index")
-                .withKeyConditionExpression("jobFairId = :jobFairId AND jobFairBoothId = :jobFairBoothId ")
-                .withExpressionAttributeValues(eav).withSelect(Select.COUNT);
-
-
-        return dynamoDBMapper.count(JobFairVisitEntity.class, queryExpression);
     }
 }
