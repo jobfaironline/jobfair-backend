@@ -65,6 +65,7 @@ public class AttendantServiceImpl implements AttendantService {
     @Override
     @Transactional
     public void updateAccount(AttendantDTO dto) {
+        System.out.println(dto);
         Optional<AccountEntity> opt = accountService.getActiveAccountById(dto.getAccount().getId());
         if (!opt.isPresent()) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Account.NOT_FOUND));

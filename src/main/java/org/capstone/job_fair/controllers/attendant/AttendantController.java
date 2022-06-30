@@ -45,15 +45,11 @@ public class AttendantController {
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ATTENDANT)")
     @PutMapping(ApiEndPoint.Attendant.UPDATE_ENDPOINT)
     public ResponseEntity<?> update(@Validated @RequestBody UpdateAttendantRequest request) {
-        try {
-            AttendantDTO attendantDTO = attendantMapper.toDTO(request);
-            attendantService.updateAccount(attendantDTO);
-            return GenericResponse.build(
-                    MessageUtil.getMessage(MessageConstant.Attendant.UPDATE_PROFILE_SUCCESSFULLY),
-                    HttpStatus.OK);
-        } catch (NoSuchElementException | IllegalArgumentException ex) {
-            return GenericResponse.build(ex.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+        AttendantDTO attendantDTO = attendantMapper.toDTO(request);
+        attendantService.updateAccount(attendantDTO);
+        return GenericResponse.build(
+                MessageUtil.getMessage(MessageConstant.Attendant.UPDATE_PROFILE_SUCCESSFULLY),
+                HttpStatus.OK);
 
     }
 
