@@ -1,8 +1,11 @@
 package org.capstone.job_fair.models.entities.company.job.questions;
 
-import lombok.*;
-import org.capstone.job_fair.models.entities.job_fair.booth.BoothJobPositionEntity;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.capstone.job_fair.models.entities.company.job.JobPositionEntity;
+import org.capstone.job_fair.models.entities.job_fair.booth.BoothJobPositionEntity;
 import org.capstone.job_fair.models.statuses.QuestionStatus;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.Cascade;

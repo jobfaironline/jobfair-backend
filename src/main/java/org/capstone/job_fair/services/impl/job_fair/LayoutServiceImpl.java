@@ -7,16 +7,16 @@ import org.capstone.job_fair.constants.GLBConstant;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.models.dtos.job_fair.LayoutBoothDTO;
 import org.capstone.job_fair.models.dtos.job_fair.LayoutDTO;
-import org.capstone.job_fair.models.entities.job_fair.booth.JobFairBoothEntity;
 import org.capstone.job_fair.models.entities.job_fair.JobFairEntity;
 import org.capstone.job_fair.models.entities.job_fair.LayoutBoothEntity;
 import org.capstone.job_fair.models.entities.job_fair.LayoutEntity;
+import org.capstone.job_fair.models.entities.job_fair.booth.JobFairBoothEntity;
 import org.capstone.job_fair.models.statuses.BoothStatus;
 import org.capstone.job_fair.models.statuses.JobFairPlanStatus;
-import org.capstone.job_fair.repositories.job_fair.job_fair_booth.JobFairBoothRepository;
-import org.capstone.job_fair.repositories.job_fair.job_fair_booth.AssignmentRepository;
 import org.capstone.job_fair.repositories.job_fair.JobFairRepository;
 import org.capstone.job_fair.repositories.job_fair.LayoutRepository;
+import org.capstone.job_fair.repositories.job_fair.job_fair_booth.AssignmentRepository;
+import org.capstone.job_fair.repositories.job_fair.job_fair_booth.JobFairBoothRepository;
 import org.capstone.job_fair.services.interfaces.job_fair.LayoutService;
 import org.capstone.job_fair.services.mappers.job_fair.LayoutMapper;
 import org.capstone.job_fair.utils.AwsUtil;
@@ -166,7 +166,7 @@ public class LayoutServiceImpl implements LayoutService {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.JOB_FAIR_NOT_FOUND));
         }
         JobFairEntity jobFairEntity = jobFairEntityOpt.get();
-        if (jobFairEntity.getJobFairBoothList().size() == 0){
+        if (jobFairEntity.getJobFairBoothList().size() == 0) {
             return Optional.empty();
         }
         return layoutRepository.findById(jobFairEntity.getJobFairBoothList().get(0).getBooth().getLayout().getId()).map(layoutMapper::toDTO);
@@ -208,11 +208,11 @@ public class LayoutServiceImpl implements LayoutService {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.NOT_EDITABLE));
 
         //check new layout's id == jobFair's layout's id
-        if (jobFairEntity.getJobFairBoothList().size() != 0 && jobFairEntity.getJobFairBoothList().get(0).getBooth().getLayout().getId().equals(layoutId)){
+        if (jobFairEntity.getJobFairBoothList().size() != 0 && jobFairEntity.getJobFairBoothList().get(0).getBooth().getLayout().getId().equals(layoutId)) {
             return;
         }
 
-        for (JobFairBoothEntity booth : jobFairEntity.getJobFairBoothList()){
+        for (JobFairBoothEntity booth : jobFairEntity.getJobFairBoothList()) {
             assignmentRepository.deleteByJobFairBoothId(booth.getId());
         }
 

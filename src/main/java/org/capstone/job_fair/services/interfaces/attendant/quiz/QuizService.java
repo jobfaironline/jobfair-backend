@@ -8,6 +8,7 @@ import java.util.Optional;
 
 public interface QuizService {
     QuizDTO createQuiz(String applicationId, String userId);
+
     Optional<QuizDTO> getQuizById(String id, String userid, boolean isDoing);
 
 
@@ -16,4 +17,4 @@ public interface QuizService {
     QuizDTO submitQuiz(String userId, String quizId, QuizEntity entity);
 
 
-    }
+}

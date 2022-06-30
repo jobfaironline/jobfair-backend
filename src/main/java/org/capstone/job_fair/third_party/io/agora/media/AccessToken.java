@@ -12,10 +12,10 @@ public class AccessToken {
         kPublishAudioStream(2),
         kPublishVideoStream(3),
         kPublishDataStream(4),
-        
+
         // For RTM only
         kRtmLogin(1000);
-    	
+
         public short intValue;
 
         Privileges(int value) {
@@ -24,7 +24,7 @@ public class AccessToken {
     }
 
     private static final String VER = "006";
-    
+
     public String appId;
     public String appCertificate;
     public String channelName;
@@ -47,7 +47,7 @@ public class AccessToken {
     }
 
     public String build() throws Exception {
-        if (! Utils.isUUID(appId)) {
+        if (!Utils.isUUID(appId)) {
             return "";
         }
 
@@ -56,8 +56,8 @@ public class AccessToken {
         }
 
         messageRawContent = Utils.pack(message);
-        signature = generateSignature(appCertificate, 
-        		appId, channelName, uid, messageRawContent);
+        signature = generateSignature(appCertificate,
+                appId, channelName, uid, messageRawContent);
         crcChannelName = crc32(channelName);
         crcUid = crc32(uid);
 
@@ -74,9 +74,9 @@ public class AccessToken {
         return VER;
     }
 
-    public static byte[] generateSignature(String appCertificate, 
-    		String appID, String channelName, String uid, byte[] message) throws Exception {
-    	
+    public static byte[] generateSignature(String appCertificate,
+                                           String appID, String channelName, String uid, byte[] message) throws Exception {
+
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try {
             baos.write(appID.getBytes());
@@ -93,7 +93,7 @@ public class AccessToken {
         if (!getVersion().equals(token.substring(0, Utils.VERSION_LENGTH))) {
             return false;
         }
-        
+
         try {
             appId = token.substring(Utils.VERSION_LENGTH, Utils.VERSION_LENGTH + Utils.APP_ID_LENGTH);
             PackContent packContent = new PackContent();
@@ -107,7 +107,7 @@ public class AccessToken {
             e.printStackTrace();
             return false;
         }
-        
+
         return true;
     }
 
@@ -142,9 +142,9 @@ public class AccessToken {
         public byte[] rawMessage;
 
         public PackContent() {
-        	// Nothing done
+            // Nothing done
         }
-        
+
         public PackContent(byte[] signature, int crcChannelName, int crcUid, byte[] rawMessage) {
             this.signature = signature;
             this.crcChannelName = crcChannelName;

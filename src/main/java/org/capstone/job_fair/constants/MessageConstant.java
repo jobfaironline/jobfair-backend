@@ -128,6 +128,8 @@ public final class MessageConstant {
 
     public static final class Account {
         public static final String NOT_FOUND = "account.error.not-found";
+        public static final String ACCOUNT_INACTIVE = "account.error.inactive";
+
         public static final String EXISTED = "account.error.existed";
         public static final String EMAIL_EXISTED = "account.error.email-existed";
         public static final String NOT_FOUND_COUNTRY = "account.error.not-found-country";
@@ -399,6 +401,7 @@ public final class MessageConstant {
         public static final String WRONG_ASSIGNMENT_TYPE = "assignment.error.wrong-assignment-type";
         public static final String INVALID_ASSIGNMENT_ORGANIZE_JOB_FAIR = "assignment.error.invalid-assignment-organize-job-fair";
         public static final String UNAVAILABLE_EMPLOYEE = "assignment.error.unavailable-employee";
+
         private Assignment() {
         }
     }

@@ -1,6 +1,9 @@
 package org.capstone.job_fair.models.entities.job_fair;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.capstone.job_fair.models.statuses.BoothStatus;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.GenericGenerator;

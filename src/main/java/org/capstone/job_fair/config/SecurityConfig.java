@@ -77,7 +77,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .cors().configurationSource(request -> {
                     CorsConfiguration configuration = new CorsConfiguration();
                     configuration.applyPermitDefaultValues();
-                    configuration.setAllowedMethods(Arrays.asList("GET","POST","PUT","DELETE"));
+                    configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
                     return configuration;
                 }).and()
                 .csrf().disable()

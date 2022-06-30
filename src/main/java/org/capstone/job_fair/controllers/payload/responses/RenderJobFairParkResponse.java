@@ -15,7 +15,7 @@ public class RenderJobFairParkResponse {
     private String jobFairLayoutUrl;
     private List<BoothData> booths = new ArrayList<>();
 
-    public void addBoothDataInformation(BoothData boothData){
+    public void addBoothDataInformation(BoothData boothData) {
         this.booths.add(boothData);
     }
 
@@ -24,7 +24,7 @@ public class RenderJobFairParkResponse {
     @AllArgsConstructor
     @Getter
     @Setter
-    public static class BoothData{
+    public static class BoothData {
 
         private Position position = new Position(0, 0, 0);
         private String slotName;
@@ -33,7 +33,7 @@ public class RenderJobFairParkResponse {
         private String boothName;
         private List<JobFairBoothLayoutVideoDTO> companyBoothLayoutVideos;
 
-        public void setPosition(double x, double y, double z){
+        public void setPosition(double x, double y, double z) {
             this.position.setX(x);
             this.position.setY(y);
             this.position.setZ(z);
@@ -45,7 +45,7 @@ public class RenderJobFairParkResponse {
         @AllArgsConstructor
         @Getter
         @Setter
-        private static class Position{
+        private static class Position {
             private double x;
             private double y;
             private double z;

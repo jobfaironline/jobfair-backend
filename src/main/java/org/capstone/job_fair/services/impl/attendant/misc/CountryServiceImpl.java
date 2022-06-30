@@ -23,8 +23,6 @@ public class CountryServiceImpl implements CountryService {
     private CountryRepository countryRepository;
 
 
-
-
     @Override
     public Integer getCountCountryById(int id) {
         return countryRepository.countById(id);
@@ -47,7 +45,8 @@ public class CountryServiceImpl implements CountryService {
     @Transactional
     public CountryDTO delete(int id) {
         Optional<CountryEntity> entityOptional = countryRepository.findById(id);
-        if(!entityOptional.isPresent()) throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Account.NOT_FOUND_COUNTRY));
+        if (!entityOptional.isPresent())
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Account.NOT_FOUND_COUNTRY));
         countryRepository.deleteById(id);
         return countryMapper.toDTO(entityOptional.get());
     }
@@ -63,7 +62,8 @@ public class CountryServiceImpl implements CountryService {
     @Transactional
     public CountryDTO update(CountryDTO dto) {
         Optional<CountryEntity> entityOptional = countryRepository.findById(dto.getId());
-        if(!entityOptional.isPresent()) throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Account.NOT_FOUND_COUNTRY));
+        if (!entityOptional.isPresent())
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Account.NOT_FOUND_COUNTRY));
         CountryEntity entity = countryRepository.save(countryMapper.toEntity(dto));
         return countryMapper.toDTO(entity);
     }

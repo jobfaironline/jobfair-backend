@@ -6,11 +6,11 @@ import org.capstone.job_fair.models.dtos.job_fair.booth.JobFairBoothLayoutDTO;
 import org.capstone.job_fair.models.dtos.job_fair.booth.JobFairBoothLayoutVideoDTO;
 import org.capstone.job_fair.models.entities.job_fair.booth.JobFairBoothLayoutEntity;
 import org.capstone.job_fair.models.entities.job_fair.booth.JobFairBoothLayoutVideoEntity;
-import org.capstone.job_fair.repositories.job_fair.job_fair_booth.JobFairBoothLayoutVideoRepository;
 import org.capstone.job_fair.repositories.job_fair.job_fair_booth.JobFairBoothLayoutRepository;
+import org.capstone.job_fair.repositories.job_fair.job_fair_booth.JobFairBoothLayoutVideoRepository;
 import org.capstone.job_fair.services.interfaces.job_fair.booth.JobFairBoothLayoutService;
-import org.capstone.job_fair.services.mappers.job_fair.booth.JobFairBoothLayoutVideoMapper;
 import org.capstone.job_fair.services.mappers.job_fair.booth.JobFairBoothLayoutMapper;
+import org.capstone.job_fair.services.mappers.job_fair.booth.JobFairBoothLayoutVideoMapper;
 import org.capstone.job_fair.utils.AwsUtil;
 import org.capstone.job_fair.utils.GLTFUtil;
 import org.capstone.job_fair.utils.MessageUtil;
@@ -77,9 +77,8 @@ public class JobFairBoothLayoutServiceImpl implements JobFairBoothLayoutService 
         }
 
         Optional<JobFairBoothLayoutEntity> latestVersionOpt =
-                    jobFairBoothLayoutRepository.findTopByJobFairBoothIdOrderByVersionDesc(dto.getJobFairBooth().getId());
+                jobFairBoothLayoutRepository.findTopByJobFairBoothIdOrderByVersionDesc(dto.getJobFairBooth().getId());
         int version = latestVersionOpt.map(jobFairBoothLayoutEntity -> jobFairBoothLayoutEntity.getVersion() + 1).orElse(0);
-
 
 
         JobFairBoothLayoutEntity entity = boothLayoutMapper.toEntity(dto);
@@ -95,9 +94,9 @@ public class JobFairBoothLayoutServiceImpl implements JobFairBoothLayoutService 
 
     @Transactional
     @Override
-    public JobFairBoothLayoutVideoDTO createNewVideoWithFile(JobFairBoothLayoutVideoDTO dto){
+    public JobFairBoothLayoutVideoDTO createNewVideoWithFile(JobFairBoothLayoutVideoDTO dto) {
         Optional<JobFairBoothLayoutEntity> layoutOpt = jobFairBoothLayoutRepository.findById(dto.getJobFairBoothLayoutId());
-        if (!layoutOpt.isPresent()){
+        if (!layoutOpt.isPresent()) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Layout.NOT_FOUND));
         }
 
@@ -114,7 +113,7 @@ public class JobFairBoothLayoutServiceImpl implements JobFairBoothLayoutService 
     @Transactional
     public JobFairBoothLayoutVideoDTO createNewVideoWithUrl(JobFairBoothLayoutVideoDTO dto) {
         Optional<JobFairBoothLayoutEntity> layoutOpt = jobFairBoothLayoutRepository.findById(dto.getJobFairBoothLayoutId());
-        if (!layoutOpt.isPresent()){
+        if (!layoutOpt.isPresent()) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Layout.NOT_FOUND));
         }
         JobFairBoothLayoutVideoEntity entity = jobFairBoothLayoutVideoMapper.toEntity(dto);

@@ -43,7 +43,7 @@ public class ExceptionHandlerController {
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<?> unauthorizedException(AccessDeniedException ex) {
-        return buildErrorResponse(ex, MessageUtil.getMessage(MessageConstant.Exception.NO_PERMISSION), HttpStatus.UNAUTHORIZED);
+        return GenericResponse.build(ex.getMessage(), HttpStatus.UNAUTHORIZED);
     }
 
 
@@ -73,7 +73,6 @@ public class ExceptionHandlerController {
         ex.printStackTrace();
         return buildErrorResponse(ex, MessageUtil.getMessage(MessageConstant.Exception.INTERNAL_ERROR), HttpStatus.BAD_REQUEST);
     }
-
 
 
     private ResponseEntity<?> buildErrorResponse(Exception exception, String message, HttpStatus httpStatus) {

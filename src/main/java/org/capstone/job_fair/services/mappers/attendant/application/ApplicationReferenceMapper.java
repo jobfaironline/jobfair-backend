@@ -11,6 +11,7 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 public abstract class ApplicationReferenceMapper {
     @Mapping(target = "application", ignore = true)
     public abstract ApplicationReferenceEntity toEntity(ApplicationReferenceDTO dto);
+
     public abstract ApplicationReferenceDTO toDTO(ApplicationReferenceEntity entity);
 
     @Mapping(target = "id", source = "id", ignore = true)

@@ -26,7 +26,8 @@ public class AgoraTokenController {
                 .getContext()
                 .getAuthentication()
                 .getPrincipal();
-        String userId = userDetails.getId();;
+        String userId = userDetails.getId();
+        ;
         String token = agoraTokenService.getRtmToken(userId);
         Map<String, String> response = new HashMap<>();
         response.put("token", token);

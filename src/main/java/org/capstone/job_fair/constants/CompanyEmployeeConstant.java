@@ -1,7 +1,9 @@
 package org.capstone.job_fair.constants;
 
 public final class CompanyEmployeeConstant {
-    private CompanyEmployeeConstant(){}
+    private CompanyEmployeeConstant() {
+    }
+
     public static final String DEFAULT_SEARCH_OFFSET_VALUE = "0";
     public static final String DEFAULT_SEARCH_PAGE_SIZE_VALUE = "10";
     public static final String DEFAULT_SEARCH_SORT_BY_VALUE = "account.createTime";
@@ -9,7 +11,9 @@ public final class CompanyEmployeeConstant {
     public static final String DEFAULT_SEARCH_CONTENT = "";
 
     public static final class XLSXFormat {
-        private XLSXFormat(){}
+        private XLSXFormat() {
+        }
+
         public static final int COLUMN_NUM = 6;
         public static final int FIRST_NAME_INDEX = 0;
         public static final int MIDDLE_NAME_INDEX = 1;

@@ -1,5 +1,6 @@
 package org.capstone.job_fair.services.impl.notification;
 
+import com.amazonaws.SdkClientException;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
@@ -7,6 +8,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.model.SendMessageRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.models.dtos.dynamoDB.NotificationMessageDTO;
 import org.capstone.job_fair.models.entities.dynamoDB.NotificationMessageEntity;
@@ -20,14 +22,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
 @Service
+@Slf4j
 public class NotificationServiceImpl implements NotificationService {
 
     @Autowired
@@ -47,6 +47,18 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Value("${aws.sqs.url}")
     private String queueURL;
+
+    //SQS has SendMessageResult, but I have no idea what to do with this shit
+    //So I just simply return true if it works
+    private Boolean broadcastMessage(SendMessageRequest sendMessageRequest) {
+        try {
+            amazonSQS.sendMessage(sendMessageRequest);
+            return true;
+        } catch (SdkClientException ex) {
+            log.error(NotificationServiceImpl.class.getSimpleName() + ": " + ex.getMessage());
+            return false;
+        }
+    }
 
     @Override
     public void createNotification(NotificationMessageDTO message, Role role) {
@@ -68,7 +80,7 @@ public class NotificationServiceImpl implements NotificationService {
         dynamoDBMapper.batchSave(notificationMessageEntityList);
 
         SendMessageRequest sendMessageRequest = new SendMessageRequest().withMessageBody(message.getNotificationId()).withQueueUrl(queueURL);
-        amazonSQS.sendMessage(sendMessageRequest);
+        this.broadcastMessage(sendMessageRequest);
     }
 
     @Override
@@ -87,11 +99,12 @@ public class NotificationServiceImpl implements NotificationService {
         dynamoDBMapper.save(entity);
 
         SendMessageRequest sendMessageRequest = new SendMessageRequest().withMessageBody(message.getNotificationId()).withQueueUrl(queueURL);
-        amazonSQS.sendMessage(sendMessageRequest);
+        this.broadcastMessage(sendMessageRequest);
     }
 
     @Override
     public void createNotification(NotificationMessageDTO message, List<String> receiverIdList) {
+
         DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(dynamoDBClient, dynamoDBMapperConfig);
 
         message.setNotificationId(UUID.randomUUID().toString());
@@ -108,28 +121,33 @@ public class NotificationServiceImpl implements NotificationService {
         dynamoDBMapper.batchSave(notificationMessageEntityList);
 
         SendMessageRequest sendMessageRequest = new SendMessageRequest().withMessageBody(message.getNotificationId()).withQueueUrl(queueURL);
-        amazonSQS.sendMessage(sendMessageRequest);
-
+        this.broadcastMessage(sendMessageRequest);
     }
 
     @Override
     public List<NotificationMessageDTO> getNotificationByAccountId(String id) {
-        DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(dynamoDBClient, dynamoDBMapperConfig);
+        try {
+            DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(dynamoDBClient, dynamoDBMapperConfig);
 
-        HashMap<String, AttributeValue> eav = new HashMap<>();
-        eav.put(":userId", new AttributeValue().withS(id));
-        eav.put(":notificationType", new AttributeValue().withS(NotificationType.NOTI.name()));
+            HashMap<String, AttributeValue> eav = new HashMap<>();
+            eav.put(":userId", new AttributeValue().withS(id));
+            eav.put(":notificationType", new AttributeValue().withS(NotificationType.NOTI.name()));
 
-        DynamoDBScanExpression scanExpression = new DynamoDBScanExpression()
-                .withFilterExpression("userId = :userId AND notificationType = :notificationType")
-                .withExpressionAttributeValues(eav);
+            DynamoDBScanExpression scanExpression = new DynamoDBScanExpression()
+                    .withFilterExpression("userId = :userId AND notificationType = :notificationType")
+                    .withExpressionAttributeValues(eav);
 
 
-        List<NotificationMessageEntity> notifications = dynamoDBMapper.scan(NotificationMessageEntity.class, scanExpression);
-        notifications = notifications.stream().collect(Collectors.toList());
-        notifications.sort((o1, o2) -> Math.toIntExact(o2.getCreateDate().compareTo(o1.getCreateDate())));
+            List<NotificationMessageEntity> notifications = dynamoDBMapper.scan(NotificationMessageEntity.class, scanExpression);
+            notifications = notifications.stream().collect(Collectors.toList());
+            notifications.sort((o1, o2) -> Math.toIntExact(o2.getCreateDate().compareTo(o1.getCreateDate())));
 
-        return notifications.stream().map(notificationMessageMapper::toDTO).collect(Collectors.toList());
+            return notifications.stream().map(notificationMessageMapper::toDTO).collect(Collectors.toList());
+        } catch (SdkClientException ex) {
+            log.error(NotificationServiceImpl.class.getSimpleName() + ": " + ex.getMessage());
+            return Collections.EMPTY_LIST;
+        }
+
 
     }
 
@@ -137,7 +155,7 @@ public class NotificationServiceImpl implements NotificationService {
     public void readNotification(String id, String userId) {
         DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(dynamoDBClient, dynamoDBMapperConfig);
         NotificationMessageEntity notification = dynamoDBMapper.load(NotificationMessageEntity.class, id);
-        if (!notification.getUserId().equals(userId)){
+        if (!notification.getUserId().equals(userId)) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Notification.NOT_FOUND));
         }
         notification.setRead(true);
@@ -155,7 +173,7 @@ public class NotificationServiceImpl implements NotificationService {
                 .withFilterExpression("userId = :userId")
                 .withExpressionAttributeValues(eav);
         List<NotificationMessageEntity> notifications = dynamoDBMapper.scan(NotificationMessageEntity.class, scanExpression);
-        for(NotificationMessageEntity noti : notifications){
+        for (NotificationMessageEntity noti : notifications) {
             noti.setRead(true);
         }
         dynamoDBMapper.batchSave(notifications);

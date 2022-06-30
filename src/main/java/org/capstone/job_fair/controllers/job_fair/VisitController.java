@@ -26,14 +26,14 @@ public class VisitController {
     public ResponseEntity<?> visitJobFair(@RequestParam String jobFairId) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         jobFairVisitService.visitJobFair(userDetails.getId(), jobFairId);
-        if (userDetails.getAuthorities().stream().anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals(Role.ATTENDANT.getAuthority()))){
+        if (userDetails.getAuthorities().stream().anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals(Role.ATTENDANT.getAuthority()))) {
             attendantRegistrationService.visitJobFair(userDetails.getId(), jobFairId);
         }
         return ResponseEntity.ok().build();
     }
 
     @PostMapping(ApiEndPoint.JobFairVisit.LEAVE_JOB_FAIR)
-    public ResponseEntity<?> leaveJobFair(@RequestParam String jobFairId){
+    public ResponseEntity<?> leaveJobFair(@RequestParam String jobFairId) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         jobFairVisitService.leaveJobFair(userDetails.getId(), jobFairId);
         return ResponseEntity.ok().build();
@@ -41,14 +41,14 @@ public class VisitController {
     }
 
     @PostMapping(ApiEndPoint.JobFairVisit.ENTER_BOOTH)
-    public ResponseEntity<?> visitBooth(@RequestParam String jobFairBoothId){
+    public ResponseEntity<?> visitBooth(@RequestParam String jobFairBoothId) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         jobFairVisitService.visitBooth(userDetails.getId(), jobFairBoothId);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping(ApiEndPoint.JobFairVisit.LEAVE_BOOTH)
-    public ResponseEntity<?> leaveBooth(@RequestParam String jobFairBoothId){
+    public ResponseEntity<?> leaveBooth(@RequestParam String jobFairBoothId) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         jobFairVisitService.leaveBooth(userDetails.getId(), jobFairBoothId);
         return ResponseEntity.ok().build();

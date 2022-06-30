@@ -23,9 +23,9 @@ public class Verifier5 {
         String channelKey = args[4];
 
         DynamicKey5 key5 = new DynamicKey5();
-        if (! key5.fromString(channelKey)) {
+        if (!key5.fromString(channelKey)) {
             System.out.println("Faile to parse key");
-            return ;
+            return;
         }
 
         System.out.println("signature " + key5.content.signature);
@@ -49,7 +49,7 @@ public class Verifier5 {
             String permission = key5.content.extra.get(DynamicKey5.ALLOW_UPLOAD_IN_CHANNEL);
             if (permission != DynamicKey5.noUpload && permission != DynamicKey5.audioVideoUpload) {
                 System.out.println("Unknown in channel upload permission " + permission + " in extra [" + toString(key5.content.extra) + "]");
-                return ;
+                return;
             }
             System.out.println("Uid = 0 \t\t " + DynamicKey5.generateInChannelPermissionKey(appID, appCertificate, channelName, key5.content.unixTs, key5.content.salt, 0, key5.content.expiredTs, permission));
             System.out.println("Uid =  " + uid + " \t " + DynamicKey5.generateInChannelPermissionKey(appID, appCertificate, channelName, key5.content.unixTs, key5.content.salt, uid, key5.content.expiredTs, permission));
@@ -75,7 +75,7 @@ public class Verifier5 {
 
         String separator = "";
 
-        for (Map.Entry<Short,String> v : extra.entrySet()) {
+        for (Map.Entry<Short, String> v : extra.entrySet()) {
             s += separator;
             s += v.getKey();
             s += ":";

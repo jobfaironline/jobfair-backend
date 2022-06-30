@@ -33,4 +33,7 @@ public interface AccountService {
 
     AccountDTO updateProfilePicture(String pictureProfileFolder, String id);
 
+    AccountDTO deactivateOwnAccount(String userId);
+
+    AccountDTO reactivateOwnAccount(String userId);
 }

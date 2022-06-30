@@ -112,7 +112,7 @@ public class AccountServiceImpl implements AccountService {
     @Transactional
     public void activateAccount(String id) {
         Optional<AccountEntity> accountOpt = accountRepository.findById(id);
-        if (!accountOpt.isPresent()){
+        if (!accountOpt.isPresent()) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Account.NOT_FOUND));
         }
         AccountEntity accountEntity = accountOpt.get();
@@ -128,7 +128,7 @@ public class AccountServiceImpl implements AccountService {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Account.OLD_PASSWORD_MISMATCH));
         }
         Optional<AccountEntity> accountOpt = accountRepository.findById(userDetails.getId());
-        if (!accountOpt.isPresent()){
+        if (!accountOpt.isPresent()) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Account.NOT_FOUND));
         }
         AccountEntity entity = accountOpt.get();
@@ -191,5 +191,24 @@ public class AccountServiceImpl implements AccountService {
         accountRepository.save(account);
         return accountMapper.toDTO(account);
     }
+
+    @Override
+    @Transactional
+    public AccountDTO deactivateOwnAccount(String userId) {
+        AccountEntity account = accountRepository.getById(userId);
+        account.setStatus(AccountStatus.INACTIVE);
+        account = accountRepository.save(account);
+        return accountMapper.toDTO(account);
+    }
+
+    @Override
+    @Transactional
+    public AccountDTO reactivateOwnAccount(String userId) {
+        AccountEntity account = accountRepository.getById(userId);
+        account.setStatus(AccountStatus.VERIFIED);
+        account = accountRepository.save(account);
+        return accountMapper.toDTO(account);
+    }
+
 
 }

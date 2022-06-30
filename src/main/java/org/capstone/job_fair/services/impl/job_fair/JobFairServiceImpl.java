@@ -106,7 +106,6 @@ public class JobFairServiceImpl implements JobFairService {
     }
 
 
-
     @Override
     @Transactional
     public void publishJobFair(String companyId, String jobFairId) {
@@ -115,7 +114,7 @@ public class JobFairServiceImpl implements JobFairService {
         jobFairRepository.save(jobFairEntity);
     }
 
-    private JobFairEntity validateJobFair(String companyId, String jobFairId){
+    private JobFairEntity validateJobFair(String companyId, String jobFairId) {
         //check existed job fair
         Optional<JobFairEntity> jobFairEntityOptional = jobFairRepository.findByIdAndCompanyId(jobFairId, companyId);
         if (!jobFairEntityOptional.isPresent()) {

@@ -52,10 +52,10 @@ public abstract class JobFairMapper {
 
     public void mapToShiftList(List<ShiftDTO> dtos, @MappingTarget List<ShiftEntity> entities) {
         List<ShiftEntity> newEntities = new ArrayList<>();
-        if ( entities != null ) {
-            for (ShiftDTO dto : dtos){
+        if (entities != null) {
+            for (ShiftDTO dto : dtos) {
                 Optional<ShiftEntity> entityOpt = entities.stream().filter(entity1 -> entity1.getId().equals(dto.getId())).findFirst();
-                if (entityOpt.isPresent()){
+                if (entityOpt.isPresent()) {
                     ShiftEntity entity = entityOpt.get();
                     entity.setBeginTime(dto.getBeginTime());
                     entity.setEndTime(dto.getEndTime());
