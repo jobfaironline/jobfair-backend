@@ -362,7 +362,7 @@ public class InterviewServiceImpl implements InterviewService {
     @Transactional
     public void finishInterview(String attendantId, String interviewRoomId, String reviewerId) {
         ApplicationEntity application = getValidApplicationEntity(attendantId, interviewRoomId, reviewerId);
-        if (application.getInterviewStatus() == null || application.getInterviewStatus() != InterviewStatus.INTERVIEWING) {
+        if (application.getInterviewStatus() == null || application.getInterviewStatus() != InterviewStatus.SUBMITTED_REPORT) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Interview.INVALID_STATUS));
         }
         application.setInterviewStatus(InterviewStatus.DONE);
@@ -497,6 +497,7 @@ public class InterviewServiceImpl implements InterviewService {
         if (interviewStatus == null || interviewStatus == InterviewStatus.NOT_YET) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Interview.INVALID_STATUS));
         }
+        application.setInterviewStatus(InterviewStatus.SUBMITTED_REPORT);
         application.setAttendantAdvantage(advantage);
         application.setAttendantDisadvantage(disadvantage);
         application.setInterviewNote(note);
