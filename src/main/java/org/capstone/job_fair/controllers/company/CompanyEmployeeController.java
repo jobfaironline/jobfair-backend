@@ -152,7 +152,7 @@ public class CompanyEmployeeController {
     }
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
-    @GetMapping(ApiEndPoint.CompanyEmployee.COMPANY_EMPLOYEE_ENDPOINT + "/{companyId}")
+    @GetMapping(ApiEndPoint.CompanyEmployee.GET_BY_COMPANY + "/{companyId}")
     public ResponseEntity<?> getCompanyEmployees(@PathVariable String companyId,
                                                  @RequestParam(value = "offset", defaultValue = CompanyEmployeeConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset,
                                                  @RequestParam(value = "pageSize", required = false, defaultValue = CompanyEmployeeConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize,
@@ -218,9 +218,9 @@ public class CompanyEmployeeController {
         }
     }
 
-    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
-    @GetMapping(ApiEndPoint.CompanyEmployee.COMPANY_EMPLOYEE_ENDPOINT)
-    public ResponseEntity<?> getEmployeeById(@RequestParam(value = "employeeID", required = true) String employeeID) {
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE)")
+    @GetMapping(ApiEndPoint.CompanyEmployee.COMPANY_EMPLOYEE_ENDPOINT + "/{employeeID}")
+    public ResponseEntity<?> getEmployeeById(@PathVariable(value = "employeeID") String employeeID) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String companyID = null;
         //Get role from secutiry context

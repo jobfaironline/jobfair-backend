@@ -80,6 +80,21 @@ public abstract class AttendantMapper {
 
 
     @Mapping(source = "accountId", target = "account.id")
+    @Mapping(source = "account.password", target = "account.password")
+    @Mapping(source = "account.phone", target = "account.phone")
+    @Mapping(source = "account.profileImageUrl", target = "account.profileImageUrl")
+    @Mapping(source = "account.firstname", target = "account.firstname")
+    @Mapping(source = "account.lastname", target = "account.lastname")
+    @Mapping(source = "account.middlename", target = "account.middlename")
+    @Mapping(source = "account.gender", target = "account.gender")
+    @Mapping(source = "title", target = "title")
+    @Mapping(source = "jobTitle", target = "jobTitle")
+    @Mapping(source = "dob", target = "dob")
+    @Mapping(source = "yearOfExp", target = "yearOfExp")
+    @Mapping(source = "maritalStatus", target = "maritalStatus")
+    @Mapping(source = "countryId", target = "countryId")
+    @Mapping(source = "residenceId", target = "residenceId")
+    @Mapping(source = "jobLevel", target = "jobLevel")
     public abstract AttendantDTO toDTO(UpdateAttendantRequest request);
 
 

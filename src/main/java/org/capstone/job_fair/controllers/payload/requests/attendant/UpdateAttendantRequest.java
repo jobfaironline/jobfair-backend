@@ -20,7 +20,6 @@ import java.util.List;
 @AllArgsConstructor
 @ToString
 @NoArgsConstructor
-
 public class UpdateAttendantRequest {
 
     @NotNull
@@ -51,9 +50,9 @@ public class UpdateAttendantRequest {
 
     private Marital maritalStatus;
 
-    private String countryId;
+    private Integer countryId;
 
-    private String residenceId;
+    private Integer residenceId;
 
     private JobLevel jobLevel;
 
@@ -80,8 +79,6 @@ public class UpdateAttendantRequest {
     @NoArgsConstructor
     @ToString
     public static class AccountRequest {
-        @EmailConstraint
-        private String email;
         @PasswordConstraint
         private String password;
         @PhoneConstraint

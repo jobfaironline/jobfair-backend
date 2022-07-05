@@ -48,6 +48,7 @@ public class UpdateCompanyEmployeeProfileRequest {
         @NameConstraint
         private String middlename;
 
+
         private Gender gender;
     }
 
