@@ -20,6 +20,7 @@ import org.capstone.job_fair.services.interfaces.job_fair.InterviewService;
 import org.capstone.job_fair.services.interfaces.notification.NotificationService;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -36,6 +37,7 @@ public class InterviewController {
     private InterviewService interviewService;
 
     @Autowired
+    @Qualifier("LocalNotificationService")
     private NotificationService notificationService;
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).ATTENDANT)")

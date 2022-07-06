@@ -23,6 +23,7 @@ import org.capstone.job_fair.services.interfaces.job_fair.JobFairVisitService;
 import org.capstone.job_fair.services.interfaces.notification.NotificationService;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -36,6 +37,7 @@ public class JobFairVisitServiceImpl implements JobFairVisitService {
     private AmazonDynamoDB dynamoDBClient;
 
     @Autowired
+    @Qualifier("LocalNotificationService")
     private NotificationService notificationService;
 
     @Autowired
