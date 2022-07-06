@@ -28,6 +28,7 @@ import org.capstone.job_fair.services.mappers.attendant.application.ApplicationM
 import org.capstone.job_fair.utils.MessageUtil;
 import org.capstone.job_fair.validators.XSSConstraint;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
@@ -53,6 +54,7 @@ public class ApplicationController {
     private ApplicationMapper applicationMapper;
 
     @Autowired
+    @Qualifier("LocalNotificationService")
     private NotificationService notificationService;
 
     @Autowired
