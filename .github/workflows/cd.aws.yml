@@ -30,7 +30,10 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
       #Build the application using Maven
       - name: Build with Maven
-        run: mvn clean install
+        run: |
+            sudo rm -rf src/main.resources/application.properties
+            mv src/main/resources/deploy.application.properties src/main/resources/application.properties
+            mvn clean install
       - name: Create elastic beanstalk configuration file
         run: |
             mkdir -p .platform/nginx/conf.d/
