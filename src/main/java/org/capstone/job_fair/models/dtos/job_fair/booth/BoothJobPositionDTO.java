@@ -39,4 +39,6 @@ public class BoothJobPositionDTO implements Serializable {
     private Integer numOfQuestion;
     private Double passMark;
     private JobFairBoothDTO jobFairBooth;
+    private String descriptionKeyWord;
+    private String requirementKeyWord;
 }

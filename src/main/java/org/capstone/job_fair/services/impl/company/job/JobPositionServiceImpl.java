@@ -1,5 +1,6 @@
 package org.capstone.job_fair.services.impl.company.job;
 
+import com.amazonaws.util.json.Jackson;
 import lombok.SneakyThrows;
 import org.apache.commons.collections4.map.HashedMap;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -82,15 +83,20 @@ public class JobPositionServiceImpl implements JobPositionService {
 
     private void updateDescriptionAndRequirementKeyWork(JobPositionEntity jobPosition){
         Map<String, String> body = new HashedMap<>();
+
         body.put("description", jobPosition.getDescription());
         Mono<KeyWordResponse> descriptionResult = webClient.post().uri(skillProcessorURL)
                 .body(Mono.just(body), Map.class)
                 .retrieve()
                 .bodyToMono(KeyWordResponse.class);
-
         descriptionResult.subscribe(keyWordResponse -> {
-            jobPosition.setDescriptionKeyWord(keyWordResponse.result.toString());
-            jobPositionRepository.save(jobPosition);
+            try {
+                String parseResult = Jackson.getObjectMapper().writeValueAsString(keyWordResponse.result);
+                jobPosition.setDescriptionKeyWord(parseResult);
+                jobPositionRepository.save(jobPosition);
+            } catch (Exception e){
+                e.printStackTrace();
+            }
         });
 
         body.put("description", jobPosition.getRequirements());
@@ -98,10 +104,14 @@ public class JobPositionServiceImpl implements JobPositionService {
                 .body(Mono.just(body), Map.class)
                 .retrieve()
                 .bodyToMono(KeyWordResponse.class);
-
         requirementResult.subscribe(keyWordResponse -> {
-            jobPosition.setRequirementKeyWord(keyWordResponse.result.toString());
-            jobPositionRepository.save(jobPosition);
+            try {
+                String parseResult = Jackson.getObjectMapper().writeValueAsString(keyWordResponse.result);
+                jobPosition.setRequirementKeyWord(parseResult);
+                jobPositionRepository.save(jobPosition);
+            } catch (Exception e){
+                e.printStackTrace();
+            }
         });
     }
 

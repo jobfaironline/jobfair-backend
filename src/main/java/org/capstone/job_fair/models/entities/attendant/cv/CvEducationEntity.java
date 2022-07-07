@@ -46,6 +46,8 @@ public class CvEducationEntity {
     @Column(name = "qualification_id")
     @Enumerated(EnumType.ORDINAL)
     private Qualification qualificationId;
+    @Column(name = "achievement_key_word")
+    private String achievementKeyWord;
 
 
     @Override

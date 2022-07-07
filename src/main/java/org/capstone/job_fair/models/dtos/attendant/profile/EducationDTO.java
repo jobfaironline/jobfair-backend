@@ -18,5 +18,5 @@ public class EducationDTO {
     private Long toDate;
     private String achievement;
     private Qualification qualification;
-
+    private String achievementKeyWord;
 }

@@ -39,6 +39,8 @@ public class CvActivityEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cv_id")
     private CvEntity cv;
+    @Column(name = "description_key_word")
+    private String descriptionKeyWord;
 
 
     @Override

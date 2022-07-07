@@ -1,5 +1,9 @@
 package org.capstone.job_fair.services.impl.attendant.application;
 
+import com.amazonaws.util.json.Jackson;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.SneakyThrows;
 import org.capstone.job_fair.constants.DataConstraint;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.models.dtos.attendant.application.ApplicationDTO;
@@ -58,7 +62,6 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Autowired
     private ApplicationSkillMapper applicationSkillMapper;
 
-
     @Autowired
     private ApplicationWorkHistoryMapper applicationWorkHistoryMapper;
 
@@ -96,6 +99,19 @@ public class ApplicationServiceImpl implements ApplicationService {
         }
     }
 
+    @SneakyThrows
+    private double calculateMatchingPoint(ApplicationEntity application){
+        ObjectMapper mapper = new ObjectMapper();
+        List<String> jobPositionKeyWords = mapper.readValue(application.getBoothJobPosition().getDescriptionKeyWord(), new TypeReference<List<String>>(){});
+        List<String> jobPositionRequirementKeyWords = mapper.readValue(application.getBoothJobPosition().getRequirementKeyWord(), new TypeReference<List<String>>(){});
+
+        List<String> workHistoriesKeyWords = new ArrayList<>();
+
+
+
+        return 0.0;
+    }
+
     @Override
     @Transactional
     public ApplicationDTO createNewApplication(ApplicationDTO dto) {
@@ -110,6 +126,12 @@ public class ApplicationServiceImpl implements ApplicationService {
         if (testStatus == null) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.NOT_FOUND_REGISTRATION_JOB_POSITION));
         }
+
+        Optional<BoothJobPositionEntity> jobPositionOpt = regisJobPosRepository.findById(dto.getBoothJobPositionDTO().getId());
+        if (!jobPositionOpt.isPresent()){
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.NOT_FOUND_REGISTRATION_JOB_POSITION));
+        }
+
         dto.setTestStatus(testStatus);
         ApplicationEntity entity = applicationMapper.toEntity(dto);
         entity.setEmail(cvEntity.getEmail());
@@ -123,13 +145,15 @@ public class ApplicationServiceImpl implements ApplicationService {
         entity.setReferences(cvEntity.getReferences().stream().map(applicationReferenceMapper::toEntity).collect(Collectors.toList()));
         entity.setSkills(cvEntity.getSkills().stream().map(applicationSkillMapper::toEntity).collect(Collectors.toList()));
         entity.setWorkHistories(cvEntity.getWorkHistories().stream().map(applicationWorkHistoryMapper::toEntity).collect(Collectors.toList()));
-
+        entity.setBoothJobPosition(jobPositionOpt.get());
 
         Random r = new Random();
         double randomValue = 0.7 + (1.0 - 0.7) * r.nextDouble();
 
         entity.setMatchingPoint(randomValue);
         ApplicationEntity resultEntity = applicationRepository.save(entity);
+        calculateMatchingPoint(resultEntity);
+
 
 
         ApplicationDTO result = applicationMapper.toDTO(resultEntity);
