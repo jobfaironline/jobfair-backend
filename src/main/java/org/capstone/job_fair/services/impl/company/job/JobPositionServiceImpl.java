@@ -1,6 +1,5 @@
 package org.capstone.job_fair.services.impl.company.job;
 
-import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.commons.collections4.map.HashedMap;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -12,6 +11,7 @@ import org.capstone.job_fair.constants.FileConstant;
 import org.capstone.job_fair.constants.JobPositionConstant;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.controllers.payload.requests.company.CreateJobPositionRequest;
+import org.capstone.job_fair.controllers.payload.responses.KeyWordResponse;
 import org.capstone.job_fair.models.dtos.company.CompanyDTO;
 import org.capstone.job_fair.models.dtos.company.job.JobPositionDTO;
 import org.capstone.job_fair.models.dtos.util.ParseFileResult;
@@ -30,11 +30,10 @@ import org.capstone.job_fair.services.interfaces.util.XSLSFileService;
 import org.capstone.job_fair.services.mappers.company.job.JobPositionMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,9 +45,12 @@ import reactor.core.publisher.Mono;
 import java.util.*;
 
 @Service
-@AllArgsConstructor
 @Transactional(readOnly = true)
 public class JobPositionServiceImpl implements JobPositionService {
+
+    @Value("${skill.processor.url}")
+    private String skillProcessorURL;
+
     @Autowired
     private JobPositionRepository jobPositionRepository;
     @Autowired
@@ -65,6 +67,9 @@ public class JobPositionServiceImpl implements JobPositionService {
     private Validator validator;
     @Autowired
     private XSLSFileService xslsFileService;
+    @Autowired
+    private WebClient webClient;
+
 
     private boolean isSubCategoryIdValid(int id) {
         return subCategoryRepository.existsById(id);
@@ -74,8 +79,30 @@ public class JobPositionServiceImpl implements JobPositionService {
         return skillTagRepository.existsById(id);
     }
 
-    public static class KeyWordResponse{
-        public List<String> result;
+
+    private void updateDescriptionAndRequirementKeyWork(JobPositionEntity jobPosition){
+        Map<String, String> body = new HashedMap<>();
+        body.put("description", jobPosition.getDescription());
+        Mono<KeyWordResponse> descriptionResult = webClient.post().uri(skillProcessorURL)
+                .body(Mono.just(body), Map.class)
+                .retrieve()
+                .bodyToMono(KeyWordResponse.class);
+
+        descriptionResult.subscribe(keyWordResponse -> {
+            jobPosition.setDescriptionKeyWord(keyWordResponse.result.toString());
+            jobPositionRepository.save(jobPosition);
+        });
+
+        body.put("description", jobPosition.getRequirements());
+        Mono<KeyWordResponse> requirementResult = webClient.post().uri(skillProcessorURL)
+                .body(Mono.just(body), Map.class)
+                .retrieve()
+                .bodyToMono(KeyWordResponse.class);
+
+        requirementResult.subscribe(keyWordResponse -> {
+            jobPosition.setRequirementKeyWord(keyWordResponse.result.toString());
+            jobPositionRepository.save(jobPosition);
+        });
     }
 
     @Override
@@ -106,38 +133,12 @@ public class JobPositionServiceImpl implements JobPositionService {
         companyDTO.setId(companyId);
         dto.setCompanyDTO(companyDTO);
         JobPositionEntity entity = mapper.toEntity(dto);
+        entity = jobPositionRepository.save(entity);
+        updateDescriptionAndRequirementKeyWork(entity);
 
-        WebClient webClient = WebClient.builder()
-                .baseUrl("localhost:6000/extract-keyword")
-                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .build();
 
-        JobPositionEntity newEntity = jobPositionRepository.save(entity);
 
-        Map<String, String> body = new HashedMap<>();
-        body.put("description", entity.getDescription());
-        Mono<KeyWordResponse> descriptionResult = webClient.post()
-                .body(Mono.just(body), Map.class)
-                .retrieve()
-                .bodyToMono(KeyWordResponse.class);
-
-        descriptionResult.subscribe(keyWordResponse -> {
-            newEntity.setDescriptionKeyWord(keyWordResponse.result.toString());
-            jobPositionRepository.save(newEntity);
-        });
-
-        body.put("description", entity.getRequirements());
-        Mono<KeyWordResponse> requirementResult = webClient.post()
-                .body(Mono.just(body), Map.class)
-                .retrieve()
-                .bodyToMono(KeyWordResponse.class);
-
-        requirementResult.subscribe(keyWordResponse -> {
-            newEntity.setDescriptionKeyWord(keyWordResponse.result.toString());
-            jobPositionRepository.save(newEntity);
-        });
-
-        return mapper.toDTO(newEntity);
+        return mapper.toDTO(entity);
     }
 
     @Override
@@ -170,7 +171,8 @@ public class JobPositionServiceImpl implements JobPositionService {
         long currentTime = new Date().getTime();
         dto.setUpdateDate(currentTime);
         mapper.updateJobPositionEntity(dto, jobPositionEntity);
-        jobPositionRepository.save(jobPositionEntity);
+        jobPositionEntity = jobPositionRepository.save(jobPositionEntity);
+        this.updateDescriptionAndRequirementKeyWork(jobPositionEntity);
         return mapper.toDTO(jobPositionEntity);
     }
 
@@ -252,7 +254,6 @@ public class JobPositionServiceImpl implements JobPositionService {
                 continue;
             }
             List<Integer> skillTagIds = new ArrayList<>();
-            System.out.println(skillTagIdsString);
             try {
                 Arrays.stream(skillTagIdsString.split(FileConstant.CSV_CONSTANT.MULTIPLE_VALUE_DELIMITER)).forEach(valueString -> {
                     skillTagIds.add((int) Double.parseDouble(valueString));
