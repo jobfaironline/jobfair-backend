@@ -53,4 +53,6 @@ public class ApplicationDTO {
     private String attendantAdvantage;
     private String attendantDisadvantage;
     private String interviewNote;
+    private Double matchingPoint;
+
 }

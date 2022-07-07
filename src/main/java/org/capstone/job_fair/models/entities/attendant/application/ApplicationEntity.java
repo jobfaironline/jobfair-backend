@@ -140,6 +140,8 @@ public class ApplicationEntity {
     @Column(name = "interview_note")
     private String interviewNote;
 
+    @Column(name = "matching_point")
+    private Double matchingPoint;
 
     @Override
     public boolean equals(Object o) {

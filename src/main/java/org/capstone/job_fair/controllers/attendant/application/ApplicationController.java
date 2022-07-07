@@ -94,6 +94,7 @@ public class ApplicationController {
         dto.setBoothJobPositionDTO(regisDTO);
         //call create method
         ApplicationDTO result = applicationService.createNewApplication(dto);
+
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 

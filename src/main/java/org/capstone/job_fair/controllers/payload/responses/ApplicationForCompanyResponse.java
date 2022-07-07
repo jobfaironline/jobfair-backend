@@ -18,4 +18,5 @@ public class ApplicationForCompanyResponse {
     String jobPositionId;
     ApplicationStatus status;
     Long evaluateDate;
+    Double matchingPoint;
 }

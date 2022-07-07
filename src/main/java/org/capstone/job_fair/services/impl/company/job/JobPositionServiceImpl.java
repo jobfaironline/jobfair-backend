@@ -2,6 +2,7 @@ package org.capstone.job_fair.services.impl.company.job;
 
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
+import org.apache.commons.collections4.map.HashedMap;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -32,11 +33,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import java.util.*;
 
@@ -69,6 +74,10 @@ public class JobPositionServiceImpl implements JobPositionService {
         return skillTagRepository.existsById(id);
     }
 
+    public static class KeyWordResponse{
+        public List<String> result;
+    }
+
     @Override
     @Transactional
     public JobPositionDTO createNewJobPosition(JobPositionDTO dto) {
@@ -97,8 +106,38 @@ public class JobPositionServiceImpl implements JobPositionService {
         companyDTO.setId(companyId);
         dto.setCompanyDTO(companyDTO);
         JobPositionEntity entity = mapper.toEntity(dto);
-        entity = jobPositionRepository.save(entity);
-        return mapper.toDTO(entity);
+
+        WebClient webClient = WebClient.builder()
+                .baseUrl("localhost:6000/extract-keyword")
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .build();
+
+        JobPositionEntity newEntity = jobPositionRepository.save(entity);
+
+        Map<String, String> body = new HashedMap<>();
+        body.put("description", entity.getDescription());
+        Mono<KeyWordResponse> descriptionResult = webClient.post()
+                .body(Mono.just(body), Map.class)
+                .retrieve()
+                .bodyToMono(KeyWordResponse.class);
+
+        descriptionResult.subscribe(keyWordResponse -> {
+            newEntity.setDescriptionKeyWord(keyWordResponse.result.toString());
+            jobPositionRepository.save(newEntity);
+        });
+
+        body.put("description", entity.getRequirements());
+        Mono<KeyWordResponse> requirementResult = webClient.post()
+                .body(Mono.just(body), Map.class)
+                .retrieve()
+                .bodyToMono(KeyWordResponse.class);
+
+        requirementResult.subscribe(keyWordResponse -> {
+            newEntity.setDescriptionKeyWord(keyWordResponse.result.toString());
+            jobPositionRepository.save(newEntity);
+        });
+
+        return mapper.toDTO(newEntity);
     }
 
     @Override

@@ -24,10 +24,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -127,6 +124,11 @@ public class ApplicationServiceImpl implements ApplicationService {
         entity.setSkills(cvEntity.getSkills().stream().map(applicationSkillMapper::toEntity).collect(Collectors.toList()));
         entity.setWorkHistories(cvEntity.getWorkHistories().stream().map(applicationWorkHistoryMapper::toEntity).collect(Collectors.toList()));
 
+
+        Random r = new Random();
+        double randomValue = 0.7 + (1.0 - 0.7) * r.nextDouble();
+
+        entity.setMatchingPoint(randomValue);
         ApplicationEntity resultEntity = applicationRepository.save(entity);
 
 

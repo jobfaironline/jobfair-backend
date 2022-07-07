@@ -51,6 +51,10 @@ public class JobPositionEntity {
     private Long createdDate;
     @Column(name = "last_updated_date")
     private Long updateDate;
+    @Column(name = "description_key_word")
+    private String descriptionKeyWord;
+    @Column(name = "requirement_key_word")
+    private String requirementKeyWord;
 
 
     @ManyToMany(fetch = FetchType.LAZY)
