@@ -31,8 +31,8 @@ jobs:
       #Build the application using Maven
       - name: Build with Maven
         run: |
-            sudo rm -rf application.properties
-            mv deploy.application.properties application.properties
+            sudo rm -rf src/main.resources/application.properties
+            mv src/main/resources/deploy.application.properties src/main/resources/application.properties
             mvn clean install
       - name: Create elastic beanstalk configuration file
         run: |
