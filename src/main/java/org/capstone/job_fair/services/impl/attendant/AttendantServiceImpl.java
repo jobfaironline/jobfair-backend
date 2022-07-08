@@ -4,6 +4,7 @@ import com.amazonaws.util.json.Jackson;
 import org.apache.commons.collections4.map.HashedMap;
 import org.capstone.job_fair.constants.AccountConstant;
 import org.capstone.job_fair.constants.MessageConstant;
+import org.capstone.job_fair.constants.SkillExtractorApiEndpoint;
 import org.capstone.job_fair.controllers.payload.responses.KeyWordResponse;
 import org.capstone.job_fair.models.dtos.attendant.AttendantDTO;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
@@ -92,7 +93,7 @@ public class AttendantServiceImpl implements AttendantService {
         attendant.getWorkHistoryEntities().forEach(workHistoryEntity -> {
             if (workHistoryEntity.getDescription() == null) return;
             body.put("description", workHistoryEntity.getDescription());
-            Mono<KeyWordResponse> descriptionResult = webClient.post().uri(skillProcessorURL)
+            Mono<KeyWordResponse> descriptionResult = webClient.post().uri(skillProcessorURL + SkillExtractorApiEndpoint.EXTRACT_KEYWORD)
                     .body(Mono.just(body), Map.class)
                     .retrieve()
                     .bodyToMono(KeyWordResponse.class);
@@ -108,12 +109,12 @@ public class AttendantServiceImpl implements AttendantService {
         });
     }
 
-    void updateEducationKeyWord(AttendantEntity attendant){
+    void updateEducationKeyWord(AttendantEntity attendant) {
         Map<String, String> body = new HashedMap<>();
         attendant.getEducationEntities().forEach(educationEntity -> {
             if (educationEntity.getAchievement() == null) return;
             body.put("description", educationEntity.getAchievement());
-            Mono<KeyWordResponse> descriptionResult = webClient.post().uri(skillProcessorURL)
+            Mono<KeyWordResponse> descriptionResult = webClient.post().uri(skillProcessorURL + SkillExtractorApiEndpoint.EXTRACT_KEYWORD)
                     .body(Mono.just(body), Map.class)
                     .retrieve()
                     .bodyToMono(KeyWordResponse.class);
@@ -129,12 +130,12 @@ public class AttendantServiceImpl implements AttendantService {
         });
     }
 
-    void updateActivityKeyWord(AttendantEntity attendant){
+    void updateActivityKeyWord(AttendantEntity attendant) {
         Map<String, String> body = new HashedMap<>();
         attendant.getActivityEntities().forEach(activityEntity -> {
             if (activityEntity.getDescription() == null) return;
             body.put("description", activityEntity.getDescription());
-            Mono<KeyWordResponse> descriptionResult = webClient.post().uri(skillProcessorURL)
+            Mono<KeyWordResponse> descriptionResult = webClient.post().uri(skillProcessorURL + SkillExtractorApiEndpoint.EXTRACT_KEYWORD)
                     .body(Mono.just(body), Map.class)
                     .retrieve()
                     .bodyToMono(KeyWordResponse.class);

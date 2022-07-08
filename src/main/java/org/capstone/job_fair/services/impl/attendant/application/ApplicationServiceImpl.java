@@ -1,9 +1,5 @@
 package org.capstone.job_fair.services.impl.attendant.application;
 
-import com.amazonaws.util.json.Jackson;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.SneakyThrows;
 import org.capstone.job_fair.constants.DataConstraint;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.models.dtos.attendant.application.ApplicationDTO;
@@ -22,13 +18,18 @@ import org.capstone.job_fair.services.interfaces.job_fair.InterviewService;
 import org.capstone.job_fair.services.mappers.attendant.application.*;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.reactive.function.client.WebClient;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -99,18 +100,6 @@ public class ApplicationServiceImpl implements ApplicationService {
         }
     }
 
-    @SneakyThrows
-    private double calculateMatchingPoint(ApplicationEntity application){
-        ObjectMapper mapper = new ObjectMapper();
-        List<String> jobPositionKeyWords = mapper.readValue(application.getBoothJobPosition().getDescriptionKeyWord(), new TypeReference<List<String>>(){});
-        List<String> jobPositionRequirementKeyWords = mapper.readValue(application.getBoothJobPosition().getRequirementKeyWord(), new TypeReference<List<String>>(){});
-
-        List<String> workHistoriesKeyWords = new ArrayList<>();
-
-
-
-        return 0.0;
-    }
 
     @Override
     @Transactional
@@ -128,7 +117,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         }
 
         Optional<BoothJobPositionEntity> jobPositionOpt = regisJobPosRepository.findById(dto.getBoothJobPositionDTO().getId());
-        if (!jobPositionOpt.isPresent()){
+        if (!jobPositionOpt.isPresent()) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.NOT_FOUND_REGISTRATION_JOB_POSITION));
         }
 
@@ -147,17 +136,8 @@ public class ApplicationServiceImpl implements ApplicationService {
         entity.setWorkHistories(cvEntity.getWorkHistories().stream().map(applicationWorkHistoryMapper::toEntity).collect(Collectors.toList()));
         entity.setBoothJobPosition(jobPositionOpt.get());
 
-        Random r = new Random();
-        double randomValue = 0.7 + (1.0 - 0.7) * r.nextDouble();
-
-        entity.setMatchingPoint(randomValue);
         ApplicationEntity resultEntity = applicationRepository.save(entity);
-        calculateMatchingPoint(resultEntity);
-
-
-
-        ApplicationDTO result = applicationMapper.toDTO(resultEntity);
-        return result;
+        return applicationMapper.toDTO(resultEntity);
     }
 
     @Override
