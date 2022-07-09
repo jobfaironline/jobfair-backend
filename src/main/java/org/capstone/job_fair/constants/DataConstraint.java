@@ -253,6 +253,10 @@ public final class DataConstraint {
         public static final int YEAR_OF_EXPERIENCE_MAX = 70;
         public static final int MIN_NAME_LENGTH = 1;
         public static final int MAX_NAME_LENGTH = 100;
+        public static final int MIN_FULL_NAME_LENGTH = 1;
+        public static final int MAX_FULL_NAME_LENGTH = 300;
+        public static final int MIN_ABOUT_ME_LENGTH = 1;
+        public static final int MAX_ABOUT_ME_LENGTH = 5000;
     }
 
     public static final class CompanyEmployee {

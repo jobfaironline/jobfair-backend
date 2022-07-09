@@ -31,4 +31,8 @@ public class CvDTO implements Serializable {
     private List<CvCertificationDTO> certifications;
     private List<CvReferenceDTO> references;
     private List<CvActivityDTO> activities;
+    private String fullName;
+    private String aboutMe;
+    private Integer countryId;
+    private String profileImageUrl;
 }

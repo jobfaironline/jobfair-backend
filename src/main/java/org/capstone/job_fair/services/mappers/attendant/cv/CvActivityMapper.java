@@ -1,10 +1,11 @@
 package org.capstone.job_fair.services.mappers.attendant.cv;
 
-import org.capstone.job_fair.controllers.payload.requests.attendant.DraftCvRequest;
+import org.capstone.job_fair.controllers.payload.requests.attendant.cv.DraftCvRequest;
 import org.capstone.job_fair.models.dtos.attendant.cv.CvActivityDTO;
 import org.capstone.job_fair.models.entities.attendant.cv.CvActivityEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
@@ -16,4 +17,7 @@ public abstract class CvActivityMapper {
 
     @Mapping(target = "id", ignore = true)
     public abstract CvActivityDTO toDTO(DraftCvRequest.Activities request);
+
+    public abstract void updateCvActivityEntityFromCvActivityDTO(CvActivityDTO dto, @MappingTarget CvActivityEntity entity);
+
 }

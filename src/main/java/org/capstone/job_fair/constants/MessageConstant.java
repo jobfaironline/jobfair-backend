@@ -394,6 +394,8 @@ public final class MessageConstant {
     public static final class Cv {
         private Cv() {
         }
+
+        public static final String NOT_FOUND = "cv.error.not-found";
     }
 
     public static final class Assignment {

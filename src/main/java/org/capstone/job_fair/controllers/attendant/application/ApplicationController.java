@@ -5,7 +5,7 @@ import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.ApplicationConstant;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.controllers.payload.requests.account.cv.CreateApplicationRequest;
-import org.capstone.job_fair.controllers.payload.requests.attendant.cv.EvaluateApplicationRequest;
+import org.capstone.job_fair.controllers.payload.requests.attendant.EvaluateApplicationRequest;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
 import org.capstone.job_fair.models.dtos.attendant.AttendantDTO;

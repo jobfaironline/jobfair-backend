@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.capstone.job_fair.models.entities.attendant.AttendantEntity;
+import org.capstone.job_fair.models.entities.attendant.misc.CountryEntity;
 import org.capstone.job_fair.models.entities.attendant.profile.CertificationEntity;
 import org.capstone.job_fair.models.enums.JobLevel;
 import org.hibernate.Hibernate;
@@ -72,6 +73,18 @@ public class CvEntity {
     @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
     @JoinColumn(name = "cv_id", referencedColumnName = "id")
     private List<CvActivityEntity> activities;
+
+    @Column(name = "full_name")
+    private String fullName;
+
+    @Column(name = "about_me")
+    private String aboutMe;
+
+    @Column(name = "country_id")
+    private String countryId;
+
+    @Column(name = "profile_image_url")
+    private String profileImageUrl;
 
     @Override
     public boolean equals(Object o) {

@@ -1,4 +1,4 @@
-package org.capstone.job_fair.controllers.payload.requests.attendant.cv;
+package org.capstone.job_fair.controllers.payload.requests.attendant;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -1,4 +1,4 @@
-package org.capstone.job_fair.controllers.payload.requests.attendant;
+package org.capstone.job_fair.controllers.payload.requests.attendant.cv;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,6 +22,16 @@ import java.util.List;
 @ToString
 @NoArgsConstructor
 public class DraftCvRequest {
+    @NameConstraint
+    @Size(min = DataConstraint.Cv.MIN_FULL_NAME_LENGTH, max = DataConstraint.Cv.MAX_FULL_NAME_LENGTH)
+    private String fullName;
+
+    @XSSConstraint
+    @Size(min = DataConstraint.Cv.MIN_ABOUT_ME_LENGTH, max = DataConstraint.Cv.MAX_ABOUT_ME_LENGTH)
+    private String aboutMe;
+
+    private Integer countryId;
+
     @EmailConstraint
     private String email;
 
