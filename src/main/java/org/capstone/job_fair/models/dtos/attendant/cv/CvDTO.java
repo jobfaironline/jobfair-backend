@@ -35,4 +35,7 @@ public class CvDTO implements Serializable {
     private String aboutMe;
     private Integer countryId;
     private String profileImageUrl;
+    private Long createTime;
+    private Long updateTime;
+
 }

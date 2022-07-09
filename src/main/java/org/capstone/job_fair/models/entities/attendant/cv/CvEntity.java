@@ -86,6 +86,12 @@ public class CvEntity {
     @Column(name = "profile_image_url")
     private String profileImageUrl;
 
+    @Column(name = "create_time")
+    private Long createTime;
+
+    @Column(name = "update_time")
+    private Long updateTime;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -1,9 +1,7 @@
 package org.capstone.job_fair.services.impl.attendant.cv;
 
 import org.capstone.job_fair.constants.MessageConstant;
-import org.capstone.job_fair.models.dtos.account.AccountDTO;
 import org.capstone.job_fair.models.dtos.attendant.cv.CvDTO;
-import org.capstone.job_fair.models.entities.account.AccountEntity;
 import org.capstone.job_fair.models.entities.attendant.cv.CvCertificationEntity;
 import org.capstone.job_fair.models.entities.attendant.cv.CvEntity;
 import org.capstone.job_fair.repositories.attendant.cv.CvRepository;
@@ -15,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -50,20 +49,12 @@ public class CvServiceImpl implements CvService {
     @Override
     @Transactional
     public CvDTO draftCv(CvDTO dto) {
-
         CvEntity entity = cvMapper.toEntity(dto);
-        entity.getActivities().forEach(activity -> activity.setCv(entity));
-        entity.getCertifications().forEach(certification -> {
-            validateCertification(certification);
-            certification.setCv(entity);
-        });
-        entity.getEducations().forEach(education -> education.setCv(entity));
-        entity.getReferences().forEach(reference -> reference.setCv(entity));
-        entity.getWorkHistories().forEach(history -> history.setCv(entity));
-        entity.getSkills().forEach(skill -> skill.setCv(entity));
-
-        CvEntity newEntity = cvRepository.save(cvMapper.toEntity(dto));
-        return cvMapper.toDTO(newEntity);
+        entity.setName("Untitled");
+        entity.setUpdateTime(new Date().getTime());
+        entity.setCreateTime(new Date().getTime());
+        entity = cvRepository.save(entity);
+        return cvMapper.toDTO(entity);
     }
 
     @Override
@@ -80,14 +71,15 @@ public class CvServiceImpl implements CvService {
     @Transactional
     public CvDTO updateCV(CvDTO dto, String userId) {
         Optional<CvEntity> opt = cvRepository.findById(dto.getId());
-        if (!opt.isPresent()){
+        if (!opt.isPresent()) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Cv.NOT_FOUND));
         }
         CvEntity cvEntity = opt.get();
-        if (!cvEntity.getAttendant().getAccountId().equals(userId)){
+        if (!cvEntity.getAttendant().getAccountId().equals(userId)) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Cv.NOT_FOUND));
         }
         cvMapper.updateCvEntityFromCvDTO(dto, cvEntity);
+        cvEntity.setUpdateTime(new Date().getTime());
         cvEntity = cvRepository.save(cvEntity);
         return cvMapper.toDTO(cvEntity);
     }
@@ -100,6 +92,22 @@ public class CvServiceImpl implements CvService {
         cv.setProfileImageUrl(url);
         cv = cvRepository.save(cv);
         return cvMapper.toDTO(cv);
+    }
+
+    @Override
+    @Transactional
+    public CvDTO deleteCV(String cvId, String userId) {
+        Optional<CvEntity> opt = cvRepository.findById(cvId);
+        if (!opt.isPresent()) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Cv.NOT_FOUND));
+        }
+        CvEntity cvEntity = opt.get();
+        if (!cvEntity.getAttendant().getAccountId().equals(userId)) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Cv.NOT_FOUND));
+        }
+        cvRepository.delete(cvEntity);
+        return cvMapper.toDTO(cvEntity);
+
     }
 
 }

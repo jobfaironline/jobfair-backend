@@ -42,10 +42,10 @@ public class CvController {
 
     @PostMapping(ApiEndPoint.Cv.CV)
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ATTENDANT)")
-    public ResponseEntity<?> draftCV(@RequestBody @Valid DraftCvRequest request) {
+    public ResponseEntity<?> createCV() {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        CvDTO dto = cvMapper.toDTO(request);
+        CvDTO dto = new CvDTO();
         AttendantDTO attendantDTO = new AttendantDTO();
         AccountDTO accountDTO = new AccountDTO();
         accountDTO.setId(userDetails.getId());
@@ -58,7 +58,7 @@ public class CvController {
 
     @PutMapping(ApiEndPoint.Cv.CV + "/{id}")
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ATTENDANT)")
-    public ResponseEntity<?> updateCV(@PathVariable("id") String id, @RequestBody @Valid UpdateCvRequest request){
+    public ResponseEntity<?> updateCV(@PathVariable("id") String id, @RequestBody @Valid UpdateCvRequest request) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String userId = userDetails.getId();
         CvDTO cvDTO = cvMapper.toDTO(request);
@@ -88,6 +88,15 @@ public class CvController {
         }
         return ResponseEntity.ok(result.get());
     }
+
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ATTENDANT)")
+    @DeleteMapping(ApiEndPoint.Cv.CV + "/{id}")
+    public ResponseEntity<?> deleteCvById(@PathVariable String id) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        CvDTO result = cvService.deleteCV(id, userDetails.getId());
+        return ResponseEntity.ok(result);
+    }
+
 
     @PostMapping(ApiEndPoint.Cv.UPLOAD_PROFILE_IMAGE)
     public ResponseEntity<?> uploadProfilePicture(@RequestParam("file") MultipartFile file, @RequestParam("cvId") String cvId) {

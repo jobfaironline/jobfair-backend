@@ -16,4 +16,6 @@ public interface CvService {
     CvDTO updateCV(CvDTO dto, String userId);
 
     CvDTO updateProfilePicture(String pictureProfileFolder, String id);
+
+    CvDTO deleteCV(String cvId, String userId);
 }
