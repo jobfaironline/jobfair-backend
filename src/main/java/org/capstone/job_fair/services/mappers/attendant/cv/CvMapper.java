@@ -45,10 +45,6 @@ public abstract class CvMapper {
 
     public abstract CvEntity toEntity(CvDTO dto);
 
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "attendant", ignore = true)
-    public abstract CvDTO toDTO(DraftCvRequest request);
-
     @Mapping(target = "attendant", ignore = true)
     public abstract CvDTO toDTO(UpdateCvRequest request);
 

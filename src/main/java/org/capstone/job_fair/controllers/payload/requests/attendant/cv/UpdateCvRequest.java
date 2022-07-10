@@ -22,6 +22,10 @@ import java.util.List;
 @NoArgsConstructor
 public class UpdateCvRequest {
     @NameConstraint
+    @Size(min = DataConstraint.Cv.MIN_NAME_LENGTH, max = DataConstraint.Cv.MAX_FULL_NAME_LENGTH)
+    private String name;
+
+    @NameConstraint
     @Size(min = DataConstraint.Cv.MIN_FULL_NAME_LENGTH, max = DataConstraint.Cv.MAX_FULL_NAME_LENGTH)
     private String fullName;
 

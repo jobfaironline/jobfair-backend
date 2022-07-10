@@ -1,7 +1,10 @@
 package org.capstone.job_fair.controllers.attendant.cv;
 
 import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
-import org.capstone.job_fair.constants.*;
+import org.capstone.job_fair.constants.AWSConstant;
+import org.capstone.job_fair.constants.ApiEndPoint;
+import org.capstone.job_fair.constants.CVConstant;
+import org.capstone.job_fair.constants.DataConstraint;
 import org.capstone.job_fair.controllers.payload.requests.attendant.cv.UpdateCvRequest;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
@@ -25,7 +28,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.net.URI;
-import java.util.List;
 import java.util.Optional;
 
 @RestController

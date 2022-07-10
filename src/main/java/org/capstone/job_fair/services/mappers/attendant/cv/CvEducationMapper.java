@@ -1,6 +1,6 @@
 package org.capstone.job_fair.services.mappers.attendant.cv;
 
-import org.capstone.job_fair.controllers.payload.requests.attendant.cv.DraftCvRequest;
+import org.capstone.job_fair.controllers.payload.requests.attendant.cv.UpdateCvRequest;
 import org.capstone.job_fair.models.dtos.attendant.cv.CvEducationDTO;
 import org.capstone.job_fair.models.entities.attendant.cv.CvEducationEntity;
 import org.capstone.job_fair.services.mappers.attendant.AttendantMapper;
@@ -18,7 +18,7 @@ public abstract class CvEducationMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "qualificationId", source = "qualification")
-    public abstract CvEducationDTO toDTO(DraftCvRequest.Educations request);
+    public abstract CvEducationDTO toDTO(UpdateCvRequest.Educations request);
 
     public abstract void updateCvEducationEntityFromCvEducationDTO(CvEducationDTO dto, @MappingTarget CvEducationEntity entity);
 
