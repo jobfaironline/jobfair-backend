@@ -1,10 +1,7 @@
 package org.capstone.job_fair.controllers.attendant.cv;
 
 import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
-import org.capstone.job_fair.constants.AWSConstant;
-import org.capstone.job_fair.constants.ApiEndPoint;
-import org.capstone.job_fair.constants.DataConstraint;
-import org.capstone.job_fair.controllers.payload.requests.attendant.cv.DraftCvRequest;
+import org.capstone.job_fair.constants.*;
 import org.capstone.job_fair.controllers.payload.requests.attendant.cv.UpdateCvRequest;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
@@ -15,6 +12,9 @@ import org.capstone.job_fair.services.interfaces.util.FileStorageService;
 import org.capstone.job_fair.services.mappers.attendant.cv.CvMapper;
 import org.capstone.job_fair.utils.ImageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -69,12 +69,17 @@ public class CvController {
 
     @GetMapping(ApiEndPoint.Cv.CV)
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ATTENDANT)")
-    public ResponseEntity<?> getAll() {
+    public ResponseEntity<?> getAll(
+            @RequestParam(value = "offset", defaultValue = CVConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset,
+            @RequestParam(value = "pageSize", defaultValue = CVConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize,
+            @RequestParam(value = "sortBy", defaultValue = CVConstant.DEFAULT_SEARCH_SORT_BY_VALUE) String sortBy,
+            @RequestParam(value = "direction", required = false, defaultValue = CVConstant.DEFAULT_SEARCH_SORT_DIRECTION) Sort.Direction direction,
+            @RequestParam(value = "name", defaultValue = CVConstant.DEFAULT_SEARCH_NAME) String name
+    ) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        List<CvDTO> result = cvService.getAllByAttendantId(userDetails.getId());
-        if (result.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
+        String userId = userDetails.getId();
+        PageRequest pageRequest = PageRequest.of(offset, pageSize).withSort(Sort.by(direction, sortBy));
+        Page<CvDTO> result = cvService.getAllByAttendantIdAndByName(userId, name, pageRequest);
         return ResponseEntity.ok(result);
     }
 
