@@ -1,23 +1,35 @@
 package org.capstone.job_fair.services.impl.attendant.cv;
 
+import com.amazonaws.util.json.Jackson;
+import org.apache.commons.collections4.map.HashedMap;
 import org.capstone.job_fair.constants.MessageConstant;
+import org.capstone.job_fair.constants.SkillExtractorApiEndpoint;
+import org.capstone.job_fair.controllers.payload.responses.KeyWordResponse;
 import org.capstone.job_fair.models.dtos.attendant.cv.CvDTO;
+import org.capstone.job_fair.models.entities.attendant.AttendantEntity;
 import org.capstone.job_fair.models.entities.attendant.cv.CvCertificationEntity;
 import org.capstone.job_fair.models.entities.attendant.cv.CvEntity;
+import org.capstone.job_fair.repositories.attendant.cv.CvActivityRepository;
+import org.capstone.job_fair.repositories.attendant.cv.CvEducationRepository;
 import org.capstone.job_fair.repositories.attendant.cv.CvRepository;
+import org.capstone.job_fair.repositories.attendant.cv.CvWorkHistoryRepository;
 import org.capstone.job_fair.services.interfaces.attendant.cv.CvService;
 import org.capstone.job_fair.services.mappers.attendant.cv.CvMapper;
 import org.capstone.job_fair.utils.AwsUtil;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -32,6 +44,21 @@ public class CvServiceImpl implements CvService {
 
     @Autowired
     private AwsUtil awsUtil;
+
+    @Value("${skill.processor.url}")
+    private String skillProcessorURL;
+
+    @Autowired
+    private WebClient webClient;
+
+    @Autowired
+    private CvWorkHistoryRepository cvWorkHistoryRepository;
+
+    @Autowired
+    private CvEducationRepository cvEducationRepository;
+
+    @Autowired
+    private CvActivityRepository cvActivityRepository;
 
     private void validateCertification(CvCertificationEntity entity) {
         //If certification has expiration date => we need to validate issue date and expired date are not null
@@ -70,6 +97,68 @@ public class CvServiceImpl implements CvService {
         return cvRepository.findByIdAndAttendantAccountId(id, attendantId).map(cvMapper::toDTO);
     }
 
+    void updateWorkHistoryKeyWord(CvEntity cv) {
+        Map<String, String> body = new HashedMap<>();
+        cv.getWorkHistories().forEach(workHistoryEntity -> {
+            if (workHistoryEntity.getDescription() == null) return;
+            body.put("description", workHistoryEntity.getDescription());
+            Mono<KeyWordResponse> descriptionResult = webClient.post().uri(skillProcessorURL + SkillExtractorApiEndpoint.EXTRACT_KEYWORD)
+                    .body(Mono.just(body), Map.class)
+                    .retrieve()
+                    .bodyToMono(KeyWordResponse.class);
+            descriptionResult.subscribe(keyWordResponse -> {
+                try {
+                    String parseResult = Jackson.getObjectMapper().writeValueAsString(keyWordResponse.result);
+                    workHistoryEntity.setDescriptionKeyWord(parseResult);
+                    cvWorkHistoryRepository.save(workHistoryEntity);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+        });
+    }
+
+    void updateEducationKeyWord(CvEntity cv) {
+        Map<String, String> body = new HashedMap<>();
+        cv.getEducations().forEach(educationEntity -> {
+            if (educationEntity.getAchievement() == null) return;
+            body.put("description", educationEntity.getAchievement());
+            Mono<KeyWordResponse> descriptionResult = webClient.post().uri(skillProcessorURL + SkillExtractorApiEndpoint.EXTRACT_KEYWORD)
+                    .body(Mono.just(body), Map.class)
+                    .retrieve()
+                    .bodyToMono(KeyWordResponse.class);
+            descriptionResult.subscribe(keyWordResponse -> {
+                try {
+                    String parseResult = Jackson.getObjectMapper().writeValueAsString(keyWordResponse.result);
+                    educationEntity.setAchievementKeyWord(parseResult);
+                    cvEducationRepository.save(educationEntity);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+        });
+    }
+    void updateActivityKeyWord(CvEntity cv) {
+        Map<String, String> body = new HashedMap<>();
+        cv.getActivities().forEach(activityEntity -> {
+            if (activityEntity.getDescription() == null) return;
+            body.put("description", activityEntity.getDescription());
+            Mono<KeyWordResponse> descriptionResult = webClient.post().uri(skillProcessorURL + SkillExtractorApiEndpoint.EXTRACT_KEYWORD)
+                    .body(Mono.just(body), Map.class)
+                    .retrieve()
+                    .bodyToMono(KeyWordResponse.class);
+            descriptionResult.subscribe(keyWordResponse -> {
+                try {
+                    String parseResult = Jackson.getObjectMapper().writeValueAsString(keyWordResponse.result);
+                    activityEntity.setDescription(parseResult);
+                    cvActivityRepository.save(activityEntity);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+        });
+    }
+
     @Override
     @Transactional
     public CvDTO updateCV(CvDTO dto, String userId) {
@@ -83,7 +172,12 @@ public class CvServiceImpl implements CvService {
         }
         cvMapper.updateCvEntityFromCvDTO(dto, cvEntity);
         cvEntity.setUpdateTime(new Date().getTime());
+
+
         cvEntity = cvRepository.save(cvEntity);
+        updateWorkHistoryKeyWord(cvEntity);
+        updateEducationKeyWord(cvEntity);
+        updateActivityKeyWord(cvEntity);
         return cvMapper.toDTO(cvEntity);
     }
 

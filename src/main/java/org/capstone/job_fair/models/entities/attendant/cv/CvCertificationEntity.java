@@ -47,9 +47,6 @@ public class CvCertificationEntity {
     @Column(name = "certification_link")
     private String certificationLink;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cv_id")
-    private CvEntity cv;
 
     @Override
     public boolean equals(Object o) {
