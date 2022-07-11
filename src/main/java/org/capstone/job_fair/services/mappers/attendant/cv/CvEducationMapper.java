@@ -13,11 +13,11 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 public abstract class CvEducationMapper {
     public abstract CvEducationDTO toDTO(CvEducationEntity entity);
 
-    @Mapping(target = "cv", ignore = true)
     public abstract CvEducationEntity toEntity(CvEducationDTO dto);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "qualificationId", source = "qualification")
+    @Mapping(target = "achievementKeyWord", ignore = true)
     public abstract CvEducationDTO toDTO(UpdateCvRequest.Educations request);
 
     public abstract void updateCvEducationEntityFromCvEducationDTO(CvEducationDTO dto, @MappingTarget CvEducationEntity entity);

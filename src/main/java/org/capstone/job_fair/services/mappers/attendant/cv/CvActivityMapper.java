@@ -16,6 +16,7 @@ public abstract class CvActivityMapper {
     public abstract CvActivityEntity toEntity(CvActivityDTO dto);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "descriptionKeyWord", ignore = true)
     public abstract CvActivityDTO toDTO(UpdateCvRequest.Activities request);
 
     public abstract void updateCvActivityEntityFromCvActivityDTO(CvActivityDTO dto, @MappingTarget CvActivityEntity entity);

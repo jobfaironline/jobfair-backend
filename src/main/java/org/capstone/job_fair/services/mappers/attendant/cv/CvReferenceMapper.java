@@ -13,7 +13,6 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 public abstract class CvReferenceMapper {
     public abstract CvReferenceDTO toDTO(CvReferenceEntity entity);
 
-    @Mapping(target = "cv", ignore = true)
     public abstract CvReferenceEntity toEntity(CvReferenceDTO dto);
 
     @Mapping(target = "id", ignore = true)

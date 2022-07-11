@@ -13,10 +13,10 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 public abstract class CvWorkHistoryMapper {
     public abstract CvWorkHistoryDTO toDTO(CvWorkHistoryEntity entity);
 
-    @Mapping(target = "cv", ignore = true)
     public abstract CvWorkHistoryEntity toEntity(CvWorkHistoryDTO dto);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "descriptionKeyWord", ignore = true)
     public abstract CvWorkHistoryDTO toDTO(UpdateCvRequest.WorkHistories request);
 
     public abstract void updateCvWorkHistoryEntityFromCvWorkHistoryDTO(CvWorkHistoryDTO dto, @MappingTarget CvWorkHistoryEntity entity);

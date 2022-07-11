@@ -46,6 +46,10 @@ public abstract class CvMapper {
     public abstract CvEntity toEntity(CvDTO dto);
 
     @Mapping(target = "attendant", ignore = true)
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "profileImageUrl", ignore = true)
+    @Mapping(target = "createTime", ignore = true)
+    @Mapping(target = "updateTime", ignore = true)
     public abstract CvDTO toDTO(UpdateCvRequest request);
 
     public abstract void updateCvEntityFromCvDTO(CvDTO dto, @MappingTarget CvEntity entity);
