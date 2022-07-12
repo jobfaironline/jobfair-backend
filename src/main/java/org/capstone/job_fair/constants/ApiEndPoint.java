@@ -31,6 +31,19 @@ public final class ApiEndPoint {
 
     }
 
+
+    public static final class Demo {
+        private Demo() {
+
+        }
+
+        public static final String DEMO_ENDPOINT = ROOT_ENDPOINT + VERSION + "/demo";
+
+        public static final String CREATE_ATTENDANT = DEMO_ENDPOINT + "/create-attendant";
+
+
+    }
+
     public static final class Quiz {
         private Quiz() {
 
