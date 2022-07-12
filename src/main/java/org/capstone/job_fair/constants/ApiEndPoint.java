@@ -41,6 +41,9 @@ public final class ApiEndPoint {
 
         public static final String CREATE_ATTENDANT = DEMO_ENDPOINT + "/create-attendant";
 
+        public static final String CREATE_BOOTH_JOB_POSITION = DEMO_ENDPOINT + "/create-booth-job-positions";
+
+        public static final String SUBMIT_MULTIPLE_APPLICATION = DEMO_ENDPOINT + "/submit-multiple-application";
 
     }
 
