@@ -9,7 +9,7 @@ import java.util.List;
 public interface NotificationService {
     void createNotification(NotificationMessageDTO message, Role role);
 
-    SendMessageResult createNotification(NotificationMessageDTO message, String receiverId);
+    void createNotification(NotificationMessageDTO message, String receiverId);
 
     void createNotification(NotificationMessageDTO message, List<String> receiverIdList);
 
