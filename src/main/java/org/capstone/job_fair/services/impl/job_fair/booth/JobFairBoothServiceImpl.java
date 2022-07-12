@@ -122,6 +122,8 @@ public class JobFairBoothServiceImpl implements JobFairBoothService {
             boothPosition.setSkillTagEntities(new HashSet<>(jobPositionEntity.getSkillTagEntities()));
             boothPosition.setDescription(jobPositionEntity.getDescription());
             boothPosition.setRequirements(jobPositionEntity.getRequirements());
+            boothPosition.setRequirementKeyWord(jobPositionEntity.getRequirementKeyWord());
+            boothPosition.setDescriptionKeyWord(jobPositionEntity.getDescriptionKeyWord());
         });
         jobFairBoothRepository.save(jobFairBoothEntity);
         return jobFairBooth;

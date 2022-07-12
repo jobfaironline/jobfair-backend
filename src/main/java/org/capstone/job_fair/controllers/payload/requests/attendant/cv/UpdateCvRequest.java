@@ -1,4 +1,4 @@
-package org.capstone.job_fair.controllers.payload.requests.attendant;
+package org.capstone.job_fair.controllers.payload.requests.attendant.cv;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,9 +19,22 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-@ToString
 @NoArgsConstructor
-public class DraftCvRequest {
+public class UpdateCvRequest {
+    @NameConstraint
+    @Size(min = DataConstraint.Cv.MIN_NAME_LENGTH, max = DataConstraint.Cv.MAX_FULL_NAME_LENGTH)
+    private String name;
+
+    @NameConstraint
+    @Size(min = DataConstraint.Cv.MIN_FULL_NAME_LENGTH, max = DataConstraint.Cv.MAX_FULL_NAME_LENGTH)
+    private String fullName;
+
+    @XSSConstraint
+    @Size(min = DataConstraint.Cv.MIN_ABOUT_ME_LENGTH, max = DataConstraint.Cv.MAX_ABOUT_ME_LENGTH)
+    private String aboutMe;
+
+    private Integer countryId;
+
     @EmailConstraint
     private String email;
 
@@ -38,33 +51,30 @@ public class DraftCvRequest {
     @Size(min = DataConstraint.Attendant.JOB_TITLE_MIN_LENGTH, max = DataConstraint.Attendant.JOB_TITLE_MAX_LENGTH)
     private String jobTitle;
 
-    @XSSConstraint
-    @Size(min = DataConstraint.Cv.MIN_NAME_LENGTH, max = DataConstraint.Cv.MAX_NAME_LENGTH)
-    private String name;
+    @Valid
+    private List<UpdateCvRequest.Skills> skills;
 
     @Valid
-    private List<DraftCvRequest.Skills> skills;
+    private List<UpdateCvRequest.WorkHistories> workHistories;
 
     @Valid
-    private List<DraftCvRequest.WorkHistories> workHistories;
+    private List<UpdateCvRequest.Educations> educations;
 
     @Valid
-    private List<DraftCvRequest.Educations> educations;
+    private List<UpdateCvRequest.Certifications> certifications;
 
     @Valid
-    private List<DraftCvRequest.Certifications> certifications;
+    private List<UpdateCvRequest.References> references;
 
     @Valid
-    private List<DraftCvRequest.References> references;
-
-    @Valid
-    private List<DraftCvRequest.Activities> activities;
+    private List<UpdateCvRequest.Activities> activities;
 
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
     @ToString
     public static class Skills {
+        private String id;
         @XSSConstraint
         @Size(min = DataConstraint.Skill.MIN_NAME_LENGTH, max = DataConstraint.Skill.MAX_NAME_LENGTH)
         private String name;
@@ -78,6 +88,7 @@ public class DraftCvRequest {
     @NoArgsConstructor
     @ToString
     public static class WorkHistories {
+        private String id;
         @Size(min = DataConstraint.WorkHistory.POSITION_MIN_LENGTH, max = DataConstraint.WorkHistory.POSITION_MAX_LENGTH)
         @XSSConstraint
         private String position;
@@ -100,6 +111,7 @@ public class DraftCvRequest {
     @NoArgsConstructor
     @ToString
     public static class Educations {
+        private String id;
         @XSSConstraint
         @Size(min = DataConstraint.Education.SUBJECT_MIN_LENGTH, max = DataConstraint.Education.SUBJECT_MAX_LENGTH)
         private String subject;
@@ -121,6 +133,7 @@ public class DraftCvRequest {
     @NoArgsConstructor
     @ToString
     public static class Certifications {
+        private String id;
         @NotEmpty
         @XSSConstraint
         @Size(min = DataConstraint.Certification.NAME_MIN_LENGTH, max = DataConstraint.Certification.NAME_MAX_LENGTH)
@@ -131,7 +144,6 @@ public class DraftCvRequest {
         @NotNull
         private Long issueDate;
         private Long expiredDate;
-        @NotNull
         private Boolean doesNotExpired;
         @XSSConstraint
         @Size(min = DataConstraint.Certification.URL_MIN_LENGTH, max = DataConstraint.Certification.URL_MAX_LENGTH)
@@ -143,6 +155,7 @@ public class DraftCvRequest {
     @NoArgsConstructor
     @ToString
     public static class References {
+        private String id;
         @XSSConstraint
         @Size(min = DataConstraint.Reference.FULLNAME_MIN_LENGTH, max = DataConstraint.Reference.FULLNAME_MAX_LENGTH)
         @NameConstraint
@@ -164,6 +177,7 @@ public class DraftCvRequest {
     @NoArgsConstructor
     @ToString
     public static class Activities {
+        private String id;
         @XSSConstraint
         @Size(min = DataConstraint.Activity.MIN_NAME_LENGTH, max = DataConstraint.Activity.MAX_NAME_LENGTH)
         private String name;

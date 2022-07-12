@@ -4,6 +4,7 @@ import org.capstone.job_fair.controllers.payload.requests.attendant.UpdateAttend
 import org.capstone.job_fair.models.dtos.attendant.profile.EducationDTO;
 import org.capstone.job_fair.models.entities.attendant.profile.EducationEntity;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
@@ -13,6 +14,7 @@ public abstract class EducationMapper {
 
     public abstract EducationDTO toDTO(EducationEntity entity);
 
+    @Mapping(target = "achievementKeyWord", ignore = true)
     public abstract EducationDTO toDTO(UpdateAttendantRequest.Educations request);
 
     public abstract void updateEducationEntityFromEducationDTO(EducationDTO dto, @MappingTarget EducationEntity entity);

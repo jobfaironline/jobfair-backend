@@ -38,5 +38,6 @@ public class ApplicationWithGenralDataOfApplicantResponse {
     String imageUrl;
     String country;
     Long dob;
+    Double matchingPoint;
 
 }

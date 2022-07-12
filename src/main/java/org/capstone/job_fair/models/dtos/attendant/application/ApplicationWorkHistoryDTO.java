@@ -17,4 +17,5 @@ public class ApplicationWorkHistoryDTO {
     private Long toDate;
     private Boolean isCurrentJob;
     private String description;
+    private String descriptionKeyWord;
 }

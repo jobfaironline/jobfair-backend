@@ -40,6 +40,9 @@ public class WorkHistoryEntity {
     @Column(name = "description", length = 5000)
     private String description;
 
+    @Column(name = "description_key_word")
+    private String descriptionKeyWord;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

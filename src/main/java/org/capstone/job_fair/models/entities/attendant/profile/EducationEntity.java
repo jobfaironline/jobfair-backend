@@ -43,6 +43,9 @@ public class EducationEntity {
     @Enumerated(EnumType.ORDINAL)
     private Qualification qualification;
 
+    @Column(name = "achievement_key_word")
+    private String achievementKeyWord;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -38,9 +38,7 @@ public class CvReferenceEntity {
     @Basic
     @Column(name = "phone_number")
     private String phoneNumber;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cv_id")
-    private CvEntity cv;
+
 
     @Override
     public boolean equals(Object o) {

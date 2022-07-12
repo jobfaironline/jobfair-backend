@@ -5,7 +5,7 @@ import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.ApplicationConstant;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.controllers.payload.requests.account.cv.CreateApplicationRequest;
-import org.capstone.job_fair.controllers.payload.requests.attendant.cv.EvaluateApplicationRequest;
+import org.capstone.job_fair.controllers.payload.requests.attendant.EvaluateApplicationRequest;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
 import org.capstone.job_fair.models.dtos.attendant.AttendantDTO;
@@ -17,6 +17,7 @@ import org.capstone.job_fair.models.enums.ApplicationStatus;
 import org.capstone.job_fair.models.enums.NotificationType;
 import org.capstone.job_fair.models.enums.Role;
 import org.capstone.job_fair.services.interfaces.attendant.application.ApplicationService;
+import org.capstone.job_fair.services.interfaces.matching_point.MatchingPointService;
 import org.capstone.job_fair.services.interfaces.notification.NotificationService;
 import org.capstone.job_fair.services.mappers.attendant.application.ApplicationMapper;
 import org.capstone.job_fair.utils.MessageUtil;
@@ -47,6 +48,9 @@ public class ApplicationController {
 
     @Autowired
     private NotificationService notificationService;
+
+    @Autowired
+    private MatchingPointService matchingPointService;
 
 
     @GetMapping(ApiEndPoint.Application.APPLICATION_ENDPOINT + "/{id}")
@@ -94,6 +98,8 @@ public class ApplicationController {
         dto.setBoothJobPositionDTO(regisDTO);
         //call create method
         ApplicationDTO result = applicationService.createNewApplication(dto);
+        matchingPointService.calculateFromApplication(result.getId()).subscribe().dispose();
+
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 

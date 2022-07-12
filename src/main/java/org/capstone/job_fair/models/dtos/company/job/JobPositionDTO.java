@@ -35,6 +35,7 @@ public class JobPositionDTO implements Serializable {
     private String requirements;
     private Long createdDate;
     private Long updateDate;
-
+    private String descriptionKeyWord;
+    private String requirementKeyWord;
 
 }

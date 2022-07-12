@@ -1,7 +1,8 @@
 package org.capstone.job_fair.services.impl.company.job;
 
-import lombok.AllArgsConstructor;
+import com.amazonaws.util.json.Jackson;
 import lombok.SneakyThrows;
+import org.apache.commons.collections4.map.HashedMap;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -11,6 +12,7 @@ import org.capstone.job_fair.constants.FileConstant;
 import org.capstone.job_fair.constants.JobPositionConstant;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.controllers.payload.requests.company.CreateJobPositionRequest;
+import org.capstone.job_fair.controllers.payload.responses.KeyWordResponse;
 import org.capstone.job_fair.models.dtos.company.CompanyDTO;
 import org.capstone.job_fair.models.dtos.company.job.JobPositionDTO;
 import org.capstone.job_fair.models.dtos.util.ParseFileResult;
@@ -29,6 +31,7 @@ import org.capstone.job_fair.services.interfaces.util.XSLSFileService;
 import org.capstone.job_fair.services.mappers.company.job.JobPositionMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -37,13 +40,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import java.util.*;
 
 @Service
-@AllArgsConstructor
 @Transactional(readOnly = true)
 public class JobPositionServiceImpl implements JobPositionService {
+
+    @Value("${skill.processor.url}")
+    private String skillProcessorURL;
+
     @Autowired
     private JobPositionRepository jobPositionRepository;
     @Autowired
@@ -60,6 +68,9 @@ public class JobPositionServiceImpl implements JobPositionService {
     private Validator validator;
     @Autowired
     private XSLSFileService xslsFileService;
+    @Autowired
+    private WebClient webClient;
+
 
     private boolean isSubCategoryIdValid(int id) {
         return subCategoryRepository.existsById(id);
@@ -67,6 +78,41 @@ public class JobPositionServiceImpl implements JobPositionService {
 
     private boolean isSkillTagIdValid(int id) {
         return skillTagRepository.existsById(id);
+    }
+
+
+    private void updateDescriptionAndRequirementKeyWork(JobPositionEntity jobPosition){
+        Map<String, String> body = new HashedMap<>();
+
+        body.put("description", jobPosition.getDescription());
+        Mono<KeyWordResponse> descriptionResult = webClient.post().uri(skillProcessorURL)
+                .body(Mono.just(body), Map.class)
+                .retrieve()
+                .bodyToMono(KeyWordResponse.class);
+        descriptionResult.subscribe(keyWordResponse -> {
+            try {
+                String parseResult = Jackson.getObjectMapper().writeValueAsString(keyWordResponse.result);
+                jobPosition.setDescriptionKeyWord(parseResult);
+                jobPositionRepository.save(jobPosition);
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+        });
+
+        body.put("description", jobPosition.getRequirements());
+        Mono<KeyWordResponse> requirementResult = webClient.post().uri(skillProcessorURL)
+                .body(Mono.just(body), Map.class)
+                .retrieve()
+                .bodyToMono(KeyWordResponse.class);
+        requirementResult.subscribe(keyWordResponse -> {
+            try {
+                String parseResult = Jackson.getObjectMapper().writeValueAsString(keyWordResponse.result);
+                jobPosition.setRequirementKeyWord(parseResult);
+                jobPositionRepository.save(jobPosition);
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+        });
     }
 
     @Override
@@ -98,6 +144,10 @@ public class JobPositionServiceImpl implements JobPositionService {
         dto.setCompanyDTO(companyDTO);
         JobPositionEntity entity = mapper.toEntity(dto);
         entity = jobPositionRepository.save(entity);
+        updateDescriptionAndRequirementKeyWork(entity);
+
+
+
         return mapper.toDTO(entity);
     }
 
@@ -131,7 +181,8 @@ public class JobPositionServiceImpl implements JobPositionService {
         long currentTime = new Date().getTime();
         dto.setUpdateDate(currentTime);
         mapper.updateJobPositionEntity(dto, jobPositionEntity);
-        jobPositionRepository.save(jobPositionEntity);
+        jobPositionEntity = jobPositionRepository.save(jobPositionEntity);
+        this.updateDescriptionAndRequirementKeyWork(jobPositionEntity);
         return mapper.toDTO(jobPositionEntity);
     }
 
@@ -213,7 +264,6 @@ public class JobPositionServiceImpl implements JobPositionService {
                 continue;
             }
             List<Integer> skillTagIds = new ArrayList<>();
-            System.out.println(skillTagIdsString);
             try {
                 Arrays.stream(skillTagIdsString.split(FileConstant.CSV_CONSTANT.MULTIPLE_VALUE_DELIMITER)).forEach(valueString -> {
                     skillTagIds.add((int) Double.parseDouble(valueString));

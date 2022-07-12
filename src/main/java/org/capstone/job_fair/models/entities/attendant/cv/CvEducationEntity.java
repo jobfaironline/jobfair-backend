@@ -39,13 +39,12 @@ public class CvEducationEntity {
     @Basic
     @Column(name = "achievement")
     private String achievement;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cv_id")
-    private CvEntity cv;
-    @Basic
+
     @Column(name = "qualification_id")
     @Enumerated(EnumType.ORDINAL)
     private Qualification qualificationId;
+    @Column(name = "achievement_key_word")
+    private String achievementKeyWord;
 
 
     @Override

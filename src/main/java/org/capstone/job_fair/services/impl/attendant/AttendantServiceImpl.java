@@ -1,7 +1,11 @@
 package org.capstone.job_fair.services.impl.attendant;
 
+import com.amazonaws.util.json.Jackson;
+import org.apache.commons.collections4.map.HashedMap;
 import org.capstone.job_fair.constants.AccountConstant;
 import org.capstone.job_fair.constants.MessageConstant;
+import org.capstone.job_fair.constants.SkillExtractorApiEndpoint;
+import org.capstone.job_fair.controllers.payload.responses.KeyWordResponse;
 import org.capstone.job_fair.models.dtos.attendant.AttendantDTO;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
 import org.capstone.job_fair.models.entities.attendant.AttendantEntity;
@@ -9,6 +13,9 @@ import org.capstone.job_fair.models.enums.Gender;
 import org.capstone.job_fair.models.enums.Role;
 import org.capstone.job_fair.models.statuses.AccountStatus;
 import org.capstone.job_fair.repositories.attendant.AttendantRepository;
+import org.capstone.job_fair.repositories.attendant.profile.ActivityRepository;
+import org.capstone.job_fair.repositories.attendant.profile.EducationRepository;
+import org.capstone.job_fair.repositories.attendant.profile.WorkHistoryRepository;
 import org.capstone.job_fair.services.interfaces.account.AccountService;
 import org.capstone.job_fair.services.interfaces.attendant.AttendantService;
 import org.capstone.job_fair.services.interfaces.attendant.misc.CountryService;
@@ -16,12 +23,16 @@ import org.capstone.job_fair.services.interfaces.attendant.misc.ResidenceService
 import org.capstone.job_fair.services.mappers.attendant.AttendantMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -48,6 +59,21 @@ public class AttendantServiceImpl implements AttendantService {
     @Autowired
     private ResidenceService residenceService;
 
+    @Autowired
+    private WorkHistoryRepository workHistoryRepository;
+
+    @Autowired
+    private EducationRepository educationRepository;
+
+    @Autowired
+    private ActivityRepository activityRepository;
+
+    @Value("${skill.processor.url}")
+    private String skillProcessorURL;
+
+    @Autowired
+    private WebClient webClient;
+
 
     private boolean isEmailExist(String email) {
         return accountService.getCountAccountByEmail(email) != 0;
@@ -62,10 +88,72 @@ public class AttendantServiceImpl implements AttendantService {
     }
 
 
+    void updateWorkHistoryKeyWord(AttendantEntity attendant) {
+        Map<String, String> body = new HashedMap<>();
+        attendant.getWorkHistoryEntities().forEach(workHistoryEntity -> {
+            if (workHistoryEntity.getDescription() == null) return;
+            body.put("description", workHistoryEntity.getDescription());
+            Mono<KeyWordResponse> descriptionResult = webClient.post().uri(skillProcessorURL + SkillExtractorApiEndpoint.EXTRACT_KEYWORD)
+                    .body(Mono.just(body), Map.class)
+                    .retrieve()
+                    .bodyToMono(KeyWordResponse.class);
+            descriptionResult.subscribe(keyWordResponse -> {
+                try {
+                    String parseResult = Jackson.getObjectMapper().writeValueAsString(keyWordResponse.result);
+                    workHistoryEntity.setDescriptionKeyWord(parseResult);
+                    workHistoryRepository.save(workHistoryEntity);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+        });
+    }
+
+    void updateEducationKeyWord(AttendantEntity attendant) {
+        Map<String, String> body = new HashedMap<>();
+        attendant.getEducationEntities().forEach(educationEntity -> {
+            if (educationEntity.getAchievement() == null) return;
+            body.put("description", educationEntity.getAchievement());
+            Mono<KeyWordResponse> descriptionResult = webClient.post().uri(skillProcessorURL + SkillExtractorApiEndpoint.EXTRACT_KEYWORD)
+                    .body(Mono.just(body), Map.class)
+                    .retrieve()
+                    .bodyToMono(KeyWordResponse.class);
+            descriptionResult.subscribe(keyWordResponse -> {
+                try {
+                    String parseResult = Jackson.getObjectMapper().writeValueAsString(keyWordResponse.result);
+                    educationEntity.setAchievementKeyWord(parseResult);
+                    educationRepository.save(educationEntity);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+        });
+    }
+
+    void updateActivityKeyWord(AttendantEntity attendant) {
+        Map<String, String> body = new HashedMap<>();
+        attendant.getActivityEntities().forEach(activityEntity -> {
+            if (activityEntity.getDescription() == null) return;
+            body.put("description", activityEntity.getDescription());
+            Mono<KeyWordResponse> descriptionResult = webClient.post().uri(skillProcessorURL + SkillExtractorApiEndpoint.EXTRACT_KEYWORD)
+                    .body(Mono.just(body), Map.class)
+                    .retrieve()
+                    .bodyToMono(KeyWordResponse.class);
+            descriptionResult.subscribe(keyWordResponse -> {
+                try {
+                    String parseResult = Jackson.getObjectMapper().writeValueAsString(keyWordResponse.result);
+                    activityEntity.setDescription(parseResult);
+                    activityRepository.save(activityEntity);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+        });
+    }
+
     @Override
     @Transactional
     public void updateAccount(AttendantDTO dto) {
-        System.out.println(dto);
         Optional<AccountEntity> opt = accountService.getActiveAccountById(dto.getAccount().getId());
         if (!opt.isPresent()) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Account.NOT_FOUND));
@@ -96,7 +184,10 @@ public class AttendantServiceImpl implements AttendantService {
         if (attendantOpt.isPresent()) {
             AttendantEntity entity = attendantOpt.get();
             attendantMapper.updateAttendantMapperFromDto(dto, entity);
-            attendantRepository.save(entity);
+            entity = attendantRepository.save(entity);
+            updateWorkHistoryKeyWord(entity);
+            updateEducationKeyWord(entity);
+            updateActivityKeyWord(entity);
         }
     }
 

@@ -44,6 +44,9 @@ public class ActivityEntity {
     @Column(name = "description")
     private String description;
 
+    @Column(name = "description_key_word")
+    private String descriptionKeyWord;
+
 
     @Override
     public boolean equals(Object o) {

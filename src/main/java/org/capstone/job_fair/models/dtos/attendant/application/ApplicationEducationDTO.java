@@ -17,4 +17,5 @@ public class ApplicationEducationDTO {
     private Long toDate;
     private String achievement;
     private Qualification qualificationId;
+    private String achievementKeyWord;
 }

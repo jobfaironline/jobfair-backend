@@ -26,9 +26,7 @@ public class CvSkillEntity {
     private String name;
     @Column(name = "proficiency")
     private Integer proficiency;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cv_id")
-    private CvEntity cv;
+
 
     @Override
     public boolean equals(Object o) {

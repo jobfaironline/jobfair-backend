@@ -17,4 +17,5 @@ public class CvWorkHistoryDTO implements Serializable {
     private Long toDate;
     private Boolean isCurrentJob;
     private String description;
+    private String descriptionKeyWord;
 }

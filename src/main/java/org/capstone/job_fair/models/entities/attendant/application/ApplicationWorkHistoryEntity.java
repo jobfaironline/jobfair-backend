@@ -37,6 +37,8 @@ public class ApplicationWorkHistoryEntity {
     @ManyToOne()
     @JoinColumn(name = "application_id")
     private ApplicationEntity application;
+    @Column(name = "description_key_word")
+    private String descriptionKeyWord;
 
 
     @Override

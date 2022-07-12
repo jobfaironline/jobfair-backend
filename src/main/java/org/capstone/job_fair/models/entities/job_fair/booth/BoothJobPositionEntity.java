@@ -99,6 +99,12 @@ public class BoothJobPositionEntity {
     @JoinColumn(name = "job_fair_booth_id")
     private JobFairBoothEntity jobFairBooth;
 
+    @Column(name = "description_key_word")
+    private String descriptionKeyWord;
+
+    @Column(name = "requirement_key_word")
+    private String requirementKeyWord;
+
 
     @Override
     public boolean equals(Object o) {

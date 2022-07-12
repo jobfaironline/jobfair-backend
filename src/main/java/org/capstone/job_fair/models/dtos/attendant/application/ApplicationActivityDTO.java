@@ -17,4 +17,5 @@ public class ApplicationActivityDTO {
     private Long toDate;
     private Boolean isCurrentActivity;
     private String description;
+    private String descriptionKeyWord;
 }
