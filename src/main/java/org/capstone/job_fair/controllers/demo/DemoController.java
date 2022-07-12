@@ -73,7 +73,7 @@ public class DemoController {
 
         attendantDTO = attendantService.createNewAccount(attendantDTO);
 
-        return attendantDTO.getAccount().getId();
+        return attendantDTO.getAccount().getEmail() + "," + attendantDTO.getAccount().getId();
     }
 
     private String createCV(String attendantId) {
@@ -85,30 +85,26 @@ public class DemoController {
         dto.setAttendant(attendantDTO);
 
         dto = cvService.draftCv(dto);
-
-        UpdateCvRequest updateCvRequest = new UpdateCvRequest();
-
-        updateCvRequest.setName("CV " + attendantId);
-        updateCvRequest.setFullName("Nguyen Van So " + attendantId);
-        updateCvRequest.setAboutMe(getSaltString(50));
-        updateCvRequest.setCountryId(1);
-        updateCvRequest.setEmail(getSaltString(10) + "@gmail.com");
-        updateCvRequest.setPhone(generatePhoneNumber());
-        update
-
+        return dto.getId();
     }
 
     @GetMapping(ApiEndPoint.Demo.CREATE_ATTENDANT)
-    public ResponseEntity<String> createAttendantWithCV(@RequestParam Integer numberOfAttendants) {
+    public ResponseEntity<?> createAttendantWithCV(@RequestParam Integer numberOfAttendants) {
 
-        ArrayList<String> attendantIdList = new ArrayList<String>();
+        ArrayList<String> attendantEmailList = new ArrayList<String>();
+
+        String attendantEmail = null;
+        String attendantId = null;
 
         for (int i = 0; i < numberOfAttendants; i++) {
             //Create attendant
-            String attendantId = createAttendant(i);
-            attendantIdList.add(attendantId);
+            attendantEmail = createAttendant(i).split(",")[0];
+            attendantId = createAttendant(i).split(",")[1];
+            attendantEmailList.add(attendantEmail);
             //Create CV
+            String cvId = createCV(attendantId);
         }
+        return ResponseEntity.ok(attendantEmailList);
     }
 
 }
