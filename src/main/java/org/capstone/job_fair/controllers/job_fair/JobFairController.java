@@ -175,17 +175,14 @@ public class JobFairController {
         jobFairService.publishJobFair(userDetails.getCompanyId(), jobFairPlanId);
 
         List<AssignmentDTO> assignments = assignmentService.getAssignmentByJobFairId(jobFairPlanId, userDetails.getCompanyId());
-        for (int i = 0; i < 100; i++) {
             for (AssignmentDTO assignment : assignments) {
                 NotificationMessageDTO notificationMessage = NotificationMessageDTO.builder()
                         .title(NotificationAction.ASSIGNMENT.toString())
                         .message(Jackson.getObjectMapper().writeValueAsString(assignment))
                         .notificationType(NotificationType.NOTI)
                         .userId(assignment.getCompanyEmployee().getAccountId()).build();
-                SendMessageResult result = notificationService.createNotification(notificationMessage, "79dc6dea-8a7d-4ecc-a5cf-6eeb843467f0");
-                System.out.println(result);
+                notificationService.createNotification(notificationMessage, assignment.getCompanyEmployee().getAccountId());
             }
-        }
 
         return ResponseEntity.ok().build();
     }
