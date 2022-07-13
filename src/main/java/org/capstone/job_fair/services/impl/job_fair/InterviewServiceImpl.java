@@ -388,9 +388,9 @@ public class InterviewServiceImpl implements InterviewService {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.APPLICATION_NOT_FOUND));
         }
         ApplicationEntity application = applicationOpt.get();
-        if (application.getStatus() != ApplicationStatus.APPROVE) {
-            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.InterviewSchedule.INVALID_APPLICATION_STATUS));
-        }
+//        if (application.getStatus() != ApplicationStatus.APPROVE) {
+//            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.InterviewSchedule.INVALID_APPLICATION_STATUS));
+//        }
         if (application.getInterviewStatus() != null) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.InterviewSchedule.ALREADY_SCHEDULE_INTERVIEW));
         }
@@ -411,9 +411,9 @@ public class InterviewServiceImpl implements InterviewService {
         long nextShiftTime = endShiftTime;
         //END TODO
 
-        if (lastIndex > 0 && scheduleList.get(lastIndex).getEndTime() + interviewLength + bufferTime > endShiftTime) {
-            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.InterviewSchedule.MAXIMUM_SCHEDULE_ALLOW));
-        }
+//        if (lastIndex > 0 && scheduleList.get(lastIndex).getEndTime() + interviewLength + bufferTime > endShiftTime) {
+//            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.InterviewSchedule.MAXIMUM_SCHEDULE_ALLOW));
+//        }
 
 
         if (lastIndex > 0) {
