@@ -257,7 +257,7 @@ public class DemoController {
         final double numberOfReject = cvIdList.size() - numberOfApprove - numberOfPending;
         Map<String, ApplicationStatus> result = new HashMap<>();
 
-        AssignmentEntity assignmentEntity = assignmentRepository.findByEmployeeId(request.getEmployeeId()).get();
+        AssignmentEntity assignmentEntity = assignmentRepository.findByEmployeeId(request.getEmployeeId(), request.getJobFairId()).get(1);
 
         String BoothJobPositionId = assignmentEntity.getJobFairBooth().getBoothJobPositions().get(0).getId();
 
