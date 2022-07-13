@@ -95,10 +95,9 @@ public interface ApplicationRepository extends JpaRepository<ApplicationEntity, 
             @Param("endTime") long endTime,
             @Param("beginTime") long beginTime);
 
-    @Query("select a from ApplicationEntity a where a.waitingRoomId = :waitingRoomId and a.interviewer.accountId = :employeeId")
-    List<ApplicationEntity> findWaitingAttendantByEmployeeId(
-            @Param("waitingRoomId") String waitingRoomId,
-            @Param("employeeId") String employeeId);
+    @Query("select a from ApplicationEntity a where a.waitingRoomId = :waitingRoomId")
+    List<ApplicationEntity> findWaitingAttendantByWaitingRoomId(
+            @Param("waitingRoomId") String waitingRoomId);
 
     Optional<ApplicationEntity> findByWaitingRoomId(String waitingRoomId);
 

@@ -347,8 +347,8 @@ public class InterviewServiceImpl implements InterviewService {
     }
 
     @Override
-    public List<InterviewScheduleDTO> getInterviewScheduleInWaitingRoom(String employeeId, String waitingRoomId) {
-        List<ApplicationEntity> applicationList = applicationRepository.findWaitingAttendantByEmployeeId(waitingRoomId, employeeId);
+    public List<InterviewScheduleDTO> getInterviewScheduleInWaitingRoom(String waitingRoomId) {
+        List<ApplicationEntity> applicationList = applicationRepository.findWaitingAttendantByWaitingRoomId(waitingRoomId);
         return applicationList.stream().map(interviewScheduleMapper::toDTO).collect(Collectors.toList());
 
     }
