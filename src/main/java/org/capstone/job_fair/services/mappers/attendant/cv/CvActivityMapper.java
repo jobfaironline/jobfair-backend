@@ -12,7 +12,6 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 public abstract class CvActivityMapper {
     public abstract CvActivityDTO toDTO(CvActivityEntity entity);
 
-    @Mapping(target = "cv", ignore = true)
     public abstract CvActivityEntity toEntity(CvActivityDTO dto);
 
     @Mapping(target = "id", ignore = true)

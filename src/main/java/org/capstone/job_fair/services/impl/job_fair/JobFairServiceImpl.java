@@ -96,6 +96,8 @@ public class JobFairServiceImpl implements JobFairService {
             throw new IllegalArgumentException(MessageConstant.JobFair.JOB_FAIR_NOT_FOUND);
         }
         JobFairEntity entity = opt.get();
+        if (entity.getStatus() == JobFairPlanStatus.PUBLISH)
+            throw new IllegalArgumentException(MessageConstant.JobFair.JOB_FAIR_ALREADY_PUBLISH);
         jobFairRepository.delete(entity);
         return jobFairMapper.toDTO(entity);
     }
