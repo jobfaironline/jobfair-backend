@@ -12,5 +12,4 @@ import java.util.List;
 public class CreateApplicationAndEvaluateRequest {
     private List<String> cvId;
     private String employeeId;
-    private String boothJobPosition;
 }
