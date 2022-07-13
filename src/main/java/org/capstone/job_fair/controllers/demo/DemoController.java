@@ -19,12 +19,15 @@ import org.capstone.job_fair.models.dtos.dynamoDB.NotificationMessageDTO;
 import org.capstone.job_fair.models.dtos.job_fair.booth.BoothJobPositionDTO;
 import org.capstone.job_fair.models.dtos.job_fair.booth.JobFairBoothDTO;
 import org.capstone.job_fair.models.entities.attendant.application.ApplicationEntity;
+import org.capstone.job_fair.models.entities.job_fair.booth.AssignmentEntity;
 import org.capstone.job_fair.models.enums.ApplicationStatus;
 import org.capstone.job_fair.models.enums.AssignmentType;
 import org.capstone.job_fair.models.enums.NotificationType;
 import org.capstone.job_fair.repositories.attendant.application.ApplicationRepository;
 import org.capstone.job_fair.repositories.attendant.cv.CvRepository;
 import org.capstone.job_fair.repositories.job_fair.JobFairRepository;
+import org.capstone.job_fair.repositories.job_fair.job_fair_booth.AssignmentRepository;
+import org.capstone.job_fair.repositories.job_fair.job_fair_booth.BoothJobPositionRepository;
 import org.capstone.job_fair.services.interfaces.attendant.AttendantService;
 import org.capstone.job_fair.services.interfaces.attendant.application.ApplicationService;
 import org.capstone.job_fair.services.interfaces.attendant.cv.CvService;
@@ -81,6 +84,12 @@ public class DemoController {
 
     @Autowired
     private CvRepository cvRepository;
+
+    @Autowired
+    private BoothJobPositionRepository boothJobPositionRepository;
+
+    @Autowired
+    private AssignmentRepository assignmentRepository;
 
     private String getSaltString(int number) {
         String SALTCHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
@@ -248,14 +257,20 @@ public class DemoController {
         final double numberOfReject = cvIdList.size() - numberOfApprove - numberOfPending;
         Map<String, ApplicationStatus> result = new HashMap<>();
 
+        AssignmentEntity assignmentEntity = assignmentRepository.findByEmployeeId(request.getEmployeeId()).get();
+
+        String BoothJobPositionId = assignmentEntity.getJobFairBooth().getBoothJobPositions().get(0).getId();
+
         int i = 0;
         //Approve
         for (; i < numberOfApprove; i++) {
             System.out.println(i);
+
+
             String cv = cvIdList.get(i);
             String accountId = cvRepository.findById(cv).get().getAttendant().getAccountId();
             CreateApplicationRequest createApplicationRequest = new CreateApplicationRequest();
-            createApplicationRequest.setBoothJobPositionId(request.getBoothJobPosition());
+            createApplicationRequest.setBoothJobPositionId(BoothJobPositionId);
             createApplicationRequest.setCvId(cv);
             String applicationId = applyApplication(createApplicationRequest, accountId);
             EvaluateApplicationRequest evaluateApplicationRequest = new EvaluateApplicationRequest();
@@ -271,7 +286,7 @@ public class DemoController {
             String cv = cvIdList.get(i);
             String accountId = cvRepository.findById(cv).get().getAttendant().getAccountId();
             CreateApplicationRequest createApplicationRequest = new CreateApplicationRequest();
-            createApplicationRequest.setBoothJobPositionId(request.getBoothJobPosition());
+            createApplicationRequest.setBoothJobPositionId(BoothJobPositionId);
             createApplicationRequest.setCvId(cv);
             String applicationId = applyApplication(createApplicationRequest, accountId);
             EvaluateApplicationRequest evaluateApplicationRequest = new EvaluateApplicationRequest();
@@ -289,14 +304,14 @@ public class DemoController {
             String cv = cvIdList.get(i);
             String accountId = cvRepository.findById(cv).get().getAttendant().getAccountId();
             CreateApplicationRequest createApplicationRequest = new CreateApplicationRequest();
-            createApplicationRequest.setBoothJobPositionId(request.getBoothJobPosition());
+            createApplicationRequest.setBoothJobPositionId(BoothJobPositionId);
             createApplicationRequest.setCvId(cv);
             String applicationId = applyApplication(createApplicationRequest, accountId);
-            EvaluateApplicationRequest evaluateApplicationRequest = new EvaluateApplicationRequest();
-            evaluateApplicationRequest.setApplicationId(applicationId);
-            evaluateApplicationRequest.setStatus(ApplicationStatus.PENDING);
-            System.out.println("pending");
-            evaluateApplicationRequest.setEvaluateMessage("Script auto evaluation pending " + i);
+//            EvaluateApplicationRequest evaluateApplicationRequest = new EvaluateApplicationRequest();
+//            evaluateApplicationRequest.setApplicationId(applicationId);
+//            evaluateApplicationRequest.setStatus(ApplicationStatus.PENDING);
+//            System.out.println("pending");
+//            evaluateApplicationRequest.setEvaluateMessage("Script auto evaluation pending " + i);
             result.put(applicationId, ApplicationStatus.PENDING);
         }
 
