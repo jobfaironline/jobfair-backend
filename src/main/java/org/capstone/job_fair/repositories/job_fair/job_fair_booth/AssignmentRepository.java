@@ -42,6 +42,6 @@ public interface AssignmentRepository extends JpaRepository<AssignmentEntity, St
     Optional<AssignmentEntity> findAssignmentEntityByJobFairBoothIdAndCompanyEmployeeAccountIdAndBeginTimeAndEndTime(String jobFairBoothId, String employeeId, Long startTime, Long endTime);
 
 
-    @Query("select a from AssignmentEntity a where a.companyEmployee.accountId = ?1")
-    Optional<AssignmentEntity> findByEmployeeId(String employeeId);
+    @Query("select a from AssignmentEntity a where a.companyEmployee.accountId = ?1 and a.jobFairBooth.jobFair.id = ?2")
+    List<AssignmentEntity> findByEmployeeId(String employeeId, String jobFairId);
 }
