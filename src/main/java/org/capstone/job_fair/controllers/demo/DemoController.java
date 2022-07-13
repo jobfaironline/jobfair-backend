@@ -19,6 +19,7 @@ import org.capstone.job_fair.models.dtos.dynamoDB.NotificationMessageDTO;
 import org.capstone.job_fair.models.dtos.job_fair.booth.BoothJobPositionDTO;
 import org.capstone.job_fair.models.dtos.job_fair.booth.JobFairBoothDTO;
 import org.capstone.job_fair.models.entities.attendant.application.ApplicationEntity;
+import org.capstone.job_fair.models.entities.job_fair.JobFairEntity;
 import org.capstone.job_fair.models.entities.job_fair.booth.AssignmentEntity;
 import org.capstone.job_fair.models.enums.ApplicationStatus;
 import org.capstone.job_fair.models.enums.AssignmentType;
@@ -43,6 +44,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -51,6 +54,7 @@ import java.util.stream.Collectors;
 @RestController
 @AllArgsConstructor
 @Slf4j
+@Transactional(readOnly = true)
 public class DemoController {
 
 
@@ -200,6 +204,15 @@ public class DemoController {
     @GetMapping(ApiEndPoint.Demo.CREATE_ATTENDANT)
     public ResponseEntity<?> createAttendantWithCV(@RequestParam Integer numberOfAttendants) {
         return ResponseEntity.ok(createAttendantsWithOneCv(numberOfAttendants));
+    }
+
+    @GetMapping(ApiEndPoint.Demo.PUBLISH_JOBFAIR)
+    @javax.transaction.Transactional
+    public ResponseEntity<?> publishJobFair(@RequestParam String JobFairId) {
+        JobFairEntity jobFair = jobFairRepository.findById(JobFairId).get();
+        jobFair.setPublicStartTime(jobFair.getCreateTime());
+        jobFairRepository.save(jobFair);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping(ApiEndPoint.Demo.CREATE_BOOTH_JOB_POSITION)
