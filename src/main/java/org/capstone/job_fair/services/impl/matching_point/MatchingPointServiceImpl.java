@@ -154,6 +154,7 @@ public class MatchingPointServiceImpl implements MatchingPointService {
                     .build();
 
 
+            System.out.println(skillProcessorURL + SkillExtractorApiEndpoint.MATCHING_POINT_APPLICATION);
             Mono<Map<String, Double>> response = webClient.post().uri(skillProcessorURL + SkillExtractorApiEndpoint.MATCHING_POINT_APPLICATION)
                     .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)

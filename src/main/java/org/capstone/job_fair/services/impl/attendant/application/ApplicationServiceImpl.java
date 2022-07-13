@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -243,7 +244,11 @@ public class ApplicationServiceImpl implements ApplicationService {
         boolean isValidUser = applicationEntity
                 .getBoothJobPosition().getJobFairBooth().getAssignments()
                 .stream()
-                .anyMatch(assignmentEntity -> assignmentEntity.getCompanyEmployee().getAccountId().equals(userId) && assignmentEntity.getType() == AssignmentType.INTERVIEWER);
+                .anyMatch(assignmentEntity -> {
+                    System.out.println(assignmentEntity.getCompanyEmployee().getAccountId().equals(userId));
+                    System.out.println(assignmentEntity.getType() == AssignmentType.INTERVIEWER);
+                   return  assignmentEntity.getCompanyEmployee().getAccountId().equals(userId) && assignmentEntity.getType() == AssignmentType.INTERVIEWER;
+                });
         if (!isValidUser) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.MISS_MATCH_INTERVIEWER));
         }
