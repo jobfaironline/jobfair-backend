@@ -13,12 +13,16 @@ import org.capstone.job_fair.models.dtos.account.AccountDTO;
 import org.capstone.job_fair.models.dtos.attendant.AttendantDTO;
 import org.capstone.job_fair.models.dtos.attendant.application.ApplicationDTO;
 import org.capstone.job_fair.models.dtos.attendant.cv.CvDTO;
+import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
 import org.capstone.job_fair.models.dtos.company.job.JobPositionDTO;
 import org.capstone.job_fair.models.dtos.dynamoDB.NotificationMessageDTO;
 import org.capstone.job_fair.models.dtos.job_fair.booth.BoothJobPositionDTO;
 import org.capstone.job_fair.models.dtos.job_fair.booth.JobFairBoothDTO;
+import org.capstone.job_fair.models.entities.attendant.application.ApplicationEntity;
 import org.capstone.job_fair.models.enums.ApplicationStatus;
+import org.capstone.job_fair.models.enums.AssignmentType;
 import org.capstone.job_fair.models.enums.NotificationType;
+import org.capstone.job_fair.repositories.attendant.application.ApplicationRepository;
 import org.capstone.job_fair.repositories.attendant.cv.CvRepository;
 import org.capstone.job_fair.repositories.job_fair.JobFairRepository;
 import org.capstone.job_fair.services.interfaces.attendant.AttendantService;
@@ -29,6 +33,7 @@ import org.capstone.job_fair.services.interfaces.job_fair.booth.JobFairBoothServ
 import org.capstone.job_fair.services.interfaces.matching_point.MatchingPointService;
 import org.capstone.job_fair.services.interfaces.notification.NotificationService;
 import org.capstone.job_fair.services.mappers.attendant.AttendantMapper;
+import org.capstone.job_fair.services.mappers.attendant.application.ApplicationMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -127,13 +132,16 @@ public class DemoController {
         return dto.getId();
     }
 
+    //This function must be call when Supervisor edit booth profile. No add booth job position manually and must run script
     private List<BoothJobPositionDTO> createBoothJobPosition(String jobFairId) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
+        //get 5 job positions first
         Page<JobPositionDTO> jobPositions = jobPositionService.getAllJobPositionOfCompany(userDetails.getCompanyId(), null, null, null, 5, 0, "createdDate", Sort.Direction.ASC);
 
         //Get all job fair booths of job fair, then add job position to those booths
         List<JobFairBoothDTO> boothListDTO = jobFairBoothService.getCompanyBoothByJobFairId(jobFairId);
+
         int count = 0;
         for (JobFairBoothDTO dto : boothListDTO) {
             count++;
@@ -143,7 +151,7 @@ public class DemoController {
             jobFairBoothDto.setName("chay script lan thu " + count);
             //mapping job position to booth job position
             List<BoothJobPositionDTO> boothJobPositions = jobPositions.getContent().stream().map(item -> {
-                BoothJobPositionDTO boothJobPosition = BoothJobPositionDTO.builder().originJobPosition(item.getId()).minSalary(Double.parseDouble("5")).maxSalary(Double.parseDouble("5")).numOfPosition(Integer.parseInt("1")).isHaveTest(false).note("abc").testTimeLength(Integer.parseInt("15")).numOfQuestion(Integer.parseInt("0")).passMark(Double.parseDouble("0")).jobFairBooth(jobFairBoothDto).descriptionKeyWord(item.getDescriptionKeyWord()).requirementKeyWord(item.getRequirementKeyWord()).build();
+                BoothJobPositionDTO boothJobPosition = BoothJobPositionDTO.builder().originJobPosition(item.getId()).minSalary(Double.parseDouble("5")).maxSalary(Double.parseDouble("5")).numOfPosition(Integer.parseInt("1")).isHaveTest(false).note("abc").testTimeLength(Integer.parseInt("15")).numOfQuestion(Integer.parseInt("0")).passMark(Double.parseDouble("0")).jobFairBooth(jobFairBoothDto).descriptionKeyWord("abc").requirementKeyWord("abc").build();
                 boothJobPosition.setIsHaveTest(false);
                 return boothJobPosition;
             }).collect(Collectors.toList());
@@ -158,13 +166,12 @@ public class DemoController {
     }
 
 
-    private List<Map<String, String>> createAttendantsWithOneCv(Integer numberOfAttendants) {
-
-        List<Map<String, String>> result = new ArrayList<>();
-
+    private List<String> createAttendantsWithOneCv(Integer numberOfAttendants) {
 
         String attendantEmail = null;
         String attendantId = null;
+
+        List<String> result = new ArrayList<>();
 
         for (int i = 0; i < numberOfAttendants; i++) {
             Map<String, String> map = new HashMap<String, String>();
@@ -174,8 +181,7 @@ public class DemoController {
 
             //Create CV
             String cvId = createCV(attendantId);
-            map.put(attendantId, cvId);
-            result.add(map);
+            result.add(cvId);
         }
         return result;
 
@@ -234,7 +240,7 @@ public class DemoController {
     }
 
     @PostMapping(ApiEndPoint.Demo.SUBMIT_MULTIPLE_APPLICATION)
-    public ResponseEntity<?> createApplicationAndEvaluate(@RequestBody CreateApplicationAndEvaluateRequest request) {
+    public ResponseEntity<?> submitAndEvaluateMultipleApplication(@RequestBody CreateApplicationAndEvaluateRequest request) {
         List<String> cvIdList = request.getCvId();
         final double numberOfApprove = cvIdList.size() * 0.3;
         final double numberOfPending = cvIdList.size() * 0.3;
@@ -253,6 +259,8 @@ public class DemoController {
             evaluateApplicationRequest.setApplicationId(applicationId);
             evaluateApplicationRequest.setStatus(ApplicationStatus.APPROVE);
             evaluateApplicationRequest.setEvaluateMessage("Script auto evaluation approve");
+            System.out.println("approve");
+            evaluateApplication(evaluateApplicationRequest, request.getEmployeeId());
             result.put(applicationId, ApplicationStatus.APPROVE);
         }
         //Pending
@@ -266,6 +274,7 @@ public class DemoController {
             EvaluateApplicationRequest evaluateApplicationRequest = new EvaluateApplicationRequest();
             evaluateApplicationRequest.setApplicationId(applicationId);
             evaluateApplicationRequest.setStatus(ApplicationStatus.PENDING);
+            System.out.println("pending");
             evaluateApplicationRequest.setEvaluateMessage("Script auto evaluation pending " + i);
             result.put(applicationId, ApplicationStatus.PENDING);
         }
@@ -281,11 +290,12 @@ public class DemoController {
             evaluateApplicationRequest.setApplicationId(applicationId);
             evaluateApplicationRequest.setStatus(ApplicationStatus.REJECT);
             evaluateApplicationRequest.setEvaluateMessage("Script auto evaluation reject " + i);
+            System.out.println("reject");
+            evaluateApplication(evaluateApplicationRequest, request.getEmployeeId());
             result.put(applicationId, ApplicationStatus.REJECT);
         }
 
         return ResponseEntity.ok(result);
     }
-
 
 }
