@@ -16,7 +16,7 @@ import java.util.Optional;
 
 @Repository
 public interface AssignmentRepository extends JpaRepository<AssignmentEntity, String> {
-    Optional<AssignmentEntity> findByCompanyEmployeeAccountIdAndJobFairBoothId(String employeeId, String jobFairBoothId);
+    List<AssignmentEntity> findByCompanyEmployeeAccountIdAndJobFairBoothId(String employeeId, String jobFairBoothId);
 
     List<AssignmentEntity> findByJobFairBoothJobFairIdAndJobFairBoothJobFairCompanyId(String jobFairId, String companyId);
 
