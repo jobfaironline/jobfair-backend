@@ -48,7 +48,7 @@ import java.util.stream.Collectors;
 @RestController
 @AllArgsConstructor
 @Slf4j
-@Transactional(readOnly = true)
+@Transactional
 public class DemoController {
 
 
@@ -201,7 +201,6 @@ public class DemoController {
     }
 
     @GetMapping(ApiEndPoint.Demo.PUBLISH_JOBFAIR)
-    @javax.transaction.Transactional
     public ResponseEntity<?> publishJobFair(@RequestParam String JobFairId) {
         JobFairEntity jobFair = jobFairRepository.findById(JobFairId).get();
         jobFair.setPublicStartTime(jobFair.getCreateTime());
@@ -337,8 +336,6 @@ public class DemoController {
             evaluateApplication(evaluateApplicationRequest, request.getEmployeeId());
             result.put(cvIdList.get(i), ApplicationStatus.REJECT);
         }
-
-
         return ResponseEntity.ok(result);
     }
 
