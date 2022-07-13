@@ -1,49 +1,44 @@
 package org.capstone.job_fair.controllers.demo;
 
-import com.amazonaws.Response;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import org.capstone.job_fair.constants.ApiEndPoint;
-import org.capstone.job_fair.constants.JobPositionConstant;
+import org.capstone.job_fair.constants.MessageConstant;
+import org.capstone.job_fair.controllers.payload.requests.account.cv.CreateApplicationRequest;
+import org.capstone.job_fair.controllers.payload.requests.attendant.EvaluateApplicationRequest;
 import org.capstone.job_fair.controllers.payload.requests.attendant.RegisterAttendantRequest;
-import org.capstone.job_fair.controllers.payload.requests.attendant.cv.UpdateCvRequest;
-import org.capstone.job_fair.controllers.payload.requests.company.BoothDescriptionRequest;
-import org.capstone.job_fair.controllers.payload.requests.job_fair.BoothJobPositionRequest;
+import org.capstone.job_fair.controllers.payload.requests.demo.CreateApplicationAndEvaluateRequest;
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
 import org.capstone.job_fair.models.dtos.attendant.AttendantDTO;
 import org.capstone.job_fair.models.dtos.attendant.application.ApplicationDTO;
 import org.capstone.job_fair.models.dtos.attendant.cv.CvDTO;
 import org.capstone.job_fair.models.dtos.company.job.JobPositionDTO;
+import org.capstone.job_fair.models.dtos.dynamoDB.NotificationMessageDTO;
 import org.capstone.job_fair.models.dtos.job_fair.booth.BoothJobPositionDTO;
 import org.capstone.job_fair.models.dtos.job_fair.booth.JobFairBoothDTO;
 import org.capstone.job_fair.models.enums.ApplicationStatus;
-import org.capstone.job_fair.models.enums.JobLevel;
+import org.capstone.job_fair.models.enums.NotificationType;
+import org.capstone.job_fair.repositories.attendant.cv.CvRepository;
+import org.capstone.job_fair.repositories.job_fair.JobFairRepository;
 import org.capstone.job_fair.services.interfaces.attendant.AttendantService;
 import org.capstone.job_fair.services.interfaces.attendant.application.ApplicationService;
 import org.capstone.job_fair.services.interfaces.attendant.cv.CvService;
 import org.capstone.job_fair.services.interfaces.company.job.JobPositionService;
-import org.capstone.job_fair.services.interfaces.job_fair.JobFairService;
 import org.capstone.job_fair.services.interfaces.job_fair.booth.JobFairBoothService;
 import org.capstone.job_fair.services.interfaces.matching_point.MatchingPointService;
+import org.capstone.job_fair.services.interfaces.notification.NotificationService;
 import org.capstone.job_fair.services.mappers.attendant.AttendantMapper;
+import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @RestController
 @AllArgsConstructor
@@ -72,6 +67,15 @@ public class DemoController {
 
     @Autowired
     private MatchingPointService matchingPointService;
+
+    @Autowired
+    private JobFairRepository jobFairRepository;
+
+    @Autowired
+    private NotificationService notificationService;
+
+    @Autowired
+    private CvRepository cvRepository;
 
     private String getSaltString(int number) {
         String SALTCHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
@@ -126,34 +130,20 @@ public class DemoController {
     private List<BoothJobPositionDTO> createBoothJobPosition(String jobFairId) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        Page<JobPositionDTO> jobPositions = jobPositionService.getAllJobPositionOfCompany(
-                userDetails.getCompanyId(), null, null, null, 5, 0, "createdDate", Sort.Direction.ASC);
+        Page<JobPositionDTO> jobPositions = jobPositionService.getAllJobPositionOfCompany(userDetails.getCompanyId(), null, null, null, 5, 0, "createdDate", Sort.Direction.ASC);
 
         //Get all job fair booths of job fair, then add job position to those booths
         List<JobFairBoothDTO> boothListDTO = jobFairBoothService.getCompanyBoothByJobFairId(jobFairId);
-
+        int count = 0;
         for (JobFairBoothDTO dto : boothListDTO) {
+            count++;
             JobFairBoothDTO jobFairBoothDto = new JobFairBoothDTO();
             jobFairBoothDto.setId(dto.getId());
-            jobFairBoothDto.setDescription("chay script");
-            jobFairBoothDto.setName("chay script");
+            jobFairBoothDto.setDescription("chay script lan thu " + count);
+            jobFairBoothDto.setName("chay script lan thu " + count);
             //mapping job position to booth job position
             List<BoothJobPositionDTO> boothJobPositions = jobPositions.getContent().stream().map(item -> {
-                BoothJobPositionDTO boothJobPosition = BoothJobPositionDTO
-                        .builder()
-                        .originJobPosition(item.getId())
-                        .minSalary(Double.parseDouble("5"))
-                        .maxSalary(Double.parseDouble("5"))
-                        .numOfPosition(Integer.parseInt("1"))
-                        .isHaveTest(false)
-                        .note("abc")
-                        .testTimeLength(Integer.parseInt("15"))
-                        .numOfQuestion(Integer.parseInt("0"))
-                        .passMark(Double.parseDouble("0"))
-                        .jobFairBooth(jobFairBoothDto)
-                        .descriptionKeyWord(item.getDescriptionKeyWord())
-                        .requirementKeyWord(item.getRequirementKeyWord())
-                        .build();
+                BoothJobPositionDTO boothJobPosition = BoothJobPositionDTO.builder().originJobPosition(item.getId()).minSalary(Double.parseDouble("5")).maxSalary(Double.parseDouble("5")).numOfPosition(Integer.parseInt("1")).isHaveTest(false).note("abc").testTimeLength(Integer.parseInt("15")).numOfQuestion(Integer.parseInt("0")).passMark(Double.parseDouble("0")).jobFairBooth(jobFairBoothDto).descriptionKeyWord(item.getDescriptionKeyWord()).requirementKeyWord(item.getRequirementKeyWord()).build();
                 boothJobPosition.setIsHaveTest(false);
                 return boothJobPosition;
             }).collect(Collectors.toList());
@@ -167,44 +157,8 @@ public class DemoController {
         return result;
     }
 
-//    private void submitMultipleApplication(String jobFairId, String attendantId) {
-//        //1. Draft multiple applications
-//
-//
-//        List<BoothJobPositionDTO> boothJobPositions = createBoothJobPosition(jobFairId);
-//
-//
-//        List<Map<String, String>> mapLists = createAttendantsWithOneCv(100);
-//        for (Map<String, String> map : mapLists) {
-//            ApplicationDTO dto = new ApplicationDTO();
-//            AttendantDTO attendantDTO = new AttendantDTO();
-//            AccountDTO accountDTO = new AccountDTO();
-//            //set account Id
-//            map.keySet().stream().forEach(userId -> {
-//                accountDTO.setId(userId);
-//                attendantDTO.setAccount(accountDTO);
-//                dto.setAttendant(attendantDTO);
-//
-//                map.values().stream().forEach(cvId -> {
-//                    for (BoothJobPositionDTO Dto : boothJobPositions) {
-//                        dto.setCreateDate(new Date().getTime());
-//                        dto.setStatus(ApplicationStatus.DRAFT);
-//                        dto.setOriginCvId(cvId);
-//                        dto.setBoothJobPositionDTO(Dto);
-//                        //call create method
-//                        ApplicationDTO result = applicationService.createNewApplication(dto);
-//                        matchingPointService.calculateFromApplication(result.getId()).subscribe().dispose();
-//                        //2. submit multiple application
-//                        applicationService.submitApplication(result.getId(), userId);
-//                    }
-//                });
-//            });
-//
-//        }
-//
-//    }
 
-    private List<Map<String, String>> createAttendantsWithOneCv (Integer numberOfAttendants) {
+    private List<Map<String, String>> createAttendantsWithOneCv(Integer numberOfAttendants) {
 
         List<Map<String, String>> result = new ArrayList<>();
 
@@ -226,6 +180,7 @@ public class DemoController {
         return result;
 
     }
+
     @GetMapping(ApiEndPoint.Demo.CREATE_ATTENDANT)
     public ResponseEntity<?> createAttendantWithCV(@RequestParam Integer numberOfAttendants) {
         return ResponseEntity.ok(createAttendantsWithOneCv(numberOfAttendants));
@@ -234,12 +189,103 @@ public class DemoController {
     @GetMapping(ApiEndPoint.Demo.CREATE_BOOTH_JOB_POSITION)
     public ResponseEntity<?> createBoothJobPositions(@RequestParam String jobFairId) {
         return ResponseEntity.ok(createBoothJobPosition(jobFairId));
-    };
+    }
 
-//    @GetMapping(ApiEndPoint.Demo.SUBMIT_MULTIPLE_APPLICATION)
-//    public ResponseEntity<?> submitApplications(@RequestParam String jobFairId, @RequestParam String attendantId) {
-//        submitMultipleApplication(jobFairId, attendantId);
-//        return ResponseEntity.ok("submitted");
-//    }
+    private String applyApplication(CreateApplicationRequest request, String accountId) {
+        //call applicationDTO
+        ApplicationDTO dto = new ApplicationDTO();
+
+        AttendantDTO attendantDTO = new AttendantDTO();
+        AccountDTO accountDTO = new AccountDTO();
+        accountDTO.setId(accountId);
+        attendantDTO.setAccount(accountDTO);
+        dto.setAttendant(attendantDTO);
+
+        //call registrationJobPositionDTO + setId from request
+        BoothJobPositionDTO regisDTO = new BoothJobPositionDTO();
+        regisDTO.setId(request.getBoothJobPositionId());
+        //set summary, create date, status, attendantDTO, registrationJobPositionDTO for ApplicationDTO
+        dto.setCreateDate(new Date().getTime());
+        dto.setStatus(ApplicationStatus.DRAFT);
+        dto.setOriginCvId(request.getCvId());
+        dto.setBoothJobPositionDTO(regisDTO);
+        //call create method
+        ApplicationDTO result = applicationService.createNewApplication(dto);
+        matchingPointService.calculateFromApplication(result.getId()).subscribe().dispose();
+        applicationService.submitApplication(result.getId(), accountId);
+        return result.getId();
+    }
+
+    private void evaluateApplication(EvaluateApplicationRequest request, String userId) {
+        ApplicationDTO dto = new ApplicationDTO();
+        dto.setId(request.getApplicationId());
+        dto.setEvaluateMessage(request.getEvaluateMessage());
+        dto.setStatus(request.getStatus());
+
+        dto = applicationService.evaluateApplication(dto, userId);
+
+        //create notification message
+        NotificationMessageDTO notificationMessageDTO = new NotificationMessageDTO();
+        notificationMessageDTO.setMessage(MessageUtil.getMessage(MessageConstant.Application.EVALUATE_MESSAGE_TO_ATTENDANT));
+        notificationMessageDTO.setNotificationType(NotificationType.NOTI);
+
+        //send notification to attendant
+        notificationService.createNotification(notificationMessageDTO, dto.getAttendant().getAccount().getId());
+    }
+
+    @PostMapping(ApiEndPoint.Demo.SUBMIT_MULTIPLE_APPLICATION)
+    public ResponseEntity<?> createApplicationAndEvaluate(@RequestBody CreateApplicationAndEvaluateRequest request) {
+        List<String> cvIdList = request.getCvId();
+        final double numberOfApprove = cvIdList.size() * 0.3;
+        final double numberOfPending = cvIdList.size() * 0.3;
+        final double numberOfReject = cvIdList.size() - numberOfApprove - numberOfPending;
+        Map<String, ApplicationStatus> result = new HashMap<>();
+        int i = 0;
+        //Approve
+        for (; i < numberOfApprove; i++) {
+            String cv = cvIdList.get(i);
+            String accountId = cvRepository.findById(cv).get().getAttendant().getAccountId();
+            CreateApplicationRequest createApplicationRequest = new CreateApplicationRequest();
+            createApplicationRequest.setBoothJobPositionId(request.getBoothJobPosition());
+            createApplicationRequest.setCvId(cv);
+            String applicationId = applyApplication(createApplicationRequest, accountId);
+            EvaluateApplicationRequest evaluateApplicationRequest = new EvaluateApplicationRequest();
+            evaluateApplicationRequest.setApplicationId(applicationId);
+            evaluateApplicationRequest.setStatus(ApplicationStatus.APPROVE);
+            evaluateApplicationRequest.setEvaluateMessage("Script auto evaluation approve");
+            result.put(applicationId, ApplicationStatus.APPROVE);
+        }
+        //Pending
+        for (; i < numberOfApprove + numberOfReject + numberOfPending; i++) {
+            String cv = cvIdList.get(i);
+            String accountId = cvRepository.findById(cv).get().getAttendant().getAccountId();
+            CreateApplicationRequest createApplicationRequest = new CreateApplicationRequest();
+            createApplicationRequest.setBoothJobPositionId(request.getBoothJobPosition());
+            createApplicationRequest.setCvId(cv);
+            String applicationId = applyApplication(createApplicationRequest, accountId);
+            EvaluateApplicationRequest evaluateApplicationRequest = new EvaluateApplicationRequest();
+            evaluateApplicationRequest.setApplicationId(applicationId);
+            evaluateApplicationRequest.setStatus(ApplicationStatus.PENDING);
+            evaluateApplicationRequest.setEvaluateMessage("Script auto evaluation pending " + i);
+            result.put(applicationId, ApplicationStatus.PENDING);
+        }
+        //Reject
+        for (; i < numberOfApprove + numberOfReject; i++) {
+            String cv = cvIdList.get(i);
+            String accountId = cvRepository.findById(cv).get().getAttendant().getAccountId();
+            CreateApplicationRequest createApplicationRequest = new CreateApplicationRequest();
+            createApplicationRequest.setBoothJobPositionId(request.getBoothJobPosition());
+            createApplicationRequest.setCvId(cv);
+            String applicationId = applyApplication(createApplicationRequest, accountId);
+            EvaluateApplicationRequest evaluateApplicationRequest = new EvaluateApplicationRequest();
+            evaluateApplicationRequest.setApplicationId(applicationId);
+            evaluateApplicationRequest.setStatus(ApplicationStatus.REJECT);
+            evaluateApplicationRequest.setEvaluateMessage("Script auto evaluation reject " + i);
+            result.put(applicationId, ApplicationStatus.REJECT);
+        }
+
+        return ResponseEntity.ok(result);
+    }
+
 
 }
