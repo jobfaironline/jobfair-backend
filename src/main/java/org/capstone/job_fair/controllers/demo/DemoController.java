@@ -187,6 +187,7 @@ public class DemoController {
 
     }
 
+
     @GetMapping(ApiEndPoint.Demo.CREATE_ATTENDANT)
     public ResponseEntity<?> createAttendantWithCV(@RequestParam Integer numberOfAttendants) {
         return ResponseEntity.ok(createAttendantsWithOneCv(numberOfAttendants));
@@ -246,9 +247,11 @@ public class DemoController {
         final double numberOfPending = cvIdList.size() * 0.3;
         final double numberOfReject = cvIdList.size() - numberOfApprove - numberOfPending;
         Map<String, ApplicationStatus> result = new HashMap<>();
+
         int i = 0;
         //Approve
         for (; i < numberOfApprove; i++) {
+            System.out.println(i);
             String cv = cvIdList.get(i);
             String accountId = cvRepository.findById(cv).get().getAttendant().getAccountId();
             CreateApplicationRequest createApplicationRequest = new CreateApplicationRequest();
@@ -259,27 +262,12 @@ public class DemoController {
             evaluateApplicationRequest.setApplicationId(applicationId);
             evaluateApplicationRequest.setStatus(ApplicationStatus.APPROVE);
             evaluateApplicationRequest.setEvaluateMessage("Script auto evaluation approve");
-            System.out.println("approve");
             evaluateApplication(evaluateApplicationRequest, request.getEmployeeId());
             result.put(applicationId, ApplicationStatus.APPROVE);
         }
-        //Pending
-        for (; i < numberOfApprove + numberOfReject + numberOfPending; i++) {
-            String cv = cvIdList.get(i);
-            String accountId = cvRepository.findById(cv).get().getAttendant().getAccountId();
-            CreateApplicationRequest createApplicationRequest = new CreateApplicationRequest();
-            createApplicationRequest.setBoothJobPositionId(request.getBoothJobPosition());
-            createApplicationRequest.setCvId(cv);
-            String applicationId = applyApplication(createApplicationRequest, accountId);
-            EvaluateApplicationRequest evaluateApplicationRequest = new EvaluateApplicationRequest();
-            evaluateApplicationRequest.setApplicationId(applicationId);
-            evaluateApplicationRequest.setStatus(ApplicationStatus.PENDING);
-            System.out.println("pending");
-            evaluateApplicationRequest.setEvaluateMessage("Script auto evaluation pending " + i);
-            result.put(applicationId, ApplicationStatus.PENDING);
-        }
         //Reject
         for (; i < numberOfApprove + numberOfReject; i++) {
+            System.out.println(i);
             String cv = cvIdList.get(i);
             String accountId = cvRepository.findById(cv).get().getAttendant().getAccountId();
             CreateApplicationRequest createApplicationRequest = new CreateApplicationRequest();
@@ -294,6 +282,24 @@ public class DemoController {
             evaluateApplication(evaluateApplicationRequest, request.getEmployeeId());
             result.put(applicationId, ApplicationStatus.REJECT);
         }
+
+        //Pending
+        for (; i < numberOfApprove + numberOfReject + numberOfPending; i++) {
+            System.out.println(i);
+            String cv = cvIdList.get(i);
+            String accountId = cvRepository.findById(cv).get().getAttendant().getAccountId();
+            CreateApplicationRequest createApplicationRequest = new CreateApplicationRequest();
+            createApplicationRequest.setBoothJobPositionId(request.getBoothJobPosition());
+            createApplicationRequest.setCvId(cv);
+            String applicationId = applyApplication(createApplicationRequest, accountId);
+            EvaluateApplicationRequest evaluateApplicationRequest = new EvaluateApplicationRequest();
+            evaluateApplicationRequest.setApplicationId(applicationId);
+            evaluateApplicationRequest.setStatus(ApplicationStatus.PENDING);
+            System.out.println("pending");
+            evaluateApplicationRequest.setEvaluateMessage("Script auto evaluation pending " + i);
+            result.put(applicationId, ApplicationStatus.PENDING);
+        }
+
 
         return ResponseEntity.ok(result);
     }
