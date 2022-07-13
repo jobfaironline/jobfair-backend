@@ -425,7 +425,7 @@ public class InterviewServiceImpl implements InterviewService {
         application.setInterviewName("Interview with " + application.getAttendant().getAccount().getFullname());
         application.setInterviewDescription("Interview with " + application.getAttendant().getAccount().getFullname());
         application.setEndTime(application.getBeginTime() + interviewLength);
-        application.setInterviewStatus(InterviewStatus.INTERVIEWING);
+        application.setInterviewStatus(InterviewStatus.NOT_YET);
         CompanyEmployeeEntity companyEmployee = new CompanyEmployeeEntity();
         companyEmployee.setAccountId(interviewerId);
         application.setInterviewer(companyEmployee);

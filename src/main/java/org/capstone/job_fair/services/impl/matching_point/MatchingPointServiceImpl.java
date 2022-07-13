@@ -56,12 +56,12 @@ public class MatchingPointServiceImpl implements MatchingPointService {
             List<String> descriptionKeyWords = Collections.emptyList();
             try {
                 descriptionKeyWords = mapper.readValue(jobPosition.getDescriptionKeyWord(), listStringType);
-            } catch (JsonProcessingException | NullPointerException ignored) {
+            } catch (JsonProcessingException | NullPointerException | IllegalArgumentException ignored) {
             }
             List<String> requirementKeyWords = Collections.emptyList();
             try {
                 requirementKeyWords = mapper.readValue(jobPosition.getRequirementKeyWord(), listStringType);
-            } catch (JsonProcessingException | NullPointerException ignored) {
+            } catch (JsonProcessingException | NullPointerException | IllegalArgumentException ignored) {
             }
             List<String> jobSkills = Collections.emptyList();
             if (jobPosition.getSkillTagEntities() != null) {
