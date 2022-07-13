@@ -68,6 +68,8 @@ public abstract class JobPositionMapper {
     @Mapping(target = "companyDTO", ignore = true)
     @Mapping(target = "createdDate", ignore = true)
     @Mapping(target = "updateDate", ignore = true)
+    @Mapping(target = "descriptionKeyWord", ignore = true)
+    @Mapping(target = "requirementKeyWord", ignore = true)
     public abstract JobPositionDTO toDTO(UpdateJobPositionRequest request);
 
     @Mapping(target = "language", qualifiedByName = "toJobPositionEntityLanguage")

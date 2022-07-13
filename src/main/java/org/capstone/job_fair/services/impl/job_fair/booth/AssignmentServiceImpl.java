@@ -124,9 +124,9 @@ public class AssignmentServiceImpl implements AssignmentService {
         if (type == AssignmentType.INTERVIEWER || type == AssignmentType.RECEPTION) {
             return createAssignment(assignerId, employeeId, jobFairBoothId, type, companyId, beginTime, endTime);
         }
-        Optional<AssignmentEntity> entityOpt = assignmentRepository.findByCompanyEmployeeAccountIdAndJobFairBoothId(employeeId, jobFairBoothId);
-        if (entityOpt.isPresent()) {
-            AssignmentEntity entity = entityOpt.get();
+        List<AssignmentEntity> assignments = assignmentRepository.findByCompanyEmployeeAccountIdAndJobFairBoothId(employeeId, jobFairBoothId);
+        if (!assignments.isEmpty()) {
+            AssignmentEntity entity = assignments.get(0);
             entity.setType(type);
             entity.setBeginTime(beginTime);
             entity.setEndTime(endTime);

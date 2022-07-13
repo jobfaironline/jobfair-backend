@@ -19,12 +19,16 @@ import org.capstone.job_fair.models.entities.attendant.application.ApplicationEn
 import org.capstone.job_fair.models.entities.company.CompanyEmployeeEntity;
 import org.capstone.job_fair.models.entities.dynamoDB.WaitingRoomVisitEntity;
 import org.capstone.job_fair.models.entities.job_fair.InterviewRequestChangeEntity;
+import org.capstone.job_fair.models.entities.job_fair.booth.AssignmentEntity;
+import org.capstone.job_fair.models.entities.job_fair.booth.JobFairBoothEntity;
 import org.capstone.job_fair.models.enums.ApplicationStatus;
+import org.capstone.job_fair.models.enums.AssignmentType;
 import org.capstone.job_fair.models.enums.InterviewRequestChangeStatus;
 import org.capstone.job_fair.models.enums.NotificationType;
 import org.capstone.job_fair.models.statuses.InterviewStatus;
 import org.capstone.job_fair.repositories.attendant.application.ApplicationRepository;
 import org.capstone.job_fair.repositories.job_fair.InterviewRequestChangeRepository;
+import org.capstone.job_fair.repositories.job_fair.job_fair_booth.AssignmentRepository;
 import org.capstone.job_fair.services.interfaces.job_fair.InterviewService;
 import org.capstone.job_fair.services.interfaces.notification.NotificationService;
 import org.capstone.job_fair.services.mappers.attendant.application.ApplicationMapper;
@@ -32,6 +36,7 @@ import org.capstone.job_fair.services.mappers.job_fair.InterviewRequestChangeMap
 import org.capstone.job_fair.services.mappers.job_fair.InterviewScheduleMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -70,6 +75,15 @@ public class InterviewServiceImpl implements InterviewService {
 
     @Autowired
     private DynamoDBMapperConfig dynamoDBMapperConfig;
+
+    @Autowired
+    private AssignmentRepository assignmentRepository;
+
+    @Value("${interview.length.millis}")
+    private long interviewLength;
+
+    @Value("${interview.buffer.millis}")
+    private long interviewBufferLength;
 
 
     @Override
@@ -333,13 +347,8 @@ public class InterviewServiceImpl implements InterviewService {
     }
 
     @Override
-    public List<InterviewScheduleDTO> getInterviewScheduleInWaitingRoom(String employeeId, String waitingRoomId) {
-        LocalDate localDate = LocalDate.now();
-        LocalDateTime endOfDay = localDate.atTime(LocalTime.MAX);
-        LocalDateTime startOfDay = localDate.atTime(LocalTime.MIN);
-        long endTime = endOfDay.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-        long beginTime = startOfDay.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-        List<ApplicationEntity> applicationList = applicationRepository.findWaitingAttendantByEmployeeId(waitingRoomId, beginTime, endTime, employeeId);
+    public List<InterviewScheduleDTO> getInterviewScheduleInWaitingRoom(String waitingRoomId) {
+        List<ApplicationEntity> applicationList = applicationRepository.findWaitingAttendantByWaitingRoomId(waitingRoomId);
         return applicationList.stream().map(interviewScheduleMapper::toDTO).collect(Collectors.toList());
 
     }
@@ -381,6 +390,22 @@ public class InterviewServiceImpl implements InterviewService {
     }
 
 
+    /***
+     *
+     * process of scheduling an interview
+     * Step 1: Get interview assignments that endTime > current + interviewLength + bufferTime
+     *         If empty throw Exception
+     * Step 2: Check for if the first available slot is an empty slot
+     *         If true process to step 3.1 else step to 3.2
+     * Step 3.1: create a brand-new UUID for waitingRoomId and interviewRoomId,
+     *           interviewBeginTime = assignment.beginTime,
+     *           interviewEndTime = assigment.endTime + bufferTime
+     * Step 3.2:
+     *      1. Check if there is still enough time to assign to the first available assignment
+     *         If true => assign application to that interview slot,
+     *                    get previous waitingRoomId and interviewRoomId and assign to application
+     *         If false => move to second available assignment
+     */
     @Override
     public InterviewScheduleDTO scheduleInterview(String applicationId, String interviewerId) {
         Optional<ApplicationEntity> applicationOpt = applicationRepository.findById(applicationId);
@@ -388,49 +413,70 @@ public class InterviewServiceImpl implements InterviewService {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.APPLICATION_NOT_FOUND));
         }
         ApplicationEntity application = applicationOpt.get();
-//        if (application.getStatus() != ApplicationStatus.APPROVE) {
-//            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.InterviewSchedule.INVALID_APPLICATION_STATUS));
-//        }
+        if (application.getStatus() != ApplicationStatus.APPROVE) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.InterviewSchedule.INVALID_APPLICATION_STATUS));
+        }
         if (application.getInterviewStatus() != null) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.InterviewSchedule.ALREADY_SCHEDULE_INTERVIEW));
         }
-        LocalDate localDate = LocalDate.now();
-        LocalDateTime endOfDay = localDate.atTime(LocalTime.MAX);
-        LocalDateTime startOfDay = localDate.atTime(LocalTime.MIN);
-        long endTime = endOfDay.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-        long beginTime = startOfDay.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+        JobFairBoothEntity jobFairBooth = application.getBoothJobPosition().getJobFairBooth();
 
-        List<ApplicationEntity> scheduleList = applicationRepository.findWholeByInterviewerAndInTimeRange(interviewerId, beginTime, endTime);
-        int lastIndex = scheduleList.size() - 1;
+        long now = new Date().getTime();
+        //Step 1
+        List<AssignmentEntity> assignments = assignmentRepository.findByCompanyEmployeeAccountIdAndJobFairBoothId(interviewerId, jobFairBooth.getId());
 
-        //TODO: get this from DB
-        long interviewLength = 45 * 60 * 1000L;
-        long bufferTime = 15 * 60 * 1000L;
-        LocalDateTime sevenHour = startOfDay.plusHours(19);
-        long endShiftTime = sevenHour.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-        long nextShiftTime = endShiftTime;
-        //END TODO
-
-//        if (lastIndex > 0 && scheduleList.get(lastIndex).getEndTime() + interviewLength + bufferTime > endShiftTime) {
-//            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.InterviewSchedule.MAXIMUM_SCHEDULE_ALLOW));
-//        }
-
-
-        if (lastIndex > 0) {
-            application.setBeginTime(scheduleList.get(lastIndex).getEndTime() + bufferTime);
-        } else {
-            application.setBeginTime(nextShiftTime);
+        assignments = assignments.stream().filter(assignment -> {
+            if (assignment.getType() != AssignmentType.INTERVIEWER) return false;
+            return assignment.getEndTime() > now + interviewLength + interviewBufferLength;
+        }).collect(Collectors.toList());
+        assignments.sort((o1, o2) -> {
+            return Math.toIntExact(o1.getBeginTime() - o2.getBeginTime());
+        });
+        if (assignments.isEmpty()) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.InterviewSchedule.MAXIMUM_SCHEDULE_ALLOW));
         }
+        AssignmentEntity firstAssignment = assignments.get(0);
+        List<ApplicationEntity> scheduleList = applicationRepository.findWholeByInterviewerAndInTimeRange(interviewerId, firstAssignment.getBeginTime(), firstAssignment.getEndTime());
+        String interviewRoomId = "";
+        String waitingRoomId = "";
+        long interviewBeginTime = 0;
+        long interviewEndTime = 0;
+        //step 2
+        if (scheduleList.isEmpty()){
+            //step 3.1
+            interviewBeginTime = firstAssignment.getBeginTime();
+            interviewEndTime = firstAssignment.getBeginTime() + interviewLength;
+            interviewRoomId =  ScheduleConstant.INTERVIEW_ROOM_PREFIX + UUID.randomUUID().toString();
+            waitingRoomId = ScheduleConstant.WAITING_ROOM_PREFIX + UUID.randomUUID().toString();
+        } else {
+            //step 3.2
+            ApplicationEntity lastInterview = scheduleList.get(scheduleList.size() -1);
+            if (lastInterview.getEndTime() + interviewLength + interviewBufferLength > firstAssignment.getEndTime()){
+                if (assignments.size() == 1){
+                    throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.InterviewSchedule.MAXIMUM_SCHEDULE_ALLOW));
+                }
+                AssignmentEntity secondAssignment = assignments.get(1);
+                interviewBeginTime = firstAssignment.getBeginTime();
+                interviewEndTime = firstAssignment.getEndTime() + interviewLength;
+                interviewRoomId =  ScheduleConstant.INTERVIEW_ROOM_PREFIX + UUID.randomUUID().toString();
+                waitingRoomId = ScheduleConstant.WAITING_ROOM_PREFIX + UUID.randomUUID().toString();
+            } else {
+                interviewBeginTime = lastInterview.getEndTime() + interviewBufferLength;
+                interviewEndTime = interviewBeginTime + interviewLength;
+                interviewRoomId =  lastInterview.getInterviewRoomId();
+                waitingRoomId = lastInterview.getWaitingRoomId();
+            }
+        }
+
 
         application.setInterviewName("Interview with " + application.getAttendant().getAccount().getFullname());
         application.setInterviewDescription("Interview with " + application.getAttendant().getAccount().getFullname());
-        application.setEndTime(application.getBeginTime() + interviewLength);
+        application.setBeginTime(interviewBeginTime);
+        application.setEndTime(interviewEndTime);
         application.setInterviewStatus(InterviewStatus.NOT_YET);
         CompanyEmployeeEntity companyEmployee = new CompanyEmployeeEntity();
         companyEmployee.setAccountId(interviewerId);
         application.setInterviewer(companyEmployee);
-        String waitingRoomId = ScheduleConstant.WAITING_ROOM_PREFIX + UUID.randomUUID().toString();
-        String interviewRoomId = ScheduleConstant.INTERVIEW_ROOM_PREFIX + UUID.randomUUID().toString();
         application.setWaitingRoomId(waitingRoomId);
         application.setInterviewRoomId(interviewRoomId);
         applicationRepository.save(application);

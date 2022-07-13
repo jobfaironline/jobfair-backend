@@ -109,7 +109,6 @@ public class JobController {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String companyId = userDetails.getCompanyId();
         Page<JobPositionDTO> jobPositions = jobPositionService.getAllJobPositionOfCompany(companyId, jobTypeId, jobLevel, jobTitle, pageSize, offset, sortBy, direction);
-        if (jobPositions.isEmpty()) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(jobPositions);
     }
 
