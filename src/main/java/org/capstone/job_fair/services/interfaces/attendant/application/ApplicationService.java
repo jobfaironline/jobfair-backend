@@ -24,7 +24,7 @@ public interface ApplicationService {
 
     Page<ApplicationEntity> getAllApplicationsOfAttendantByCriteria(String userId, String jobFairName, String jobPositionName, List<ApplicationStatus> statusList, Long fromTime, Long toTime, int offset, int pageSize, String sortBy, Sort.Direction direction);
 
-    void submitApplication(String applicationId, String userId);
+    ApplicationDTO submitApplication(String applicationId, String userId);
 
     Optional<ApplicationDTO> getApplicationByIdForAttendant(String applicationId, String userId);
 

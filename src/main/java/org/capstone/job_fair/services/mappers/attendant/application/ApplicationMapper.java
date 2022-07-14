@@ -30,7 +30,6 @@ import org.mapstruct.*;
         ApplicationSkillMapper.class,
         ApplicationWorkHistoryMapper.class,
         CompanyEmployeeMapper.class,
-        BoothJobPositionMapper.class
 }, nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public abstract class ApplicationMapper {
 
@@ -74,6 +73,9 @@ public abstract class ApplicationMapper {
     @Mapping(target = "dob", source = "attendant.dob")
     @Mapping(target = "jobFairName", source = "boothJobPosition.jobFairBooth.jobFair.name")
     @Mapping(target = "jobFairId", source = "boothJobPosition.jobFairBooth.jobFair.id")
+    @Mapping(target = "candidateFullName", source="fullName")
+    @Mapping(target = "candidateProfileImageUrl", source="profileImageUrl")
+    @Mapping(target = "candidateAboutMe", source="aboutMe")
     public abstract ApplicationWithGenralDataOfApplicantResponse toApplicationWithGenralDataOfApplicantResponse(ApplicationEntity entity);
 
     @Mapping(target = "authorizerName", source = "interviewer", qualifiedByName = "toEmployeeFullName")

@@ -143,6 +143,18 @@ public class ApplicationEntity {
     @Column(name = "matching_point")
     private Double matchingPoint;
 
+    @Column(name = "about_me")
+    private String aboutMe;
+
+    @Column(name = "country_id")
+    private String countryId;
+
+    @Column(name = "profile_image_url")
+    private String profileImageUrl;
+
+    @Column(name = "full_name")
+    private String fullName;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
