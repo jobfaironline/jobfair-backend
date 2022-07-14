@@ -267,7 +267,9 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         applicationMapper.updateFromDTO(applicationEntity, dto);
         applicationEntity = applicationRepository.save(applicationEntity);
-        interviewService.scheduleInterview(applicationEntity.getId(), userId);
+        if (applicationEntity.getStatus() == ApplicationStatus.APPROVE) {
+            interviewService.scheduleInterview(applicationEntity.getId(), userId);
+        }
 
         return applicationMapper.toDTO(applicationEntity);
     }
