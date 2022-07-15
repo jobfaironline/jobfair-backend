@@ -141,23 +141,14 @@ public class InterviewController {
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).ATTENDANT)")
     @GetMapping(ApiEndPoint.Interview.GET_WAITING_ROOM_INFO)
     public ResponseEntity<?> getWaitingRoomInformation(@RequestParam("waitingRoomId") String waitingRoomId) {
-        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        boolean isAttendant = userDetails.hasRole(Role.ATTENDANT);
-        if (isAttendant) {
-            int turn = interviewService.getAttendantTurnInWaitingRoom(userDetails.getId(), waitingRoomId);
-            Map<String, Integer> response = new HashMap<>();
-            response.put("turn", turn);
-            return ResponseEntity.ok(response);
-        } else {
-            List<InterviewScheduleDTO> scheduleDTOS = interviewService.getInterviewScheduleInWaitingRoom(userDetails.getId(), waitingRoomId);
-            List<String> connectedUserId = interviewService.getConnectedUserIds(waitingRoomId);
-            List<EmployeeWaitingRoomScheduleResponse> result = scheduleDTOS.stream().map(dto -> {
-                EmployeeWaitingRoomScheduleResponse response = new EmployeeWaitingRoomScheduleResponse(dto);
-                response.setInWaitingRoom(connectedUserId.contains(dto.getAttendantId()));
-                return response;
-            }).collect(Collectors.toList());
-            return ResponseEntity.ok(result);
-        }
+        List<InterviewScheduleDTO> scheduleDTOS = interviewService.getInterviewScheduleInWaitingRoom(waitingRoomId);
+        List<String> connectedUserId = interviewService.getConnectedUserIds(waitingRoomId);
+        List<EmployeeWaitingRoomScheduleResponse> result = scheduleDTOS.stream().map(dto -> {
+            EmployeeWaitingRoomScheduleResponse response = new EmployeeWaitingRoomScheduleResponse(dto);
+            response.setInWaitingRoom(connectedUserId.contains(dto.getAttendantId()));
+            return response;
+        }).collect(Collectors.toList());
+        return ResponseEntity.ok(result);
     }
 
     @PostMapping(ApiEndPoint.Interview.FINISH_INTERVIEW)
