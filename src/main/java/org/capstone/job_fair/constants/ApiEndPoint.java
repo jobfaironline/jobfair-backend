@@ -46,6 +46,8 @@ public final class ApiEndPoint {
         public static final String SUBMIT_MULTIPLE_APPLICATION = DEMO_ENDPOINT + "/submit-multiple-application";
         public static final String PUBLISH_JOBFAIR = DEMO_ENDPOINT + "/publish-jobfair";
 
+        public static final String CREATE_EMPLOYEES = DEMO_ENDPOINT + "/create-employees";
+
     }
 
     public static final class Quiz {
