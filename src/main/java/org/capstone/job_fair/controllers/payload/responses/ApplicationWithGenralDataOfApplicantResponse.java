@@ -39,5 +39,8 @@ public class ApplicationWithGenralDataOfApplicantResponse {
     String country;
     Long dob;
     Double matchingPoint;
+    String candidateFullName;
+    String candidateProfileImageUrl;
+    String candidateAboutMe;
 
 }

@@ -4,12 +4,14 @@ import lombok.*;
 import org.capstone.job_fair.models.entities.attendant.misc.JobLevelEntity;
 import org.capstone.job_fair.models.entities.attendant.misc.LanguageEntity;
 import org.capstone.job_fair.models.entities.company.CompanyEntity;
+import org.capstone.job_fair.models.entities.company.job.questions.QuestionsEntity;
 import org.capstone.job_fair.models.entities.company.misc.SkillTagEntity;
 import org.capstone.job_fair.models.entities.company.misc.SubCategoryEntity;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -55,6 +57,10 @@ public class JobPositionEntity {
     private String descriptionKeyWord;
     @Column(name = "requirement_key_word")
     private String requirementKeyWord;
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
+    @OneToMany(mappedBy = "jobPosition", orphanRemoval = true)
+    private List<QuestionsEntity> questions;
 
 
     @ManyToMany(fetch = FetchType.LAZY)

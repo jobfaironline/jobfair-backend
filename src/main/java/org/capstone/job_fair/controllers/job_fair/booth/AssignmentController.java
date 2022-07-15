@@ -1,17 +1,23 @@
 package org.capstone.job_fair.controllers.job_fair.booth;
 
+import com.amazonaws.util.json.Jackson;
+import lombok.SneakyThrows;
 import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.AssignmentConstant;
 import org.capstone.job_fair.controllers.payload.requests.job_fair.AssignEmployeeRequest;
 import org.capstone.job_fair.controllers.payload.responses.JobFairAssignmentStatisticsResponse;
 import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
+import org.capstone.job_fair.models.dtos.dynamoDB.NotificationMessageDTO;
 import org.capstone.job_fair.models.dtos.job_fair.booth.AssignmentDTO;
 import org.capstone.job_fair.models.dtos.util.ParseFileResult;
 import org.capstone.job_fair.models.enums.AssignmentType;
+import org.capstone.job_fair.models.enums.NotificationAction;
+import org.capstone.job_fair.models.enums.NotificationType;
 import org.capstone.job_fair.services.interfaces.company.CompanyEmployeeService;
 import org.capstone.job_fair.services.interfaces.job_fair.booth.AssignmentService;
 import org.capstone.job_fair.services.interfaces.job_fair.booth.JobFairBoothService;
+import org.capstone.job_fair.services.interfaces.notification.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -38,19 +44,44 @@ public class AssignmentController {
     @Autowired
     private JobFairBoothService jobFairBoothService;
 
+    @Autowired
+    private NotificationService notificationService;
+
 
     @PostMapping(ApiEndPoint.Assignment.ASSIGN)
+    @SneakyThrows
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) OR hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE)")
     public ResponseEntity<?> assignEmployee(@Valid @RequestBody AssignEmployeeRequest request) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        AssignmentDTO dto = assignmentService.assignEmployee(userDetails.getId(), request.getEmployeeId(), request.getJobFairBoothId(), request.getType(), userDetails.getCompanyId(), request.getBeginTime(), request.getEndTime());
-        return ResponseEntity.ok(dto);
+        AssignmentDTO assigment = assignmentService.assignEmployee(userDetails.getId(), request.getEmployeeId(), request.getJobFairBoothId(), request.getType(), userDetails.getCompanyId(), request.getBeginTime(), request.getEndTime());
+        if (assigment.getType() == AssignmentType.INTERVIEWER || assigment.getType() == AssignmentType.RECEPTION){
+            NotificationMessageDTO notificationMessage = NotificationMessageDTO.builder()
+                    .title(NotificationAction.ASSIGNMENT.toString())
+                    .message(Jackson.getObjectMapper().writeValueAsString(assigment))
+                    .notificationType(NotificationType.NOTI)
+                    .userId(assigment.getCompanyEmployee().getAccountId()).build();
+            notificationService.createNotification(notificationMessage, assigment.getCompanyEmployee().getAccountId());
+        }
+
+        return ResponseEntity.ok(assigment);
     }
 
     @DeleteMapping(ApiEndPoint.Assignment.UNASSIGN + "/{id}")
+    @SneakyThrows
     public ResponseEntity<?> unassignEmployee(@PathVariable("id") String assignmentId) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        AssignmentDTO dto = assignmentService.unAssignEmployee(assignmentId);
-        return ResponseEntity.ok(dto);
+        AssignmentDTO assignment = assignmentService.unAssignEmployee(assignmentId);
+
+        if (assignment.getType() == AssignmentType.INTERVIEWER || assignment.getType() == AssignmentType.RECEPTION){
+            NotificationMessageDTO notificationMessage = NotificationMessageDTO.builder()
+                    .title(NotificationAction.UN_ASSIGNMENT.toString())
+                    .message(Jackson.getObjectMapper().writeValueAsString(assignment))
+                    .notificationType(NotificationType.NOTI)
+                    .userId(assignment.getCompanyEmployee().getAccountId()).build();
+            notificationService.createNotification(notificationMessage, assignment.getCompanyEmployee().getAccountId());
+        }
+
+        return ResponseEntity.ok(assignment);
     }
 
     @PutMapping(ApiEndPoint.Assignment.ASSIGNMENT + "/{id}")

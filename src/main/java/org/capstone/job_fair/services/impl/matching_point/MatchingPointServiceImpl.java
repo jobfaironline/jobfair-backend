@@ -70,9 +70,7 @@ public class MatchingPointServiceImpl implements MatchingPointService {
             List<String> otherKeyWords = new ArrayList<>();
             otherKeyWords.add(jobPosition.getLanguage().getName());
             if (jobPosition.getCategories() != null) {
-                jobPosition.getCategories().forEach(subCategoryEntity -> {
-                    otherKeyWords.add(subCategoryEntity.getName());
-                });
+                jobPosition.getCategories().forEach(subCategoryEntity -> otherKeyWords.add(subCategoryEntity.getName()));
             }
 
 
@@ -163,7 +161,7 @@ public class MatchingPointServiceImpl implements MatchingPointService {
                     });
 
             Map<String, Double> responseBody = response.block();
-            double result = responseBody.get("result");
+            Double result = responseBody.get("result");
             application.setMatchingPoint(result);
             applicationRepository.save(application);
             return application;

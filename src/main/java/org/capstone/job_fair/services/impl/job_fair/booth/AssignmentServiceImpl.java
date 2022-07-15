@@ -65,6 +65,7 @@ public class AssignmentServiceImpl implements AssignmentService {
     private XSLSFileService xslsFileService;
 
 
+
     @Getter
     @Setter
     @AllArgsConstructor
@@ -185,7 +186,11 @@ public class AssignmentServiceImpl implements AssignmentService {
         List<CompanyEmployeeEntity> companyEmployees = companyEmployeeRepository.findAllByCompanyIdAndAccountRoleId(companyId, Role.COMPANY_EMPLOYEE.ordinal());
 
         companyEmployees = companyEmployees.stream().filter(companyEmployee -> {
-            boolean result = assignmentsInJobFair.stream().anyMatch(assignment -> assignment.getCompanyEmployee().getAccountId().equals(companyEmployee.getAccountId()));
+            boolean result = assignmentsInJobFair.stream().anyMatch(assignment -> {
+                boolean isUserHasAssignment = assignment.getCompanyEmployee().getAccountId().equals(companyEmployee.getAccountId());
+                boolean isDecorator = assignment.getType() == AssignmentType.DECORATOR;
+                return (isUserHasAssignment && !isDecorator);
+            });
             return !result;
         }).collect(Collectors.toList());
         return companyEmployees.stream().map(companyEmployeeMapper::toDTO).collect(Collectors.toList());
@@ -351,5 +356,21 @@ public class AssignmentServiceImpl implements AssignmentService {
         }
         parseResult = parseCsvFile(file, jobFairId, companyId, assigner);
         return parseResult;
+    }
+
+    @Override
+    public List<CompanyEmployeeDTO> getAvailableInterviewer(String jobFairBoothId) {
+        long now = new Date().getTime();
+        List<AssignmentEntity> assignments = assignmentRepository.findByJobFairBoothIdAndType(jobFairBoothId, AssignmentType.INTERVIEWER);
+        assignments = assignments.stream().filter(assignment -> assignment.getEndTime() > now).collect(Collectors.toList());
+        assignments.sort((o1, o2) -> Math.toIntExact(o1.getBeginTime() - o2.getBeginTime()));
+        List<CompanyEmployeeEntity> employees = new ArrayList<>();
+        assignments.forEach(assignment -> {
+            if (!employees.contains(assignment.getCompanyEmployee())){
+                employees.add(assignment.getCompanyEmployee());
+            }
+        });
+
+        return employees.stream().map(companyEmployeeMapper::toDTO).collect(Collectors.toList());
     }
 }
