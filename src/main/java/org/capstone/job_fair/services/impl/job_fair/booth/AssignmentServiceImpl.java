@@ -186,7 +186,11 @@ public class AssignmentServiceImpl implements AssignmentService {
         List<CompanyEmployeeEntity> companyEmployees = companyEmployeeRepository.findAllByCompanyIdAndAccountRoleId(companyId, Role.COMPANY_EMPLOYEE.ordinal());
 
         companyEmployees = companyEmployees.stream().filter(companyEmployee -> {
-            boolean result = assignmentsInJobFair.stream().anyMatch(assignment -> assignment.getCompanyEmployee().getAccountId().equals(companyEmployee.getAccountId()));
+            boolean result = assignmentsInJobFair.stream().anyMatch(assignment -> {
+                boolean isUserHasAssignment = assignment.getCompanyEmployee().getAccountId().equals(companyEmployee.getAccountId());
+                boolean isDecorator = assignment.getType() == AssignmentType.DECORATOR;
+                return (isUserHasAssignment && !isDecorator);
+            });
             return !result;
         }).collect(Collectors.toList());
         return companyEmployees.stream().map(companyEmployeeMapper::toDTO).collect(Collectors.toList());
