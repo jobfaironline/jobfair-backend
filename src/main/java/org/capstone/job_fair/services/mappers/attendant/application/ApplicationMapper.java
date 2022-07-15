@@ -83,6 +83,8 @@ public abstract class ApplicationMapper {
     @Mapping(target = "jobPositionTitle", source = "boothJobPosition.title")
     @Mapping(target = "jobFairName", source = "boothJobPosition.jobFairBooth.jobFair.name")
     @Mapping(target = "jobFairId", source = "boothJobPosition.jobFairBooth.jobFair.id")
+    @Mapping(target = "boothName", source = "boothJobPosition.jobFairBooth.name")
+    @Mapping(target = "companyName", source = "boothJobPosition.jobFairBooth.jobFair.company.name")
     public abstract ApplicationForAttendantResponse toApplicationForAttendantResponse(ApplicationEntity entity);
 
     @Named("toEmployeeFullName")
