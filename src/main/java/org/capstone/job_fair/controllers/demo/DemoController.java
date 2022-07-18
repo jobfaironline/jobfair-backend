@@ -1,5 +1,6 @@
 package org.capstone.job_fair.controllers.demo;
 
+import com.amazonaws.Response;
 import com.opencsv.CSVWriter;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +14,7 @@ import org.capstone.job_fair.controllers.payload.requests.attendant.RegisterAtte
 import org.capstone.job_fair.controllers.payload.requests.company.CompanyEmployeeRegisterRequest;
 import org.capstone.job_fair.controllers.payload.requests.company.CreateQuestionsRequest;
 import org.capstone.job_fair.controllers.payload.requests.demo.CreateApplicationAndEvaluateRequest;
+import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
 import org.capstone.job_fair.models.dtos.attendant.AttendantDTO;
 import org.capstone.job_fair.models.dtos.attendant.application.ApplicationDTO;
@@ -29,6 +31,7 @@ import org.capstone.job_fair.models.entities.job_fair.JobFairEntity;
 import org.capstone.job_fair.models.entities.job_fair.booth.AssignmentEntity;
 import org.capstone.job_fair.models.enums.ApplicationStatus;
 import org.capstone.job_fair.models.enums.NotificationType;
+import org.capstone.job_fair.models.enums.TestStatus;
 import org.capstone.job_fair.repositories.attendant.cv.CvRepository;
 import org.capstone.job_fair.repositories.job_fair.JobFairRepository;
 import org.capstone.job_fair.repositories.job_fair.job_fair_booth.AssignmentRepository;
@@ -50,6 +53,7 @@ import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
@@ -289,7 +293,7 @@ public class DemoController {
         return ResponseEntity.ok(createBoothJobPosition(jobFairId));
     }
 
-    private String applyApplication(CreateApplicationRequest request, String accountId) {
+    private String applyApplication(CreateApplicationRequest request, String accountId, TestStatus testStatus, Double matchingPoint) {
         //call applicationDTO
         ApplicationDTO dto = new ApplicationDTO();
 
@@ -307,18 +311,26 @@ public class DemoController {
         dto.setStatus(ApplicationStatus.DRAFT);
         dto.setOriginCvId(request.getCvId());
         dto.setBoothJobPositionDTO(regisDTO);
+        dto.setTestStatus(testStatus);
+        dto.setMatchingPoint(matchingPoint);
         //call create method
         ApplicationDTO result = applicationService.createNewApplication(dto);
-        matchingPointService.calculateFromApplication(result.getId()).subscribe().dispose();
+
+//        matchingPointService.calculateFromApplication(result.getId()).subscribe().dispose();
         applicationService.submitApplication(result.getId(), accountId);
         return result.getId();
     }
 
     private void evaluateApplication(EvaluateApplicationRequest request, String userId) {
+        final double HIGH_MATCHING_POINT = 70;
+        final double MEDIUM_MATCHING_POINT = 50;
+        final double LOW_MATCHING_POINT = 50;
+
         ApplicationDTO dto = new ApplicationDTO();
         dto.setId(request.getApplicationId());
         dto.setEvaluateMessage(request.getEvaluateMessage());
         dto.setStatus(request.getStatus());
+
 
         dto = applicationService.evaluateApplication(dto, userId);
 
@@ -334,9 +346,20 @@ public class DemoController {
     @PostMapping(ApiEndPoint.Demo.SUBMIT_MULTIPLE_APPLICATION + "/apply")
     public ResponseEntity<?> submitMultipleApplication(@RequestBody CreateApplicationAndEvaluateRequest request) {
         List<String> cvIdList = request.getCvId();
-        final double numberOfApprove = cvIdList.size() * 0.3;
-        final double numberOfPending = cvIdList.size() * 0.3;
-        final double numberOfReject = cvIdList.size() - numberOfApprove - numberOfPending;
+
+        if (cvIdList.size() <= 15) {
+            return GenericResponse.build("Cv list must be >= 15 CVs", HttpStatus.NOT_FOUND);
+        }
+
+        final double HIGH_MATCHING_POINT = 0.7;
+        final double MEDIUM_MATCHING_POINT = 0.5;
+        final double LOW_MATCHING_POINT = 0.3;
+
+        final double numberOfFailTest = cvIdList.size() * 0.5;
+        final double numberOfPassTest = cvIdList.size() * 0.5;
+        final double numberOfApprove = numberOfPassTest * 0.3;
+        final double numberOfPending = numberOfPassTest * 0.3;
+        final double numberOfReject = numberOfPassTest - numberOfApprove - numberOfPending;
         List<String> result = new ArrayList<>();
 
         AssignmentEntity assignmentEntity = assignmentRepository.findByEmployeeId(request.getEmployeeId(), request.getJobFairId()).get(1);
@@ -346,36 +369,33 @@ public class DemoController {
         int i = 0;
         //Approve
         for (; i < numberOfApprove; i++) {
-            System.out.println(i);
             String cv = cvIdList.get(i);
             String accountId = cvRepository.findById(cv).get().getAttendant().getAccountId();
             CreateApplicationRequest createApplicationRequest = new CreateApplicationRequest();
             createApplicationRequest.setBoothJobPositionId(BoothJobPositionId);
             createApplicationRequest.setCvId(cv);
-            String applicationId = applyApplication(createApplicationRequest, accountId);
+            String applicationId = applyApplication(createApplicationRequest, accountId, TestStatus.PASS, HIGH_MATCHING_POINT);
             result.add(applicationId);
         }
         //Reject
         for (; i < numberOfApprove + numberOfReject; i++) {
-            System.out.println(i);
             String cv = cvIdList.get(i);
             String accountId = cvRepository.findById(cv).get().getAttendant().getAccountId();
             CreateApplicationRequest createApplicationRequest = new CreateApplicationRequest();
             createApplicationRequest.setBoothJobPositionId(BoothJobPositionId);
             createApplicationRequest.setCvId(cv);
-            String applicationId = applyApplication(createApplicationRequest, accountId);
+            String applicationId = applyApplication(createApplicationRequest, accountId, TestStatus.PASS, MEDIUM_MATCHING_POINT);
             result.add(applicationId);
         }
 
         //Pending
         for (; i < numberOfApprove + numberOfReject + numberOfPending; i++) {
-            System.out.println(i);
             String cv = cvIdList.get(i);
             String accountId = cvRepository.findById(cv).get().getAttendant().getAccountId();
             CreateApplicationRequest createApplicationRequest = new CreateApplicationRequest();
             createApplicationRequest.setBoothJobPositionId(BoothJobPositionId);
             createApplicationRequest.setCvId(cv);
-            String applicationId = applyApplication(createApplicationRequest, accountId);
+            String applicationId = applyApplication(createApplicationRequest, accountId, TestStatus.PASS, LOW_MATCHING_POINT);
             result.add(applicationId);
         }
         return ResponseEntity.ok(result);
@@ -385,9 +405,11 @@ public class DemoController {
     @PostMapping(ApiEndPoint.Demo.SUBMIT_MULTIPLE_APPLICATION + "/evaluate")
     public ResponseEntity<?> evaluateMultipleApplication(@RequestBody CreateApplicationAndEvaluateRequest request) {
         List<String> cvIdList = request.getCvId();
+
         final double numberOfApprove = cvIdList.size() * 0.3;
         final double numberOfPending = cvIdList.size() * 0.3;
         final double numberOfReject = cvIdList.size() - numberOfApprove - numberOfPending;
+
         Map<String, ApplicationStatus> result = new HashMap<>();
 
 
@@ -438,9 +460,8 @@ public class DemoController {
     }
 
     @PostMapping(ApiEndPoint.Demo.CREATE_EMPLOYEES)
-    public ResponseEntity<?> createEmployees(@RequestParam(value = "numberOfEmployees", defaultValue = "77") int numberOfEmployees) {
-        List<CompanyEmployeeDTO> result = createMultipleEmployee(numberOfEmployees);
-        return ResponseEntity.ok(result);
+    public ResponseEntity<?> createEmployees(int numberOfEmployees) {
+        return ResponseEntity.ok(createMultipleEmployee(numberOfEmployees));
     }
 
 }
