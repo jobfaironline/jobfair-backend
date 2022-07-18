@@ -161,7 +161,9 @@ public class StatisticsController {
         response.jobFair.name = jobFairEntity.getName();
         response.jobFair.id = jobFairEntity.getId();
 
-        response.generalStatistics.boothNum = jobFairEntity.getJobFairBoothList().size();
+        response.generalStatistics.boothNum = (int) jobFairEntity.getJobFairBoothList().stream().filter(booth -> {
+            return booth.getName() != null;
+        }).count();
         response.generalStatistics.jobPositionNum = jobFairEntity.getJobFairBoothList().stream()
                 .map(booth -> booth.getBoothJobPositions().size()).mapToInt(Integer::intValue).sum();
         response.generalStatistics.employeeNum = assignmentService.getCountAssignedEmployeeByJobFair(id);
