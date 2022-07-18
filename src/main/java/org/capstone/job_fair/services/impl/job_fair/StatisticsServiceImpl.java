@@ -127,7 +127,11 @@ public class StatisticsServiceImpl implements StatisticsService {
             jobPosition.setName(jobPositionEntity.getTitle());
             jobPosition.setGoal(jobPositionEntity.getNumOfPosition());
             int appliedCVNum = applicationByJobPosition.get(jobPositionEntity.getId()) != null ? applicationByJobPosition.get(jobPositionEntity.getId()).size() : 0;
+            int approvedCVNum = applicationByJobPosition.get(jobPositionEntity.getId()) == null ? 0 : (int)applicationByJobPosition.get(jobPositionEntity.getId()).stream().filter(application -> {
+                return application.getStatus() == ApplicationStatus.APPROVE;
+            }).count();
             jobPosition.setCurrent(appliedCVNum);
+            jobPosition.setApproveCV(approvedCVNum);
             if (applicationByJobPosition.get(jobPositionEntity.getId()) != null) {
                 double averageMatchingPoint = applicationByJobPosition.get(jobPositionEntity.getId()).stream().map(applicationEntity -> {
                     if (applicationEntity.getMatchingPoint() == null) return 0.0;
@@ -159,8 +163,12 @@ public class StatisticsServiceImpl implements StatisticsService {
             booth.setName(boothEntity.getName());
             int visitNum = random.ints(0, 10).findFirst().getAsInt();
             int appliedCvNum = applicationByBooth.get(boothEntity.getId()) != null ? applicationByBooth.get(boothEntity.getId()).size() : 0;
+            int approvedCVNum = applicationByBooth.get(boothEntity.getId()) == null ? 0 : (int)applicationByBooth.get(boothEntity.getId()).stream().filter(application -> {
+                return application.getStatus() == ApplicationStatus.APPROVE;
+            }).count();
             booth.setVisitNum(visitNum);
             booth.setCvNum(appliedCvNum);
+            booth.setApproveCV(approvedCVNum);
             if (applicationByBooth.get(boothEntity.getId()) != null) {
                 double average = applicationByBooth.get(boothEntity.getId()).stream().map(applicationEntity -> {
                     if (applicationEntity.getMatchingPoint() == null) return 0.0;

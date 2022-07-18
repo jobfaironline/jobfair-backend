@@ -47,6 +47,7 @@ public class JobFairStatisticsDTO {
         private String name;
         private int goal = 0;
         private int current = 0;
+        private int approveCV = 0;
         private double matchingPointAverage = 0;
     }
 
@@ -56,6 +57,7 @@ public class JobFairStatisticsDTO {
         private String name;
         private int visitNum = 0;
         private int cvNum = 0;
+        private int approveCV = 0;
         private double matchingPointAverage = 0.0;
     }
 }
