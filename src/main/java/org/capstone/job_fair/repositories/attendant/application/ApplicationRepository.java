@@ -47,6 +47,14 @@ public interface ApplicationRepository extends JpaRepository<ApplicationEntity, 
                                                                               Pageable pageable);
 
     @Query("select a from ApplicationEntity a " +
+            "where a.boothJobPosition.jobFairBooth.jobFair.company.id  = :companyId " +
+            "and a.boothJobPosition.jobFairBooth.id = :jobFairBoothId and a.status in :statusList")
+    Page<ApplicationEntity> findAllApplicationOfCompanyByJobFairBoothIdAndStatusIn(@Param("companyId") String companyId,
+                                                                              @Param("jobFairBoothId") String jobFairBoothId,
+                                                                              @Param("statusList") List<ApplicationStatus> applicationStatusList,
+                                                                              Pageable pageable);
+
+    @Query("select a from ApplicationEntity a " +
             "where a.boothJobPosition.jobFairBooth.jobFair.company.id = :companyId and a.boothJobPosition.title like concat('%', :jobTitle, '%') " +
             "and a.boothJobPosition.jobFairBooth.jobFair.name like concat('%', :jobFairName, '%') and a.status in :statusList")
     Page<ApplicationEntity> findAllApplicationOfCompanyByJobPositionTitleLikeAndJobFairNameLikeAndStatusIn(@Param("companyId") String companyId,
