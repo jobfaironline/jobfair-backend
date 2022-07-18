@@ -432,9 +432,9 @@ public class InterviewServiceImpl implements InterviewService {
         assignments.sort((o1, o2) -> {
             return Math.toIntExact(o1.getBeginTime() - o2.getBeginTime());
         });
-        if (assignments.isEmpty()) {
-            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.InterviewSchedule.MAXIMUM_SCHEDULE_ALLOW));
-        }
+//        if (assignments.isEmpty()) {
+//            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.InterviewSchedule.MAXIMUM_SCHEDULE_ALLOW));
+//        }
         AssignmentEntity firstAssignment = assignments.get(0);
         List<ApplicationEntity> scheduleList = applicationRepository.findWholeByInterviewerAndInTimeRange(interviewerId, firstAssignment.getBeginTime(), firstAssignment.getEndTime());
         String interviewRoomId = "";
@@ -452,9 +452,9 @@ public class InterviewServiceImpl implements InterviewService {
             //step 3.2
             ApplicationEntity lastInterview = scheduleList.get(scheduleList.size() -1);
             if (lastInterview.getEndTime() + interviewLength + interviewBufferLength > firstAssignment.getEndTime()){
-                if (assignments.size() == 1){
-                    throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.InterviewSchedule.MAXIMUM_SCHEDULE_ALLOW));
-                }
+//                if (assignments.size() == 1){
+//                    throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.InterviewSchedule.MAXIMUM_SCHEDULE_ALLOW));
+//                }
                 AssignmentEntity secondAssignment = assignments.get(1);
                 interviewBeginTime = firstAssignment.getBeginTime();
                 interviewEndTime = firstAssignment.getEndTime() + interviewLength;
