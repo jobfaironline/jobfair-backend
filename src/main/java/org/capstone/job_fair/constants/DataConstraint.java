@@ -22,11 +22,11 @@ public final class DataConstraint {
         }
 
         public static final int MIN_TIME = 0;
-        public static final int MAX_DESCRIPTION_LENGTH = 500000;
+        public static final int MAX_DESCRIPTION_LENGTH = 500;
         public static final int MESSAGE_MIN_LENGTH = 1;
         public static final int MESSAGE_MAX_LENGTH = 500;
         public static final int NAME_MAX_LENGTH = 100;
-        public static final int TARGET_ATTENDANT_MAX_LENGTH = 500;
+        public static final int TARGET_ATTENDANT_MAX_LENGTH = 100;
         public static final long MINIMUM_DECORATE_TIME = 60 * 60 * 1000L;
         public static final long MINIMUM_PUBLIC_TIME = 60 * 60 * 1000L;
         public static final long MINIMUM_BUFFER_TIME = 0L;
@@ -110,7 +110,7 @@ public final class DataConstraint {
         }
 
         public static final int TITLE_LENGTH = 200;
-        public static final int DESCRIPTION_LENGTH = 1000;
+        public static final int DESCRIPTION_LENGTH = 500;
         public static final int NOTE_LENGTH = 1000;
         public static final long SALARY_MAX = 10000;
         public static final long SALARY_MIN = 0;
@@ -121,7 +121,7 @@ public final class DataConstraint {
         public static final int SKILL_TAG_MAX = 5;
         public static final int SKILL_TAG_MIN = 1;
         public static final int EMPLOYEE_MIN = 1;
-        public static final int EMPLOYEE_MAX = 100000;
+        public static final int EMPLOYEE_MAX = 100;
         public static final int TEST_LENGTH_MIN = 1;
         public static final int TEST_LENGTH_MAX = 1000;
         public static final int NUM_OF_QUESTION_MIN = 1;

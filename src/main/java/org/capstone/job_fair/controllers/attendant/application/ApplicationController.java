@@ -1,5 +1,7 @@
 package org.capstone.job_fair.controllers.attendant.application;
 
+import com.amazonaws.util.json.Jackson;
+import lombok.SneakyThrows;
 import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.ApplicationConstant;
@@ -10,13 +12,16 @@ import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
 import org.capstone.job_fair.models.dtos.attendant.AttendantDTO;
 import org.capstone.job_fair.models.dtos.attendant.application.ApplicationDTO;
+import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
 import org.capstone.job_fair.models.dtos.dynamoDB.NotificationMessageDTO;
 import org.capstone.job_fair.models.dtos.job_fair.booth.BoothJobPositionDTO;
 import org.capstone.job_fair.models.entities.attendant.application.ApplicationEntity;
 import org.capstone.job_fair.models.enums.ApplicationStatus;
+import org.capstone.job_fair.models.enums.NotificationAction;
 import org.capstone.job_fair.models.enums.NotificationType;
 import org.capstone.job_fair.models.enums.Role;
 import org.capstone.job_fair.services.interfaces.attendant.application.ApplicationService;
+import org.capstone.job_fair.services.interfaces.job_fair.booth.AssignmentService;
 import org.capstone.job_fair.services.interfaces.matching_point.MatchingPointService;
 import org.capstone.job_fair.services.interfaces.notification.NotificationService;
 import org.capstone.job_fair.services.mappers.attendant.application.ApplicationMapper;
@@ -36,6 +41,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 public class ApplicationController {
@@ -51,6 +57,9 @@ public class ApplicationController {
 
     @Autowired
     private MatchingPointService matchingPointService;
+
+    @Autowired
+    private AssignmentService assignmentService;
 
 
     @GetMapping(ApiEndPoint.Application.APPLICATION_ENDPOINT + "/{id}")
@@ -105,10 +114,22 @@ public class ApplicationController {
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ATTENDANT)")
     @PostMapping(ApiEndPoint.Application.SUBMIT_APPLICATION + "/{id}")
+    @SneakyThrows
     public ResponseEntity<?> submitApplication(@PathVariable("id") String applicationId) {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         UserDetailsImpl user = (UserDetailsImpl) securityContext.getAuthentication().getPrincipal();
-        applicationService.submitApplication(applicationId, user.getId());
+        ApplicationDTO application = applicationService.submitApplication(applicationId, user.getId());
+
+        List<CompanyEmployeeDTO> employees = assignmentService.getAvailableInterviewer(application.getBoothJobPositionDTO().getJobFairBooth().getId());
+        NotificationMessageDTO notificationMessage = NotificationMessageDTO.builder()
+                .title(NotificationAction.APPLICATION.toString())
+                .message(Jackson.getObjectMapper().writeValueAsString(application))
+                .notificationType(NotificationType.NOTI)
+                .build();
+        List<String> ids = employees.stream().map(CompanyEmployeeDTO::getAccountId).collect(Collectors.toList());
+        notificationService.createNotification(notificationMessage, ids);
+
+
         return ResponseEntity.ok().build();
     }
 

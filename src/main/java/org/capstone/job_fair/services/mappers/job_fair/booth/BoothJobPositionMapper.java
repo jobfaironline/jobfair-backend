@@ -3,17 +3,20 @@ package org.capstone.job_fair.services.mappers.job_fair.booth;
 import org.capstone.job_fair.models.dtos.company.misc.SkillTagDTO;
 import org.capstone.job_fair.models.dtos.company.misc.SubCategoryDTO;
 import org.capstone.job_fair.models.dtos.job_fair.booth.BoothJobPositionDTO;
+import org.capstone.job_fair.models.dtos.job_fair.booth.JobFairBoothDTO;
 import org.capstone.job_fair.models.entities.attendant.misc.JobLevelEntity;
 import org.capstone.job_fair.models.entities.attendant.misc.LanguageEntity;
 import org.capstone.job_fair.models.entities.company.job.JobTypeEntity;
 import org.capstone.job_fair.models.entities.company.misc.SkillTagEntity;
 import org.capstone.job_fair.models.entities.company.misc.SubCategoryEntity;
 import org.capstone.job_fair.models.entities.job_fair.booth.BoothJobPositionEntity;
+import org.capstone.job_fair.models.entities.job_fair.booth.JobFairBoothEntity;
 import org.capstone.job_fair.models.enums.JobLevel;
 import org.capstone.job_fair.models.enums.JobType;
 import org.capstone.job_fair.models.enums.Language;
 import org.capstone.job_fair.services.mappers.company.misc.SkillTagMapper;
 import org.capstone.job_fair.services.mappers.company.misc.SubCategoryMapper;
+import org.capstone.job_fair.services.mappers.job_fair.booth.JobFairBoothMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -41,7 +44,7 @@ public abstract class BoothJobPositionMapper {
     @Mapping(target = "jobType", source = "jobTypeEntity", qualifiedByName = "toJobPositionDTOJobType")
     @Mapping(target = "subCategoryDTOs", source = "categories", qualifiedByName = "toJobPositionDTOSubCategory")
     @Mapping(target = "skillTagDTOS", source = "skillTagEntities", qualifiedByName = "toJobPositionDTOSkillTag")
-    @Mapping(target = "jobFairBooth", ignore = true)
+    @Mapping(target = "jobFairBooth", source="jobFairBooth", qualifiedByName = "toJobFairBoothDTO")
     public abstract BoothJobPositionDTO toDTO(BoothJobPositionEntity entity);
 
     @Mapping(target = "language", qualifiedByName = "toJobPositionEntityLanguage")
@@ -51,6 +54,15 @@ public abstract class BoothJobPositionMapper {
     @Mapping(target = "skillTagEntities", source = "skillTagDTOS", qualifiedByName = "toJobPositionEntitySkillTag")
     @Mapping(target = "jobFairBooth", ignore = true)
     public abstract BoothJobPositionEntity toEntity(BoothJobPositionDTO jobPositionDTO);
+
+
+    @Named("toJobFairBoothDTO")
+    public JobFairBoothDTO toJobFairBoothDTO (JobFairBoothEntity entity){
+        if (entity == null) return null;
+        JobFairBoothDTO dto = new JobFairBoothDTO();
+        dto.setId(entity.getId());
+        return dto;
+    }
 
     @Named("toJobPositionDTOSkillTag")
     public List<SkillTagDTO> toJobPositionDTOSkillTag(Set<SkillTagEntity> skillTags) {

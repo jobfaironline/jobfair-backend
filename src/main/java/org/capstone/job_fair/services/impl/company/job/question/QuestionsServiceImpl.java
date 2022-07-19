@@ -99,7 +99,6 @@ public class QuestionsServiceImpl implements QuestionsService {
         if (!questionsEntityOptional.isPresent())
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Question.NOT_FOUND));
         QuestionsEntity questionsEntity = questionsEntityOptional.get();
-        questionsEntity.setStatus(QuestionStatus.INACTIVE);
         questionsRepository.save(questionsEntity);
         return questionsMapper.toDTO(questionsEntity);
     }

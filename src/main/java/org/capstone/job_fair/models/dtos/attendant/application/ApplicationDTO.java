@@ -54,5 +54,10 @@ public class ApplicationDTO {
     private String attendantDisadvantage;
     private String interviewNote;
     private Double matchingPoint;
+    private String aboutMe;
+    private String fullName;
+    private String profileImageUrl;
+    private String countryId;
+
 
 }

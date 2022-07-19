@@ -24,4 +24,6 @@ public class ApplicationForAttendantResponse {
 
     private String jobPositionTitle;
     private String jobPositionId;
+    private String boothName;
+    private String companyName;
 }

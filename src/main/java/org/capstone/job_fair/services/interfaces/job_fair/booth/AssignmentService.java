@@ -33,4 +33,6 @@ public interface AssignmentService {
     Optional<AssignmentDTO> getAssignmentById(String id);
 
     ParseFileResult<AssignmentDTO> createNewAssignmentsFromFile(MultipartFile file, String jobFairId, String companyId, String assignerId);
+
+    List<CompanyEmployeeDTO> getAvailableInterviewer(String jobFairBoothId);
 }

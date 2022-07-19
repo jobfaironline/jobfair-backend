@@ -22,7 +22,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -136,6 +135,11 @@ public class ApplicationServiceImpl implements ApplicationService {
         entity.setSkills(cvEntity.getSkills().stream().map(applicationSkillMapper::toEntity).collect(Collectors.toList()));
         entity.setWorkHistories(cvEntity.getWorkHistories().stream().map(applicationWorkHistoryMapper::toEntity).collect(Collectors.toList()));
         entity.setBoothJobPosition(jobPositionOpt.get());
+        entity.setAboutMe(cvEntity.getAboutMe());
+        entity.setCountryId(cvEntity.getCountryId());
+        entity.setFullName(cvEntity.getFullName());
+        entity.setProfileImageUrl(cvEntity.getProfileImageUrl());
+
 
         ApplicationEntity resultEntity = applicationRepository.save(entity);
         return applicationMapper.toDTO(resultEntity);
@@ -154,7 +158,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     @Transactional
-    public void submitApplication(String applicationId, String userId) {
+    public ApplicationDTO submitApplication(String applicationId, String userId) {
         Optional<ApplicationEntity> entityOptional = applicationRepository.findById(applicationId);
         if (!entityOptional.isPresent()) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.APPLICATION_NOT_FOUND));
@@ -174,7 +178,8 @@ public class ApplicationServiceImpl implements ApplicationService {
         }
 
         entity.setStatus(ApplicationStatus.PENDING);
-        applicationRepository.save(entity);
+        entity = applicationRepository.save(entity);
+        return applicationMapper.toDTO(entity);
     }
 
     @Override
@@ -244,11 +249,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         boolean isValidUser = applicationEntity
                 .getBoothJobPosition().getJobFairBooth().getAssignments()
                 .stream()
-                .anyMatch(assignmentEntity -> {
-                    System.out.println(assignmentEntity.getCompanyEmployee().getAccountId().equals(userId));
-                    System.out.println(assignmentEntity.getType() == AssignmentType.INTERVIEWER);
-                   return  assignmentEntity.getCompanyEmployee().getAccountId().equals(userId) && assignmentEntity.getType() == AssignmentType.INTERVIEWER;
-                });
+                .anyMatch(assignmentEntity -> assignmentEntity.getCompanyEmployee().getAccountId().equals(userId) && assignmentEntity.getType() == AssignmentType.INTERVIEWER);
         if (!isValidUser) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.MISS_MATCH_INTERVIEWER));
         }
@@ -267,7 +268,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         applicationMapper.updateFromDTO(applicationEntity, dto);
         applicationEntity = applicationRepository.save(applicationEntity);
-        if (applicationEntity.getStatus() == ApplicationStatus.APPROVE) {
+        if (applicationEntity.getStatus() == ApplicationStatus.APPROVE){
             interviewService.scheduleInterview(applicationEntity.getId(), userId);
         }
 
