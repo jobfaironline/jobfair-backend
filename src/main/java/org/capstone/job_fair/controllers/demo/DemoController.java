@@ -1,8 +1,10 @@
 package org.capstone.job_fair.controllers.demo;
 
 import com.amazonaws.Response;
+import com.amazonaws.util.json.Jackson;
 import com.opencsv.CSVWriter;
 import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import org.capstone.job_fair.constants.ApiEndPoint;
@@ -30,6 +32,7 @@ import org.capstone.job_fair.models.dtos.job_fair.booth.JobFairBoothDTO;
 import org.capstone.job_fair.models.entities.job_fair.JobFairEntity;
 import org.capstone.job_fair.models.entities.job_fair.booth.AssignmentEntity;
 import org.capstone.job_fair.models.enums.ApplicationStatus;
+import org.capstone.job_fair.models.enums.NotificationAction;
 import org.capstone.job_fair.models.enums.NotificationType;
 import org.capstone.job_fair.models.enums.TestStatus;
 import org.capstone.job_fair.repositories.attendant.cv.CvRepository;
@@ -43,6 +46,7 @@ import org.capstone.job_fair.services.interfaces.company.CompanyEmployeeService;
 import org.capstone.job_fair.services.interfaces.company.CompanyService;
 import org.capstone.job_fair.services.interfaces.company.job.JobPositionService;
 import org.capstone.job_fair.services.interfaces.company.job.question.QuestionsService;
+import org.capstone.job_fair.services.interfaces.job_fair.booth.AssignmentService;
 import org.capstone.job_fair.services.interfaces.job_fair.booth.JobFairBoothService;
 import org.capstone.job_fair.services.interfaces.matching_point.MatchingPointService;
 import org.capstone.job_fair.services.interfaces.notification.NotificationService;
@@ -119,6 +123,9 @@ public class DemoController {
     private QuestionsMapper questionsMapper;
 
 
+    @Autowired
+    private AssignmentService assignmentService;
+
 
 
     private String getSaltString(int number) {
@@ -171,6 +178,41 @@ public class DemoController {
         return dto.getId();
     }
 
+    private CreateQuestionsRequest.Choice generateAnswer (String content, Boolean status) {
+        return new CreateQuestionsRequest.Choice(content, status);
+    }
+
+    private CreateQuestionsRequest generateQuestion (String jobPositionId) {
+        CreateQuestionsRequest request = new CreateQuestionsRequest();
+        List<CreateQuestionsRequest.Choice> listChoices = new ArrayList<>();
+        //correct choice
+        CreateQuestionsRequest.Choice choice1 = new CreateQuestionsRequest.Choice();
+        choice1.setContent("Telephone networks");
+        choice1.setIsCorrect(true);
+        listChoices.add(choice1);
+
+        CreateQuestionsRequest.Choice choice2 = new CreateQuestionsRequest.Choice();
+        choice2.setContent("Telegraph networks ");
+        choice2.setIsCorrect(true);
+        listChoices.add(choice2);
+
+        CreateQuestionsRequest.Choice choice3 = new CreateQuestionsRequest.Choice();
+        choice3.setContent("Wireless networks");
+        choice3.setIsCorrect(true);
+        listChoices.add(choice3);
+
+        //wrong choice
+        CreateQuestionsRequest.Choice wrongChoice = new CreateQuestionsRequest.Choice();
+        wrongChoice.setContent("That is correct answer");
+        wrongChoice.setIsCorrect(false);
+        listChoices.add(wrongChoice);
+
+        request.setJobPositionId(jobPositionId);
+        request.setContent("Which of the following networks use store-and-forward switching operation?");
+        request.setChoicesList(listChoices);
+
+        return request;
+    }
     //This function must be call when Supervisor edit booth profile. No add booth job position manually and must run script
     //REMEMBER: run script to delete all application first !
     private List<BoothJobPositionDTO> createBoothJobPosition(String jobFairId) {
@@ -181,26 +223,11 @@ public class DemoController {
 
         //Add 1 question (includes 1 correct answer and 1 wrong answer) to each job position
         jobPositions.getContent().stream().forEach(item -> {
-            CreateQuestionsRequest request = new CreateQuestionsRequest();
-            List<CreateQuestionsRequest.Choice> listChoices = new ArrayList<>();
-            //correct choice
-            CreateQuestionsRequest.Choice correctChoice = new CreateQuestionsRequest.Choice();
-            correctChoice.setContent("Answer: câu này đúng nè chọn đi");
-            correctChoice.setIsCorrect(true);
-            listChoices.add(correctChoice);
-
-            //wrong choice
-            CreateQuestionsRequest.Choice wrongChoice = new CreateQuestionsRequest.Choice();
-            wrongChoice.setContent("Answer: câu này sai đó đừng chọn");
-            wrongChoice.setIsCorrect(false);
-            listChoices.add(wrongChoice);
-
-            request.setJobPositionId(item.getId());
-            request.setContent("Question: Hãy tìm câu trả lời đúng");
-            request.setChoicesList(listChoices);
-
-            //create questions
-            createQuestions(request);
+            for (int i = 0; i < 4; i++) {
+                CreateQuestionsRequest request = generateQuestion(item.getId());
+                //create questions
+                createQuestions(request);
+            }
         });
 
         //Get all job fair booths of job fair, then add job position to those booths
@@ -292,7 +319,7 @@ public class DemoController {
     public ResponseEntity<?> createBoothJobPositions(@RequestParam String jobFairId) {
         return ResponseEntity.ok(createBoothJobPosition(jobFairId));
     }
-
+    @SneakyThrows
     private String applyApplication(CreateApplicationRequest request, String accountId, TestStatus testStatus, Double matchingPoint) {
         //call applicationDTO
         ApplicationDTO dto = new ApplicationDTO();
@@ -317,7 +344,17 @@ public class DemoController {
         ApplicationDTO result = applicationService.createNewApplication(dto);
 
 //        matchingPointService.calculateFromApplication(result.getId()).subscribe().dispose();
-        applicationService.submitApplication(result.getId(), accountId);
+        result = applicationService.submitApplication(result.getId(), accountId);
+
+        //notification
+        List<CompanyEmployeeDTO> employees = assignmentService.getAvailableInterviewer(result.getBoothJobPositionDTO().getJobFairBooth().getId());
+        NotificationMessageDTO notificationMessage = NotificationMessageDTO.builder()
+                .title(NotificationAction.APPLICATION.toString())
+                .message(Jackson.getObjectMapper().writeValueAsString(result))
+                .notificationType(NotificationType.NOTI)
+                .build();
+        List<String> ids = employees.stream().map(CompanyEmployeeDTO::getAccountId).collect(Collectors.toList());
+        notificationService.createNotification(notificationMessage, ids);
         return result.getId();
     }
 
