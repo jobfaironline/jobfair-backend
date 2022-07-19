@@ -2,10 +2,7 @@ package org.capstone.job_fair.controllers.account;
 
 import lombok.extern.slf4j.Slf4j;
 import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
-import org.capstone.job_fair.constants.AWSConstant;
-import org.capstone.job_fair.constants.ApiEndPoint;
-import org.capstone.job_fair.constants.DataConstraint;
-import org.capstone.job_fair.constants.MessageConstant;
+import org.capstone.job_fair.constants.*;
 import org.capstone.job_fair.controllers.payload.requests.account.ChangePasswordRequest;
 import org.capstone.job_fair.controllers.payload.responses.BasicInfoResponse;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
@@ -20,6 +17,7 @@ import org.capstone.job_fair.services.mappers.token.AccountVerifyTokenMapper;
 import org.capstone.job_fair.utils.ImageUtil;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -30,7 +28,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -55,8 +52,11 @@ public class AccountController {
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
     @GetMapping(ApiEndPoint.Account.ACCOUNT_ENDPOINT)
-    public ResponseEntity<List<AccountDTO>> getAccounts() {
-        return new ResponseEntity<>(accountService.getAllAccounts(), HttpStatus.OK);
+    public ResponseEntity<?> getAccounts(@RequestParam(value = "offset", defaultValue = AccountConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset,
+                                         @RequestParam(value = "pageSize", defaultValue = AccountConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize,
+                                         @RequestParam(value = "sortBy", defaultValue = AccountConstant.DEFAULT_SEARCH_SORT_BY_VALUE) String sortBy,
+                                         @RequestParam(value = "direction", required = false, defaultValue = AccountConstant.DEFAULT_SORT_DIRECTION) Sort.Direction direction) {
+        return new ResponseEntity<>(accountService.getAllAccounts(pageSize, offset, sortBy, direction), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")

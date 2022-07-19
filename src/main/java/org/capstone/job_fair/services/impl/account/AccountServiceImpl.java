@@ -4,6 +4,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import org.capstone.job_fair.constants.ApiEndPoint;
+import org.capstone.job_fair.constants.DataConstraint;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
@@ -19,15 +20,16 @@ import org.capstone.job_fair.utils.AwsUtil;
 import org.capstone.job_fair.utils.DomainUtil;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -59,11 +61,15 @@ public class AccountServiceImpl implements AccountService {
     @Autowired
     private AwsUtil awsUtil;
 
+    private void validatePaging(int pageSize, int offset) {
+        if (offset < DataConstraint.Paging.OFFSET_MIN || pageSize < DataConstraint.Paging.PAGE_SIZE_MIN)
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Account.INVALID_PAGE_NUMBER));
+    }
+
     @Override
-    public List<AccountDTO> getAllAccounts() {
-        return accountRepository.findAll()
-                .stream().map(AccountEntity -> accountMapper.toDTO(AccountEntity))
-                .collect(Collectors.toList());
+    public Page<AccountDTO> getAllAccounts(int pageSize, int offset, String sortBy, Sort.Direction direction) {
+        validatePaging(pageSize, offset);
+        return accountRepository.findAll(PageRequest.of(offset, pageSize).withSort(direction, sortBy)).map(accountMapper::toDTO);
     }
 
     @Override
