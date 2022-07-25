@@ -151,6 +151,7 @@ public final class MessageConstant {
         public static final String VERIFY_ACCOUNT_TOKEN_INTERVAL_ERROR = "account.verify.token-interval-error";
         public static final String ALREADY_VERIFIED = "account.verify.already-verified";
         public static final String NOT_VERIRIED = "account.verify.not-verified";
+        public static final String INVALID_PAGE_NUMBER = "account.paging.invalid-page-number";
 
         private Account() {
         }

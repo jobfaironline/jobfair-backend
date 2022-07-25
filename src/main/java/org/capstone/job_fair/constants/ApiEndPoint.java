@@ -121,6 +121,7 @@ public final class ApiEndPoint {
         public static final String PUBLISHABLE = JOB_FAIR + "/check-publish";
         public static final String UPLOAD_THUMBNAIL = JOB_FAIR + "/upload-thumbnail";
         public static final String FOR_ATTENDANT = JOB_FAIR + "/attendants";
+        public static final String STATISTICS = JOB_FAIR + "/statistics";
     }
 
     public static class Questions {
@@ -300,6 +301,7 @@ public final class ApiEndPoint {
         }
 
         public static final String JOB_FAIR_BOOTH = ROOT_ENDPOINT + VERSION + "/job-fair-booth";
+        public static final String STATISTICS = JOB_FAIR_BOOTH + "/statistics";
     }
 
     public static final class Cv {

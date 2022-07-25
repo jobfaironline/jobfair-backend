@@ -2,12 +2,13 @@ package org.capstone.job_fair.services.interfaces.account;
 
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface AccountService {
-    List<AccountDTO> getAllAccounts();
+    Page<AccountDTO> getAllAccounts(int pageSize, int offset, String sortBy, Sort.Direction direction);
 
     Optional<AccountEntity> getActiveAccountByEmail(String email);
 
