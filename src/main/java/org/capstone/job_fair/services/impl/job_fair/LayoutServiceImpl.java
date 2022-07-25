@@ -208,13 +208,13 @@ public class LayoutServiceImpl implements LayoutService {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.NOT_EDITABLE));
 
         //check new layout's id == jobFair's layout's id
-        if (jobFairEntity.getJobFairBoothList().size() != 0 && jobFairEntity.getJobFairBoothList().get(0).getBooth().getLayout().getId().equals(layoutId)) {
-            return;
-        }
+//        if (jobFairEntity.getJobFairBoothList().size() != 0 && jobFairEntity.getJobFairBoothList().get(0).getBooth().getLayout().getId().equals(layoutId)) {
+//            return;
+//        }
 
-        for (JobFairBoothEntity booth : jobFairEntity.getJobFairBoothList()) {
-            assignmentRepository.deleteByJobFairBoothId(booth.getId());
-        }
+//        for (JobFairBoothEntity booth : jobFairEntity.getJobFairBoothList()) {
+//            assignmentRepository.deleteByJobFairBoothId(booth.getId());
+//        }
 
         jobFairBoothRepository.deleteAllByJobFairId(jobFairId);
 
