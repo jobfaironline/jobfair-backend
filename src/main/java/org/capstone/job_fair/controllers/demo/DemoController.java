@@ -35,6 +35,7 @@ import org.capstone.job_fair.models.entities.company.CompanyEmployeeEntity;
 import org.capstone.job_fair.models.entities.job_fair.JobFairEntity;
 import org.capstone.job_fair.models.entities.job_fair.booth.AssignmentEntity;
 import org.capstone.job_fair.models.enums.*;
+import org.capstone.job_fair.models.statuses.AccountStatus;
 import org.capstone.job_fair.repositories.attendant.cv.CvRepository;
 import org.capstone.job_fair.repositories.company.CompanyEmployeeRepository;
 import org.capstone.job_fair.repositories.job_fair.JobFairRepository;
@@ -710,7 +711,18 @@ public class DemoController {
 
             //maximum needed employee will be 40, so get 45
             Page<CompanyEmployeeDTO> pageResult = companyEmployeeService.getAllCompanyEmployees(userDetails.getCompanyId(), "", 45, 0, "account.createTime", Sort.Direction.ASC);
-            List<CompanyEmployeeDTO> neededEmployeeList = pageResult.getContent().stream().limit(totalNumberOfNeededEmployee).collect(Collectors.toList());
+            List<CompanyEmployeeDTO> neededEmployeeList = pageResult
+                    .getContent()
+                    .stream()
+                    .filter(item -> item.getAccount().getRole() != Role.COMPANY_MANAGER)
+                    .limit(totalNumberOfNeededEmployee).collect(Collectors.toList());
+
+            //make sure these employee must be VERIFIED
+            neededEmployeeList.forEach(item -> {
+                AccountDTO dto = item.getAccount();
+                dto.setStatus(AccountStatus.VERIFIED);
+                item.setAccount(dto);
+            });
 
             for (int j = 0; j <= totalNumberOfAssignBooth; j++) {
                 //get first 4 employees from total needed employee
