@@ -1,6 +1,5 @@
 package org.capstone.job_fair.controllers.job_fair;
 
-import com.amazonaws.services.sqs.model.SendMessageResult;
 import com.amazonaws.util.json.Jackson;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +33,7 @@ import org.capstone.job_fair.services.mappers.job_fair.JobFairMapper;
 import org.capstone.job_fair.utils.ImageUtil;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -71,6 +71,7 @@ public class JobFairController {
     private FileStorageService fileStorageService;
 
     @Autowired
+    @Qualifier("LocalNotificationService")
     private NotificationService notificationService;
 
     @Autowired

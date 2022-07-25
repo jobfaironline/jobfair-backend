@@ -6,6 +6,7 @@ import org.capstone.job_fair.models.dtos.dynamoDB.NotificationMessageDTO;
 import org.capstone.job_fair.models.enums.NotificationType;
 import org.capstone.job_fair.services.interfaces.notification.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 public class NotificationController {
 
     @Autowired
+    @Qualifier("LocalNotificationService")
     private NotificationService notificationService;
 
     @GetMapping(ApiEndPoint.Notification.NOTIFICATION)
