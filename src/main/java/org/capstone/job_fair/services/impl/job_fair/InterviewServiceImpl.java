@@ -427,14 +427,15 @@ public class InterviewServiceImpl implements InterviewService {
 
         assignments = assignments.stream().filter(assignment -> {
             if (assignment.getType() != AssignmentType.INTERVIEWER) return false;
+            System.out.println(assignment.getEndTime());
             return assignment.getEndTime() > now + interviewLength + interviewBufferLength;
         }).collect(Collectors.toList());
         assignments.sort((o1, o2) -> {
             return Math.toIntExact(o1.getBeginTime() - o2.getBeginTime());
         });
-//        if (assignments.isEmpty()) {
-//            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.InterviewSchedule.MAXIMUM_SCHEDULE_ALLOW));
-//        }
+        if (assignments.isEmpty()) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.InterviewSchedule.MAXIMUM_SCHEDULE_ALLOW));
+        }
         AssignmentEntity firstAssignment = assignments.get(0);
         List<ApplicationEntity> scheduleList = applicationRepository.findWholeByInterviewerAndInTimeRange(interviewerId, firstAssignment.getBeginTime(), firstAssignment.getEndTime());
         String interviewRoomId = "";

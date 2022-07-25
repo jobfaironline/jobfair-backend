@@ -101,11 +101,11 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
         } catch (EntityNotFoundException ex) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Company.NOT_FOUND));
         }
-        int currentCompanyEmployeeNum = employeeRepository.countByCompanyIdAndAccountStatusIn(companyEntity.getId(),
-                Arrays.asList(AccountStatus.VERIFIED, AccountStatus.REGISTERED));
-        if (currentCompanyEmployeeNum >= companyEntity.getEmployeeMaxNum()) {
-            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyEmployee.MAX_QUOTA_FOR_COMPANY_EMPLOYEE));
-        }
+//        int currentCompanyEmployeeNum = employeeRepository.countByCompanyIdAndAccountStatusIn(companyEntity.getId(),
+//                Arrays.asList(AccountStatus.VERIFIED, AccountStatus.REGISTERED));
+//        if (currentCompanyEmployeeNum >= companyEntity.getEmployeeMaxNum()) {
+//            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyEmployee.MAX_QUOTA_FOR_COMPANY_EMPLOYEE));
+//        }
 
         String password = PasswordGenerator.generatePassword();
         dto.getAccount().setPassword(password);

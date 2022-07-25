@@ -48,6 +48,11 @@ public final class ApiEndPoint {
 
         public static final String CREATE_EMPLOYEES = DEMO_ENDPOINT + "/create-employees";
 
+        public static final String CREATE_COMPANIES_WITH_80_EMPLOYEES = DEMO_ENDPOINT + "/create-companies";
+        public static final String CREATE_1_DRAFT_JOB_FAIR_FOR_COMPANY = DEMO_ENDPOINT + "/create-1-draft";
+
+        public static final String CREATE_JOB_FAIR_DRAFT_FOR_COMPANIES = DEMO_ENDPOINT + "/create-job-fair-draft";
+
     }
 
     public static final class Quiz {
