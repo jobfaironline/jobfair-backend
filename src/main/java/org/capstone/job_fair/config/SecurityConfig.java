@@ -105,7 +105,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 //Job Fair API Security: specific end point for get job fair detail
                 .authorizeRequests().antMatchers(ApiEndPoint.JobFair.JOB_FAIR + "/**").permitAll().and()
                 //Attendant API Security: specific end point will be configured inside controller
-                .authorizeRequests().antMatchers(ApiEndPoint.CompanyEmployee.REGISTER_COMPANY_MANAGER).permitAll()
+                .authorizeRequests().antMatchers(ApiEndPoint.CompanyEmployee.REGISTER_COMPANY_MANAGER).permitAll().and()
+                .authorizeRequests().antMatchers(ApiEndPoint.Demo.DEMO_ENDPOINT + "/**").permitAll()
                 .anyRequest().authenticated().and()
                 .headers().contentSecurityPolicy("script-src 'self'");
 

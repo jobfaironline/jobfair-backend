@@ -1,11 +1,9 @@
 package org.capstone.job_fair.controllers.demo;
 
 import com.amazonaws.util.json.Jackson;
-import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
-import org.capstone.job_fair.constants.AWSConstant;
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.controllers.payload.requests.account.cv.CreateApplicationRequest;
@@ -16,7 +14,6 @@ import org.capstone.job_fair.controllers.payload.requests.company.CreateCompanyR
 import org.capstone.job_fair.controllers.payload.requests.company.CreateQuestionsRequest;
 import org.capstone.job_fair.controllers.payload.requests.demo.CreateApplicationAndEvaluateRequest;
 import org.capstone.job_fair.controllers.payload.requests.job_fair.DraftJobFairRequest;
-import org.capstone.job_fair.controllers.payload.responses.CompanyEmployeeResponse;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
 import org.capstone.job_fair.models.dtos.attendant.AttendantDTO;
@@ -29,16 +26,11 @@ import org.capstone.job_fair.models.dtos.company.job.questions.ChoicesDTO;
 import org.capstone.job_fair.models.dtos.company.job.questions.QuestionsDTO;
 import org.capstone.job_fair.models.dtos.dynamoDB.NotificationMessageDTO;
 import org.capstone.job_fair.models.dtos.job_fair.JobFairDTO;
-import org.capstone.job_fair.models.dtos.job_fair.LayoutBoothDTO;
-import org.capstone.job_fair.models.dtos.job_fair.LayoutDTO;
 import org.capstone.job_fair.models.dtos.job_fair.booth.AssignmentDTO;
 import org.capstone.job_fair.models.dtos.job_fair.booth.BoothJobPositionDTO;
 import org.capstone.job_fair.models.dtos.job_fair.booth.JobFairBoothDTO;
-import org.capstone.job_fair.models.dtos.job_fair.booth.JobFairBoothLayoutDTO;
-import org.capstone.job_fair.models.entities.company.CompanyEmployeeEntity;
 import org.capstone.job_fair.models.entities.job_fair.JobFairEntity;
 import org.capstone.job_fair.models.entities.job_fair.booth.AssignmentEntity;
-import org.capstone.job_fair.models.entities.job_fair.booth.JobFairBoothLayoutEntity;
 import org.capstone.job_fair.models.enums.*;
 import org.capstone.job_fair.models.statuses.AccountStatus;
 import org.capstone.job_fair.repositories.attendant.cv.CvRepository;
@@ -628,69 +620,68 @@ public class DemoController {
         return ResponseEntity.ok(createMultipleEmployee(numberOfEmployees));
     }
 
-    private List<String> createMultipleCompanies(int numberOfCompanies, int numberOfEmployees) {
-        List<String> companyIds = new ArrayList<>();
-        for (int i = 0; i <= numberOfCompanies; i++) {
-            CreateCompanyRequest createCompanyRequest = new CreateCompanyRequest();
-            createCompanyRequest.setCompanyDescription("description");
-            createCompanyRequest.setCompanyEmail("demo_email_company" + i + "@gmail.com");
-            createCompanyRequest.setAddress("address");
-            createCompanyRequest.setTaxId("taxID0" + i);
-            createCompanyRequest.setName("Auto_Company_0" + i);
-            createCompanyRequest.setPhone("0123456789");
-            createCompanyRequest.setUrl("http://link.com");
-            createCompanyRequest.setSizeId(1);
-            CreateCompanyRequest.BenefitRequest benefit = new CreateCompanyRequest.BenefitRequest();
-            benefit.setId(1);
-            benefit.setDescription("alalala");
-            List<CreateCompanyRequest.BenefitRequest> benefitss = new ArrayList<>();
-            benefitss.add(benefit);
-            List<Integer> subCategoriesIds = new ArrayList<>();
-            createCompanyRequest.setBenefits(benefitss);
-            createCompanyRequest.setSubCategoriesIds(subCategoriesIds);
-            CompanyDTO dto = companyMapper.toDTO(createCompanyRequest);
-            dto.setEmployeeMaxNum(5000);
-            dto = companyService.createCompany(dto);
+    private String createCompanyWithEmployeeNums(int numberOfEmployees, String companyName) {
+        CreateCompanyRequest createCompanyRequest = new CreateCompanyRequest();
+        createCompanyRequest.setCompanyDescription("description");
+        createCompanyRequest.setCompanyEmail("_" +getSaltString(2) + companyName + "@gmail.com");
+        createCompanyRequest.setAddress("address");
+        createCompanyRequest.setTaxId(getSaltString(4));
+        createCompanyRequest.setName(companyName);
+        createCompanyRequest.setPhone(generatePhoneNumber());
+        createCompanyRequest.setUrl("http://link.com");
+        createCompanyRequest.setSizeId(1);
+        CreateCompanyRequest.BenefitRequest benefit = new CreateCompanyRequest.BenefitRequest();
+        benefit.setId(1);
+        benefit.setDescription("alalala");
+        List<CreateCompanyRequest.BenefitRequest> benefitss = new ArrayList<>();
+        benefitss.add(benefit);
+        List<Integer> subCategoriesIds = new ArrayList<>();
+        createCompanyRequest.setBenefits(benefitss);
+        createCompanyRequest.setSubCategoriesIds(subCategoriesIds);
+        CompanyDTO dto = companyMapper.toDTO(createCompanyRequest);
+        dto.setEmployeeMaxNum(5000);
+        dto = companyService.createCompany(dto);
 
-            //create company manager
-            AccountDTO managerAccount = new AccountDTO();
-            managerAccount.setEmail("manager_demo_company" + i + "@gmail.com");
-            managerAccount.setPassword("123456");
-            managerAccount.setPhone("0123456789");
-            managerAccount.setFirstname("Manager");
-            managerAccount.setLastname("Of");
-            managerAccount.setMiddlename("Company Demo " + i);
-            //set default gender of company manager is MALE
-            managerAccount.setGender(Gender.MALE);
-            CompanyEmployeeDTO managerDTO = new CompanyEmployeeDTO();
-            managerDTO.setAccount(managerAccount);
-            managerDTO.setCompanyDTO(dto);
-            managerDTO.setDepartment("DEPARTMENT_DEMO_" + i);
-            companyEmployeeService.createNewCompanyManagerAccount(managerDTO);
+        //create company manager
+        AccountDTO managerAccount = new AccountDTO();
+        managerAccount.setEmail("manager_demo_company_" + companyName + "_" +getSaltString(2) + "@gmail.com");
+        managerAccount.setPassword("123456");
+        managerAccount.setPhone(generatePhoneNumber());
+        managerAccount.setFirstname("Manager");
+        managerAccount.setLastname("Of");
+        managerAccount.setMiddlename(companyName);
+        //set default gender of company manager is MALE
+        managerAccount.setGender(Gender.MALE);
+        CompanyEmployeeDTO managerDTO = new CompanyEmployeeDTO();
+        managerDTO.setAccount(managerAccount);
+        managerDTO.setCompanyDTO(dto);
+        managerDTO.setDepartment("DEPARTMENT_DEMO_" + companyName);
+        companyEmployeeService.createNewCompanyManagerAccount(managerDTO);
 
-            //create 80 employees
-            for (int t = 0; t <= numberOfEmployees; t++) {
-                CompanyEmployeeRegisterRequest createEmployeeRequest = new CompanyEmployeeRegisterRequest();
-                createEmployeeRequest.setEmail("employee_demo_company_0" + i + t + "@gmail.com");
-                createEmployeeRequest.setFirstName("Pham");
-                createEmployeeRequest.setMiddleName(" Cao");
-                createEmployeeRequest.setLastName(" Son_0" + i + t);
-                createEmployeeRequest.setDepartment("DEPARTMENT_DEMO_" + t + "OF_COMPANY_" + i);
-                createEmployeeRequest.setEmployeeId("EMPLOYEE_" + t + "+_OF_COMPANY" + i);
+        //create employees
+        for (int i = 0; i <= numberOfEmployees; i++) {
+            CompanyEmployeeRegisterRequest createEmployeeRequest = new CompanyEmployeeRegisterRequest();
+            createEmployeeRequest.setEmail("employee_demo_company_" + companyName + i + "_" + getSaltString(2)+ "@gmail.com");
+            createEmployeeRequest.setFirstName("Employee");
+            createEmployeeRequest.setMiddleName("Of");
+            createEmployeeRequest.setLastName(companyName + "_" + i) ;
+            createEmployeeRequest.setDepartment("DEPARTMENT_DEMO_" + i + "OF_COMPANY_" + companyName);
+            createEmployeeRequest.setEmployeeId("EMPLOYEE_" + i + "+_OF_COMPANY" + companyName);
 
-                CompanyEmployeeDTO employeeDTO = companyEmployeeMapper.toDTO(createEmployeeRequest);
-                employeeDTO.setCompanyDTO(dto);
-                companyEmployeeService.createNewCompanyEmployeeAccount(employeeDTO);
+            CompanyEmployeeDTO employeeDTO = companyEmployeeMapper.toDTO(createEmployeeRequest);
+            employeeDTO.setCompanyDTO(dto);
+            companyEmployeeService.createNewCompanyEmployeeAccount(employeeDTO);
 
-            }
-            companyIds.add(dto.getId());
         }
-        return companyIds;
+        return dto.getId();
     }
 
     @PostMapping(ApiEndPoint.Demo.CREATE_COMPANIES_WITH_80_EMPLOYEES)
-    public ResponseEntity<?> createCompaniesAndEmployees(@RequestParam int numOfCompanies, @RequestParam int numberOfEmployees) {
-        return ResponseEntity.ok(createMultipleCompanies(numOfCompanies, numberOfEmployees));
+    public ResponseEntity<?> createCompaniesAndEmployees(@RequestParam int numberOfEmployees, @RequestParam String companyName) {
+        String companyId = createCompanyWithEmployeeNums(numberOfEmployees, companyName);
+        Map<String, String> body = new HashMap<>();
+        body.put("id", companyId);
+        return ResponseEntity.ok(body);
     }
 
     @PostMapping(ApiEndPoint.Demo.CREATE_JOB_FAIR_DRAFT_FOR_COMPANIES)
