@@ -324,9 +324,6 @@ public class DemoController {
     }
 
     private void evaluateApplication(EvaluateApplicationRequest request, String userId) {
-        final double HIGH_MATCHING_POINT = 70;
-        final double MEDIUM_MATCHING_POINT = 50;
-        final double LOW_MATCHING_POINT = 50;
 
         ApplicationDTO dto = new ApplicationDTO();
         dto.setId(request.getApplicationId());
@@ -365,7 +362,6 @@ public class DemoController {
         //High score
         for (; i < numberOfHighScore; i++) {
             String cv = cvIdList.get(i);
-            System.out.println(cv);
             String accountId = cvRepository.findById(cv).get().getAttendant().getAccountId();
             CreateApplicationRequest createApplicationRequest = new CreateApplicationRequest();
             createApplicationRequest.setBoothJobPositionId(BoothJobPositionId);
@@ -377,7 +373,6 @@ public class DemoController {
         //Medium score
         for (; i < numberOfMediumScore + numberOfHighScore; i++) {
             String cv = cvIdList.get(i);
-            System.out.println(cv);
             String accountId = cvRepository.findById(cv).get().getAttendant().getAccountId();
             CreateApplicationRequest createApplicationRequest = new CreateApplicationRequest();
             createApplicationRequest.setBoothJobPositionId(BoothJobPositionId);
@@ -390,7 +385,6 @@ public class DemoController {
         //Low score
         for (; i < numberOfLowScore + numberOfMediumScore + numberOfHighScore; i++) {
             String cv = cvIdList.get(i);
-            System.out.println(cv);
             String accountId = cvRepository.findById(cv).get().getAttendant().getAccountId();
             CreateApplicationRequest createApplicationRequest = new CreateApplicationRequest();
             createApplicationRequest.setBoothJobPositionId(BoothJobPositionId);
@@ -426,12 +420,10 @@ public class DemoController {
         }
         //Reject
         for (; i < numberOfApprove + numberOfReject; i++) {
-            System.out.println(i);
             EvaluateApplicationRequest evaluateApplicationRequest = new EvaluateApplicationRequest();
             evaluateApplicationRequest.setApplicationId(cvIdList.get(i));
             evaluateApplicationRequest.setStatus(ApplicationStatus.REJECT);
             evaluateApplicationRequest.setEvaluateMessage("Script auto evaluation reject " + i);
-            System.out.println("reject");
             evaluateApplication(evaluateApplicationRequest, request.getEmployeeId());
             result.put(cvIdList.get(i), ApplicationStatus.REJECT);
         }
