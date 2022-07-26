@@ -28,6 +28,7 @@ import org.capstone.job_fair.models.dtos.company.job.questions.ChoicesDTO;
 import org.capstone.job_fair.models.dtos.company.job.questions.QuestionsDTO;
 import org.capstone.job_fair.models.dtos.dynamoDB.NotificationMessageDTO;
 import org.capstone.job_fair.models.dtos.job_fair.JobFairDTO;
+import org.capstone.job_fair.models.dtos.job_fair.LayoutBoothDTO;
 import org.capstone.job_fair.models.dtos.job_fair.booth.AssignmentDTO;
 import org.capstone.job_fair.models.dtos.job_fair.booth.BoothJobPositionDTO;
 import org.capstone.job_fair.models.dtos.job_fair.booth.JobFairBoothDTO;
@@ -712,20 +713,26 @@ public class DemoController {
 
             //maximum needed employee will be 40, so get 45
             Page<CompanyEmployeeDTO> pageResult = companyEmployeeService.getAllCompanyEmployees(userDetails.getCompanyId(), "", 45, 0, "account.createTime", Sort.Direction.ASC);
-            List<CompanyEmployeeDTO> neededEmployeeList = pageResult
-                    .getContent()
-                    .stream()
-                    .filter(item -> item.getAccount().getRole() != Role.COMPANY_MANAGER)
-                    .limit(totalNumberOfNeededEmployee).collect(Collectors.toList());
 
-            //make sure these employee must be VERIFIED
-            neededEmployeeList.forEach(item -> {
-                AccountDTO dto = item.getAccount();
-                dto.setStatus(AccountStatus.VERIFIED);
-                item.setAccount(dto);
-            });
-
+            List<CompanyEmployeeDTO> listShuffle = new ArrayList<>();
+            for (CompanyEmployeeDTO c : pageResult.getContent()) {
+                listShuffle.add(c);
+            }
             for (int j = 0; j <= totalNumberOfAssignBooth; j++) {
+                Collections.shuffle(listShuffle);
+                System.out.println(listShuffle);
+                List<CompanyEmployeeDTO> neededEmployeeList = listShuffle
+                        .stream()
+                        .filter(item -> item.getAccount().getRole() != Role.COMPANY_MANAGER)
+                        .limit(totalNumberOfNeededEmployee).collect(Collectors.toList());
+                System.out.println(neededEmployeeList);
+
+                //make sure these employee must be VERIFIED
+                neededEmployeeList.forEach(item -> {
+                    AccountDTO dto = item.getAccount();
+                    dto.setStatus(AccountStatus.VERIFIED);
+                    item.setAccount(dto);
+                });
                 //get first 4 employees from total needed employee
                 //Employee 1: SUPERVISOR
                 AssignmentDTO supervisorAssigment = assignmentService
