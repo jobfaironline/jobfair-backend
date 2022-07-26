@@ -429,7 +429,6 @@ public class InterviewServiceImpl implements InterviewService {
 
         assignments = assignments.stream().filter(assignment -> {
             if (assignment.getType() != AssignmentType.INTERVIEWER) return false;
-            System.out.println(assignment.getEndTime());
             return assignment.getEndTime() > now + interviewLength + interviewBufferLength;
         }).collect(Collectors.toList());
         assignments.sort((o1, o2) -> {

@@ -106,7 +106,6 @@ public class NotificationServiceImpl implements NotificationService {
     public void createNotification(NotificationMessageDTO message, List<String> receiverIdList) {
 
         DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(dynamoDBClient, dynamoDBMapperConfig);
-        System.out.println("Receiver id list: " + receiverIdList);
 
 
         message.setNotificationId(UUID.randomUUID().toString());
@@ -120,17 +119,10 @@ public class NotificationServiceImpl implements NotificationService {
             entity.setUserId(s);
             return entity;
         }).collect(Collectors.toList());
-        for (NotificationMessageEntity entity: notificationMessageEntityList) {
-            System.out.println("Message entity:  " + entity);
-        }
+
         dynamoDBMapper.batchSave(notificationMessageEntityList);
 
         SendMessageRequest sendMessageRequest = new SendMessageRequest().withMessageBody(message.getNotificationId()).withQueueUrl(queueURL);
-        for (NotificationMessageEntity entity : notificationMessageEntityList ) {
-            System.out.print("Entity: ");
-            System.out.println(entity);
-        }
-        System.out.println(sendMessageRequest);
         this.broadcastMessage(sendMessageRequest);
     }
 

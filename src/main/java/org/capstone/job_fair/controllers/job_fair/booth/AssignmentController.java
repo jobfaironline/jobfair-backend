@@ -72,7 +72,8 @@ public class AssignmentController {
     @SneakyThrows
     public ResponseEntity<?> unassignEmployee(@PathVariable("id") String assignmentId) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        AssignmentDTO assignment = assignmentService.unAssignEmployee(assignmentId);
+        String companyId = userDetails.getCompanyId();
+        AssignmentDTO assignment = assignmentService.unAssignEmployee(assignmentId, companyId);
 
         if (assignment.getType() == AssignmentType.INTERVIEWER || assignment.getType() == AssignmentType.RECEPTION){
             NotificationMessageDTO notificationMessage = NotificationMessageDTO.builder()

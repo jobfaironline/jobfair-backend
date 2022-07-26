@@ -14,7 +14,7 @@ import java.util.Optional;
 public interface AssignmentService {
     AssignmentDTO assignEmployee(String assignerId, String employeeId, String jobFairBoothId, AssignmentType type, String companyId, Long beginTime, Long endTime);
 
-    AssignmentDTO unAssignEmployee(String assignmentId);
+    AssignmentDTO unAssignEmployee(String assignmentId, String companyId);
 
     AssignmentDTO updateAssignment(String assignmentId, long beginTime, long endTime, AssignmentType type);
 

@@ -137,21 +137,20 @@ public class AssignmentServiceImpl implements AssignmentService {
             entity.setEndTime(endTime);
             return updateAssigment(entity, companyId);
         }
-        System.out.println(jobFairBoothId);
         return createAssignment(assignerId, employeeId, jobFairBoothId, type, companyId, beginTime, endTime);
     }
 
     @Override
     @Transactional
-    public AssignmentDTO unAssignEmployee(String assignmentId) {
+    public AssignmentDTO unAssignEmployee(String assignmentId, String companyId) {
         Optional<AssignmentEntity> entityOpt = assignmentRepository.findById(assignmentId);
         if (!entityOpt.isPresent()) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Assignment.NOT_FOUND));
         }
         AssignmentEntity entity = entityOpt.get();
-        /*if (!entity.getCompanyEmployee().getCompany().getId().equals(companyId)) {
+        if (!entity.getCompanyEmployee().getCompany().getId().equals(companyId)) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Assignment.NOT_FOUND));
-        }*/
+        }
         assignmentRepository.delete(entity);
         return assignmentMapper.toDTO(entity);
     }
