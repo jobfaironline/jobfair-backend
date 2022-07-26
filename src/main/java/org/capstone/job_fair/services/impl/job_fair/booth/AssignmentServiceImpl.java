@@ -422,7 +422,6 @@ public class AssignmentServiceImpl implements AssignmentService {
         return shiftTime;
     }
 
-    @Transactional
     private ParseFileResult<AssignmentDTO> createShiftAssignmentFromListString(List<List<String>> data, String jobFairBoothId, String companyId, CompanyEmployeeEntity assigner) throws ParseException {
         ParseFileResult<AssignmentDTO> parseResult = new ParseFileResult<>();
         int rowNum = data.size();
@@ -496,8 +495,6 @@ public class AssignmentServiceImpl implements AssignmentService {
                                 assignmentEntity.getCompanyEmployee().getCompany().getId(),
                                 assignmentEntity.getBeginTime(),
                                 assignmentEntity.getEndTime());
-                        jobFairBoothRepository.save(assignmentEntity.getJobFairBooth());
-                        assignmentEntity = assignmentRepository.save(assignmentEntity);
                         AssignmentDTO dto = assignmentMapper.toDTO(assignmentEntity);
                         parseResult.addToResult(dto);
                     }
