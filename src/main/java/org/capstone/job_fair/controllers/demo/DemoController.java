@@ -3,7 +3,6 @@ package org.capstone.job_fair.controllers.demo;
 import com.amazonaws.util.json.Jackson;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import org.capstone.job_fair.constants.AccountConstant;
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
@@ -12,19 +11,16 @@ import org.capstone.job_fair.controllers.payload.requests.attendant.EvaluateAppl
 import org.capstone.job_fair.controllers.payload.requests.attendant.RegisterAttendantRequest;
 import org.capstone.job_fair.controllers.payload.requests.company.CompanyEmployeeRegisterRequest;
 import org.capstone.job_fair.controllers.payload.requests.company.CreateCompanyRequest;
-import org.capstone.job_fair.controllers.payload.requests.company.CreateQuestionsRequest;
 import org.capstone.job_fair.controllers.payload.requests.demo.CreateApplicationAndEvaluateRequest;
 import org.capstone.job_fair.controllers.payload.requests.job_fair.DraftJobFairRequest;
-import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
 import org.capstone.job_fair.models.dtos.attendant.AttendantDTO;
 import org.capstone.job_fair.models.dtos.attendant.application.ApplicationDTO;
+import org.capstone.job_fair.models.dtos.attendant.cv.CvActivityDTO;
 import org.capstone.job_fair.models.dtos.attendant.cv.CvDTO;
 import org.capstone.job_fair.models.dtos.company.CompanyDTO;
 import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
 import org.capstone.job_fair.models.dtos.company.job.JobPositionDTO;
-import org.capstone.job_fair.models.dtos.company.job.questions.ChoicesDTO;
-import org.capstone.job_fair.models.dtos.company.job.questions.QuestionsDTO;
 import org.capstone.job_fair.models.dtos.dynamoDB.NotificationMessageDTO;
 import org.capstone.job_fair.models.dtos.job_fair.JobFairDTO;
 import org.capstone.job_fair.models.dtos.job_fair.ShiftDTO;
@@ -65,9 +61,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -174,30 +168,35 @@ public class DemoController {
     }
 
 
-    private String createAttendant(int i) {
+    private AttendantDTO createAttendant(int i) {
         RegisterAttendantRequest request = new RegisterAttendantRequest();
         request.setEmail(getSaltString(10) + "@gmail.com");
         request.setPassword("123456");
-        request.setFirstname("Nguyen Van");
-        request.setLastname("So " + i);
+        request.setFirstname("Adam");
+        request.setLastname("Smith");
         request.setPhone(generatePhoneNumber());
-        request.setMiddlename("MiddleName " + i);
+        request.setMiddlename(getSaltString(3));
 
         AttendantDTO attendantDTO = attendantMapper.toDTO(request);
 
         attendantDTO = attendantService.createNewAccount(attendantDTO);
 
-        return attendantDTO.getAccount().getEmail() + "," + attendantDTO.getAccount().getId();
+        return attendantDTO;
     }
 
-    private String createCV(String attendantId) {
+    private String createCV(AttendantDTO attendantDTO) {
         CvDTO dto = new CvDTO();
-        AttendantDTO attendantDTO = new AttendantDTO();
-        AccountDTO accountDTO = new AccountDTO();
-        accountDTO.setId(attendantId);
-        attendantDTO.setAccount(accountDTO);
         dto.setAttendant(attendantDTO);
-
+        dto.setEmail(attendantDTO.getAccount().getEmail());
+        dto.setCreateTime(new Date().getTime());
+        dto.setName("My cv");
+        dto.setAboutMe("This is me");
+        dto.setCountryId(attendantDTO.getCountryId());
+        dto.setFullName(attendantDTO.getAccount().getFirstname() + " " + attendantDTO.getAccount().getMiddlename() + " " + attendantDTO.getAccount().getLastname());
+        dto.setJobLevel(attendantDTO.getJobLevel());
+        dto.setJobTitle(attendantDTO.getJobTitle());
+        dto.setPhone(attendantDTO.getAccount().getPhone());
+        dto.setProfileImageUrl(attendantDTO.getAccount().getProfileImageUrl());
         dto = cvService.draftCv(dto);
         return dto.getId();
     }
@@ -207,7 +206,7 @@ public class DemoController {
     private List<BoothJobPositionDTO> createBoothJobPosition(String jobFairId) {
 
         Optional<JobFairEntity> jobFairOpt = jobFairRepository.findById(jobFairId);
-        if (!jobFairOpt.isPresent()){
+        if (!jobFairOpt.isPresent()) {
             return null;
         }
 
@@ -252,20 +251,15 @@ public class DemoController {
     }
 
     private List<String> createAttendantsWithOneCv(Integer numberOfAttendants) {
-
-        String attendantEmail = null;
-        String attendantId = null;
-
         List<String> result = new ArrayList<>();
 
         for (int i = 0; i < numberOfAttendants; i++) {
             Map<String, String> map = new HashMap<String, String>();
             //Create attendant
-            attendantEmail = createAttendant(i).split(",")[0];
-            attendantId = createAttendant(i).split(",")[1];
+            AttendantDTO attendantDTO = createAttendant(i);
 
             //Create CV
-            String cvId = createCV(attendantId);
+            String cvId = createCV(attendantDTO);
             result.add(cvId);
         }
         return result;
@@ -315,7 +309,6 @@ public class DemoController {
         //call create method
         ApplicationDTO result = applicationService.createNewApplication(dto);
 
-//        matchingPointService.calculateFromApplication(result.getId()).subscribe().dispose();
         result = applicationService.submitApplication(result.getId(), accountId);
 
         //notification
@@ -355,20 +348,13 @@ public class DemoController {
     @PostMapping(ApiEndPoint.Demo.SUBMIT_MULTIPLE_APPLICATION + "/apply")
     public ResponseEntity<?> submitMultipleApplication(@RequestBody CreateApplicationAndEvaluateRequest request) {
         List<String> cvIdList = request.getCvId();
-
-        if (cvIdList.size() <= 15) {
-            return GenericResponse.build("Cv list must be >= 15 CVs", HttpStatus.NOT_FOUND);
-        }
-
-        final double HIGH_MATCHING_POINT = 0.7;
-        final double MEDIUM_MATCHING_POINT = 0.5;
+        final double HIGH_MATCHING_POINT = 0.8;
+        final double MEDIUM_MATCHING_POINT = 0.6;
         final double LOW_MATCHING_POINT = 0.3;
 
-        final double numberOfFailTest = cvIdList.size() * 0.5;
-        final double numberOfPassTest = cvIdList.size() * 0.5;
-        final double numberOfApprove = numberOfPassTest * 0.3;
-        final double numberOfPending = numberOfPassTest * 0.3;
-        final double numberOfReject = numberOfPassTest - numberOfApprove - numberOfPending;
+        final double numberOfHighScore = cvIdList.size() * 0.5;
+        final double numberOfMediumScore = cvIdList.size() * 0.3;
+        final double numberOfLowScore = cvIdList.size() - numberOfHighScore - numberOfMediumScore;
         List<String> result = new ArrayList<>();
 
         AssignmentEntity assignmentEntity = assignmentRepository.findByEmployeeId(request.getEmployeeId(), request.getJobFairId()).get(1);
@@ -376,35 +362,41 @@ public class DemoController {
         String BoothJobPositionId = assignmentEntity.getJobFairBooth().getBoothJobPositions().get(0).getId();
 
         int i = 0;
-        //Approve
-        for (; i < numberOfApprove; i++) {
+        //High score
+        for (; i < numberOfHighScore; i++) {
             String cv = cvIdList.get(i);
+            System.out.println(cv);
             String accountId = cvRepository.findById(cv).get().getAttendant().getAccountId();
             CreateApplicationRequest createApplicationRequest = new CreateApplicationRequest();
             createApplicationRequest.setBoothJobPositionId(BoothJobPositionId);
             createApplicationRequest.setCvId(cv);
-            String applicationId = applyApplication(createApplicationRequest, accountId, TestStatus.PASS, HIGH_MATCHING_POINT);
+            double beta = ThreadLocalRandom.current().nextDouble(0, 0.1);
+            String applicationId = applyApplication(createApplicationRequest, accountId, TestStatus.PASS, HIGH_MATCHING_POINT + beta);
             result.add(applicationId);
         }
-        //Reject
-        for (; i < numberOfApprove + numberOfReject; i++) {
+        //Medium score
+        for (; i < numberOfMediumScore + numberOfHighScore; i++) {
             String cv = cvIdList.get(i);
+            System.out.println(cv);
             String accountId = cvRepository.findById(cv).get().getAttendant().getAccountId();
             CreateApplicationRequest createApplicationRequest = new CreateApplicationRequest();
             createApplicationRequest.setBoothJobPositionId(BoothJobPositionId);
             createApplicationRequest.setCvId(cv);
-            String applicationId = applyApplication(createApplicationRequest, accountId, TestStatus.PASS, MEDIUM_MATCHING_POINT);
+            double beta = ThreadLocalRandom.current().nextDouble(0, 0.1);
+            String applicationId = applyApplication(createApplicationRequest, accountId, TestStatus.PASS, MEDIUM_MATCHING_POINT + beta);
             result.add(applicationId);
         }
 
-        //Pending
-        for (; i < numberOfApprove + numberOfReject + numberOfPending; i++) {
+        //Low score
+        for (; i < numberOfLowScore + numberOfMediumScore + numberOfHighScore; i++) {
             String cv = cvIdList.get(i);
+            System.out.println(cv);
             String accountId = cvRepository.findById(cv).get().getAttendant().getAccountId();
             CreateApplicationRequest createApplicationRequest = new CreateApplicationRequest();
             createApplicationRequest.setBoothJobPositionId(BoothJobPositionId);
             createApplicationRequest.setCvId(cv);
-            String applicationId = applyApplication(createApplicationRequest, accountId, TestStatus.PASS, LOW_MATCHING_POINT);
+            double beta = ThreadLocalRandom.current().nextDouble(0, 0.1);
+            String applicationId = applyApplication(createApplicationRequest, accountId, TestStatus.PASS, LOW_MATCHING_POINT + beta);
             result.add(applicationId);
         }
         return ResponseEntity.ok(result);
@@ -444,34 +436,6 @@ public class DemoController {
             result.put(cvIdList.get(i), ApplicationStatus.REJECT);
         }
         return ResponseEntity.ok(result);
-    }
-
-    private List<CompanyEmployeeDTO> createMultipleEmployee(int numberOfEmployees) {
-        List<CompanyEmployeeDTO> result = new ArrayList<>();
-        for (int i = 0; i < numberOfEmployees; i++) {
-            CompanyEmployeeRegisterRequest request = new CompanyEmployeeRegisterRequest();
-            request.setEmail("demo_employee" + i + "@gmail.com");
-            request.setEmployeeId("DEMO_" + i);
-            request.setDepartment("DEMO_DEPARTMENT");
-            request.setFirstName("Nguyen ");
-            request.setMiddleName("Van ");
-            request.setLastName("A " + i);
-            CompanyEmployeeDTO dto = companyEmployeeMapper.toDTO(request);
-            UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            String companyId = userDetails.getCompanyId();
-            CompanyDTO companyDTO = new CompanyDTO();
-            companyDTO.setId(companyId);
-            dto.setCompanyDTO(companyDTO);
-            CompanyEmployeeDTO resultDTO = companyEmployeeService.createNewCompanyEmployeeAccount(dto);
-            result.add(resultDTO);
-        }
-
-        return result;
-    }
-
-    @PostMapping(ApiEndPoint.Demo.CREATE_EMPLOYEES)
-    public ResponseEntity<?> createEmployees(int numberOfEmployees) {
-        return ResponseEntity.ok(createMultipleEmployee(numberOfEmployees));
     }
 
     private String createCompanyWithEmployeeNums(int numberOfEmployees, String companyName) {

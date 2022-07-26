@@ -12,10 +12,10 @@ import org.capstone.job_fair.services.mappers.dynamoDB.NotificationMessageMapper
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -33,15 +33,18 @@ public class LocalNotificationService implements NotificationService {
     @Autowired
     private NotificationMessageRepository notificationMessageRepository;
 
+    @Autowired
+    private WebClient webClient;
+
     private void sendNotification(String notificationId) {
         try {
             final String uri = "http://localhost:4000/notification";
-
-            RestTemplate restTemplate = new RestTemplate();
             Map<String, String> body = new HashedMap<>();
             body.put("notificationId", notificationId);
-            HttpEntity<Map<String, String>> request = new HttpEntity<>(body);
-            restTemplate.postForObject(uri, request, Map.class);
+            webClient.post().uri(uri)
+                    .body(Mono.just(body), Map.class)
+                    .retrieve()
+                    .bodyToMono(Void.class).subscribe();
         } catch (Exception e) {
             e.printStackTrace();
         }
