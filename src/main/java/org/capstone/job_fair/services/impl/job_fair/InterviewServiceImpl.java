@@ -216,7 +216,7 @@ public class InterviewServiceImpl implements InterviewService {
     }
 
     @SneakyThrows
-    private void sendWaitingCountToConnectedUser(String channelId, String userId, String interviewerId, boolean isLeaveRoom) {
+    protected void sendWaitingCountToConnectedUser(String channelId, String userId, String interviewerId, boolean isLeaveRoom) {
         Map<String, Object> payload = new HashMap<>();
         payload.put("userId", userId);
 
@@ -314,6 +314,7 @@ public class InterviewServiceImpl implements InterviewService {
 
     @Override
     @SneakyThrows
+    @Transactional
     public void askAttendantJoinInterviewRoom(String attendantId, String interviewRoomId) {
         List<ApplicationEntity> applicationList = applicationRepository.findByInterviewRoomId(interviewRoomId);
         if (applicationList.size() == 0) {

@@ -18,14 +18,13 @@ import org.capstone.job_fair.services.interfaces.job_fair.InterviewService;
 import org.capstone.job_fair.services.mappers.attendant.application.*;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -68,6 +67,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     private ApplicationWorkHistoryMapper applicationWorkHistoryMapper;
 
     @Autowired
+    @Qualifier("LocalInterviewService")
     private InterviewService interviewService;
 
 

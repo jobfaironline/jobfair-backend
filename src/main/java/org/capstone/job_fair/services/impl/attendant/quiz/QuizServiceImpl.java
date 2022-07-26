@@ -153,6 +153,7 @@ public class QuizServiceImpl implements QuizService {
 
     private Double evaluateQuiz(QuizEntity entity) {
         double mark = 0;
+        if (entity.getQuestionList().size() == 0) return 0.0;
         double oneQuestionPoint = 10 / entity.getQuestionList().size();
         int numberOfAnswer;
         int numberOfWrongAnswer;

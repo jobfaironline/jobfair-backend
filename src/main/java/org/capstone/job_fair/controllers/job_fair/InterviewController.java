@@ -34,6 +34,7 @@ import java.util.stream.Collectors;
 public class InterviewController {
 
     @Autowired
+    @Qualifier("LocalInterviewService")
     private InterviewService interviewService;
 
     @Autowired

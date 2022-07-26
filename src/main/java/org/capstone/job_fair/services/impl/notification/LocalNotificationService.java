@@ -98,13 +98,13 @@ public class LocalNotificationService implements NotificationService {
 
     @Transactional
     protected List<NotificationMessageEntity> createNotificationWrapper(NotificationMessageDTO message, List<String> receiverIdList) {
-        message.setNotificationId(UUID.randomUUID().toString());
         message.setRead(false);
         Long now = new Date().getTime();
         message.setCreateDate(now);
 
         List<NotificationMessageEntity> notificationMessageEntityList = receiverIdList.stream().map(s -> {
             NotificationMessageEntity entity = notificationMessageMapper.toEntity(message);
+            entity.setNotificationId(UUID.randomUUID().toString());
             entity.setId(UUID.randomUUID().toString());
             entity.setUserId(s);
             return entity;
