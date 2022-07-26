@@ -4,6 +4,7 @@ import com.amazonaws.util.json.Jackson;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
+import org.capstone.job_fair.constants.AccountConstant;
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.controllers.payload.requests.account.cv.CreateApplicationRequest;
@@ -26,9 +27,13 @@ import org.capstone.job_fair.models.dtos.company.job.questions.ChoicesDTO;
 import org.capstone.job_fair.models.dtos.company.job.questions.QuestionsDTO;
 import org.capstone.job_fair.models.dtos.dynamoDB.NotificationMessageDTO;
 import org.capstone.job_fair.models.dtos.job_fair.JobFairDTO;
+import org.capstone.job_fair.models.dtos.job_fair.ShiftDTO;
 import org.capstone.job_fair.models.dtos.job_fair.booth.AssignmentDTO;
 import org.capstone.job_fair.models.dtos.job_fair.booth.BoothJobPositionDTO;
 import org.capstone.job_fair.models.dtos.job_fair.booth.JobFairBoothDTO;
+import org.capstone.job_fair.models.entities.account.AccountEntity;
+import org.capstone.job_fair.models.entities.company.CompanyEmployeeEntity;
+import org.capstone.job_fair.models.entities.company.CompanyEntity;
 import org.capstone.job_fair.models.entities.job_fair.JobFairEntity;
 import org.capstone.job_fair.models.entities.job_fair.booth.AssignmentEntity;
 import org.capstone.job_fair.models.enums.*;
@@ -60,6 +65,7 @@ import org.capstone.job_fair.services.mappers.job_fair.JobFairMapper;
 import org.capstone.job_fair.services.mappers.job_fair.booth.JobFairBoothLayoutMapper;
 import org.capstone.job_fair.utils.AwsUtil;
 import org.capstone.job_fair.utils.MessageUtil;
+import org.capstone.job_fair.utils.PasswordGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
@@ -67,9 +73,14 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
@@ -150,7 +161,7 @@ public class DemoController {
     private JobFairBoothService boothService;
 
     @Autowired
-    private CompanyEmployeeRepository employeeRepository;
+    private CompanyEmployeeRepository companyEmployeeRepository;
 
     @Autowired
     private LayoutService layoutService;
@@ -163,6 +174,9 @@ public class DemoController {
 
     @Autowired
     private AwsUtil awsUtil;
+
+    @Autowired
+    private BCryptPasswordEncoder encoder;
 
 
     private String getSaltString(int number) {
@@ -623,7 +637,7 @@ public class DemoController {
     private String createCompanyWithEmployeeNums(int numberOfEmployees, String companyName) {
         CreateCompanyRequest createCompanyRequest = new CreateCompanyRequest();
         createCompanyRequest.setCompanyDescription("description");
-        createCompanyRequest.setCompanyEmail("_" +getSaltString(2) + companyName + "@gmail.com");
+        createCompanyRequest.setCompanyEmail("_" + getSaltString(2) + companyName + "@gmail.com");
         createCompanyRequest.setAddress("address");
         createCompanyRequest.setTaxId(getSaltString(4));
         createCompanyRequest.setName(companyName);
@@ -638,42 +652,60 @@ public class DemoController {
         List<Integer> subCategoriesIds = new ArrayList<>();
         createCompanyRequest.setBenefits(benefitss);
         createCompanyRequest.setSubCategoriesIds(subCategoriesIds);
-        CompanyDTO dto = companyMapper.toDTO(createCompanyRequest);
-        dto.setEmployeeMaxNum(5000);
-        dto = companyService.createCompany(dto);
+        CompanyDTO companyDTO = companyMapper.toDTO(createCompanyRequest);
+        companyDTO.setEmployeeMaxNum(5000);
+        companyDTO = companyService.createCompany(companyDTO);
+        CompanyEntity companyEntity = companyMapper.toEntity(companyDTO);
 
         //create company manager
         AccountDTO managerAccount = new AccountDTO();
-        managerAccount.setEmail("manager_demo_company_" + companyName + "_" +getSaltString(2) + "@gmail.com");
+        managerAccount.setEmail("manager_demo_company_" + companyName + "_" + getSaltString(2) + "@gmail.com");
         managerAccount.setPassword("123456");
         managerAccount.setPhone(generatePhoneNumber());
         managerAccount.setFirstname("Manager");
         managerAccount.setLastname("Of");
         managerAccount.setMiddlename(companyName);
-        //set default gender of company manager is MALE
         managerAccount.setGender(Gender.MALE);
         CompanyEmployeeDTO managerDTO = new CompanyEmployeeDTO();
         managerDTO.setAccount(managerAccount);
-        managerDTO.setCompanyDTO(dto);
+        managerDTO.setCompanyDTO(companyDTO);
         managerDTO.setDepartment("DEPARTMENT_DEMO_" + companyName);
-        companyEmployeeService.createNewCompanyManagerAccount(managerDTO);
+        managerDTO.getAccount().setRole(Role.COMPANY_MANAGER);
+        managerDTO.getAccount().setCreateTime(new Date().getTime());
+        CompanyEmployeeEntity entity = companyEmployeeMapper.toEntity(managerDTO);
+        entity.setCompany(companyEntity);
+        AccountEntity accountEntity = entity.getAccount();
+        accountEntity.setPassword(encoder.encode(accountEntity.getPassword()));
+        accountEntity.setProfileImageUrl(AccountConstant.DEFAULT_PROFILE_IMAGE_URL);
+        accountEntity.setStatus(AccountStatus.VERIFIED);
+        companyEmployeeRepository.save(entity);
 
         //create employees
-        for (int i = 0; i <= numberOfEmployees; i++) {
+        for (int i = 0; i < numberOfEmployees; i++) {
             CompanyEmployeeRegisterRequest createEmployeeRequest = new CompanyEmployeeRegisterRequest();
-            createEmployeeRequest.setEmail("employee_demo_company_" + companyName + i + "_" + getSaltString(2)+ "@gmail.com");
+            createEmployeeRequest.setEmail("employee_demo_company_" + companyName + i + "_" + getSaltString(2) + "@gmail.com");
             createEmployeeRequest.setFirstName("Employee");
             createEmployeeRequest.setMiddleName("Of");
-            createEmployeeRequest.setLastName(companyName + "_" + i) ;
+            createEmployeeRequest.setLastName(companyName + "_" + i);
             createEmployeeRequest.setDepartment("DEPARTMENT_DEMO_" + i + "OF_COMPANY_" + companyName);
             createEmployeeRequest.setEmployeeId("EMPLOYEE_" + i + "+_OF_COMPANY" + companyName);
 
             CompanyEmployeeDTO employeeDTO = companyEmployeeMapper.toDTO(createEmployeeRequest);
-            employeeDTO.setCompanyDTO(dto);
-            companyEmployeeService.createNewCompanyEmployeeAccount(employeeDTO);
+            String password = PasswordGenerator.generatePassword();
+            employeeDTO.getAccount().setPassword(password);
+            employeeDTO.getAccount().setRole(Role.COMPANY_EMPLOYEE);
+            employeeDTO.getAccount().setStatus(AccountStatus.VERIFIED);
+            employeeDTO.getAccount().setProfileImageUrl(AccountConstant.DEFAULT_PROFILE_IMAGE_URL);
+            employeeDTO.getAccount().setCreateTime(new Date().getTime());
+            employeeDTO.getAccount().setGender(Gender.MALE);
 
+            entity = companyEmployeeMapper.toEntity(employeeDTO);
+            entity.setCompany(companyEntity);
+            String hashPassword = encoder.encode(password);
+            entity.getAccount().setPassword(hashPassword);
+            companyEmployeeRepository.save(entity);
         }
-        return dto.getId();
+        return companyDTO.getId();
     }
 
     @PostMapping(ApiEndPoint.Demo.CREATE_COMPANIES_WITH_80_EMPLOYEES)
@@ -792,107 +824,142 @@ public class DemoController {
     }
 
     @PostMapping(ApiEndPoint.Demo.CREATE_1_DRAFT_JOB_FAIR_FOR_COMPANY)
-    public ResponseEntity<?> create1DraftForEachCompany(@RequestBody List<String> companyIds) {
-        for (String id : companyIds) {
-            UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            DraftJobFairRequest request = new DraftJobFairRequest();
-            request.setName("CREATED_JOB_FAIR_DRAFT_" + companyIds.indexOf(id));
-            request.setDecorateStartTime(1658730607000L);
-            request.setDecorateEndTime(1661409007000L);
-            request.setPublicStartTime(1661754607000L);
-            request.setPublicEndTime(1667025007000L);
-            request.setDescription("description about job fair");
-            request.setTargetAttendant("Sinh vien FPT");
-            request.setHostName("Demo haha");
-            JobFairDTO jobFairDTO = jobFairMapper.toDTO(request);
-            jobFairDTO.setThumbnailUrl("https://d3polnwtp0nqe6.cloudfront.net/JobFair-thumbnail/6b9f083b-9a95-4bd3-b264-4822ae76b8f6");
+    public ResponseEntity<?> create1DraftForEachCompany(@RequestParam String companyId) {
+        LocalDate localDate = LocalDate.now();
+        LocalDate twoDayLater = localDate.plusDays(2);
+        LocalDate threeDayLater = localDate.plusDays(3);
+        LocalDate fiveDayLater = localDate.plusDays(5);
 
 
-            jobFairDTO.setCompany(CompanyDTO.builder().id(userDetails.getCompanyId()).build());
-            jobFairDTO = jobFairService.createNewJobFair(jobFairDTO);
-            layoutService.pickJobFairLayout(jobFairDTO.getId(), "b40ab83c-8f13-44ea-91b7-993f2263efae", userDetails.getCompanyId());
+        LocalDateTime startOfDay = localDate.atTime(LocalTime.MIN);
+        long decorateStartTime = startOfDay.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
 
+        LocalDateTime endOfDay = twoDayLater.atTime(LocalTime.MAX);
+        long decorateEndTime = endOfDay.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
 
-            /*
-             * 1. Random total of booths that need assign
-             * 2. Calculate total number of employee that need to be assigned: totalOfBooth * 4
-             * 3. Use for i to assign  employee. In this loop, get first 4 employee from total of emmployee above, then assign equally to the each booth
-             * */
-            List<JobFairBoothDTO> jobFairBooths = jobFairBoothService.getCompanyBoothByJobFairId(jobFairDTO.getId());
+        startOfDay = threeDayLater.atTime(LocalTime.MIN);
+        long publicStartTime = startOfDay.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
 
-            final Integer minimumBooth = 1;
-            final Integer maximumBooth = 10;
+        endOfDay = fiveDayLater.atTime(LocalTime.MAX);
+        long publicEndTime = endOfDay.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
 
-            final int totalNumberOfAssignBooth = ThreadLocalRandom.current().nextInt(minimumBooth, maximumBooth + 1);
-            final int totalNumberOfNeededEmployee = totalNumberOfAssignBooth * 4;
+        DraftJobFairRequest request = new DraftJobFairRequest();
+        request.setName("CREATED_JOB_FAIR_DRAFT_" + getSaltString(2));
 
-            //maximum needed employee will be 40, so get 45
-            Page<CompanyEmployeeDTO> pageResult = companyEmployeeService.getAllCompanyEmployees(userDetails.getCompanyId(), "", 45, 0, "account.createTime", Sort.Direction.ASC);
+        request.setDecorateStartTime(decorateStartTime);
+        request.setDecorateEndTime(decorateEndTime);
+        request.setPublicStartTime(publicStartTime);
+        request.setPublicEndTime(publicEndTime);
+        request.setDescription("description about job fair");
+        request.setTargetAttendant("Sinh vien FPT");
+        request.setHostName("Demo");
+        JobFairDTO jobFairDTO = jobFairMapper.toDTO(request);
+        jobFairDTO.setThumbnailUrl("https://d3polnwtp0nqe6.cloudfront.net/JobFair-thumbnail/6b9f083b-9a95-4bd3-b264-4822ae76b8f6");
+        jobFairDTO.setCompany(CompanyDTO.builder().id(companyId).build());
 
-            List<CompanyEmployeeDTO> listShuffle = new ArrayList<>();
-            for (CompanyEmployeeDTO c : pageResult.getContent()) {
-                listShuffle.add(c);
-            }
-            for (int j = 0; j <= totalNumberOfAssignBooth; j++) {
-                Collections.shuffle(listShuffle);
-                System.out.println(listShuffle);
-                List<CompanyEmployeeDTO> neededEmployeeList = listShuffle
-                        .stream()
-                        .filter(item -> item.getAccount().getRole() != Role.COMPANY_MANAGER)
-                        .limit(totalNumberOfNeededEmployee).collect(Collectors.toList());
-                System.out.println(neededEmployeeList);
+        ShiftDTO morningShift = new ShiftDTO();
+        morningShift.setBeginTime(25200000L);
+        morningShift.setEndTime(36000000L);
+        morningShift.setJobFairId(jobFairDTO.getId());
 
-                //make sure these employee must be VERIFIED
-                neededEmployeeList.forEach(item -> {
-                    AccountDTO dto = item.getAccount();
-                    dto.setStatus(AccountStatus.VERIFIED);
-                    item.setAccount(dto);
-                });
-                //get first 4 employees from total needed employee
-                //Employee 1: SUPERVISOR
-                AssignmentDTO supervisorAssigment = assignmentService
-                        .assignEmployee(
-                                userDetails.getId(),
-                                neededEmployeeList.get(0).getAccountId(),
-                                jobFairBooths.get(j).getId(),
-                                AssignmentType.SUPERVISOR,
-                                userDetails.getCompanyId(),
-                                1658730607000L,
-                                1661409007000L);
-                AssignmentDTO decoratorAssignment = assignmentService
-                        .assignEmployee(
-                                userDetails.getId(),
-                                neededEmployeeList.get(1).getAccountId(),
-                                jobFairBooths.get(j).getId(),
-                                AssignmentType.DECORATOR,
-                                userDetails.getCompanyId(),
-                                1658730607000L,
-                                1661409007000L
-                        );
+        ShiftDTO afternoonShift = new ShiftDTO();
+        afternoonShift.setBeginTime(43200000L);
+        afternoonShift.setEndTime(54000000L);
+        afternoonShift.setJobFairId(jobFairDTO.getId());
 
-                AssignmentDTO staffAssignment_1 = assignmentService
-                        .assignEmployee(
-                                userDetails.getId(),
-                                neededEmployeeList.get(2).getAccountId(),
-                                jobFairBooths.get(j).getId(),
-                                AssignmentType.STAFF,
-                                userDetails.getCompanyId(),
-                                1658730607000L,
-                                1661409007000L
-                        );
-                AssignmentDTO staffAssignment_2 = assignmentService
-                        .assignEmployee(
-                                userDetails.getId(),
-                                neededEmployeeList.get(3).getAccountId(),
-                                jobFairBooths.get(j).getId(),
-                                AssignmentType.STAFF,
-                                userDetails.getCompanyId(),
-                                1658730607000L,
-                                1661409007000L
-                        );
-            }
+        jobFairDTO.setShifts(new ArrayList<>());
+        jobFairDTO.getShifts().add(morningShift);
+        jobFairDTO.getShifts().add(afternoonShift);
 
+        jobFairDTO = jobFairService.createNewJobFair(jobFairDTO);
+
+        layoutService.pickJobFairLayout(jobFairDTO.getId(), "b40ab83c-8f13-44ea-91b7-993f2263efae", companyId);
+
+        /*
+         * 1. Random total of booths that need assign
+         * 2. Calculate total number of employee that need to be assigned: totalOfBooth * 4
+         * 3. Use for i to assign  employee. In this loop, get first 4 employee from total of employee above, then assign equally to each booth
+         * */
+        List<JobFairBoothDTO> jobFairBooths = jobFairBoothService.getCompanyBoothByJobFairId(jobFairDTO.getId());
+
+        final int minimumBooth = 1;
+        final int maximumBooth = 10;
+
+        final int totalNumberOfAssignBooth = ThreadLocalRandom.current().nextInt(minimumBooth, maximumBooth + 1);
+        final int totalNumberOfNeededEmployee = totalNumberOfAssignBooth * 4;
+
+        //maximum needed employee will be 40, so get 45
+        Page<CompanyEmployeeDTO> pageResult = companyEmployeeService.getAllCompanyEmployees(companyId, "", 45, 0, "account.createTime", Sort.Direction.ASC);
+
+        List<CompanyEmployeeDTO> listShuffle = new ArrayList<>(pageResult.getContent());
+        Collections.shuffle(listShuffle);
+        System.out.println(listShuffle.size());
+
+        List<CompanyEmployeeEntity> managers = companyEmployeeRepository.findAllByCompanyIdAndAccountRoleId(companyId, Role.COMPANY_MANAGER.ordinal());
+        CompanyEmployeeEntity manager = managers.get(0);
+
+        for (int i = 0; i <= totalNumberOfAssignBooth; i++) {
+            List<CompanyEmployeeDTO> neededEmployeeList = listShuffle
+                    .stream()
+                    .filter(item -> item.getAccount().getRole() != Role.COMPANY_MANAGER)
+                    .limit(4).collect(Collectors.toList());
+
+            //make sure these employees must be VERIFIED
+            neededEmployeeList.forEach(item -> {
+                AccountDTO dto = item.getAccount();
+                dto.setStatus(AccountStatus.VERIFIED);
+                item.setAccount(dto);
+            });
+
+            //get first 4 employees from total needed employee
+            //Employee 1: SUPERVISOR
+            assignmentService
+                    .assignEmployee(
+                            manager.getAccountId(),
+                            neededEmployeeList.get(0).getAccountId(),
+                            jobFairBooths.get(i).getId(),
+                            AssignmentType.SUPERVISOR,
+                            companyId,
+                            decorateStartTime,
+                            publicEndTime);
+            //Employee 2: DECORATOR
+            assignmentService
+                    .assignEmployee(
+                            manager.getAccountId(),
+                            neededEmployeeList.get(1).getAccountId(),
+                            jobFairBooths.get(i).getId(),
+                            AssignmentType.DECORATOR,
+                            companyId,
+                            decorateStartTime,
+                            decorateEndTime
+                    );
+            //Employee 3: STAFF
+            assignmentService
+                    .assignEmployee(
+                            manager.getAccountId(),
+                            neededEmployeeList.get(2).getAccountId(),
+                            jobFairBooths.get(i).getId(),
+                            AssignmentType.STAFF,
+                            companyId,
+                            decorateStartTime,
+                            decorateEndTime
+                    );
+            //Employee 4: STAFF
+            assignmentService
+                    .assignEmployee(
+                            manager.getAccountId(),
+                            neededEmployeeList.get(3).getAccountId(),
+                            jobFairBooths.get(i).getId(),
+                            AssignmentType.STAFF,
+                            companyId,
+                            decorateStartTime,
+                            decorateEndTime
+                    );
+
+            listShuffle.removeAll(neededEmployeeList);
         }
-        return ResponseEntity.ok("Created");
+
+
+        return ResponseEntity.ok(jobFairDTO);
     }
 }

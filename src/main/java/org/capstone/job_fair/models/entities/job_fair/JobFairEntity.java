@@ -60,7 +60,7 @@ public class JobFairEntity {
     @JoinColumn(name = "job_fair_id", referencedColumnName = "id")
     private List<JobFairBoothEntity> jobFairBoothList;
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "job_fair_id", referencedColumnName = "id")
     private List<ShiftEntity> shifts;
 
