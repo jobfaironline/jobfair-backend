@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
+import org.capstone.job_fair.constants.AWSConstant;
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.controllers.payload.requests.account.cv.CreateApplicationRequest;
@@ -29,12 +30,15 @@ import org.capstone.job_fair.models.dtos.company.job.questions.QuestionsDTO;
 import org.capstone.job_fair.models.dtos.dynamoDB.NotificationMessageDTO;
 import org.capstone.job_fair.models.dtos.job_fair.JobFairDTO;
 import org.capstone.job_fair.models.dtos.job_fair.LayoutBoothDTO;
+import org.capstone.job_fair.models.dtos.job_fair.LayoutDTO;
 import org.capstone.job_fair.models.dtos.job_fair.booth.AssignmentDTO;
 import org.capstone.job_fair.models.dtos.job_fair.booth.BoothJobPositionDTO;
 import org.capstone.job_fair.models.dtos.job_fair.booth.JobFairBoothDTO;
+import org.capstone.job_fair.models.dtos.job_fair.booth.JobFairBoothLayoutDTO;
 import org.capstone.job_fair.models.entities.company.CompanyEmployeeEntity;
 import org.capstone.job_fair.models.entities.job_fair.JobFairEntity;
 import org.capstone.job_fair.models.entities.job_fair.booth.AssignmentEntity;
+import org.capstone.job_fair.models.entities.job_fair.booth.JobFairBoothLayoutEntity;
 import org.capstone.job_fair.models.enums.*;
 import org.capstone.job_fair.models.statuses.AccountStatus;
 import org.capstone.job_fair.repositories.attendant.cv.CvRepository;
@@ -42,6 +46,7 @@ import org.capstone.job_fair.repositories.company.CompanyEmployeeRepository;
 import org.capstone.job_fair.repositories.job_fair.JobFairRepository;
 import org.capstone.job_fair.repositories.job_fair.job_fair_booth.AssignmentRepository;
 import org.capstone.job_fair.repositories.job_fair.job_fair_booth.BoothJobPositionRepository;
+import org.capstone.job_fair.repositories.job_fair.job_fair_booth.JobFairBoothLayoutRepository;
 import org.capstone.job_fair.services.interfaces.attendant.AttendantService;
 import org.capstone.job_fair.services.interfaces.attendant.application.ApplicationService;
 import org.capstone.job_fair.services.interfaces.attendant.cv.CvService;
@@ -60,6 +65,8 @@ import org.capstone.job_fair.services.mappers.company.CompanyEmployeeMapper;
 import org.capstone.job_fair.services.mappers.company.CompanyMapper;
 import org.capstone.job_fair.services.mappers.company.job.question.QuestionsMapper;
 import org.capstone.job_fair.services.mappers.job_fair.JobFairMapper;
+import org.capstone.job_fair.services.mappers.job_fair.booth.JobFairBoothLayoutMapper;
+import org.capstone.job_fair.utils.AwsUtil;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -154,6 +161,15 @@ public class DemoController {
 
     @Autowired
     private LayoutService layoutService;
+
+    @Autowired
+    private JobFairBoothLayoutRepository jobFairBoothLayoutRepository;
+
+    @Autowired
+    private JobFairBoothLayoutMapper boothLayoutMapper;
+
+    @Autowired
+    private AwsUtil awsUtil;
 
 
     private String getSaltString(int number) {
@@ -632,6 +648,7 @@ public class DemoController {
             createCompanyRequest.setBenefits(benefitss);
             createCompanyRequest.setSubCategoriesIds(subCategoriesIds);
             CompanyDTO dto = companyMapper.toDTO(createCompanyRequest);
+            dto.setEmployeeMaxNum(5000);
             dto = companyService.createCompany(dto);
 
             //create company manager
@@ -671,7 +688,7 @@ public class DemoController {
     }
 
     @PostMapping(ApiEndPoint.Demo.CREATE_COMPANIES_WITH_80_EMPLOYEES)
-    public ResponseEntity<?> createCompaniesAnd80Employees(@RequestParam int numOfCompanies, @RequestParam int numberOfEmployees) {
+    public ResponseEntity<?> createCompaniesAndEmployees(@RequestParam int numOfCompanies, @RequestParam int numberOfEmployees) {
         return ResponseEntity.ok(createMultipleCompanies(numOfCompanies, numberOfEmployees));
     }
 
@@ -704,6 +721,7 @@ public class DemoController {
              * 3. Use for i to assign  employee. In this loop, get first 4 employee from total of emmployee above, then assign equally to the each booth
              * */
             List<JobFairBoothDTO> jobFairBooths = jobFairBoothService.getCompanyBoothByJobFairId(jobFairDTO.getId());
+
             final Integer minimumBooth = 1;
             final Integer maximumBooth = 10;
 
@@ -753,6 +771,7 @@ public class DemoController {
                                 1658730607000L,
                                 1661409007000L
                         );
+
                 AssignmentDTO staffAssignment_1 = assignmentService
                         .assignEmployee(
                                 userDetails.getId(),
@@ -797,9 +816,9 @@ public class DemoController {
             jobFairDTO.setThumbnailUrl("https://d3polnwtp0nqe6.cloudfront.net/JobFair-thumbnail/6b9f083b-9a95-4bd3-b264-4822ae76b8f6");
 
 
-            jobFairDTO.setCompany(CompanyDTO.builder().id(id).build());
+            jobFairDTO.setCompany(CompanyDTO.builder().id(userDetails.getCompanyId()).build());
             jobFairDTO = jobFairService.createNewJobFair(jobFairDTO);
-            layoutService.pickJobFairLayout(jobFairDTO.getId(), "b40ab83c-8f13-44ea-91b7-993f2263efae", id);
+            layoutService.pickJobFairLayout(jobFairDTO.getId(), "b40ab83c-8f13-44ea-91b7-993f2263efae", userDetails.getCompanyId());
 
 
             /*
@@ -808,6 +827,7 @@ public class DemoController {
              * 3. Use for i to assign  employee. In this loop, get first 4 employee from total of emmployee above, then assign equally to the each booth
              * */
             List<JobFairBoothDTO> jobFairBooths = jobFairBoothService.getCompanyBoothByJobFairId(jobFairDTO.getId());
+
             final Integer minimumBooth = 1;
             final Integer maximumBooth = 10;
 
@@ -816,9 +836,26 @@ public class DemoController {
 
             //maximum needed employee will be 40, so get 45
             Page<CompanyEmployeeDTO> pageResult = companyEmployeeService.getAllCompanyEmployees(userDetails.getCompanyId(), "", 45, 0, "account.createTime", Sort.Direction.ASC);
-            List<CompanyEmployeeDTO> neededEmployeeList = pageResult.getContent().stream().limit(totalNumberOfNeededEmployee).collect(Collectors.toList());
 
+            List<CompanyEmployeeDTO> listShuffle = new ArrayList<>();
+            for (CompanyEmployeeDTO c : pageResult.getContent()) {
+                listShuffle.add(c);
+            }
             for (int j = 0; j <= totalNumberOfAssignBooth; j++) {
+                Collections.shuffle(listShuffle);
+                System.out.println(listShuffle);
+                List<CompanyEmployeeDTO> neededEmployeeList = listShuffle
+                        .stream()
+                        .filter(item -> item.getAccount().getRole() != Role.COMPANY_MANAGER)
+                        .limit(totalNumberOfNeededEmployee).collect(Collectors.toList());
+                System.out.println(neededEmployeeList);
+
+                //make sure these employee must be VERIFIED
+                neededEmployeeList.forEach(item -> {
+                    AccountDTO dto = item.getAccount();
+                    dto.setStatus(AccountStatus.VERIFIED);
+                    item.setAccount(dto);
+                });
                 //get first 4 employees from total needed employee
                 //Employee 1: SUPERVISOR
                 AssignmentDTO supervisorAssigment = assignmentService
@@ -840,6 +877,7 @@ public class DemoController {
                                 1658730607000L,
                                 1661409007000L
                         );
+
                 AssignmentDTO staffAssignment_1 = assignmentService
                         .assignEmployee(
                                 userDetails.getId(),
@@ -861,6 +899,7 @@ public class DemoController {
                                 1661409007000L
                         );
             }
+
         }
         return ResponseEntity.ok("Created");
     }

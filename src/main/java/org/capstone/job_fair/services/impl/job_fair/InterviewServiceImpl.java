@@ -453,9 +453,9 @@ public class InterviewServiceImpl implements InterviewService {
             //step 3.2
             ApplicationEntity lastInterview = scheduleList.get(scheduleList.size() -1);
             if (lastInterview.getEndTime() + interviewLength + interviewBufferLength > firstAssignment.getEndTime()){
-//                if (assignments.size() == 1){
-//                    throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.InterviewSchedule.MAXIMUM_SCHEDULE_ALLOW));
-//                }
+                if (assignments.size() == 1){
+                    throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.InterviewSchedule.MAXIMUM_SCHEDULE_ALLOW));
+                }
                 AssignmentEntity secondAssignment = assignments.get(1);
                 interviewBeginTime = firstAssignment.getBeginTime();
                 interviewEndTime = firstAssignment.getEndTime() + interviewLength;
