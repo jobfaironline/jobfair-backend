@@ -183,5 +183,17 @@ public class AssignmentController {
 
     }
 
+    @PostMapping(ApiEndPoint.Assignment.CREATE_SHIFT_UPLOAD_CSV)
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
+    public ResponseEntity<?> assignSiftToMultipleEmployee(@RequestParam("jobFairBoothId") String jobFairId,
+                                                          @RequestPart("file") MultipartFile file) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String companyId = userDetails.getCompanyId();
+        ParseFileResult<AssignmentDTO> result = assignmentService.assignShiftForMultipleEmployee(file, jobFairId, companyId, userDetails.getId());
+        if(!result.isHasError()) {
+            return ResponseEntity.ok(result.getResult());
+        }
+        return ResponseEntity.badRequest().body(result);
+    }
 
 }

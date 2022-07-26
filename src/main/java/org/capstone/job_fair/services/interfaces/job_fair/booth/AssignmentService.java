@@ -35,4 +35,7 @@ public interface AssignmentService {
     ParseFileResult<AssignmentDTO> createNewAssignmentsFromFile(MultipartFile file, String jobFairId, String companyId, String assignerId);
 
     List<CompanyEmployeeDTO> getAvailableInterviewer(String jobFairBoothId);
-}
+
+    ParseFileResult<AssignmentDTO> assignShiftForMultipleEmployee(MultipartFile file, String jobFairId, String companyId, String assignerId);
+
+    }

@@ -405,6 +405,9 @@ public final class MessageConstant {
         public static final String INVALID_ASSIGNMENT_ORGANIZE_JOB_FAIR = "assignment.error.invalid-assignment-organize-job-fair";
         public static final String UNAVAILABLE_EMPLOYEE = "assignment.error.unavailable-employee";
 
+        public static final String INVALID_SHIFT_NAME = "assignment.error.invalid-shift-name";
+        public static final String SHIFT_TIME_OVER_JOB_FAIR_END_TIME = "assignment.error.shift-time-over-job-fair-end-time";
+
         private Assignment() {
         }
     }
