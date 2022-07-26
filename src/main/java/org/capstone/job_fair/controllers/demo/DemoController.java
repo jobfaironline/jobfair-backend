@@ -43,8 +43,6 @@ import org.capstone.job_fair.repositories.attendant.cv.CvRepository;
 import org.capstone.job_fair.repositories.company.CompanyEmployeeRepository;
 import org.capstone.job_fair.repositories.job_fair.JobFairRepository;
 import org.capstone.job_fair.repositories.job_fair.job_fair_booth.AssignmentRepository;
-import org.capstone.job_fair.repositories.job_fair.job_fair_booth.BoothJobPositionRepository;
-import org.capstone.job_fair.repositories.job_fair.job_fair_booth.JobFairBoothLayoutRepository;
 import org.capstone.job_fair.services.interfaces.attendant.AttendantService;
 import org.capstone.job_fair.services.interfaces.attendant.application.ApplicationService;
 import org.capstone.job_fair.services.interfaces.attendant.cv.CvService;
@@ -56,14 +54,11 @@ import org.capstone.job_fair.services.interfaces.job_fair.JobFairService;
 import org.capstone.job_fair.services.interfaces.job_fair.LayoutService;
 import org.capstone.job_fair.services.interfaces.job_fair.booth.AssignmentService;
 import org.capstone.job_fair.services.interfaces.job_fair.booth.JobFairBoothService;
-import org.capstone.job_fair.services.interfaces.matching_point.MatchingPointService;
 import org.capstone.job_fair.services.interfaces.notification.NotificationService;
 import org.capstone.job_fair.services.mappers.attendant.AttendantMapper;
 import org.capstone.job_fair.services.mappers.company.CompanyEmployeeMapper;
 import org.capstone.job_fair.services.mappers.company.CompanyMapper;
-import org.capstone.job_fair.services.mappers.company.job.question.QuestionsMapper;
 import org.capstone.job_fair.services.mappers.job_fair.JobFairMapper;
-import org.capstone.job_fair.services.mappers.job_fair.booth.JobFairBoothLayoutMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.capstone.job_fair.utils.PasswordGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -207,142 +202,27 @@ public class DemoController {
         return dto.getId();
     }
 
-    private CreateQuestionsRequest.Choice generateAnswer(String content, Boolean status) {
-        return new CreateQuestionsRequest.Choice(content, status);
-    }
-
-    private List<CreateQuestionsRequest.Choice> createTrueFalseQuestion(String trueAnswer, String falseAnswer) {
-        List<CreateQuestionsRequest.Choice> listChoices = new ArrayList<>();
-
-        CreateQuestionsRequest.Choice choice1 = new CreateQuestionsRequest.Choice();
-        choice1.setContent(trueAnswer);
-        choice1.setIsCorrect(true);
-        listChoices.add(choice1);
-
-        CreateQuestionsRequest.Choice choice2 = new CreateQuestionsRequest.Choice();
-        choice2.setContent(falseAnswer);
-        choice2.setIsCorrect(false);
-        listChoices.add(choice2);
-
-        return listChoices;
-    }
-
-    private List<CreateQuestionsRequest.Choice> createMultipleChoiceQuestion(List<String> wrongAnswer, List<String> correctAnswer) {
-        List<CreateQuestionsRequest.Choice> listChoices = new ArrayList<>();
-
-        wrongAnswer.forEach(item -> {
-            CreateQuestionsRequest.Choice choice = new CreateQuestionsRequest.Choice();
-            choice.setContent(item);
-            choice.setIsCorrect(false);
-            listChoices.add(choice);
-        });
-
-        correctAnswer.forEach(item -> {
-            CreateQuestionsRequest.Choice choice = new CreateQuestionsRequest.Choice();
-            choice.setContent(item);
-            choice.setIsCorrect(true);
-            listChoices.add(choice);
-        });
-
-        return listChoices;
-    }
-
-    private List<CreateQuestionsRequest> generateQuestion(String jobPositionId) {
-        //create 3 True False questions
-        List<CreateQuestionsRequest.Choice> TF_Question1 = createTrueFalseQuestion("T-In the cloud, instead of physically managing operation system, you use services.", "F-In the cloud, instead of physically managing middleware, you use services.");
-        List<CreateQuestionsRequest.Choice> TF_Question2 = createTrueFalseQuestion("T-Enable MFA for the root user", "F-Using the root user for routine administrative tasks");
-        List<CreateQuestionsRequest.Choice> TF_Question3 = createTrueFalseQuestion("T-CloudWatch", "F-CloudFront");
-
-        //create 3 multiple choice questions
-        List<String> wrongChoice_1 = new ArrayList<>();
-        wrongChoice_1.add("Allows all inbound traffic and blocks all outbound traffic.");
-        wrongChoice_1.add("Allows all inbound and outbound traffic");
-        wrongChoice_1.add("Blocks all inbound and outbound traffic.");
-        List<String> correctChoice_1 = new ArrayList<>();
-        correctChoice_1.add("Blocks all inbound traffic and allows all outbound traffic (true)");
-        List<CreateQuestionsRequest.Choice> MC_Question1 = createMultipleChoiceQuestion(wrongChoice_1, correctChoice_1);
-
-        List<String> wrongChoice_2 = new ArrayList<>();
-        wrongChoice_2.add("Instance placement and instance size");
-        wrongChoice_2.add("Instance AMI and networking speed");
-        wrongChoice_2.add("Instance tenancy and instance billing");
-        List<String> correctChoice_2 = new ArrayList<>();
-        correctChoice_2.add("Instance family and instance size (true)");
-        List<CreateQuestionsRequest.Choice> MC_Question2 = createMultipleChoiceQuestion(wrongChoice_2, correctChoice_2);
-
-        List<String> wrongChoice_3 = new ArrayList<>();
-        wrongChoice_3.add("Amaztrong");
-        wrongChoice_3.add("Amazon Web Identity and Access Encryption");
-        wrongChoice_3.add("Amazon Elastic 3");
-        List<String> correctChoice_3 = new ArrayList<>();
-        correctChoice_1.add("Amazon Elastic Block Storage Encryption (true)");
-        List<CreateQuestionsRequest.Choice> MC_Question3 = createMultipleChoiceQuestion(wrongChoice_3, correctChoice_3);
-///////////////////////////////
-        List<CreateQuestionsRequest> result = new ArrayList<>();
-        //TRUE-FALSE Questions
-        CreateQuestionsRequest TF1 = new CreateQuestionsRequest();
-        TF1.setContent("Which of the following pieces of information do you need to create a Virtual Private Cloud (VPC)?");
-        TF1.setChoicesList(TF_Question1);
-        TF1.setJobPositionId(jobPositionId);
-
-        CreateQuestionsRequest TF2 = new CreateQuestionsRequest();
-        TF2.setContent("What must you do to allow resources in a public subnet to communicate with the internet?");
-        TF2.setChoicesList(TF_Question2);
-        TF2.setJobPositionId(jobPositionId);
-
-        CreateQuestionsRequest TF3 = new CreateQuestionsRequest();
-        TF3.setContent("Which amongst the following tools is for monitoring?");
-        TF3.setChoicesList(TF_Question3);
-        TF3.setJobPositionId(jobPositionId);
-
-        result.add(TF1);
-        result.add(TF2);
-        result.add(TF3);
-
-        //MC_Questions
-        CreateQuestionsRequest MC1 = new CreateQuestionsRequest();
-        MC1.setContent("Which of the following is true for the default settings of a security group?");
-        MC1.setChoicesList(MC_Question1);
-        MC1.setJobPositionId(jobPositionId);
-
-        CreateQuestionsRequest MC2 = new CreateQuestionsRequest();
-        MC2.setContent("What does an Amazon EC2 instance type indicate?");
-        MC2.setChoicesList(MC_Question2);
-        MC2.setJobPositionId(jobPositionId);
-
-        CreateQuestionsRequest MC3 = new CreateQuestionsRequest();
-        MC3.setContent("Which of the following is Amazon Web Services' latest encryption tool?");
-        MC3.setChoicesList(MC_Question3);
-        MC3.setJobPositionId(jobPositionId);
-
-        result.add(MC1);
-        result.add(MC2);
-        result.add(MC3);
-
-        return result;
-    }
-
     //This function must be call when Supervisor edit booth profile. No add booth job position manually and must run script
     //REMEMBER: run script to delete all application first !
     private List<BoothJobPositionDTO> createBoothJobPosition(String jobFairId) {
-        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        Optional<JobFairEntity> jobFairOpt = jobFairRepository.findById(jobFairId);
+        if (!jobFairOpt.isPresent()){
+            return null;
+        }
+
+        JobFairEntity jobFair = jobFairOpt.get();
+        CompanyEntity companyEntity = jobFair.getCompany();
 
         //get 5 job positions first
-        Page<JobPositionDTO> jobPositions = jobPositionService.getAllJobPositionOfCompany(userDetails.getCompanyId(), null, null, null, 5, 0, "createdDate", Sort.Direction.ASC);
-
-        //Add 1 question (includes 1 correct answer and 1 wrong answer) to each job position
-        jobPositions.getContent().stream().forEach(item -> {
-            List<CreateQuestionsRequest> requestList = generateQuestion(item.getId());
-            requestList.forEach(request -> {
-                //create questions
-                createQuestions(request);
-            });
-        });
+        Page<JobPositionDTO> jobPositions = jobPositionService.getAllJobPositionOfCompany(companyEntity.getId(), null, null, null, 5, 0, "createdDate", Sort.Direction.ASC);
 
         //Get all job fair booths of job fair, then add job position to those booths
         List<JobFairBoothDTO> boothListDTO = jobFairBoothService.getCompanyBoothByJobFairId(jobFairId);
 
         int count = 0;
+        List<BoothJobPositionDTO> result = new ArrayList<>();
+
         for (JobFairBoothDTO dto : boothListDTO) {
             count++;
             JobFairBoothDTO jobFairBoothDto = new JobFairBoothDTO();
@@ -350,44 +230,26 @@ public class DemoController {
             jobFairBoothDto.setDescription("chay script lan thu " + count);
             jobFairBoothDto.setName("chay script lan thu " + count);
             //mapping job position to booth job position
-            List<BoothJobPositionDTO> boothJobPositions = jobPositions.getContent().stream().map(item -> {
-                BoothJobPositionDTO boothJobPosition = BoothJobPositionDTO
-                        .builder()
-                        .originJobPosition(item.getId())
-                        .minSalary(Double.parseDouble("5"))
-                        .maxSalary(Double.parseDouble("5"))
-                        .numOfPosition(Integer.parseInt("1"))
-                        .isHaveTest(true)
-                        .note("this job position required test")
-                        .testTimeLength(Integer.parseInt("15"))
-                        .numOfQuestion(Integer.parseInt("4"))
-                        .passMark(Double.parseDouble("1"))
-                        .jobFairBooth(jobFairBoothDto)
-                        .descriptionKeyWord("abc").requirementKeyWord("abc").build();
-                return boothJobPosition;
-            }).collect(Collectors.toList());
+            List<BoothJobPositionDTO> boothJobPositions = jobPositions.getContent().stream().map(item -> BoothJobPositionDTO
+                    .builder()
+                    .originJobPosition(item.getId())
+                    .minSalary(5.0)
+                    .maxSalary(100.0)
+                    .numOfPosition(1)
+                    .isHaveTest(true)
+                    .note("this job position required test")
+                    .testTimeLength(15)
+                    .numOfQuestion(4)
+                    .passMark(1.0)
+                    .jobFairBooth(jobFairBoothDto)
+                    .descriptionKeyWord(item.getDescriptionKeyWord())
+                    .requirementKeyWord(item.getRequirementKeyWord()).build()).collect(Collectors.toList());
             dto.setBoothJobPositions(boothJobPositions);
-            jobFairBoothService.updateJobFairBooth(dto, userDetails.getCompanyId());
+            dto = jobFairBoothService.updateJobFairBooth(dto, companyEntity.getId());
+            result.addAll(dto.getBoothJobPositions());
         }
-
-
-        List<BoothJobPositionDTO> result = new ArrayList<>();
-        jobFairBoothService.getCompanyBoothByJobFairId(jobFairId).stream().forEach(item -> item.getBoothJobPositions().stream().forEach(element -> result.add(element)));
         return result;
     }
-
-    private void createQuestions(CreateQuestionsRequest request) {
-        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        QuestionsDTO questionsDTO = new QuestionsDTO();
-        JobPositionDTO jobPositionDTO = new JobPositionDTO();
-        jobPositionDTO.setId(request.getJobPositionId());
-        questionsDTO.setJobPosition(jobPositionDTO);
-        questionsDTO.setContent(request.getContent());
-        List<ChoicesDTO> choicesDTOList = request.getChoicesList().stream().map(choice -> new ChoicesDTO(null, choice.getContent(), choice.getIsCorrect(), null)).collect(Collectors.toList());
-        questionsDTO.setChoicesList(choicesDTOList);
-        questionsService.createQuestion(questionsDTO, userDetails.getId(), userDetails.getCompanyId());
-    }
-
 
     private List<String> createAttendantsWithOneCv(Integer numberOfAttendants) {
 
