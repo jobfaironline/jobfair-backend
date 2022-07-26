@@ -137,6 +137,7 @@ public class AssignmentServiceImpl implements AssignmentService {
             entity.setEndTime(endTime);
             return updateAssigment(entity, companyId);
         }
+        System.out.println(jobFairBoothId);
         return createAssignment(assignerId, employeeId, jobFairBoothId, type, companyId, beginTime, endTime);
     }
 
