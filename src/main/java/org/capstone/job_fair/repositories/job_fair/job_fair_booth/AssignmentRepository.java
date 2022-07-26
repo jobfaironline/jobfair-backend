@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,5 +36,10 @@ public interface AssignmentRepository extends JpaRepository<AssignmentEntity, St
     Page<AssignmentEntity> findByCompanyEmployeeAccountIdAndJobFairBoothJobFairStatusAndType(String employeeId, JobFairPlanStatus status, AssignmentType type, Pageable pageable);
 
     List<AssignmentEntity> findByJobFairBoothIdAndType(String jobFairBoothId, AssignmentType type);
+
+    @Query("select a from AssignmentEntity a " +
+            "where a.jobFairBooth.id = ?1 and a.companyEmployee.accountId = ?2 and a.beginTime = ?3 and a.endTime = ?4")
+    Optional<AssignmentEntity> findAssignmentEntityByJobFairBoothIdAndCompanyEmployeeAccountIdAndBeginTimeAndEndTime(String jobFairBoothId, String employeeId, Long startTime, Long endTime);
+
 
 }

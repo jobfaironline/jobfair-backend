@@ -15,6 +15,7 @@ import org.capstone.job_fair.models.dtos.job_fair.booth.AssignmentDTO;
 import org.capstone.job_fair.models.dtos.util.ParseFileResult;
 import org.capstone.job_fair.models.entities.company.CompanyEmployeeEntity;
 import org.capstone.job_fair.models.entities.job_fair.JobFairEntity;
+import org.capstone.job_fair.models.entities.job_fair.ShiftEntity;
 import org.capstone.job_fair.models.entities.job_fair.booth.AssignmentEntity;
 import org.capstone.job_fair.models.entities.job_fair.booth.JobFairBoothEntity;
 import org.capstone.job_fair.models.enums.AssignmentType;
@@ -22,6 +23,7 @@ import org.capstone.job_fair.models.enums.Role;
 import org.capstone.job_fair.models.statuses.JobFairPlanStatus;
 import org.capstone.job_fair.repositories.company.CompanyEmployeeRepository;
 import org.capstone.job_fair.repositories.job_fair.JobFairRepository;
+import org.capstone.job_fair.repositories.job_fair.ShiftRepository;
 import org.capstone.job_fair.repositories.job_fair.job_fair_booth.AssignmentRepository;
 import org.capstone.job_fair.repositories.job_fair.job_fair_booth.JobFairBoothRepository;
 import org.capstone.job_fair.services.interfaces.job_fair.booth.AssignmentService;
@@ -64,6 +66,8 @@ public class AssignmentServiceImpl implements AssignmentService {
     @Autowired
     private XSLSFileService xslsFileService;
 
+    @Autowired
+    private ShiftRepository shiftRepository;
 
 
     @Getter
@@ -274,8 +278,7 @@ public class AssignmentServiceImpl implements AssignmentService {
 
                     List<CompanyEmployeeDTO> availableEmployees = this.getAvailableCompanyByJobFairId(jobFairId, companyId);
                     CompanyEmployeeEntity companyEmployee = assignmentEntity.getCompanyEmployee();
-                    boolean isEmployeeAvailable = availableEmployees.stream()
-                            .anyMatch(dto -> dto.getAccountId().equals(companyEmployee.getAccountId()));
+                    boolean isEmployeeAvailable = availableEmployees.stream().anyMatch(dto -> dto.getAccountId().equals(companyEmployee.getAccountId()));
                     if (!isEmployeeAvailable) {
                         parseResult.addErrorMessage(i + 1, MessageUtil.getMessage(MessageConstant.Assignment.UNAVAILABLE_EMPLOYEE));
                         throw new ParseException(parseResult);
@@ -366,11 +369,185 @@ public class AssignmentServiceImpl implements AssignmentService {
         assignments.sort((o1, o2) -> Math.toIntExact(o1.getBeginTime() - o2.getBeginTime()));
         List<CompanyEmployeeEntity> employees = new ArrayList<>();
         assignments.forEach(assignment -> {
-            if (!employees.contains(assignment.getCompanyEmployee())){
+            if (!employees.contains(assignment.getCompanyEmployee())) {
                 employees.add(assignment.getCompanyEmployee());
             }
         });
 
         return employees.stream().map(companyEmployeeMapper::toDTO).collect(Collectors.toList());
     }
+
+    private String getShiftTime(String name, Long jobFairStartTime, Long jobFairEndTime, int day, ShiftEntity morningShift, ShiftEntity afternoonShift) {
+        final Long ONE_DAY = 24 * 60 * 60 * 1000L;
+        final Long MORNING_SHIFT_START = morningShift.getBeginTime();
+        final Long MORNING_SHIFT_END = morningShift.getEndTime();
+        final Long AFTERNOON_SHIFT_START = afternoonShift.getBeginTime();
+        final Long AFTERNOON_SHIFT_END = afternoonShift.getEndTime();
+        Long timeTmp = 0L;
+        String shiftTime = "";
+        switch (name) {
+            case "morning":
+                timeTmp = jobFairStartTime + (day - 1) * ONE_DAY + MORNING_SHIFT_START;
+
+                if (timeTmp > jobFairEndTime) {
+                    throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Assignment.SHIFT_TIME_OVER_JOB_FAIR_END_TIME));
+                } else {
+                    shiftTime = Long.toString(timeTmp);
+                }
+
+                timeTmp = jobFairStartTime + (day - 1) * ONE_DAY + MORNING_SHIFT_END;
+                if (timeTmp > jobFairEndTime) {
+                    throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Assignment.SHIFT_TIME_OVER_JOB_FAIR_END_TIME));
+                } else {
+                    shiftTime += "," + Long.toString(timeTmp);
+                }
+                break;
+            case "afternoon":
+                timeTmp = jobFairStartTime + (day - 1) * ONE_DAY + AFTERNOON_SHIFT_START;
+                if (timeTmp > jobFairEndTime) {
+                    throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Assignment.SHIFT_TIME_OVER_JOB_FAIR_END_TIME));
+                } else {
+                    shiftTime = Long.toString(timeTmp);
+                }
+
+                timeTmp = jobFairStartTime + (day - 1) * ONE_DAY + AFTERNOON_SHIFT_END;
+                if (timeTmp > jobFairEndTime) {
+                    throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Assignment.SHIFT_TIME_OVER_JOB_FAIR_END_TIME));
+                } else {
+                    shiftTime += "," + Long.toString(timeTmp);
+                }
+                break;
+            default:
+                throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Assignment.INVALID_SHIFT_NAME));
+        }
+        return shiftTime;
+    }
+
+    private ParseFileResult<AssignmentDTO> createShiftAssignmentFromListString(List<List<String>> data, String jobFairBoothId, String companyId, CompanyEmployeeEntity assigner) throws ParseException {
+        ParseFileResult<AssignmentDTO> parseResult = new ParseFileResult<>();
+        int rowNum = data.size();
+
+        List<AssignmentEntity> entities = new ArrayList<>();
+        for (int i = 1; i < rowNum; i++) {
+            List<String> rowData = data.get(i);
+            boolean isEmpty = true;
+            String employeeId = rowData.get(0);
+            String jobFairDay = rowData.get(1);
+            String shift = rowData.get(2);
+            String assignmentTypeString = rowData.get(3);
+            isEmpty = (employeeId.trim().isEmpty() || jobFairDay.trim().isEmpty() || shift.trim().isEmpty() || assignmentTypeString.trim().isEmpty());
+            if (!isEmpty) {
+                AssignmentType type = null;
+                //Only allow interviewer and receptionist
+                try {
+                    type = AssignmentType.valueOf(assignmentTypeString);
+                    if (type == AssignmentType.SUPERVISOR || type == AssignmentType.DECORATOR || type == AssignmentType.STAFF) {
+                        parseResult.addErrorMessage(i, MessageUtil.getMessage(MessageConstant.Assignment.INVALID_ASSIGNMENT_ORGANIZE_JOB_FAIR));
+                    }
+                } catch (IllegalArgumentException e) {
+                    parseResult.addErrorMessage(i, MessageUtil.getMessage(MessageConstant.Assignment.WRONG_ASSIGNMENT_TYPE));
+                }
+                //Find company employee
+                Optional<CompanyEmployeeEntity> companyEmployeeOpt = companyEmployeeRepository.findByEmployeeIdAndCompanyId(employeeId, companyId);
+                if (!companyEmployeeOpt.isPresent()) {
+                    parseResult.addErrorMessage(i, MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMPLOYEE_NOT_FOUND));
+                }
+                //Get all shift of job fair
+                Optional<JobFairBoothEntity> jobFairBoothOpt = jobFairBoothRepository.findById(jobFairBoothId);
+                if (!jobFairBoothOpt.isPresent()) {
+                    throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFairBooth.NOT_FOUND));
+                }
+                JobFairBoothEntity jobFairBooth = jobFairBoothOpt.get();
+                List<ShiftEntity> shiftEntities = shiftRepository.findAllByJobFairId(jobFairBooth.getJobFair().getId());
+                ShiftEntity morningShift, afternoonShift;
+                //Get morning shift and afternoon shift
+                if (shiftEntities.get(0).getBeginTime() < shiftEntities.get(1).getBeginTime()) {
+                    morningShift = shiftEntities.get(0);
+                    afternoonShift = shiftEntities.get(1);
+                } else {
+                    morningShift = shiftEntities.get(1);
+                    afternoonShift = shiftEntities.get(0);
+                }
+
+                AssignmentEntity entity = new AssignmentEntity();
+                entity.setCompanyEmployee(companyEmployeeOpt.get());
+                String shiftTime = null;
+                try {
+                    shiftTime = getShiftTime(shift, jobFairBooth.getJobFair().getPublicStartTime(), jobFairBooth.getJobFair().getPublicEndTime(), Integer.parseInt(jobFairDay), morningShift, afternoonShift);
+                    entity.setBeginTime(Long.parseLong(shiftTime.split(",")[0]));
+                    entity.setEndTime(Long.parseLong(shiftTime.split(",")[1]));
+                } catch (IllegalArgumentException e) {
+                    parseResult.addErrorMessage(i, e.getMessage());
+                }
+                entity.setType(type);
+                entity.setAssigner(assigner);
+                entities.add(entity);
+            }
+        }
+        if (!parseResult.isHasError()) {
+            for (int i = 0; i < entities.size(); i++) {
+                AssignmentEntity assignmentEntity = entities.get(i);
+                try {
+                    if (!parseResult.isHasError()) {
+                        AssignmentDTO dto = null;
+                        Optional<AssignmentEntity> assignmentEntityOpt = assignmentRepository.findAssignmentEntityByJobFairBoothIdAndCompanyEmployeeAccountIdAndBeginTimeAndEndTime(jobFairBoothId, assignmentEntity.getCompanyEmployee().getAccountId(), assignmentEntity.getBeginTime(), assignmentEntity.getEndTime());
+                        if (assignmentEntityOpt.isPresent())
+                            dto = updateAssignment(assignmentEntityOpt.get().getId(), assignmentEntity.getBeginTime(), assignmentEntity.getEndTime(), assignmentEntity.getType());
+                        else
+                            dto = assignEmployee(assigner.getAccountId(), assignmentEntity.getCompanyEmployee().getAccountId(), jobFairBoothId, assignmentEntity.getType(), assignmentEntity.getCompanyEmployee().getCompany().getId(), assignmentEntity.getBeginTime(), assignmentEntity.getEndTime());
+                        parseResult.addToResult(dto);
+                    }
+                } catch (Exception e) {
+                    //+1 because row start at 1
+                    parseResult.addErrorMessage(i + 1, e.getMessage());
+                }
+            }
+        }
+        return parseResult;
+    }
+
+    @Override
+    @SneakyThrows
+    @Transactional
+    public ParseFileResult<AssignmentDTO> assignShiftForMultipleEmployee(MultipartFile file, String jobFairId, String companyId, String assignerId) {
+        Optional<CompanyEmployeeEntity> assignerOpt = companyEmployeeRepository.findByAccountId(assignerId);
+        if (!assignerOpt.isPresent()) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMPLOYEE_NOT_FOUND));
+        }
+        CompanyEmployeeEntity assigner = assignerOpt.get();
+        //check for invalid type
+        List<String> allowTypes = Arrays.asList(FileConstant.CSV_CONSTANT.TYPE, FileConstant.XLS_CONSTANT.TYPE, FileConstant.XLSX_CONSTANT.TYPE);
+        String fileType = file.getContentType();
+        if (!allowTypes.contains(fileType)) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.File.NOT_ALLOWED));
+        }
+        ParseFileResult<AssignmentDTO> parseResult;
+        List<List<String>> data = null;
+
+        //Excel file
+        if (Objects.equals(fileType, FileConstant.XLSX_CONSTANT.TYPE) || Objects.equals(fileType, FileConstant.XLS_CONSTANT.TYPE)) {
+            Workbook workbook = new XSSFWorkbook(file.getInputStream());
+            if (workbook.getNumberOfSheets() != 1) {
+                throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.File.XSL_NO_SHEET));
+            }
+            Sheet sheet = workbook.getSheetAt(0);
+            data = xslsFileService.readXSLSheet(sheet, AssignmentConstant.XLSXFormat.COLUMN_NUM);
+            try {
+                parseResult = createShiftAssignmentFromListString(data, jobFairId, companyId, assigner);
+            } catch (ParseException e) {
+                parseResult = e.getResult();
+            }
+            if (parseResult.isHasError()) {
+                String url = xslsFileService.uploadErrorXSLFile(workbook, parseResult.getErrors(), file.getOriginalFilename(), AssignmentConstant.XLSXFormat.ERROR_INDEX);
+                parseResult.setErrorFileUrl(url);
+            }
+            return parseResult;
+        }
+        //CSV file
+        data = xslsFileService.readCSVFile(file.getInputStream());
+        parseResult = createShiftAssignmentFromListString(data, jobFairId, companyId, assigner);
+        return parseResult;
+    }
+
+
 }
