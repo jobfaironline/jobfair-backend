@@ -1,5 +1,6 @@
 package org.capstone.job_fair.services.interfaces.notification;
 
+import com.amazonaws.services.sqs.model.SendMessageResult;
 import org.capstone.job_fair.models.dtos.dynamoDB.NotificationMessageDTO;
 import org.capstone.job_fair.models.enums.Role;
 

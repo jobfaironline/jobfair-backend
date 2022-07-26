@@ -31,6 +31,30 @@ public final class ApiEndPoint {
 
     }
 
+
+    public static final class Demo {
+        private Demo() {
+
+        }
+
+        public static final String DEMO_ENDPOINT = ROOT_ENDPOINT + VERSION + "/demo";
+
+        public static final String CREATE_ATTENDANT = DEMO_ENDPOINT + "/create-attendant";
+
+        public static final String CREATE_BOOTH_JOB_POSITION = DEMO_ENDPOINT + "/create-booth-job-positions";
+
+        public static final String SUBMIT_MULTIPLE_APPLICATION = DEMO_ENDPOINT + "/submit-multiple-application";
+        public static final String PUBLISH_JOBFAIR = DEMO_ENDPOINT + "/publish-jobfair";
+
+        public static final String CREATE_EMPLOYEES = DEMO_ENDPOINT + "/create-employees";
+
+        public static final String CREATE_COMPANIES_WITH_80_EMPLOYEES = DEMO_ENDPOINT + "/create-companies";
+        public static final String CREATE_1_DRAFT_JOB_FAIR_FOR_COMPANY = DEMO_ENDPOINT + "/create-1-draft";
+
+        public static final String CREATE_JOB_FAIR_DRAFT_FOR_COMPANIES = DEMO_ENDPOINT + "/create-job-fair-draft";
+
+    }
+
     public static final class Quiz {
         private Quiz() {
 

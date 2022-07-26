@@ -1,5 +1,6 @@
 package org.capstone.job_fair.controllers.job_fair;
 
+import com.amazonaws.services.sqs.model.SendMessageResult;
 import com.amazonaws.util.json.Jackson;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -174,15 +175,14 @@ public class JobFairController {
         jobFairService.publishJobFair(userDetails.getCompanyId(), jobFairPlanId);
 
         List<AssignmentDTO> assignments = assignmentService.getAssignmentByJobFairId(jobFairPlanId, userDetails.getCompanyId());
-
-        for (AssignmentDTO assignment : assignments) {
-            NotificationMessageDTO notificationMessage = NotificationMessageDTO.builder()
-                    .title(NotificationAction.ASSIGNMENT.toString())
-                    .message(Jackson.getObjectMapper().writeValueAsString(assignment))
-                    .notificationType(NotificationType.NOTI)
-                    .userId(assignment.getCompanyEmployee().getAccountId()).build();
-            notificationService.createNotification(notificationMessage, assignment.getCompanyEmployee().getAccountId());
-        }
+            for (AssignmentDTO assignment : assignments) {
+                NotificationMessageDTO notificationMessage = NotificationMessageDTO.builder()
+                        .title(NotificationAction.ASSIGNMENT.toString())
+                        .message(Jackson.getObjectMapper().writeValueAsString(assignment))
+                        .notificationType(NotificationType.NOTI)
+                        .userId(assignment.getCompanyEmployee().getAccountId()).build();
+                notificationService.createNotification(notificationMessage, assignment.getCompanyEmployee().getAccountId());
+            }
 
         return ResponseEntity.ok().build();
     }

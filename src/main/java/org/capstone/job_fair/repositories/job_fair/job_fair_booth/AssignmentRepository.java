@@ -36,4 +36,6 @@ public interface AssignmentRepository extends JpaRepository<AssignmentEntity, St
 
     List<AssignmentEntity> findByJobFairBoothIdAndType(String jobFairBoothId, AssignmentType type);
 
+    @Query("select a from AssignmentEntity a where a.companyEmployee.accountId = ?1 and a.jobFairBooth.jobFair.id = ?2")
+    List<AssignmentEntity> findByEmployeeId(String employeeId, String jobFairId);
 }
