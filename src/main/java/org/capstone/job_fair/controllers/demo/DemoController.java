@@ -61,6 +61,7 @@ import org.capstone.job_fair.services.mappers.company.job.question.QuestionsMapp
 import org.capstone.job_fair.services.mappers.job_fair.JobFairMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
@@ -74,7 +75,6 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 @RestController
-@AllArgsConstructor
 @Slf4j
 @Transactional
 public class DemoController {
@@ -106,6 +106,7 @@ public class DemoController {
     private JobFairRepository jobFairRepository;
 
     @Autowired
+    @Qualifier("LocalNotificationService")
     private NotificationService notificationService;
 
     @Autowired

@@ -36,6 +36,7 @@ import org.capstone.job_fair.services.mappers.job_fair.InterviewRequestChangeMap
 import org.capstone.job_fair.services.mappers.job_fair.InterviewScheduleMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -68,6 +69,7 @@ public class InterviewServiceImpl implements InterviewService {
     private AmazonDynamoDB dynamoDBClient;
 
     @Autowired
+    @Qualifier("LocalNotificationService")
     private NotificationService notificationService;
 
     @Autowired

@@ -19,6 +19,7 @@ import org.capstone.job_fair.services.interfaces.job_fair.booth.AssignmentServic
 import org.capstone.job_fair.services.interfaces.job_fair.booth.JobFairBoothService;
 import org.capstone.job_fair.services.interfaces.notification.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -45,6 +46,7 @@ public class AssignmentController {
     private JobFairBoothService jobFairBoothService;
 
     @Autowired
+    @Qualifier("LocalNotificationService")
     private NotificationService notificationService;
 
 
