@@ -30,6 +30,8 @@ public interface ApplicationRepository extends JpaRepository<ApplicationEntity, 
                                                                     @Param("jobFairName") String jobFairName,
                                                                     Pageable pageable);
 
+    List<ApplicationEntity> findByAttendantAccountId(String attendantId);
+
     @Query("select a from ApplicationEntity a " +
             "where a.boothJobPosition.jobFairBooth.jobFair.company.id = :companyId " +
             "and a.boothJobPosition.id = :jobPositionId and a.status in :statusList")

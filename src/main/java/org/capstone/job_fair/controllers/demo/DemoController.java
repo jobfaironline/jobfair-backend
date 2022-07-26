@@ -28,16 +28,17 @@ import org.capstone.job_fair.models.dtos.company.job.questions.QuestionsDTO;
 import org.capstone.job_fair.models.dtos.dynamoDB.NotificationMessageDTO;
 import org.capstone.job_fair.models.dtos.job_fair.JobFairDTO;
 import org.capstone.job_fair.models.dtos.job_fair.ShiftDTO;
-import org.capstone.job_fair.models.dtos.job_fair.booth.AssignmentDTO;
 import org.capstone.job_fair.models.dtos.job_fair.booth.BoothJobPositionDTO;
 import org.capstone.job_fair.models.dtos.job_fair.booth.JobFairBoothDTO;
 import org.capstone.job_fair.models.entities.account.AccountEntity;
+import org.capstone.job_fair.models.entities.attendant.application.ApplicationEntity;
 import org.capstone.job_fair.models.entities.company.CompanyEmployeeEntity;
 import org.capstone.job_fair.models.entities.company.CompanyEntity;
 import org.capstone.job_fair.models.entities.job_fair.JobFairEntity;
 import org.capstone.job_fair.models.entities.job_fair.booth.AssignmentEntity;
 import org.capstone.job_fair.models.enums.*;
 import org.capstone.job_fair.models.statuses.AccountStatus;
+import org.capstone.job_fair.repositories.attendant.application.ApplicationRepository;
 import org.capstone.job_fair.repositories.attendant.cv.CvRepository;
 import org.capstone.job_fair.repositories.company.CompanyEmployeeRepository;
 import org.capstone.job_fair.repositories.job_fair.JobFairRepository;
@@ -63,7 +64,6 @@ import org.capstone.job_fair.services.mappers.company.CompanyMapper;
 import org.capstone.job_fair.services.mappers.company.job.question.QuestionsMapper;
 import org.capstone.job_fair.services.mappers.job_fair.JobFairMapper;
 import org.capstone.job_fair.services.mappers.job_fair.booth.JobFairBoothLayoutMapper;
-import org.capstone.job_fair.utils.AwsUtil;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.capstone.job_fair.utils.PasswordGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,14 +89,11 @@ import java.util.stream.Collectors;
 @Slf4j
 @Transactional
 public class DemoController {
-
-
     @Autowired
     private AttendantMapper attendantMapper;
 
     @Autowired
     private AttendantService attendantService;
-
 
     @Autowired
     private CvService cvService;
@@ -111,9 +108,6 @@ public class DemoController {
     private ApplicationService applicationService;
 
     @Autowired
-    private MatchingPointService matchingPointService;
-
-    @Autowired
     private JobFairRepository jobFairRepository;
 
     @Autowired
@@ -122,9 +116,6 @@ public class DemoController {
 
     @Autowired
     private CvRepository cvRepository;
-
-    @Autowired
-    private BoothJobPositionRepository boothJobPositionRepository;
 
     @Autowired
     private AssignmentRepository assignmentRepository;
@@ -137,10 +128,6 @@ public class DemoController {
 
     @Autowired
     private QuestionsService questionsService;
-
-    @Autowired
-    private QuestionsMapper questionsMapper;
-
 
     @Autowired
     private AssignmentService assignmentService;
@@ -158,25 +145,16 @@ public class DemoController {
     private JobFairService jobFairService;
 
     @Autowired
-    private JobFairBoothService boothService;
-
-    @Autowired
     private CompanyEmployeeRepository companyEmployeeRepository;
 
     @Autowired
     private LayoutService layoutService;
 
     @Autowired
-    private JobFairBoothLayoutRepository jobFairBoothLayoutRepository;
-
-    @Autowired
-    private JobFairBoothLayoutMapper boothLayoutMapper;
-
-    @Autowired
-    private AwsUtil awsUtil;
-
-    @Autowired
     private BCryptPasswordEncoder encoder;
+
+    @Autowired
+    private ApplicationRepository applicationRepository;
 
 
     private String getSaltString(int number) {
@@ -439,8 +417,8 @@ public class DemoController {
     }
 
     @GetMapping(ApiEndPoint.Demo.PUBLISH_JOBFAIR)
-    public ResponseEntity<?> publishJobFair(@RequestParam String JobFairId) {
-        JobFairEntity jobFair = jobFairRepository.findById(JobFairId).get();
+    public ResponseEntity<?> publishJobFair(@RequestParam String jobFairId) {
+        JobFairEntity jobFair = jobFairRepository.findById(jobFairId).get();
         jobFair.setPublicStartTime(jobFair.getCreateTime());
         jobFairRepository.save(jobFair);
         return ResponseEntity.ok().build();
@@ -716,115 +694,7 @@ public class DemoController {
         return ResponseEntity.ok(body);
     }
 
-    @PostMapping(ApiEndPoint.Demo.CREATE_JOB_FAIR_DRAFT_FOR_COMPANIES)
-    public ResponseEntity<?> create4DraftJobFairForCompany() {
-        List<JobFairDTO> result = new ArrayList<>();
-        for (int i = 0; i <= 3; i++) {
-            UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            DraftJobFairRequest request = new DraftJobFairRequest();
-            request.setName("CREATED_JOB_FAIR_DRAFT_" + i);
-            request.setDecorateStartTime(1658730607000L);
-            request.setDecorateEndTime(1661409007000L);
-            request.setPublicStartTime(1661754607000L);
-            request.setPublicEndTime(1667025007000L);
-            request.setDescription("description about job fair");
-            request.setTargetAttendant("Sinh vien FPT");
-            request.setHostName("Demo haha");
-            JobFairDTO jobFairDTO = jobFairMapper.toDTO(request);
-            jobFairDTO.setThumbnailUrl("https://d3polnwtp0nqe6.cloudfront.net/JobFair-thumbnail/6b9f083b-9a95-4bd3-b264-4822ae76b8f6");
-
-
-            jobFairDTO.setCompany(CompanyDTO.builder().id(userDetails.getCompanyId()).build());
-            jobFairDTO = jobFairService.createNewJobFair(jobFairDTO);
-            layoutService.pickJobFairLayout(jobFairDTO.getId(), "b40ab83c-8f13-44ea-91b7-993f2263efae", userDetails.getCompanyId());
-
-
-            /*
-             * 1. Random total of booths that need assign
-             * 2. Calculate total number of employee that need to be assigned: totalOfBooth * 4
-             * 3. Use for i to assign  employee. In this loop, get first 4 employee from total of emmployee above, then assign equally to the each booth
-             * */
-            List<JobFairBoothDTO> jobFairBooths = jobFairBoothService.getCompanyBoothByJobFairId(jobFairDTO.getId());
-
-            final Integer minimumBooth = 1;
-            final Integer maximumBooth = 10;
-
-            final int totalNumberOfAssignBooth = ThreadLocalRandom.current().nextInt(minimumBooth, maximumBooth + 1);
-            final int totalNumberOfNeededEmployee = totalNumberOfAssignBooth * 4;
-
-            //maximum needed employee will be 40, so get 45
-            Page<CompanyEmployeeDTO> pageResult = companyEmployeeService.getAllCompanyEmployees(userDetails.getCompanyId(), "", 45, 0, "account.createTime", Sort.Direction.ASC);
-
-            List<CompanyEmployeeDTO> listShuffle = new ArrayList<>();
-            for (CompanyEmployeeDTO c : pageResult.getContent()) {
-                listShuffle.add(c);
-            }
-            for (int j = 0; j <= totalNumberOfAssignBooth; j++) {
-                Collections.shuffle(listShuffle);
-                System.out.println(listShuffle);
-                List<CompanyEmployeeDTO> neededEmployeeList = listShuffle
-                        .stream()
-                        .filter(item -> item.getAccount().getRole() != Role.COMPANY_MANAGER)
-                        .limit(totalNumberOfNeededEmployee).collect(Collectors.toList());
-                System.out.println(neededEmployeeList);
-
-                //make sure these employee must be VERIFIED
-                neededEmployeeList.forEach(item -> {
-                    AccountDTO dto = item.getAccount();
-                    dto.setStatus(AccountStatus.VERIFIED);
-                    item.setAccount(dto);
-                });
-                //get first 4 employees from total needed employee
-                //Employee 1: SUPERVISOR
-                AssignmentDTO supervisorAssigment = assignmentService
-                        .assignEmployee(
-                                userDetails.getId(),
-                                neededEmployeeList.get(0).getAccountId(),
-                                jobFairBooths.get(j).getId(),
-                                AssignmentType.SUPERVISOR,
-                                userDetails.getCompanyId(),
-                                1658730607000L,
-                                1661409007000L);
-                AssignmentDTO decoratorAssignment = assignmentService
-                        .assignEmployee(
-                                userDetails.getId(),
-                                neededEmployeeList.get(1).getAccountId(),
-                                jobFairBooths.get(j).getId(),
-                                AssignmentType.DECORATOR,
-                                userDetails.getCompanyId(),
-                                1658730607000L,
-                                1661409007000L
-                        );
-
-                AssignmentDTO staffAssignment_1 = assignmentService
-                        .assignEmployee(
-                                userDetails.getId(),
-                                neededEmployeeList.get(2).getAccountId(),
-                                jobFairBooths.get(j).getId(),
-                                AssignmentType.STAFF,
-                                userDetails.getCompanyId(),
-                                1658730607000L,
-                                1661409007000L
-                        );
-                AssignmentDTO staffAssignment_2 = assignmentService
-                        .assignEmployee(
-                                userDetails.getId(),
-                                neededEmployeeList.get(3).getAccountId(),
-                                jobFairBooths.get(j).getId(),
-                                AssignmentType.STAFF,
-                                userDetails.getCompanyId(),
-                                1658730607000L,
-                                1661409007000L
-                        );
-            }
-
-            result.add(jobFairDTO);
-        }
-        return ResponseEntity.ok(result);
-    }
-
-    @PostMapping(ApiEndPoint.Demo.CREATE_1_DRAFT_JOB_FAIR_FOR_COMPANY)
-    public ResponseEntity<?> create1DraftForEachCompany(@RequestParam String companyId) {
+    private JobFairDTO createDraftJobFair(String companyId, boolean isAssignment) {
         LocalDate localDate = LocalDate.now();
         LocalDate twoDayLater = localDate.plusDays(2);
         LocalDate threeDayLater = localDate.plusDays(3);
@@ -875,6 +745,7 @@ public class DemoController {
 
         layoutService.pickJobFairLayout(jobFairDTO.getId(), "b40ab83c-8f13-44ea-91b7-993f2263efae", companyId);
 
+        if (!isAssignment) return jobFairDTO;
         /*
          * 1. Random total of booths that need assign
          * 2. Calculate total number of employee that need to be assigned: totalOfBooth * 4
@@ -886,14 +757,12 @@ public class DemoController {
         final int maximumBooth = 10;
 
         final int totalNumberOfAssignBooth = ThreadLocalRandom.current().nextInt(minimumBooth, maximumBooth + 1);
-        final int totalNumberOfNeededEmployee = totalNumberOfAssignBooth * 4;
 
         //maximum needed employee will be 40, so get 45
         Page<CompanyEmployeeDTO> pageResult = companyEmployeeService.getAllCompanyEmployees(companyId, "", 45, 0, "account.createTime", Sort.Direction.ASC);
 
         List<CompanyEmployeeDTO> listShuffle = new ArrayList<>(pageResult.getContent());
         Collections.shuffle(listShuffle);
-        System.out.println(listShuffle.size());
 
         List<CompanyEmployeeEntity> managers = companyEmployeeRepository.findAllByCompanyIdAndAccountRoleId(companyId, Role.COMPANY_MANAGER.ordinal());
         CompanyEmployeeEntity manager = managers.get(0);
@@ -958,8 +827,32 @@ public class DemoController {
 
             listShuffle.removeAll(neededEmployeeList);
         }
+        return jobFairDTO;
 
+    }
 
+    @PostMapping(ApiEndPoint.Demo.CREATE_1_DRAFT_JOB_FAIR_FOR_COMPANY)
+    public ResponseEntity<?> create1DraftForEachCompany(@RequestParam String companyId) {
+        JobFairDTO jobFairDTO = createDraftJobFair(companyId, true);
         return ResponseEntity.ok(jobFairDTO);
     }
+
+    @PostMapping(ApiEndPoint.Demo.CREATE_JOB_FAIR_DRAFT_WITHOUT_ASSIGNMENT)
+    public ResponseEntity<?> create1DraftWithoutAssignment(@RequestParam String companyId) {
+        JobFairDTO jobFairDTO = createDraftJobFair(companyId, false);
+        return ResponseEntity.ok(jobFairDTO);
+    }
+
+    @PostMapping(ApiEndPoint.Demo.PASS_TEST)
+    @Transactional
+    public ResponseEntity<?> passTestForUser(@RequestParam String attendantId) {
+        List<ApplicationEntity> applicationEntities = applicationRepository.findByAttendantAccountId(attendantId);
+        applicationEntities.forEach(applicationEntity -> {
+            applicationEntity.setTestStatus(TestStatus.PASS);
+        });
+        applicationRepository.saveAll(applicationEntities);
+        return ResponseEntity.ok().build();
+    }
+
+
 }
