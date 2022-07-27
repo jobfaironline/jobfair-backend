@@ -193,7 +193,8 @@ public class AssignmentServiceImpl implements AssignmentService {
             boolean result = assignmentsInJobFair.stream().anyMatch(assignment -> {
                 boolean isUserHasAssignment = assignment.getCompanyEmployee().getAccountId().equals(companyEmployee.getAccountId());
                 boolean isDecorator = assignment.getType() == AssignmentType.DECORATOR;
-                return (isUserHasAssignment && !isDecorator);
+                boolean isSupervisor = assignment.getType() == AssignmentType.SUPERVISOR;
+                return (isUserHasAssignment && !isDecorator && !isSupervisor);
             });
             return !result;
         }).collect(Collectors.toList());
