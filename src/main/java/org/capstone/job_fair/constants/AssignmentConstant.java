@@ -20,4 +20,14 @@ final public class AssignmentConstant {
         public static final int ASSIGMENT_INDEX = 3;
         public static final int ERROR_INDEX = 4;
     }
+
+    public static final class XLSXSupervisorFormat{
+        private XLSXSupervisorFormat(){}
+        public static final int COLUMN_NUM = 4;
+        public static final int EMPLOYEE_ID_INDEX = 0;
+        public static final int JOB_FAIR_DAY_INDEX = 1;
+        public static final int SHIFT_INDEX = 2;
+        public static final int ASSIGNMENT_TYPE_INDEX = 3;
+        public static final int ERROR_INDEX = 4;
+    }
 }

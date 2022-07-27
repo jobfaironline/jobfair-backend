@@ -378,14 +378,14 @@ public class AssignmentServiceImpl implements AssignmentService {
     }
 
     private String getShiftTime(String name, Long jobFairStartTime, Long jobFairEndTime, int day, ShiftEntity morningShift, ShiftEntity afternoonShift) {
-        final Long ONE_DAY = 24 * 60 * 60 * 1000L;
+        final long ONE_DAY = 24 * 60 * 60 * 1000L;
         final Long MORNING_SHIFT_START = morningShift.getBeginTime();
         final Long MORNING_SHIFT_END = morningShift.getEndTime();
         final Long AFTERNOON_SHIFT_START = afternoonShift.getBeginTime();
         final Long AFTERNOON_SHIFT_END = afternoonShift.getEndTime();
-        Long timeTmp = 0L;
+        long timeTmp = 0L;
         String shiftTime = "";
-        switch (name) {
+        switch (name.toLowerCase()) {
             case "morning":
                 timeTmp = jobFairStartTime + (day - 1) * ONE_DAY + MORNING_SHIFT_START;
 
@@ -431,10 +431,10 @@ public class AssignmentServiceImpl implements AssignmentService {
         for (int i = 1; i < rowNum; i++) {
             List<String> rowData = data.get(i);
             boolean isEmpty = true;
-            String employeeId = rowData.get(0);
-            String jobFairDay = rowData.get(1);
-            String shift = rowData.get(2);
-            String assignmentTypeString = rowData.get(3);
+            String employeeId = rowData.get(AssignmentConstant.XLSXSupervisorFormat.EMPLOYEE_ID_INDEX);
+            String jobFairDay = rowData.get(AssignmentConstant.XLSXSupervisorFormat.JOB_FAIR_DAY_INDEX);
+            String shift = rowData.get(AssignmentConstant.XLSXSupervisorFormat.SHIFT_INDEX);
+            String assignmentTypeString = rowData.get(AssignmentConstant.XLSXSupervisorFormat.ASSIGNMENT_TYPE_INDEX);
             isEmpty = (employeeId.trim().isEmpty() || jobFairDay.trim().isEmpty() || shift.trim().isEmpty() || assignmentTypeString.trim().isEmpty());
             if (!isEmpty) {
                 AssignmentType type = null;
@@ -473,7 +473,7 @@ public class AssignmentServiceImpl implements AssignmentService {
                 entity.setCompanyEmployee(companyEmployeeOpt.get());
                 String shiftTime = null;
                 try {
-                    shiftTime = getShiftTime(shift, jobFairBooth.getJobFair().getPublicStartTime(), jobFairBooth.getJobFair().getPublicEndTime(), Integer.parseInt(jobFairDay), morningShift, afternoonShift);
+                    shiftTime = getShiftTime(shift, jobFairBooth.getJobFair().getPublicStartTime(), jobFairBooth.getJobFair().getPublicEndTime(), Double.valueOf(jobFairDay).intValue(), morningShift, afternoonShift);
                     entity.setBeginTime(Long.parseLong(shiftTime.split(",")[0]));
                     entity.setEndTime(Long.parseLong(shiftTime.split(",")[1]));
                 } catch (IllegalArgumentException e) {
