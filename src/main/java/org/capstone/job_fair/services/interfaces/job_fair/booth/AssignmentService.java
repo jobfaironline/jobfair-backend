@@ -38,4 +38,5 @@ public interface AssignmentService {
 
     ParseFileResult<AssignmentDTO> assignShiftForMultipleEmployee(MultipartFile file, String jobFairId, String companyId, String assignerId);
 
-    }
+    boolean isSupervisorAssignAllTask(String jobFairBoothId);
+}

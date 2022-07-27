@@ -119,6 +119,7 @@ public final class ApiEndPoint {
         public static final String UPLOAD_THUMBNAIL = JOB_FAIR + "/upload-thumbnail";
         public static final String FOR_ATTENDANT = JOB_FAIR + "/attendants";
         public static final String STATISTICS = JOB_FAIR + "/statistics";
+        public static final String PROGRESS = JOB_FAIR + "/progress";
     }
 
     public static class Questions {

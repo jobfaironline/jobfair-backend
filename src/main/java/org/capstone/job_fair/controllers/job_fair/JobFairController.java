@@ -14,6 +14,7 @@ import org.capstone.job_fair.controllers.payload.responses.RenderJobFairParkResp
 import org.capstone.job_fair.models.dtos.company.CompanyDTO;
 import org.capstone.job_fair.models.dtos.dynamoDB.NotificationMessageDTO;
 import org.capstone.job_fair.models.dtos.job_fair.JobFairDTO;
+import org.capstone.job_fair.models.dtos.job_fair.JobFairProgressDTO;
 import org.capstone.job_fair.models.dtos.job_fair.LayoutDTO;
 import org.capstone.job_fair.models.dtos.job_fair.booth.AssignmentDTO;
 import org.capstone.job_fair.models.dtos.job_fair.booth.JobFairBoothDTO;
@@ -237,5 +238,14 @@ public class JobFairController {
         }
         return ResponseEntity.ok(payload);
     }
+
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
+    @GetMapping(ApiEndPoint.JobFair.PROGRESS + "/{jobFairId}")
+    public ResponseEntity<?> getJobFairProgress(@PathVariable("jobFairId") String jobFairPlanId) {
+        JobFairProgressDTO jobFairProgressDTO = jobFairService.getJobFairProgress(jobFairPlanId);
+        return ResponseEntity.ok(jobFairProgressDTO);
+    }
+
+
 
 }

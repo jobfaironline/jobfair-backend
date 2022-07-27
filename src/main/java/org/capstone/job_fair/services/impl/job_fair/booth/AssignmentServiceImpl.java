@@ -38,6 +38,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -548,6 +552,32 @@ public class AssignmentServiceImpl implements AssignmentService {
         data = xslsFileService.readCSVFile(file.getInputStream());
         parseResult = createShiftAssignmentFromListString(data, jobFairId, companyId, assigner);
         return parseResult;
+    }
+
+    @Override
+    public boolean isSupervisorAssignAllTask(String jobFairBoothId) {
+        Optional<JobFairBoothEntity> jobFairBoothOpt = jobFairBoothRepository.findById(jobFairBoothId);
+        if (!jobFairBoothOpt.isPresent()) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFairBooth.NOT_FOUND));
+        }
+        JobFairBoothEntity jobFairBooth = jobFairBoothOpt.get();
+        long publicStartTime = jobFairBooth.getJobFair().getPublicStartTime();
+        long publicEndTime = jobFairBooth.getJobFair().getPublicEndTime();
+        LocalDateTime publicStartDateTime =
+                LocalDateTime.ofInstant(Instant.ofEpochMilli(publicStartTime), ZoneId.systemDefault());
+        LocalDateTime publicEndDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(publicEndTime), ZoneId.systemDefault());
+        long daysBetween = Duration.between(publicStartDateTime, publicEndDateTime).toDays() + 1; //+1 because the job fair end time is at 23:59:99 not enough for diff add 1 more day
+
+        List<AssignmentEntity> staffAssignments = assignmentRepository.findByJobFairBoothIdAndType(jobFairBoothId, AssignmentType.STAFF);
+        int staffNum = staffAssignments.size();
+        long expectedAssignment = daysBetween * staffNum * jobFairBooth.getJobFair().getShifts().size();
+
+        List<AssignmentEntity> interviewerAssignments = assignmentRepository.findByJobFairBoothIdAndType(jobFairBoothId, AssignmentType.INTERVIEWER);
+        List<AssignmentEntity> receptionAssignments = assignmentRepository.findByJobFairBoothIdAndType(jobFairBoothId, AssignmentType.RECEPTION);
+
+        long actualAssignment = interviewerAssignments.size() + receptionAssignments.size();
+
+        return expectedAssignment == actualAssignment;
     }
 
 
