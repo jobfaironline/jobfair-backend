@@ -4,6 +4,7 @@ import org.apache.commons.collections4.map.HashedMap;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.models.dtos.dynamoDB.NotificationMessageDTO;
 import org.capstone.job_fair.models.entities.dynamoDB.NotificationMessageEntity;
+import org.capstone.job_fair.models.enums.NotificationType;
 import org.capstone.job_fair.models.enums.Role;
 import org.capstone.job_fair.repositories.account.AccountRepository;
 import org.capstone.job_fair.repositories.local_dynamo.NotificationMessageRepository;
@@ -127,7 +128,7 @@ public class LocalNotificationService implements NotificationService {
     public List<NotificationMessageDTO> getNotificationByAccountId(String id) {
         List<NotificationMessageEntity> notifications = notificationMessageRepository.findByUserId(id);
         notifications.sort((o1, o2) -> Math.toIntExact(o2.getCreateDate().compareTo(o1.getCreateDate())));
-        return notifications.stream().map(notificationMessageMapper::toDTO).collect(Collectors.toList());
+        return notifications.stream().filter(notificationMessageEntity -> notificationMessageEntity.getNotificationType() == NotificationType.NOTI ).map(notificationMessageMapper::toDTO).collect(Collectors.toList());
     }
 
     @Override
