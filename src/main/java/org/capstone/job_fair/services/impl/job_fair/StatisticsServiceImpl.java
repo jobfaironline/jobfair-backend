@@ -2,14 +2,19 @@ package org.capstone.job_fair.services.impl.job_fair;
 
 import org.apache.commons.collections4.map.HashedMap;
 import org.capstone.job_fair.constants.MessageConstant;
+import org.capstone.job_fair.models.dtos.company.CompanyStatisticsDTO;
 import org.capstone.job_fair.models.dtos.job_fair.JobFairStatisticsDTO;
 import org.capstone.job_fair.models.dtos.job_fair.booth.BoothStatisticsDTO;
 import org.capstone.job_fair.models.entities.attendant.application.ApplicationEntity;
+import org.capstone.job_fair.models.entities.company.CompanyEntity;
 import org.capstone.job_fair.models.entities.job_fair.JobFairEntity;
 import org.capstone.job_fair.models.entities.job_fair.booth.BoothJobPositionEntity;
 import org.capstone.job_fair.models.entities.job_fair.booth.JobFairBoothEntity;
 import org.capstone.job_fair.models.enums.ApplicationStatus;
+import org.capstone.job_fair.models.statuses.InterviewStatus;
+import org.capstone.job_fair.models.statuses.JobFairPlanStatus;
 import org.capstone.job_fair.repositories.attendant.application.ApplicationRepository;
+import org.capstone.job_fair.repositories.company.CompanyRepository;
 import org.capstone.job_fair.repositories.job_fair.JobFairRepository;
 import org.capstone.job_fair.repositories.job_fair.job_fair_booth.JobFairBoothRepository;
 import org.capstone.job_fair.services.interfaces.job_fair.StatisticsService;
@@ -40,6 +45,9 @@ public class StatisticsServiceImpl implements StatisticsService {
     @Autowired
     private JobFairBoothRepository jobFairBoothRepository;
 
+    @Autowired
+    private CompanyRepository companyRepository;
+
     @Override
     public JobFairStatisticsDTO getJobFairStatistics(String jobFairId, String companyId) {
         Random random = new Random();
@@ -67,7 +75,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         statisticsDTO.getGeneralStatistics().setEmployeeNum(employeeNum);
 
         //get CV general statistics
-        Page<ApplicationEntity> applicationPage = applicationRepository.findAllApplicationOfCompanyByJobFairIdAndStatusIn(companyId, jobFairId, Arrays.asList(ApplicationStatus.APPROVE, ApplicationStatus.PENDING, ApplicationStatus.PENDING), Pageable.unpaged());
+        Page<ApplicationEntity> applicationPage = applicationRepository.findAllApplicationOfCompanyByJobFairIdAndStatusIn(companyId, jobFairId, Arrays.asList(ApplicationStatus.APPROVE, ApplicationStatus.PENDING, ApplicationStatus.REJECT), Pageable.unpaged());
         long pendingCVNum = applicationPage.stream().filter(application -> application.getStatus() == ApplicationStatus.PENDING).count();
         long rejectCVNum = applicationPage.stream().filter(application -> application.getStatus() == ApplicationStatus.REJECT).count();
         long approveCVNum = applicationPage.stream().filter(application -> application.getStatus() == ApplicationStatus.APPROVE).count();
@@ -127,7 +135,7 @@ public class StatisticsServiceImpl implements StatisticsService {
             jobPosition.setName(jobPositionEntity.getTitle());
             jobPosition.setGoal(jobPositionEntity.getNumOfPosition());
             int appliedCVNum = applicationByJobPosition.get(jobPositionEntity.getId()) != null ? applicationByJobPosition.get(jobPositionEntity.getId()).size() : 0;
-            int approvedCVNum = applicationByJobPosition.get(jobPositionEntity.getId()) == null ? 0 : (int)applicationByJobPosition.get(jobPositionEntity.getId()).stream().filter(application -> {
+            int approvedCVNum = applicationByJobPosition.get(jobPositionEntity.getId()) == null ? 0 : (int) applicationByJobPosition.get(jobPositionEntity.getId()).stream().filter(application -> {
                 return application.getStatus() == ApplicationStatus.APPROVE;
             }).count();
             jobPosition.setCurrent(appliedCVNum);
@@ -163,7 +171,7 @@ public class StatisticsServiceImpl implements StatisticsService {
             booth.setName(boothEntity.getName());
             int visitNum = random.ints(0, 10).findFirst().getAsInt();
             int appliedCvNum = applicationByBooth.get(boothEntity.getId()) != null ? applicationByBooth.get(boothEntity.getId()).size() : 0;
-            int approvedCVNum = applicationByBooth.get(boothEntity.getId()) == null ? 0 : (int)applicationByBooth.get(boothEntity.getId()).stream().filter(application -> {
+            int approvedCVNum = applicationByBooth.get(boothEntity.getId()) == null ? 0 : (int) applicationByBooth.get(boothEntity.getId()).stream().filter(application -> {
                 return application.getStatus() == ApplicationStatus.APPROVE;
             }).count();
             booth.setVisitNum(visitNum);
@@ -199,7 +207,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         statisticsDTO.getBooth().setId(jobFairBoothEntity.getId());
 
         //get CV statistics
-        Page<ApplicationEntity> applicationPage = applicationRepository.findAllApplicationOfCompanyByJobFairBoothIdAndStatusIn(companyId, boothId, Arrays.asList(ApplicationStatus.APPROVE, ApplicationStatus.PENDING, ApplicationStatus.PENDING), Pageable.unpaged());
+        Page<ApplicationEntity> applicationPage = applicationRepository.findAllApplicationOfCompanyByJobFairBoothIdAndStatusIn(companyId, boothId, Arrays.asList(ApplicationStatus.APPROVE, ApplicationStatus.PENDING, ApplicationStatus.REJECT), Pageable.unpaged());
         long pendingCVNum = applicationPage.stream().filter(application -> application.getStatus() == ApplicationStatus.PENDING).count();
         long rejectCVNum = applicationPage.stream().filter(application -> application.getStatus() == ApplicationStatus.REJECT).count();
         long approveCVNum = applicationPage.stream().filter(application -> application.getStatus() == ApplicationStatus.APPROVE).count();
@@ -244,5 +252,119 @@ public class StatisticsServiceImpl implements StatisticsService {
             statisticsDTO.getJobPositions().add(jobPosition);
         });
         return statisticsDTO;
+    }
+
+    @Override
+    public CompanyStatisticsDTO getCompanyStatistics(String companyId) {
+        CompanyStatisticsDTO result = new CompanyStatisticsDTO();
+
+        CompanyEntity companyEntity = companyRepository.getById(companyId);
+
+
+        //get general statistics
+        List<JobFairEntity> publishedJobFairs = jobFairRepository.findByCompanyIdAndStatus(companyId, JobFairPlanStatus.PUBLISH);
+        List<JobFairEntity> draftJobFairs = jobFairRepository.findByCompanyIdAndStatus(companyId, JobFairPlanStatus.DRAFT);
+
+        long now = new Date().getTime();
+        List<JobFairEntity> inProgressJobFairs = publishedJobFairs.stream().filter(jobfair -> jobfair.getDecorateStartTime() < now && jobfair.getPublicEndTime() > now).collect(Collectors.toList());
+        List<JobFairEntity> pastJobFairs = publishedJobFairs.stream().filter(jobFair -> jobFair.getPublicEndTime() <= now).collect(Collectors.toList());
+        List<JobFairEntity> upComingJobFairs = publishedJobFairs.stream().filter(jobFair -> jobFair.getDecorateStartTime() >= now).collect(Collectors.toList());
+
+        int createdJobFairNum = publishedJobFairs.size() + draftJobFairs.size();
+        int publishedJobFairNum = publishedJobFairs.size();
+        int boothTotalNum = publishedJobFairs.stream().map(jobFair -> jobFair.getJobFairBoothList().size()).mapToInt(Integer::intValue).sum();
+        int inProgressJobFairNum = inProgressJobFairs.size();
+        int pastJobFairNum = pastJobFairs.size();
+        int upComingJobFairNum = upComingJobFairs.size();
+
+        result.getGeneralStatistics().setCreatedJobFairNum(createdJobFairNum);
+        result.getGeneralStatistics().setPublishedJobFairNum(publishedJobFairNum);
+        result.getGeneralStatistics().setParticipantNum(0);
+        result.getGeneralStatistics().setBoothTotalNums(boothTotalNum);
+        result.getGeneralStatistics().setInProgressJobFairNum(inProgressJobFairNum);
+        result.getGeneralStatistics().setPastJobFairNum(pastJobFairNum);
+        result.getGeneralStatistics().setUpComingJobFairNum(upComingJobFairNum);
+        result.getGeneralStatistics().setCompanyName(companyEntity.getName());
+
+
+        //get CV statisics
+        List<ApplicationEntity> applications = publishedJobFairs.stream().flatMap(jobFair -> {
+            Page<ApplicationEntity> applicationPage = applicationRepository.findAllApplicationOfCompanyByJobFairIdAndStatusIn(companyId, jobFair.getId(), Arrays.asList(ApplicationStatus.APPROVE, ApplicationStatus.PENDING, ApplicationStatus.REJECT), Pageable.unpaged());
+            return applicationPage.toList().stream();
+        }).collect(Collectors.toList());
+
+        List<ApplicationEntity> approvedApplications = applications.stream().filter(application -> application.getStatus() == ApplicationStatus.APPROVE).collect(Collectors.toList());
+        List<ApplicationEntity> rejectedApplications = applications.stream().filter(application -> application.getStatus() == ApplicationStatus.REJECT).collect(Collectors.toList());
+        List<ApplicationEntity> pendingApplications = applications.stream().filter(application -> application.getStatus() == ApplicationStatus.PENDING).collect(Collectors.toList());
+        List<ApplicationEntity> interviewApplications = applications.stream().filter(application -> application.getInterviewStatus() != null).collect(Collectors.toList());
+        List<ApplicationEntity> doneInterviewApplications = applications.stream().filter(application -> application.getInterviewStatus() == InterviewStatus.DONE).collect(Collectors.toList());
+
+        int cvNum = approvedApplications.size() + rejectedApplications.size() + pendingApplications.size();
+        int approvedCvNum = approvedApplications.size();
+        int rejectedCvNum = rejectedApplications.size();
+        int pendingCvNum = pendingApplications.size();
+        int interviewNum = interviewApplications.size();
+        int doneInterviewNum = doneInterviewApplications.size();
+
+        result.getCvStatistics().setCvNum(cvNum);
+        result.getCvStatistics().setApprovedCvNum(approvedCvNum);
+        result.getCvStatistics().setRejectedCvNum(rejectedCvNum);
+        result.getCvStatistics().setPendingCvNum(pendingCvNum);
+        result.getCvStatistics().setInterviewNum(interviewNum);
+        result.getCvStatistics().setDoneInterviewNum(doneInterviewNum);
+
+
+        //get job statistics
+        Map<String, List<ApplicationEntity>> applicationByJobPosition = new HashedMap<>();
+        applications.forEach(applicationEntity -> {
+            String jobPositionId = applicationEntity.getBoothJobPosition().getId();
+            if (applicationByJobPosition.containsKey(jobPositionId)) {
+                applicationByJobPosition.get(jobPositionId).add(applicationEntity);
+                return;
+            }
+            List<ApplicationEntity> newList = new ArrayList<>();
+            newList.add(applicationEntity);
+            applicationByJobPosition.put(jobPositionId, newList);
+        });
+        List<BoothJobPositionEntity> jobPositionEntities = publishedJobFairs.stream().flatMap(jobFair -> {
+            return jobFair.getJobFairBoothList().stream().flatMap(booth -> booth.getBoothJobPositions().stream());
+        }).collect(Collectors.toList());
+        jobPositionEntities.forEach(jobPositionEntity -> {
+            CompanyStatisticsDTO.JobPosition jobPosition = new CompanyStatisticsDTO.JobPosition();
+            jobPosition.setId(jobPositionEntity.getId());
+            jobPosition.setName(jobPositionEntity.getTitle());
+            jobPosition.setGoal(jobPositionEntity.getNumOfPosition());
+            int appliedCVNum = applicationByJobPosition.get(jobPositionEntity.getId()) != null ? applicationByJobPosition.get(jobPositionEntity.getId()).size() : 0;
+            jobPosition.setCurrent(appliedCVNum);
+            if (applicationByJobPosition.get(jobPositionEntity.getId()) != null) {
+                double averageMatchingPoint = applicationByJobPosition.get(jobPositionEntity.getId()).stream().map(applicationEntity -> {
+                    if (applicationEntity.getMatchingPoint() == null) return 0.0;
+                    return applicationEntity.getMatchingPoint();
+                }).mapToDouble(Double::doubleValue).average().orElse(0.0);
+                jobPosition.setMatchingPointAverage(averageMatchingPoint);
+            }
+            result.getJobPositions().add(jobPosition);
+        });
+
+        //get job fair statistics
+        publishedJobFairs.forEach(jobFair -> {
+            int boothNum = jobFair.getJobFairBoothList().size();
+            int participationNum = 0;
+            int jobPositionNum = jobFair.getJobFairBoothList().stream().map(booth -> booth.getBoothJobPositions().size()).mapToInt(Integer::intValue).sum();
+            int employeeNum = assignmentService.getCountAssignedEmployeeByJobFair(jobFair.getId());
+
+            CompanyStatisticsDTO.JobFair jobFairStatistics = new CompanyStatisticsDTO.JobFair();
+            jobFairStatistics.setId(jobFair.getId());
+            jobFairStatistics.setName(jobFair.getName());
+            jobFairStatistics.setBoothNum(boothNum);
+            jobFairStatistics.setParticipationNum(participationNum);
+            jobFairStatistics.setJobPositionNum(jobPositionNum);
+            jobFairStatistics.setEmployeeNum(employeeNum);
+            jobFairStatistics.setDecorateStartTime(jobFair.getDecorateStartTime());
+            jobFairStatistics.setPublicEndTime(jobFair.getPublicEndTime());
+            result.getJobFairs().add(jobFairStatistics);
+        });
+
+        return result;
     }
 }
