@@ -12,4 +12,8 @@ public class JobFairConstant {
     public static final String DEFAULT_JOBFAIR_NAME = "";
     public static final String DEFAULT_CATEGORY_ID = "";
     public static final String DEFAULT_COUNTRY_ID = "";
+
+    public enum AdminSearchStatus {
+        TAKEN_PLACE, HAPPENING, COMING_SOON
+    }
 }

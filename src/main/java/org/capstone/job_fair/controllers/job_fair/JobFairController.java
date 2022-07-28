@@ -165,8 +165,21 @@ public class JobFairController {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Page<JobFairDTO> result = jobFairService.findByNameAndCompanyIdAndStatus(name, userDetails.getCompanyId(), status, PageRequest.of(offset, pageSize).withSort(Sort.by(direction, sortBy)));
         return ResponseEntity.ok(result);
-
     }
+
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
+    @GetMapping(ApiEndPoint.JobFair.FOR_ADMIN)
+    public ResponseEntity<?> getJobFairForAdmin(@RequestParam(value = "offset", defaultValue = JobFairConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset,
+                                        @RequestParam(value = "pageSize", defaultValue = JobFairConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize,
+                                        @RequestParam(value = "sortBy", defaultValue = JobFairConstant.DEFAULT_SEARCH_SORT_BY_VALUE) String sortBy,
+                                        @RequestParam(value = "direction", required = false, defaultValue = JobFairConstant.DEFAULT_SEARCH_SORT_DIRECTION) Sort.Direction direction,
+                                        @RequestParam(value = "name", defaultValue = JobFairConstant.DEFAULT_JOBFAIR_NAME) String name,
+                                        @RequestParam(value = "status", required = false) JobFairConstant.AdminSearchStatus status
+    ) {
+        Page<JobFairDTO> result = jobFairService.findJobFairForAdmin(name, status, PageRequest.of(offset, pageSize).withSort(Sort.by(direction, sortBy)));
+        return ResponseEntity.ok(result);
+    }
+
 
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")

@@ -1,6 +1,7 @@
 package org.capstone.job_fair.services.impl.job_fair;
 
 import org.capstone.job_fair.constants.DataConstraint;
+import org.capstone.job_fair.constants.JobFairConstant;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.models.dtos.job_fair.JobFairDTO;
 import org.capstone.job_fair.models.dtos.job_fair.JobFairProgressDTO;
@@ -200,7 +201,7 @@ public class JobFairServiceImpl implements JobFairService {
     @Override
     public JobFairProgressDTO getJobFairProgress(String jobFairId) {
         Optional<JobFairEntity> jobFairOpt = jobFairRepository.findById(jobFairId);
-        if (!jobFairOpt.isPresent()){
+        if (!jobFairOpt.isPresent()) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.JOB_FAIR_NOT_FOUND));
         }
         JobFairEntity jobFair = jobFairOpt.get();
@@ -210,13 +211,13 @@ public class JobFairServiceImpl implements JobFairService {
 
         jobFair.getJobFairBoothList().forEach(jobFairBooth -> {
             List<AssignmentEntity> supervisors = assignmentRepository.findByJobFairBoothIdAndType(jobFairBooth.getId(), AssignmentType.SUPERVISOR);
-            if (supervisors.size() != 1){
+            if (supervisors.size() != 1) {
                 return;
             }
             JobFairProgressDTO.Booth booth = new JobFairProgressDTO.Booth();
             booth.setId(jobFairBooth.getId());
             booth.setName(jobFairBooth.getName());
-            if (supervisors.size() != 0){
+            if (supervisors.size() != 0) {
                 AssignmentEntity supervisorAssignment = supervisors.get(0);
                 JobFairProgressDTO.Supervisor supervisor = new JobFairProgressDTO.Supervisor();
                 boolean assignTask = assignmentService.isSupervisorAssignAllTask(jobFairBooth.getId());
@@ -227,7 +228,7 @@ public class JobFairServiceImpl implements JobFairService {
                 booth.setSupervisor(supervisor);
             }
             List<AssignmentEntity> decorators = assignmentRepository.findByJobFairBoothIdAndType(jobFairBooth.getId(), AssignmentType.DECORATOR);
-            if (decorators.size() != 0){
+            if (decorators.size() != 0) {
                 AssignmentEntity decoratorAssignment = decorators.get(0);
                 JobFairProgressDTO.Decorator decorator = new JobFairProgressDTO.Decorator();
                 Optional<JobFairBoothLayoutDTO> latestLayoutOpt = jobFairBoothLayoutService.getLatestVersionByCompanyBoothId(jobFairBooth.getId());
@@ -247,5 +248,15 @@ public class JobFairServiceImpl implements JobFairService {
         double overallProgress = result.getBooths().stream().map(booth -> booth.getProgress()).mapToDouble(Double::doubleValue).average().orElse(0);
         result.setOverallProgress(overallProgress);
         return result;
+    }
+
+    @Override
+    public Page<JobFairDTO> findJobFairForAdmin(String name, JobFairConstant.AdminSearchStatus status, Pageable pageable) {
+        long now = new Date().getTime();
+        if (status == JobFairConstant.AdminSearchStatus.HAPPENING)
+            return jobFairRepository.findInProgressJobFair("%" + name + "%", now, pageable).map(jobFairMapper::toDTO);
+        if (status == JobFairConstant.AdminSearchStatus.COMING_SOON)
+            return jobFairRepository.findUpComingJobFair("%" + name + "%", now, pageable).map(jobFairMapper::toDTO);
+        return jobFairRepository.findPastJobFair("%" + name + "%", now, pageable).map(jobFairMapper::toDTO);
     }
 }

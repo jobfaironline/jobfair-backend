@@ -1,5 +1,6 @@
 package org.capstone.job_fair.services.interfaces.job_fair;
 
+import org.capstone.job_fair.constants.JobFairConstant;
 import org.capstone.job_fair.models.dtos.job_fair.JobFairDTO;
 import org.capstone.job_fair.models.dtos.job_fair.JobFairProgressDTO;
 import org.capstone.job_fair.models.statuses.JobFairPlanStatus;
@@ -28,4 +29,6 @@ public interface JobFairService {
     Page<JobFairDTO> findJobFairForAttendantByCriteria(String name, String countryId, String subCategoryId, Pageable pageable);
 
     JobFairProgressDTO getJobFairProgress(String jobFairId);
+
+    Page<JobFairDTO> findJobFairForAdmin(String name, JobFairConstant.AdminSearchStatus status, Pageable pageable);
 }
