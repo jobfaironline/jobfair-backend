@@ -142,6 +142,7 @@ public class ApplicationController {
                                                                     @RequestParam(value = "jobPositionName", required = false, defaultValue = ApplicationConstant.DEFAULT_JOB_POSITION_SEARCH_NAME) String jobPositionName,
                                                                     @RequestParam(value = "jobFairName", required = false, defaultValue = ApplicationConstant.DEFAULT_JOB_FAIR_SEARCH_NAME) String jobFairName,
                                                                     @RequestParam(value = "jobPositionId", required = false) String jobPositionId,
+                                                                    @RequestParam(value = "attendantName", required = false) String attendantName,
                                                                     @RequestParam(value = "jobFairId", required = false) String jobFairId,
                                                                     @RequestParam(value = "offset", defaultValue = ApplicationConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset,
                                                                     @RequestParam(value = "pageSize", defaultValue = ApplicationConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize,
@@ -161,7 +162,7 @@ public class ApplicationController {
         if (jobFairId != null)
             applicationForCompanyResponses = applicationService.getApplicationOfCompanyByJobFairIdAndStatus(companyId, jobFairId, statusList, pageSize, offset, sortBy, direction);
         if (jobFairId == null && jobPositionId == null)
-            applicationForCompanyResponses = applicationService.getApplicationOfCompanyByJobFairNameAndJobPositionNameAndStatus(companyId, jobFairName, jobPositionName, statusList, pageSize, offset, sortBy, direction);
+            applicationForCompanyResponses = applicationService.getApplicationOfCompanyByJobFairNameAndJobPositionNameAndAttendantNameAndStatus(companyId, jobFairName, jobPositionName, attendantName, statusList, pageSize, offset, sortBy, direction);
 
         if (applicationForCompanyResponses.isEmpty()) return ResponseEntity.noContent().build();
 

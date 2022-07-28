@@ -11,6 +11,7 @@ import org.capstone.job_fair.models.dtos.account.AccountDTO;
 import org.capstone.job_fair.models.dtos.attendant.AttendantDTO;
 import org.capstone.job_fair.models.dtos.attendant.cv.CvDTO;
 import org.capstone.job_fair.services.interfaces.attendant.cv.CvService;
+import org.capstone.job_fair.services.interfaces.matching_point.MatchingPointService;
 import org.capstone.job_fair.services.interfaces.util.FileStorageService;
 import org.capstone.job_fair.services.mappers.attendant.cv.CvMapper;
 import org.capstone.job_fair.utils.ImageUtil;
@@ -28,6 +29,8 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -41,6 +44,9 @@ public class CvController {
 
     @Autowired
     private FileStorageService fileStorageService;
+
+    @Autowired
+    private MatchingPointService matchingPointService;
 
     @PostMapping(ApiEndPoint.Cv.CV)
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ATTENDANT)")
@@ -118,6 +124,14 @@ public class CvController {
             return GenericResponse.build((e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return ResponseEntity.created(URI.create(cvDTO.getProfileImageUrl())).build();
+    }
+
+    @PostMapping(ApiEndPoint.Cv.GET_MATCHING_POINT)
+    public ResponseEntity<?> getMatchingPoint(@RequestParam("cvId") String cvId, @RequestParam("boothJobPositionId") String boothJobPositionId) {
+        Double point = matchingPointService.calculateBetweenCVAndBoothJobPosition(cvId, boothJobPositionId).block();
+        Map<String, Double> result = new HashMap<>();
+        result.put("result", point);
+        return ResponseEntity.ok(result);
     }
 
 

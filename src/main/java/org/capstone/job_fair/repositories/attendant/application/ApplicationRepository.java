@@ -52,18 +52,19 @@ public interface ApplicationRepository extends JpaRepository<ApplicationEntity, 
             "where a.boothJobPosition.jobFairBooth.jobFair.company.id  = :companyId " +
             "and a.boothJobPosition.jobFairBooth.id = :jobFairBoothId and a.status in :statusList")
     Page<ApplicationEntity> findAllApplicationOfCompanyByJobFairBoothIdAndStatusIn(@Param("companyId") String companyId,
-                                                                              @Param("jobFairBoothId") String jobFairBoothId,
-                                                                              @Param("statusList") List<ApplicationStatus> applicationStatusList,
-                                                                              Pageable pageable);
+                                                                                   @Param("jobFairBoothId") String jobFairBoothId,
+                                                                                   @Param("statusList") List<ApplicationStatus> applicationStatusList,
+                                                                                   Pageable pageable);
 
     @Query("select a from ApplicationEntity a " +
-            "where a.boothJobPosition.jobFairBooth.jobFair.company.id = :companyId and a.boothJobPosition.title like concat('%', :jobTitle, '%') " +
-            "and a.boothJobPosition.jobFairBooth.jobFair.name like concat('%', :jobFairName, '%') and a.status in :statusList")
-    Page<ApplicationEntity> findAllApplicationOfCompanyByJobPositionTitleLikeAndJobFairNameLikeAndStatusIn(@Param("companyId") String companyId,
-                                                                                                           @Param("jobTitle") String jobTitle,
-                                                                                                           @Param("jobFairName") String jobFairName,
-                                                                                                           @Param("statusList") List<ApplicationStatus> applicationStatusList,
-                                                                                                           Pageable pageable);
+            "where a.boothJobPosition.jobFairBooth.jobFair.company.id = :companyId and (a.boothJobPosition.title like concat('%', :jobTitle, '%') " +
+            "OR a.boothJobPosition.jobFairBooth.jobFair.name like concat('%', :jobFairName, '%') OR a.fullName like concat('%', :attendantName, '%')) and a.status in :statusList")
+    Page<ApplicationEntity> findAllApplicationOfCompanyByJobPositionTitleLikeAndJobFairNameLikeAndAttendantNameLikeStatusIn(@Param("companyId") String companyId,
+                                                                                                                            @Param("jobTitle") String jobTitle,
+                                                                                                                            @Param("jobFairName") String jobFairName,
+                                                                                                                            @Param("attendantName") String attendantName,
+                                                                                                                            @Param("statusList") List<ApplicationStatus> applicationStatusList,
+                                                                                                                            Pageable pageable);
 
 
     @Query("select a from ApplicationEntity a where a.id = :applicationId and a.boothJobPosition.jobFairBooth.jobFair.company.id = :companyId")

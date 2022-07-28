@@ -6,7 +6,7 @@ import reactor.core.publisher.Mono;
 public interface MatchingPointService {
     Mono<ApplicationEntity> calculateFromApplication(String applicationId);
 
-    Mono<Void> calculateBetweenCVAndBoothJobPosition(String cvId, String jobPositionId);
+    Mono<Double> calculateBetweenCVAndBoothJobPosition(String cvId, String jobPositionId);
 
     Mono<Void> calculateBetweenProfileAndBoothJobPosition(String attendantId, String jobPositonId);
 }

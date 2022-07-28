@@ -311,6 +311,7 @@ public final class ApiEndPoint {
 
         public static final String CV = ROOT_ENDPOINT + VERSION + "/cv";
         public static final String UPLOAD_PROFILE_IMAGE = CV + "/upload-profile";
+        public static final String GET_MATCHING_POINT = CV + "/matching-point";
     }
 
     public static final class Assignment {
