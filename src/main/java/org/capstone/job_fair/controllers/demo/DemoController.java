@@ -32,6 +32,7 @@ import org.capstone.job_fair.models.entities.company.CompanyEmployeeEntity;
 import org.capstone.job_fair.models.entities.company.CompanyEntity;
 import org.capstone.job_fair.models.entities.company.job.JobPositionEntity;
 import org.capstone.job_fair.models.entities.job_fair.JobFairEntity;
+import org.capstone.job_fair.models.entities.job_fair.ShiftEntity;
 import org.capstone.job_fair.models.entities.job_fair.booth.AssignmentEntity;
 import org.capstone.job_fair.models.entities.job_fair.booth.JobFairBoothEntity;
 import org.capstone.job_fair.models.entities.job_fair.booth.JobFairBoothLayoutEntity;
@@ -74,10 +75,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneId;
+import java.time.*;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
@@ -270,6 +268,54 @@ public class DemoController {
         return result;
     }
 
+    private List<BoothJobPositionDTO> createBoothJobPosition(String jobFairId, String jobFairBoothId) {
+
+        Optional<JobFairEntity> jobFairOpt = jobFairRepository.findById(jobFairId);
+        if (!jobFairOpt.isPresent()) {
+            return null;
+        }
+
+        JobFairEntity jobFair = jobFairOpt.get();
+        CompanyEntity companyEntity = jobFair.getCompany();
+
+        //get 5 job positions first
+        Page<JobPositionDTO> jobPositions = jobPositionService.getAllJobPositionOfCompany(companyEntity.getId(), null, null, null, 5, 0, "createdDate", Sort.Direction.ASC);
+
+        //Get all job fair booths of job fair, then add job position to those booths
+        List<JobFairBoothDTO> boothListDTO = jobFairBoothService.getCompanyBoothByJobFairId(jobFairId);
+
+        int count = 0;
+        List<BoothJobPositionDTO> result = new ArrayList<>();
+
+        for (JobFairBoothDTO dto : boothListDTO) {
+            if (dto.getId().equals(jobFairBoothId)) continue;
+            count++;
+            JobFairBoothDTO jobFairBoothDto = new JobFairBoothDTO();
+            jobFairBoothDto.setId(dto.getId());
+            jobFairBoothDto.setDescription("chay script lan thu " + count);
+            jobFairBoothDto.setName("chay script lan thu " + count);
+            //mapping job position to booth job position
+            List<BoothJobPositionDTO> boothJobPositions = jobPositions.getContent().stream().map(item -> BoothJobPositionDTO
+                    .builder()
+                    .originJobPosition(item.getId())
+                    .minSalary(5.0)
+                    .maxSalary(100.0)
+                    .numOfPosition(1)
+                    .isHaveTest(true)
+                    .note("this job position required test")
+                    .testTimeLength(15)
+                    .numOfQuestion(4)
+                    .passMark(1.0)
+                    .jobFairBooth(jobFairBoothDto)
+                    .descriptionKeyWord(item.getDescriptionKeyWord())
+                    .requirementKeyWord(item.getRequirementKeyWord()).build()).collect(Collectors.toList());
+            dto.setBoothJobPositions(boothJobPositions);
+            dto = jobFairBoothService.updateJobFairBooth(dto, companyEntity.getId());
+            result.addAll(dto.getBoothJobPositions());
+        }
+        return result;
+    }
+
     private List<String> createAttendantsWithOneCv(Integer numberOfAttendants) {
         List<String> result = new ArrayList<>();
 
@@ -300,9 +346,103 @@ public class DemoController {
         return ResponseEntity.ok().build();
     }
 
+    protected void decorateJobFair(String jobFairId, String jobFairBoothId){
+        JobFairEntity jobFair = jobFairRepository.getById(jobFairId);
+        long oldDecorateEndTime = jobFair.getDecorateEndTime();
+        long oldDecorateStartTime = jobFair.getDecorateStartTime();
+        jobFair.setDecorateStartTime(0L);
+        jobFair.setDecorateEndTime(new Date().getTime() + 10000000);
+        jobFairRepository.saveAndFlush(jobFair);
+
+        //get booths that have employee assign to
+        createBoothJobPosition(jobFairId, jobFairBoothId);
+
+
+
+        //make latest booth layout, assign to booth
+        JobFairProgressDTO jobFairProgressDTO = jobFairService.getJobFairProgress(jobFairId);
+
+        for (JobFairProgressDTO.Booth booth: jobFairProgressDTO.getBooths()){
+            if (booth.getId().equals(jobFairBoothId)) continue;
+            JobFairBoothEntity jobFairBooth = jobFairBoothRepository.getById(booth.getId());
+            jobFairBooth.setDescription("This is department description");
+            JobFairBoothLayoutEntity layout = new JobFairBoothLayoutEntity();
+            layout.setId(UUID.randomUUID().toString());
+            layout.setVersion(1);
+            layout.setCreateDate(new Date().getTime());
+            layout.setUrl("https://d1t63ajhfi2lx8.cloudfront.net/Default/default_booth.glb");
+            layout.setJobFairBooth(jobFairBooth);
+            jobFairBoothLayoutRepository.save(layout);
+            jobFairBoothRepository.save(jobFairBooth);
+        }
+
+        jobFair.setDecorateEndTime(oldDecorateEndTime);
+        jobFair.setDecorateStartTime(oldDecorateStartTime);
+        jobFairRepository.saveAndFlush(jobFair);
+    }
+
+    private void assignTask(String jobFairId, String jobFairBoothId){
+        JobFairEntity jobFair = jobFairRepository.getById(jobFairId);
+        List<ShiftEntity> shifts = jobFair.getShifts();
+        ShiftEntity morningShift, afternoonShift;
+        //Get morning shift and afternoon shift
+        if (shifts.get(0).getBeginTime() < shifts.get(1).getBeginTime()) {
+            morningShift = shifts.get(0);
+            afternoonShift = shifts.get(1);
+        } else {
+            morningShift = shifts.get(1);
+            afternoonShift = shifts.get(0);
+        }
+
+        long publicStartTime = jobFair.getPublicStartTime();
+        long publicEndTime = jobFair.getPublicEndTime();
+        LocalDateTime publicStartDateTime =
+                LocalDateTime.ofInstant(Instant.ofEpochMilli(publicStartTime), ZoneId.systemDefault());
+        LocalDateTime publicEndDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(publicEndTime), ZoneId.systemDefault());
+        long daysBetween = Duration.between(publicStartDateTime, publicEndDateTime).toDays();
+
+
+        List<JobFairBoothEntity> booths = jobFair.getJobFairBoothList();
+        for (JobFairBoothEntity booth : booths){
+            if (Objects.equals(booth.getId(), jobFairBoothId)) continue;
+            if (booth.getName() == null) continue;
+            List<AssignmentEntity> staffs = assignmentRepository.findByJobFairBoothIdAndType(booth.getId(), AssignmentType.STAFF);
+            List<AssignmentEntity> supervisors = assignmentRepository.findByJobFairBoothIdAndType(booth.getId(), AssignmentType.SUPERVISOR);
+            AssignmentEntity staff1 = staffs.get(0);
+            AssignmentEntity staff2 = staffs.get(1);
+            AssignmentEntity supervisor = supervisors.get(0);
+
+            for (int i = 0; i <= daysBetween; i ++){
+                long beginDate = publicStartDateTime.plusDays(i).toLocalDate().atStartOfDay(ZoneOffset.systemDefault()).toInstant().toEpochMilli();
+                assignmentService.assignEmployee(supervisor.getCompanyEmployee().getAccountId(),
+                        staff1.getCompanyEmployee().getAccountId(),
+                        booth.getId(), AssignmentType.INTERVIEWER,
+                        jobFair.getCompany().getId(), beginDate + morningShift.getBeginTime(), beginDate + morningShift.getEndTime());
+                assignmentService.assignEmployee(supervisor.getCompanyEmployee().getAccountId(),
+                        staff1.getCompanyEmployee().getAccountId(),
+                        booth.getId(), AssignmentType.INTERVIEWER,
+                        jobFair.getCompany().getId(), beginDate + afternoonShift.getBeginTime(), beginDate + afternoonShift.getEndTime());
+            }
+
+            for (int i = 0; i <= daysBetween; i ++){
+                long beginDate = publicStartDateTime.plusDays(i).toLocalDate().atStartOfDay(ZoneOffset.systemDefault()).toInstant().toEpochMilli();
+                assignmentService.assignEmployee(supervisor.getCompanyEmployee().getAccountId(),
+                        staff2.getCompanyEmployee().getAccountId(),
+                        booth.getId(), AssignmentType.RECEPTION,
+                        jobFair.getCompany().getId(), beginDate + morningShift.getBeginTime(), beginDate + morningShift.getEndTime());
+                assignmentService.assignEmployee(supervisor.getCompanyEmployee().getAccountId(),
+                        staff2.getCompanyEmployee().getAccountId(),
+                        booth.getId(), AssignmentType.RECEPTION,
+                        jobFair.getCompany().getId(), beginDate + afternoonShift.getBeginTime(), beginDate + afternoonShift.getEndTime());
+            }
+        }
+    }
+
     @GetMapping(ApiEndPoint.Demo.CREATE_BOOTH_JOB_POSITION)
-    public ResponseEntity<?> createBoothJobPositions(@RequestParam String jobFairId) {
-        return ResponseEntity.ok(createBoothJobPosition(jobFairId));
+    public ResponseEntity<?> createBoothJobPositions(@RequestParam String jobFairId, @RequestParam String jobFairBoothId) {
+        decorateJobFair(jobFairId, jobFairBoothId);
+        assignTask(jobFairId, jobFairBoothId);
+        return ResponseEntity.ok().build();
     }
 
     @SneakyThrows
