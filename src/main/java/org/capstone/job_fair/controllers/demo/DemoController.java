@@ -16,13 +16,13 @@ import org.capstone.job_fair.controllers.payload.requests.job_fair.DraftJobFairR
 import org.capstone.job_fair.models.dtos.account.AccountDTO;
 import org.capstone.job_fair.models.dtos.attendant.AttendantDTO;
 import org.capstone.job_fair.models.dtos.attendant.application.ApplicationDTO;
-import org.capstone.job_fair.models.dtos.attendant.cv.CvActivityDTO;
 import org.capstone.job_fair.models.dtos.attendant.cv.CvDTO;
 import org.capstone.job_fair.models.dtos.company.CompanyDTO;
 import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
 import org.capstone.job_fair.models.dtos.company.job.JobPositionDTO;
 import org.capstone.job_fair.models.dtos.dynamoDB.NotificationMessageDTO;
 import org.capstone.job_fair.models.dtos.job_fair.JobFairDTO;
+import org.capstone.job_fair.models.dtos.job_fair.JobFairProgressDTO;
 import org.capstone.job_fair.models.dtos.job_fair.ShiftDTO;
 import org.capstone.job_fair.models.dtos.job_fair.booth.BoothJobPositionDTO;
 import org.capstone.job_fair.models.dtos.job_fair.booth.JobFairBoothDTO;
@@ -30,15 +30,22 @@ import org.capstone.job_fair.models.entities.account.AccountEntity;
 import org.capstone.job_fair.models.entities.attendant.application.ApplicationEntity;
 import org.capstone.job_fair.models.entities.company.CompanyEmployeeEntity;
 import org.capstone.job_fair.models.entities.company.CompanyEntity;
+import org.capstone.job_fair.models.entities.company.job.JobPositionEntity;
 import org.capstone.job_fair.models.entities.job_fair.JobFairEntity;
 import org.capstone.job_fair.models.entities.job_fair.booth.AssignmentEntity;
+import org.capstone.job_fair.models.entities.job_fair.booth.JobFairBoothEntity;
+import org.capstone.job_fair.models.entities.job_fair.booth.JobFairBoothLayoutEntity;
 import org.capstone.job_fair.models.enums.*;
 import org.capstone.job_fair.models.statuses.AccountStatus;
+import org.capstone.job_fair.models.statuses.JobFairPlanStatus;
 import org.capstone.job_fair.repositories.attendant.application.ApplicationRepository;
 import org.capstone.job_fair.repositories.attendant.cv.CvRepository;
 import org.capstone.job_fair.repositories.company.CompanyEmployeeRepository;
+import org.capstone.job_fair.repositories.company.job.JobPositionRepository;
 import org.capstone.job_fair.repositories.job_fair.JobFairRepository;
 import org.capstone.job_fair.repositories.job_fair.job_fair_booth.AssignmentRepository;
+import org.capstone.job_fair.repositories.job_fair.job_fair_booth.JobFairBoothLayoutRepository;
+import org.capstone.job_fair.repositories.job_fair.job_fair_booth.JobFairBoothRepository;
 import org.capstone.job_fair.services.interfaces.attendant.AttendantService;
 import org.capstone.job_fair.services.interfaces.attendant.application.ApplicationService;
 import org.capstone.job_fair.services.interfaces.attendant.cv.CvService;
@@ -54,6 +61,7 @@ import org.capstone.job_fair.services.interfaces.notification.NotificationServic
 import org.capstone.job_fair.services.mappers.attendant.AttendantMapper;
 import org.capstone.job_fair.services.mappers.company.CompanyEmployeeMapper;
 import org.capstone.job_fair.services.mappers.company.CompanyMapper;
+import org.capstone.job_fair.services.mappers.company.job.JobPositionMapper;
 import org.capstone.job_fair.services.mappers.job_fair.JobFairMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.capstone.job_fair.utils.PasswordGenerator;
@@ -89,6 +97,9 @@ public class DemoController {
 
     @Autowired
     private JobFairBoothService jobFairBoothService;
+
+    @Autowired
+    private JobFairBoothRepository jobFairBoothRepository;
 
     @Autowired
     private JobPositionService jobPositionService;
@@ -145,6 +156,15 @@ public class DemoController {
     @Autowired
     private ApplicationRepository applicationRepository;
 
+    @Autowired
+    private JobFairBoothLayoutRepository jobFairBoothLayoutRepository;
+
+
+    @Autowired
+    private JobPositionMapper jobPositionMapper;
+
+    @Autowired
+    private JobPositionRepository jobPositionRepository;
 
     private String getSaltString(int number) {
         String SALTCHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
@@ -501,6 +521,34 @@ public class DemoController {
             entity.getAccount().setPassword(hashPassword);
             companyEmployeeRepository.save(entity);
         }
+
+
+        List<String> jobNames = Arrays.asList("Unity Game Developer", "Java Software Engineer", "Test Automation Specialist", "DevOps", "Project Manager", "Frontend Developer", "Full Stack Developer", "Accounting Associate", "Graphic Design Specialist");
+        //create job position
+        for (String name : jobNames){
+            JobPositionDTO jobPositionDTO = new JobPositionDTO();
+            jobPositionDTO.setTitle(name);
+            jobPositionDTO.setContactPersonName(managerAccount.getFullname());
+            jobPositionDTO.setContactEmail(managerAccount.getEmail());
+            jobPositionDTO.setLanguage(Language.Vietnamese);
+            jobPositionDTO.setLevel(JobLevel.FRESHER);
+            jobPositionDTO.setJobType(JobType.INTERNSHIP);
+            CompanyDTO newCompanyDTO = new CompanyDTO();
+            newCompanyDTO.setId(companyDTO.getId());
+            jobPositionDTO.setCompanyDTO(newCompanyDTO);
+            jobPositionDTO.setDescription("This is the job description");
+            jobPositionDTO.setRequirements("This is the job requirements");
+            jobPositionDTO.setDescriptionKeyWord("developer");
+            jobPositionDTO.setRequirementKeyWord("developer");
+            long currentTime = new Date().getTime();
+            jobPositionDTO.setCreatedDate(currentTime);
+
+            JobPositionEntity jobPositionEntity = jobPositionMapper.toEntity(jobPositionDTO);
+            jobPositionRepository.save(jobPositionEntity);
+        }
+
+
+
         return companyDTO.getId();
     }
 
@@ -514,25 +562,28 @@ public class DemoController {
 
     private JobFairDTO createDraftJobFair(String companyId, boolean isAssignment) {
         LocalDate localDate = LocalDate.now();
+        LocalDate fiveDayAgo = localDate.minusDays(5);
+        LocalDate twoDayAgo = localDate.minusDays(2);
+        LocalDate oneDayAgo = localDate.minusDays(1);
         LocalDate twoDayLater = localDate.plusDays(2);
         LocalDate threeDayLater = localDate.plusDays(3);
         LocalDate fiveDayLater = localDate.plusDays(5);
 
 
-        LocalDateTime startOfDay = localDate.atTime(LocalTime.MIN);
+        LocalDateTime startOfDay = fiveDayAgo.atTime(LocalTime.MIN);
         long decorateStartTime = startOfDay.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
 
-        LocalDateTime endOfDay = twoDayLater.atTime(LocalTime.MAX);
+        LocalDateTime endOfDay = twoDayAgo.atTime(LocalTime.MAX);
         long decorateEndTime = endOfDay.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
 
-        startOfDay = threeDayLater.atTime(LocalTime.MIN);
+        startOfDay = oneDayAgo.atTime(LocalTime.MIN);
         long publicStartTime = startOfDay.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
 
         endOfDay = fiveDayLater.atTime(LocalTime.MAX);
         long publicEndTime = endOfDay.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
 
         DraftJobFairRequest request = new DraftJobFairRequest();
-        request.setName("CREATED_JOB_FAIR_DRAFT_" + getSaltString(2));
+        request.setName("JOB_FAIR_DEMO_" + getSaltString(2));
 
         request.setDecorateStartTime(decorateStartTime);
         request.setDecorateEndTime(decorateEndTime);
@@ -586,6 +637,7 @@ public class DemoController {
         CompanyEmployeeEntity manager = managers.get(0);
 
         for (int i = 0; i <= totalNumberOfAssignBooth; i++) {
+
             List<CompanyEmployeeDTO> neededEmployeeList = listShuffle
                     .stream()
                     .filter(item -> item.getAccount().getRole() != Role.COMPANY_MANAGER)
@@ -649,6 +701,48 @@ public class DemoController {
 
     }
 
+    protected void decorateJobFair(String jobFairId){
+        JobFairEntity jobFair = jobFairRepository.getById(jobFairId);
+        long oldDecorateEndTime = jobFair.getDecorateEndTime();
+        long oldDecorateStartTime = jobFair.getDecorateStartTime();
+        jobFair.setDecorateStartTime(0L);
+        jobFair.setDecorateEndTime(new Date().getTime() + 10000000);
+        jobFairRepository.saveAndFlush(jobFair);
+
+        //get booths that have employee assign to
+        List<BoothJobPositionDTO> jobPositionDTOS = createBoothJobPosition(jobFairId);
+
+
+
+        //make latest booth layout, assign to booth
+        JobFairProgressDTO jobFairProgressDTO = jobFairService.getJobFairProgress(jobFairId);
+
+        for (JobFairProgressDTO.Booth booth: jobFairProgressDTO.getBooths()){
+            JobFairBoothEntity jobFairBooth = jobFairBoothRepository.getById(booth.getId());
+            jobFairBooth.setName("Department");
+            JobFairBoothLayoutEntity layout = new JobFairBoothLayoutEntity();
+            layout.setId(UUID.randomUUID().toString());
+            layout.setVersion(1);
+            layout.setCreateDate(new Date().getTime());
+            layout.setUrl("https://d1t63ajhfi2lx8.cloudfront.net/Default/default_booth.glb");
+            layout.setJobFairBooth(jobFairBooth);
+            jobFairBoothLayoutRepository.save(layout);
+            jobFairBoothRepository.save(jobFairBooth);
+        }
+
+        jobFair.setDecorateEndTime(oldDecorateEndTime);
+        jobFair.setDecorateStartTime(oldDecorateStartTime);
+        jobFairRepository.saveAndFlush(jobFair);
+    }
+
+    @Transactional
+    protected void publishFakeJobFair(String jobFairId) {
+        //publish job fair
+        JobFairEntity jobFair = jobFairRepository.getById(jobFairId);
+        jobFair.setStatus(JobFairPlanStatus.PUBLISH);
+        jobFairRepository.saveAndFlush(jobFair);
+    }
+
     @PostMapping(ApiEndPoint.Demo.CREATE_1_DRAFT_JOB_FAIR_FOR_COMPANY)
     public ResponseEntity<?> create1DraftForEachCompany(@RequestParam String companyId) {
         JobFairDTO jobFairDTO = createDraftJobFair(companyId, true);
@@ -672,5 +766,10 @@ public class DemoController {
         return ResponseEntity.ok().build();
     }
 
-
+    @PostMapping(ApiEndPoint.Demo.PUBLISH_FAKE_JOB_FAIR)
+    public ResponseEntity<?> publishFakeJobFairs(@RequestParam String jobFairId) {
+        publishFakeJobFair(jobFairId);
+        decorateJobFair(jobFairId);
+        return ResponseEntity.ok().build();
+    }
 }

@@ -7,6 +7,7 @@ import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.controllers.payload.requests.company.CreateJobPositionRequest;
 import org.capstone.job_fair.controllers.payload.requests.company.UpdateJobPositionRequest;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
+import org.capstone.job_fair.models.dtos.company.CompanyDTO;
 import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
 import org.capstone.job_fair.models.dtos.company.job.JobPositionDTO;
 import org.capstone.job_fair.models.dtos.util.ParseFileResult;
@@ -64,6 +65,10 @@ public class JobController {
             }
 
             JobPositionDTO jobPositionDTO = jobPositionMapper.toDTO(request);
+            String companyId = userDetails.getCompanyId();
+            CompanyDTO companyDTO = new CompanyDTO();
+            companyDTO.setId(companyId);
+            jobPositionDTO.setCompanyDTO(companyDTO);
             jobPositionService.createNewJobPosition(jobPositionDTO);
             return GenericResponse.build(MessageUtil.getMessage(MessageConstant.Job.CREATE_JOB_SUCCESSFULLY), HttpStatus.CREATED);
         } catch (IllegalArgumentException ex) {

@@ -194,7 +194,6 @@ public class JobFairServiceImpl implements JobFairService {
                 ("%" + name + "%",
                         JobFairPlanStatus.PUBLISH,
                         currentTime,
-                        subCategoryId,
                         pageable).map(jobFairMapper::toDTO);
     }
 

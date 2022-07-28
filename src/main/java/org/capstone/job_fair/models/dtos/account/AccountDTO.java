@@ -26,4 +26,9 @@ public class AccountDTO implements Serializable {
     private Gender gender;
     private Role role;
     private Long createTime;
+
+    public String getFullname() {
+        return firstname + " " + middlename + " " + lastname;
+    }
+
 }

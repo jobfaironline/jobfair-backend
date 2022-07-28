@@ -7,10 +7,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
-import org.capstone.job_fair.constants.DataConstraint;
-import org.capstone.job_fair.constants.FileConstant;
-import org.capstone.job_fair.constants.JobPositionConstant;
-import org.capstone.job_fair.constants.MessageConstant;
+import org.capstone.job_fair.constants.*;
 import org.capstone.job_fair.controllers.payload.requests.company.CreateJobPositionRequest;
 import org.capstone.job_fair.controllers.payload.responses.KeyWordResponse;
 import org.capstone.job_fair.models.dtos.company.CompanyDTO;
@@ -85,7 +82,7 @@ public class JobPositionServiceImpl implements JobPositionService {
         Map<String, String> body = new HashedMap<>();
 
         body.put("description", jobPosition.getDescription());
-        Mono<KeyWordResponse> descriptionResult = webClient.post().uri(skillProcessorURL)
+        Mono<KeyWordResponse> descriptionResult = webClient.post().uri(skillProcessorURL + SkillExtractorApiEndpoint.EXTRACT_KEYWORD)
                 .body(Mono.just(body), Map.class)
                 .retrieve()
                 .bodyToMono(KeyWordResponse.class);
@@ -100,7 +97,7 @@ public class JobPositionServiceImpl implements JobPositionService {
         });
 
         body.put("description", jobPosition.getRequirements());
-        Mono<KeyWordResponse> requirementResult = webClient.post().uri(skillProcessorURL)
+        Mono<KeyWordResponse> requirementResult = webClient.post().uri(skillProcessorURL+SkillExtractorApiEndpoint.EXTRACT_KEYWORD)
                 .body(Mono.just(body), Map.class)
                 .retrieve()
                 .bodyToMono(KeyWordResponse.class);
@@ -118,8 +115,6 @@ public class JobPositionServiceImpl implements JobPositionService {
     @Override
     @Transactional
     public JobPositionDTO createNewJobPosition(JobPositionDTO dto) {
-        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String companyId = userDetails.getCompanyId();
         if (dto.getSubCategoryDTOs() != null) {
             dto.getSubCategoryDTOs().forEach(subCategoryDTO -> {
                 if (!isSubCategoryIdValid(subCategoryDTO.getId())) {
@@ -134,14 +129,9 @@ public class JobPositionServiceImpl implements JobPositionService {
                 }
             });
         }
-        if (companyService.getCountById(companyId) == 0) {
-            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Company.NOT_FOUND));
-        }
         long currentTime = new Date().getTime();
         dto.setCreatedDate(currentTime);
-        CompanyDTO companyDTO = new CompanyDTO();
-        companyDTO.setId(companyId);
-        dto.setCompanyDTO(companyDTO);
+
         JobPositionEntity entity = mapper.toEntity(dto);
         entity = jobPositionRepository.save(entity);
         updateDescriptionAndRequirementKeyWork(entity);
