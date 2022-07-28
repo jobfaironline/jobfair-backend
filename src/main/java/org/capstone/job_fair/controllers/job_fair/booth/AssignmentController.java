@@ -10,6 +10,7 @@ import org.capstone.job_fair.controllers.payload.responses.JobFairAssignmentStat
 import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
 import org.capstone.job_fair.models.dtos.dynamoDB.NotificationMessageDTO;
 import org.capstone.job_fair.models.dtos.job_fair.booth.AssignmentDTO;
+import org.capstone.job_fair.models.dtos.job_fair.booth.JobFairAssignmentDTO;
 import org.capstone.job_fair.models.dtos.util.ParseFileResult;
 import org.capstone.job_fair.models.enums.AssignmentType;
 import org.capstone.job_fair.models.enums.NotificationAction;
@@ -56,7 +57,7 @@ public class AssignmentController {
     public ResponseEntity<?> assignEmployee(@Valid @RequestBody AssignEmployeeRequest request) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         AssignmentDTO assigment = assignmentService.assignEmployee(userDetails.getId(), request.getEmployeeId(), request.getJobFairBoothId(), request.getType(), userDetails.getCompanyId(), request.getBeginTime(), request.getEndTime());
-        if (assigment.getType() == AssignmentType.INTERVIEWER || assigment.getType() == AssignmentType.RECEPTION){
+        if (assigment.getType() == AssignmentType.INTERVIEWER || assigment.getType() == AssignmentType.RECEPTION) {
             NotificationMessageDTO notificationMessage = NotificationMessageDTO.builder()
                     .title(NotificationAction.ASSIGNMENT.toString())
                     .message(Jackson.getObjectMapper().writeValueAsString(assigment))
@@ -75,7 +76,7 @@ public class AssignmentController {
         String companyId = userDetails.getCompanyId();
         AssignmentDTO assignment = assignmentService.unAssignEmployee(assignmentId, companyId);
 
-        if (assignment.getType() == AssignmentType.INTERVIEWER || assignment.getType() == AssignmentType.RECEPTION){
+        if (assignment.getType() == AssignmentType.INTERVIEWER || assignment.getType() == AssignmentType.RECEPTION) {
             NotificationMessageDTO notificationMessage = NotificationMessageDTO.builder()
                     .title(NotificationAction.UN_ASSIGNMENT.toString())
                     .message(Jackson.getObjectMapper().writeValueAsString(assignment))
@@ -157,7 +158,22 @@ public class AssignmentController {
             @RequestParam(value = "type", required = false) AssignmentType type
     ) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (type == null) type = AssignmentType.SUPERVISOR;
         Page<AssignmentDTO> result = assignmentService.getAssignmentByEmployeeIdAndType(userDetails.getId(), type, PageRequest.of(offset, pageSize).withSort(Sort.by(direction, sortBy)));
+        return ResponseEntity.ok(result);
+
+    }
+
+    @GetMapping(ApiEndPoint.Assignment.OF_EMPLOYEE_JOB_FAIR)
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE)")
+    public ResponseEntity<?> getAssignmentByEmployeeId(
+            @RequestParam(value = "offset", defaultValue = AssignmentConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset,
+            @RequestParam(value = "pageSize", defaultValue = AssignmentConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize,
+            @RequestParam(value = "sortBy", defaultValue = "create_time") String sortBy,
+            @RequestParam(value = "direction", required = false, defaultValue = AssignmentConstant.DEFAULT_SEARCH_SORT_DIRECTION) Sort.Direction direction
+    ) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Page<JobFairAssignmentDTO> result = assignmentService.getJobFairAssignmentByEmployeeId(userDetails.getId(), PageRequest.of(offset, pageSize).withSort(Sort.by(direction, sortBy)));
         return ResponseEntity.ok(result);
     }
 
@@ -193,7 +209,7 @@ public class AssignmentController {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String companyId = userDetails.getCompanyId();
         ParseFileResult<AssignmentDTO> result = assignmentService.assignShiftForMultipleEmployee(file, jobFairId, companyId, userDetails.getId());
-        if(!result.isHasError()) {
+        if (!result.isHasError()) {
             return ResponseEntity.ok(result.getResult());
         }
         return ResponseEntity.badRequest().body(result);

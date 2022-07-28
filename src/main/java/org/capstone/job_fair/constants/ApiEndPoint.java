@@ -324,6 +324,7 @@ public final class ApiEndPoint {
         public static final String JOB_FAIR_AVAILABLE = ASSIGNMENT + "/available";
         public static final String JOB_FAIR_STATISTICS = ASSIGNMENT + "/statistics";
         public static final String OF_EMPLOYEE = ASSIGNMENT + "/employee";
+        public static final String OF_EMPLOYEE_JOB_FAIR = ASSIGNMENT + "/employee/jobfair";
         public static final String CREATE_ASSIGMENT_UPLOAD_CSV = ASSIGNMENT + "/csv";
         public static final String CREATE_SHIFT_UPLOAD_CSV = ASSIGNMENT + "/shift/csv";
     }

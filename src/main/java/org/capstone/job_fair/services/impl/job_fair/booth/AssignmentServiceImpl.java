@@ -11,7 +11,9 @@ import org.capstone.job_fair.constants.AssignmentConstant;
 import org.capstone.job_fair.constants.FileConstant;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
+import org.capstone.job_fair.models.dtos.job_fair.JobFairDTO;
 import org.capstone.job_fair.models.dtos.job_fair.booth.AssignmentDTO;
+import org.capstone.job_fair.models.dtos.job_fair.booth.JobFairAssignmentDTO;
 import org.capstone.job_fair.models.dtos.util.ParseFileResult;
 import org.capstone.job_fair.models.entities.company.CompanyEmployeeEntity;
 import org.capstone.job_fair.models.entities.job_fair.JobFairEntity;
@@ -29,6 +31,7 @@ import org.capstone.job_fair.repositories.job_fair.job_fair_booth.JobFairBoothRe
 import org.capstone.job_fair.services.interfaces.job_fair.booth.AssignmentService;
 import org.capstone.job_fair.services.interfaces.util.XSLSFileService;
 import org.capstone.job_fair.services.mappers.company.CompanyEmployeeMapper;
+import org.capstone.job_fair.services.mappers.job_fair.JobFairMapper;
 import org.capstone.job_fair.services.mappers.job_fair.booth.AssignmentMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,6 +76,8 @@ public class AssignmentServiceImpl implements AssignmentService {
     @Autowired
     private ShiftRepository shiftRepository;
 
+    @Autowired
+    private JobFairMapper jobFairMapper;
 
     @Getter
     @Setter
@@ -217,9 +222,21 @@ public class AssignmentServiceImpl implements AssignmentService {
 
     @Override
     public Page<AssignmentDTO> getAssignmentByEmployeeIdAndType(String employeeId, AssignmentType type, Pageable pageable) {
-        if (type == null)
-            return assignmentRepository.findByCompanyEmployeeAccountIdAndJobFairBoothJobFairStatus(employeeId, JobFairPlanStatus.PUBLISH, pageable).map(assignmentMapper::toDTO);
         return assignmentRepository.findByCompanyEmployeeAccountIdAndJobFairBoothJobFairStatusAndType(employeeId, JobFairPlanStatus.PUBLISH, type, pageable).map(assignmentMapper::toDTO);
+    }
+
+    @Override
+    public Page<JobFairAssignmentDTO> getJobFairAssignmentByEmployeeId(String employeeId, Pageable pageable){
+        Page<JobFairEntity> jobFairEntities = jobFairRepository.findJobFairThatEmployeeHasAssignment(employeeId, pageable);
+        Page<JobFairAssignmentDTO> result = jobFairEntities.map(jobFairEntity -> {
+            JobFairAssignmentDTO dto = new JobFairAssignmentDTO();
+            JobFairDTO jobFairDTO = jobFairMapper.toDTO(jobFairEntity);
+            dto.setJobFair(jobFairDTO);
+            List<AssignmentEntity> assignmentEntities = assignmentRepository.findByJobFairBoothJobFairIdAndCompanyEmployeeAccountId(jobFairDTO.getId(), employeeId);
+            dto.setAssignments(assignmentEntities.stream().map(assignmentMapper::toDTO).collect(Collectors.toList()));
+            return dto;
+        });
+        return result;
     }
 
     @Override
