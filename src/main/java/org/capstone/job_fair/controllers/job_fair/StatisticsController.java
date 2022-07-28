@@ -3,6 +3,7 @@ package org.capstone.job_fair.controllers.job_fair;
 import lombok.extern.slf4j.Slf4j;
 import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import org.capstone.job_fair.constants.ApiEndPoint;
+import org.capstone.job_fair.models.dtos.admin.AdminStatisticsDTO;
 import org.capstone.job_fair.models.dtos.company.CompanyStatisticsDTO;
 import org.capstone.job_fair.models.dtos.job_fair.JobFairStatisticsDTO;
 import org.capstone.job_fair.models.dtos.job_fair.booth.BoothStatisticsDTO;
@@ -51,4 +52,12 @@ public class StatisticsController {
         CompanyStatisticsDTO result = statisticsService.getCompanyStatistics(companyId);
         return ResponseEntity.ok(result);
     }
+
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
+    @GetMapping(ApiEndPoint.Admin.STATISTICS)
+    public ResponseEntity<?> getAdminStatistics() {
+        AdminStatisticsDTO result = statisticsService.getAdminStatistics();
+        return ResponseEntity.ok(result);
+    }
+
 }

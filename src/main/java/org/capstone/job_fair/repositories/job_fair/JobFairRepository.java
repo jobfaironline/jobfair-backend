@@ -41,6 +41,7 @@ public interface JobFairRepository extends JpaRepository<JobFairEntity, String> 
     @Query("SELECT j FROM JobFairEntity j where (j.name like :name or j.name is null) and j.status = 1 and j.decorateStartTime >= :now")
     Page<JobFairEntity> findUpComingJobFair(@Param("name") String name, @Param("now") long now, Pageable pageable);
 
+    List<JobFairEntity> findByStatus(JobFairPlanStatus status);
 
 
 

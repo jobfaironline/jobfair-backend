@@ -1,6 +1,8 @@
 package org.capstone.job_fair.repositories.account;
 
 import org.capstone.job_fair.models.entities.account.AccountEntity;
+import org.capstone.job_fair.models.entities.account.RoleEntity;
+import org.capstone.job_fair.models.enums.Role;
 import org.capstone.job_fair.models.statuses.AccountStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -27,4 +29,8 @@ public interface AccountRepository extends JpaRepository<AccountEntity, String> 
     Optional<AccountEntity> findByEmail(String email);
 
     Optional<AccountEntity> findByEmailAndStatusIn(String email, List<AccountStatus> statuses);
+
+    long countByStatus(AccountStatus status);
+
+    long countByRoleId(int roleId);
 }

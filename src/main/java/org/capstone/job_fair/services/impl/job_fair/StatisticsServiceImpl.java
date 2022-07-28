@@ -2,6 +2,7 @@ package org.capstone.job_fair.services.impl.job_fair;
 
 import org.apache.commons.collections4.map.HashedMap;
 import org.capstone.job_fair.constants.MessageConstant;
+import org.capstone.job_fair.models.dtos.admin.AdminStatisticsDTO;
 import org.capstone.job_fair.models.dtos.company.CompanyStatisticsDTO;
 import org.capstone.job_fair.models.dtos.job_fair.JobFairStatisticsDTO;
 import org.capstone.job_fair.models.dtos.job_fair.booth.BoothStatisticsDTO;
@@ -11,8 +12,11 @@ import org.capstone.job_fair.models.entities.job_fair.JobFairEntity;
 import org.capstone.job_fair.models.entities.job_fair.booth.BoothJobPositionEntity;
 import org.capstone.job_fair.models.entities.job_fair.booth.JobFairBoothEntity;
 import org.capstone.job_fair.models.enums.ApplicationStatus;
+import org.capstone.job_fair.models.enums.Role;
+import org.capstone.job_fair.models.statuses.AccountStatus;
 import org.capstone.job_fair.models.statuses.InterviewStatus;
 import org.capstone.job_fair.models.statuses.JobFairPlanStatus;
+import org.capstone.job_fair.repositories.account.AccountRepository;
 import org.capstone.job_fair.repositories.attendant.application.ApplicationRepository;
 import org.capstone.job_fair.repositories.company.CompanyRepository;
 import org.capstone.job_fair.repositories.job_fair.JobFairRepository;
@@ -47,6 +51,9 @@ public class StatisticsServiceImpl implements StatisticsService {
 
     @Autowired
     private CompanyRepository companyRepository;
+
+    @Autowired
+    private AccountRepository accountRepository;
 
     @Override
     public JobFairStatisticsDTO getJobFairStatistics(String jobFairId, String companyId) {
@@ -364,6 +371,53 @@ public class StatisticsServiceImpl implements StatisticsService {
             jobFairStatistics.setPublicEndTime(jobFair.getPublicEndTime());
             result.getJobFairs().add(jobFairStatistics);
         });
+
+        return result;
+    }
+
+    @Override
+    public AdminStatisticsDTO getAdminStatistics() {
+        AdminStatisticsDTO result = new AdminStatisticsDTO();
+
+        //account statistics
+        long verifiedNum = accountRepository.countByStatus(AccountStatus.VERIFIED);
+        long inactiveNum = accountRepository.countByStatus(AccountStatus.INACTIVE);
+        long registeredNum = accountRepository.countByStatus(AccountStatus.REGISTERED);
+        long suspendedNum = accountRepository.countByStatus(AccountStatus.SUSPENDED);
+        long attendantNum = accountRepository.countByRoleId(Role.ATTENDANT.ordinal());
+        long companyManagerNum = accountRepository.countByRoleId(Role.COMPANY_MANAGER.ordinal());
+        long companyEmployeeNum = accountRepository.countByRoleId(Role.COMPANY_EMPLOYEE.ordinal());
+
+        result.getAccountStatistics().setVerifiedNum(verifiedNum);
+        result.getAccountStatistics().setInactiveNum(inactiveNum);
+        result.getAccountStatistics().setRegisteredNum(registeredNum);
+        result.getAccountStatistics().setSuspendedNum(suspendedNum);
+        result.getAccountStatistics().setAttendantNum(attendantNum);
+        result.getAccountStatistics().setCompanyManagerNum(companyManagerNum);
+        result.getAccountStatistics().setCompanyEmployeeNum(companyEmployeeNum);
+
+        //job fair statistics
+        List<JobFairEntity> publishedJobFairs = jobFairRepository.findByStatus(JobFairPlanStatus.PUBLISH);
+        long now = new Date().getTime();
+        List<JobFairEntity> inProgressJobFairs = publishedJobFairs.stream().filter(jobFair -> jobFair.getDecorateStartTime() < now && jobFair.getPublicEndTime() > now).collect(Collectors.toList());
+        List<JobFairEntity> pastJobFairs = publishedJobFairs.stream().filter(jobFair -> jobFair.getPublicEndTime() <= now).collect(Collectors.toList());
+        List<JobFairEntity> comingSoonJobFairs = publishedJobFairs.stream().filter(jobFair -> jobFair.getDecorateStartTime() >= now).collect(Collectors.toList());
+
+        long pastNum = pastJobFairs.size();
+        long inProgressNum = inProgressJobFairs.size();
+        long incomingNum = comingSoonJobFairs.size();
+
+        result.getJobFairStatistics().setPastNum(pastNum);
+        result.getJobFairStatistics().setIncomingNum(incomingNum);
+        result.getJobFairStatistics().setInProgressNum(inProgressNum);
+
+        //general statistics
+        long companyNum = companyRepository.count();
+        long visitorNum = 0;
+        long userNum = verifiedNum + inactiveNum + registeredNum + suspendedNum;
+        result.getGeneralStatistics().setCompanyNum(companyNum);
+        result.getGeneralStatistics().setVisitorNum(visitorNum);
+        result.getGeneralStatistics().setUserNum(userNum);
 
         return result;
     }

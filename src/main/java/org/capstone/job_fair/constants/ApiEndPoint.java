@@ -380,6 +380,11 @@ public final class ApiEndPoint {
         public static final String VIDEO_LAYOUT_WITH_FILE = DECORATOR_BOOTH_LAYOUT + "/videos/file";
         public static final String VIDEO_LAYOUT_WITH_URL = DECORATOR_BOOTH_LAYOUT + "/videos/url";
 
+    }
 
+    public static final class Admin {
+        private Admin(){}
+        public static final String ADMIN_END_POINT = ROOT_ENDPOINT + VERSION + "/admin";
+        public static final String STATISTICS = ADMIN_END_POINT + "/statistics";
     }
 }
