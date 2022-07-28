@@ -57,7 +57,6 @@ public class StatisticsServiceImpl implements StatisticsService {
 
     @Override
     public JobFairStatisticsDTO getJobFairStatistics(String jobFairId, String companyId) {
-        Random random = new Random();
         Optional<JobFairEntity> jobFairOpt = jobFairRepository.findById(jobFairId);
         if (!jobFairOpt.isPresent()) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.JOB_FAIR_NOT_FOUND));
@@ -176,7 +175,7 @@ public class StatisticsServiceImpl implements StatisticsService {
             JobFairStatisticsDTO.Booth booth = new JobFairStatisticsDTO.Booth();
             booth.setId(boothEntity.getId());
             booth.setName(boothEntity.getName());
-            int visitNum = random.ints(0, 10).findFirst().getAsInt();
+            int visitNum = 0;
             int appliedCvNum = applicationByBooth.get(boothEntity.getId()) != null ? applicationByBooth.get(boothEntity.getId()).size() : 0;
             int approvedCVNum = applicationByBooth.get(boothEntity.getId()) == null ? 0 : (int) applicationByBooth.get(boothEntity.getId()).stream().filter(application -> {
                 return application.getStatus() == ApplicationStatus.APPROVE;
