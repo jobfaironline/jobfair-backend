@@ -13,6 +13,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.spring.data.rest.configuration.SpringDataRestConfiguration;
 
@@ -21,6 +22,7 @@ import springfox.documentation.spring.data.rest.configuration.SpringDataRestConf
 @RestController
 @Import(SpringDataRestConfiguration.class)
 @EnableAsync
+@EnableScheduling
 public class JobFairApplication {
 
     @Bean

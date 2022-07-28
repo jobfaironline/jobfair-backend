@@ -27,13 +27,16 @@ public class JobFairProgressDTO {
 
     @Data
     public static class Supervisor {
+        private String id = "";
         private String name = "";
         private boolean assignTask = false;
         private boolean boothProfile = false;
+        private String assignmentId = "";
     }
 
     @Data
     public static class Decorator {
+        private String id ="";
         private String name = "";
         private boolean decorate = false;
     }

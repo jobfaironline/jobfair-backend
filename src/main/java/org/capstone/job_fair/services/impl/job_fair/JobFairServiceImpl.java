@@ -222,9 +222,11 @@ public class JobFairServiceImpl implements JobFairService {
                 JobFairProgressDTO.Supervisor supervisor = new JobFairProgressDTO.Supervisor();
                 boolean assignTask = assignmentService.isSupervisorAssignAllTask(jobFairBooth.getId());
                 boolean boothProfile = jobFairBooth.getBoothJobPositions().size() > 0 && jobFairBooth.getDescription() != null;
+                supervisor.setId(supervisorAssignment.getCompanyEmployee().getAccountId());
                 supervisor.setName(supervisorAssignment.getCompanyEmployee().getAccount().getFullname());
                 supervisor.setAssignTask(assignTask);
                 supervisor.setBoothProfile(boothProfile);
+                supervisor.setAssignmentId(supervisorAssignment.getId());
                 booth.setSupervisor(supervisor);
             }
             List<AssignmentEntity> decorators = assignmentRepository.findByJobFairBoothIdAndType(jobFairBooth.getId(), AssignmentType.DECORATOR);
@@ -233,6 +235,7 @@ public class JobFairServiceImpl implements JobFairService {
                 JobFairProgressDTO.Decorator decorator = new JobFairProgressDTO.Decorator();
                 Optional<JobFairBoothLayoutDTO> latestLayoutOpt = jobFairBoothLayoutService.getLatestVersionByCompanyBoothId(jobFairBooth.getId());
                 boolean decorate = latestLayoutOpt.isPresent();
+                decorator.setId(decoratorAssignment.getCompanyEmployee().getAccountId());
                 decorator.setName(decoratorAssignment.getCompanyEmployee().getAccount().getFullname());
                 decorator.setDecorate(decorate);
                 booth.setDecorator(decorator);

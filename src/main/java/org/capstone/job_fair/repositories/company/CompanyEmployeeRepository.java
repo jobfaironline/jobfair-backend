@@ -30,4 +30,7 @@ public interface CompanyEmployeeRepository extends JpaRepository<CompanyEmployee
             (String firstName, String middleName, String lastName, String employeeId, String companyId, Pageable pageable);
 
     Optional<CompanyEmployeeEntity> findByEmployeeIdAndCompanyId(String employeeId, String companyId);
+
+    @Query("select c from CompanyEmployeeEntity c where c.company.id = ?1 and c.account.role.id = ?2")
+    List<CompanyEmployeeEntity> findByCompanyIdAndAccountRoleId(String companyId, int roleId);
 }
