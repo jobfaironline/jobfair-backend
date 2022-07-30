@@ -4,15 +4,13 @@ package org.capstone.job_fair.services.mappers.payment;
 import org.capstone.job_fair.models.dtos.payment.SubscriptionDTO;
 import org.capstone.job_fair.models.entities.payment.SubscriptionEntity;
 import org.capstone.job_fair.services.mappers.company.CompanyMapper;
-import org.capstone.job_fair.services.mappers.job_fair.ShiftMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
-@Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE, uses = {
-        CompanyMapper.class, SubscriptionPlanMapper.class
-})
+@Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE, uses = {CompanyMapper.class, SubscriptionPlanMapper.class})
 public abstract class SubscriptionMapper {
 
     public abstract SubscriptionDTO toDTO(SubscriptionEntity entity);
+
     public abstract SubscriptionEntity toEntity(SubscriptionDTO dto);
 }

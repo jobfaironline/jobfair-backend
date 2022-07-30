@@ -32,8 +32,6 @@ public class SubscriptionPlanEntity {
     @Column(name = "price")
     private Double price;
 
-    @OneToMany(mappedBy = "subscriptionPlanEntity")
-    private Set<SubscriptionEntity> subscriptionEntities = new LinkedHashSet<>();
 
     @Override
     public boolean equals(Object o) {

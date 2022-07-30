@@ -18,6 +18,5 @@ public class SubscriptionPlanDTO {
     private String name;
     private String description;
     private Double price;
-    private Set<SubscriptionEntity> subscriptionEntities = new LinkedHashSet<>();
 
 }
