@@ -57,8 +57,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         //Call Stripe service to create charge
         String chargeId = null;
         try {
-            String price = Integer.toString((int)Math.round(subscriptionPlanEntity.getPrice().doubleValue()));
-            System.out.println("Price: " + price);
+            String price = Integer.toString((int)Math.round(subscriptionPlanEntity.getPrice().doubleValue()*100));
             chargeId = stripeService.createCharge( price, "usd", companyId, creditCardDTO, token);
             //After charge is created, create subscription
             SubscriptionEntity subscriptionEntity = new SubscriptionEntity();
@@ -74,7 +73,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
             subscriptionRepository.save(subscriptionEntity);
         } catch (StripeException e) {
             e.printStackTrace();
-            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Payment.CARD_ERROR));
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Payment.PAYMENT_ERROR));
         }
 
     }
