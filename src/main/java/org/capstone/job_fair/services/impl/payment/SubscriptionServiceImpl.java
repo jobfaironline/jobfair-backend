@@ -1,6 +1,7 @@
 package org.capstone.job_fair.services.impl.payment;
 
 import com.stripe.exception.StripeException;
+import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.models.dtos.payment.CreditCardDTO;
 import org.capstone.job_fair.models.dtos.payment.SubscriptionPlanDTO;
 import org.capstone.job_fair.models.entities.company.CompanyEntity;
@@ -11,6 +12,7 @@ import org.capstone.job_fair.repositories.payment.SubscriptionRepository;
 import org.capstone.job_fair.services.interfaces.payment.StripeService;
 import org.capstone.job_fair.services.interfaces.payment.SubscriptionService;
 import org.capstone.job_fair.services.mappers.payment.SubscriptionPlanMapper;
+import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,12 +38,12 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         Long currentDate = new Date().getTime();
         Optional<SubscriptionEntity> subscriptionEntityOptional = subscriptionRepository.findCurrentSubscriptionByCompanyId(companyId, currentDate);
         if (subscriptionEntityOptional.isPresent()) {
-            throw new IllegalArgumentException("Subscription already exists");
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Subscription.ALREADY_EXISTS));
         }
         //If company has no subscription, check for subscriptionPlanId, if it doesn't exist, throw exception.
         Optional<SubscriptionPlanEntity> subscriptionPlanOptional = subscriptionPlanRepository.findById(subscriptionPlanId);
         if (!subscriptionPlanOptional.isPresent()) {
-            throw new IllegalArgumentException("SubscriptionPlan does not exist");
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.SubscriptionPlan.NOT_FOUND));
         }
         SubscriptionPlanEntity subscriptionPlanEntity = subscriptionPlanOptional.get();
         //Call Stripe service to create card token
@@ -50,6 +52,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
             token = stripeService.createChargeToken(creditCardDTO);
         } catch (StripeException e) {
             e.printStackTrace();
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Payment.CARD_ERROR));
         }
         //Call Stripe service to create charge
         String chargeId = null;
@@ -71,6 +74,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
             subscriptionRepository.save(subscriptionEntity);
         } catch (StripeException e) {
             e.printStackTrace();
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Payment.CARD_ERROR));
         }
 
     }

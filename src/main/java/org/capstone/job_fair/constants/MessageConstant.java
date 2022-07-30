@@ -14,6 +14,32 @@ public final class MessageConstant {
         public static final String DUPLICATED = "job-level.error.duplicate-job-level";
     }
 
+    public static final class Payment {
+        private Payment() {
+
+        }
+
+        public static final String CARD_ERROR = "payment.error.card-error";
+        public static final String PAYMENT_ERROR = "payment.error.payment-error";
+    }
+
+    public static final class SubscriptionPlan {
+        private SubscriptionPlan() {
+
+        }
+
+        public static final String NOT_FOUND = "subscription-plan.error.not-found";
+        public static final String DUPLICATED = "subscription-plan.error.duplicate-subscription-plan";
+    }
+
+    public static final class Subscription {
+        private Subscription() {
+
+        }
+
+        public static final String ALREADY_EXISTS = "subscription.error.already-exists";
+    }
+
     public static final class ProfessionalCategory {
         private ProfessionalCategory() {
 
