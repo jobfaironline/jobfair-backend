@@ -274,6 +274,7 @@ public final class ApiEndPoint {
       }
 
       public static final String SUBSCRIPTION_ENDPOINT = ROOT_ENDPOINT + VERSION + "/subscriptions";
+      public static final String PAY_SUBSCRIPTION = SUBSCRIPTION_ENDPOINT + "/pay";
 
 
 

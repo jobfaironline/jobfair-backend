@@ -2,6 +2,7 @@ package org.capstone.job_fair.services.impl.payment;
 
 import com.stripe.exception.StripeException;
 import org.capstone.job_fair.models.dtos.payment.CreditCardDTO;
+import org.capstone.job_fair.models.dtos.payment.SubscriptionPlanDTO;
 import org.capstone.job_fair.models.entities.company.CompanyEntity;
 import org.capstone.job_fair.models.entities.payment.SubscriptionEntity;
 import org.capstone.job_fair.models.entities.payment.SubscriptionPlanEntity;
@@ -9,6 +10,7 @@ import org.capstone.job_fair.repositories.payment.SubscriptionPlanRepository;
 import org.capstone.job_fair.repositories.payment.SubscriptionRepository;
 import org.capstone.job_fair.services.interfaces.payment.StripeService;
 import org.capstone.job_fair.services.interfaces.payment.SubscriptionService;
+import org.capstone.job_fair.services.mappers.payment.SubscriptionPlanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +27,8 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     private SubscriptionPlanRepository subscriptionPlanRepository;
     @Autowired
     private StripeService stripeService;
+    @Autowired
+    private SubscriptionPlanMapper subscriptionPlanMapper;
 
     @Override
     public void chargeSubscription(String subscriptionPlanId, String companyId, CreditCardDTO creditCardDTO) {
@@ -69,6 +73,10 @@ public class SubscriptionServiceImpl implements SubscriptionService {
             e.printStackTrace();
         }
 
+    }
+
+    public List<SubscriptionPlanDTO> getAllSubscriptionPlans() {
+        return subscriptionPlanRepository.findAll().stream().map(subscriptionPlanMapper::toDTO).collect(java.util.stream.Collectors.toList());
     }
 
 }
