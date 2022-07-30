@@ -38,6 +38,7 @@ public final class MessageConstant {
         }
 
         public static final String ALREADY_EXISTS = "subscription.error.already-exists";
+        public static final String CREATED = "subscription.success.created";
     }
 
     public static final class ProfessionalCategory {

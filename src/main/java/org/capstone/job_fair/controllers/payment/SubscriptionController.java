@@ -2,10 +2,12 @@ package org.capstone.job_fair.controllers.payment;
 
 import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import org.capstone.job_fair.constants.ApiEndPoint;
+import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.controllers.payload.requests.payment.SubscriptionRequest;
 import org.capstone.job_fair.models.dtos.payment.CreditCardDTO;
 import org.capstone.job_fair.models.dtos.payment.SubscriptionPlanDTO;
 import org.capstone.job_fair.services.interfaces.payment.SubscriptionService;
+import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -35,7 +37,7 @@ public class SubscriptionController {
         creditCardDTO.setExp_year(request.getCard().getExp_year());
         creditCardDTO.setCvc(request.getCard().getCvc());
         subscriptionService.chargeSubscription(request.getSubscriptionId(), companyId, creditCardDTO);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(MessageUtil.getMessage(MessageConstant.Subscription.CREATED));
     }
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
     @GetMapping(ApiEndPoint.Subscription.SUBSCRIPTION_ENDPOINT)
