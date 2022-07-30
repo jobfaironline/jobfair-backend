@@ -268,6 +268,17 @@ public final class ApiEndPoint {
 
     }
 
+    public static final class Subscription{
+      private Subscription(){
+
+      }
+
+      public static final String SUBSCRIPTION_ENDPOINT = ROOT_ENDPOINT + VERSION + "/subscriptions";
+
+
+
+    }
+
     public static final class Country {
         private Country() {
 

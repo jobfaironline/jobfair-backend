@@ -30,6 +30,14 @@
         </dependencies>
     </dependencyManagement>
     <dependencies>
+        <!--Stripe dependencies-->
+        <!-- https://mvnrepository.com/artifact/com.stripe/stripe-java -->
+        <dependency>
+            <groupId>com.stripe</groupId>
+            <artifactId>stripe-java</artifactId>
+            <version>20.136.0</version>
+        </dependency>
+        <!--End Stripe dependencies-->
         <!--Mail service dependencies-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
