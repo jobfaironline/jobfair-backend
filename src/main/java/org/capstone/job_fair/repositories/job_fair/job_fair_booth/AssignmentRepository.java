@@ -33,7 +33,9 @@ public interface AssignmentRepository extends JpaRepository<AssignmentEntity, St
 
     Page<AssignmentEntity> findByCompanyEmployeeAccountIdAndJobFairBoothJobFairStatus(String employeeId, JobFairPlanStatus status, Pageable pageable);
 
-    Page<AssignmentEntity> findByCompanyEmployeeAccountIdAndJobFairBoothJobFairStatusAndType(String employeeId, JobFairPlanStatus status, AssignmentType type, Pageable pageable);
+    @Query("select a from AssignmentEntity a " +
+            "where a.companyEmployee.accountId = ?1 and a.jobFairBooth.jobFair.status = ?2 and a.type = ?3 and a.jobFairBooth.jobFair.name LIKE ?4")
+    Page<AssignmentEntity> findByCompanyEmployeeAccountIdAndJobFairBoothJobFairStatusAndTypeAndJobFairNameLike(String employeeId, JobFairPlanStatus status, AssignmentType type, String jobFairName, Pageable pageable);
 
     List<AssignmentEntity> findByJobFairBoothIdAndType(String jobFairBoothId, AssignmentType type);
 

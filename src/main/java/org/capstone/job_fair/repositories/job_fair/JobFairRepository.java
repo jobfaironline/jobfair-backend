@@ -42,10 +42,10 @@ public interface JobFairRepository extends JpaRepository<JobFairEntity, String> 
 
     List<JobFairEntity> findByStatus(JobFairPlanStatus status);
 
-    @Query(value = "SELECT * FROM job_fair WHERE id IN (SELECT distinct(job_fair_id) from job_fair_booth WHERE id in (SELECT job_fair_booth_id FROM assignment WHERE company_employee_id = :companyEmployeeId) and job_fair_id IS NOT NULL) AND status =  1",
+    @Query(value = "SELECT * FROM job_fair WHERE id IN (SELECT distinct(job_fair_id) from job_fair_booth WHERE id in (SELECT job_fair_booth_id FROM assignment WHERE company_employee_id = :companyEmployeeId) and job_fair_id IS NOT NULL) AND status =  1 AND name LIKE :jobFairName",
             countQuery = "SELECT COUNT(*) FROM job_fair WHERE id IN (SELECT distinct(job_fair_id) from job_fair_booth WHERE id in (SELECT job_fair_booth_id FROM assignment WHERE company_employee_id = :companyEmployeeId) and job_fair_id IS NOT NULL) AND status =  1",
             nativeQuery = true)
-    Page<JobFairEntity> findJobFairThatEmployeeHasAssignment(@Param("companyEmployeeId") String companyEmployeeId, Pageable pageable);
+    Page<JobFairEntity> findJobFairThatEmployeeHasAssignment(@Param("companyEmployeeId") String companyEmployeeId, @Param("jobFairName") String jobFairName, Pageable pageable);
 
 
 }

@@ -8,6 +8,7 @@ final public class AssignmentConstant {
     public static final String DEFAULT_SEARCH_PAGE_SIZE_VALUE = "10";
     public static final String DEFAULT_SEARCH_SORT_BY_VALUE = "createTime";
     public static final String DEFAULT_SEARCH_SORT_DIRECTION = "ASC";
+    public static final String DEFAULT_SEARCH_JOB_FAIR_NAME = "";
 
     public static final class XLSXFormat {
         private XLSXFormat() {

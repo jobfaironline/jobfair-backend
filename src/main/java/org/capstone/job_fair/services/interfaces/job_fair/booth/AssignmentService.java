@@ -29,9 +29,9 @@ public interface AssignmentService {
 
     Integer getCountAssignedEmployeeByJobFair(String jobFairId);
 
-    Page<AssignmentDTO> getAssignmentByEmployeeIdAndType(String employeeId, AssignmentType type, Pageable pageable);
+    Page<AssignmentDTO> getAssignmentByEmployeeIdAndTypeAndJobFairName(String employeeId, AssignmentType type, String jobFairName, Pageable pageable);
 
-    Page<JobFairAssignmentDTO> getJobFairAssignmentByEmployeeId(String employeeId, Pageable pageable);
+    Page<JobFairAssignmentDTO> getJobFairAssignmentByEmployeeIdAndJobFairName(String employeeId, String jobFairName, Pageable pageable);
 
     Optional<AssignmentDTO> getAssignmentById(String id);
 

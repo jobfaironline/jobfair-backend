@@ -221,13 +221,14 @@ public class AssignmentServiceImpl implements AssignmentService {
     }
 
     @Override
-    public Page<AssignmentDTO> getAssignmentByEmployeeIdAndType(String employeeId, AssignmentType type, Pageable pageable) {
-        return assignmentRepository.findByCompanyEmployeeAccountIdAndJobFairBoothJobFairStatusAndType(employeeId, JobFairPlanStatus.PUBLISH, type, pageable).map(assignmentMapper::toDTO);
+    public Page<AssignmentDTO> getAssignmentByEmployeeIdAndTypeAndJobFairName(String employeeId, AssignmentType type, String jobFairName, Pageable pageable) {
+        return assignmentRepository.findByCompanyEmployeeAccountIdAndJobFairBoothJobFairStatusAndTypeAndJobFairNameLike
+                (employeeId, JobFairPlanStatus.PUBLISH, type, "%" + jobFairName + "%", pageable).map(assignmentMapper::toDTO);
     }
 
     @Override
-    public Page<JobFairAssignmentDTO> getJobFairAssignmentByEmployeeId(String employeeId, Pageable pageable){
-        Page<JobFairEntity> jobFairEntities = jobFairRepository.findJobFairThatEmployeeHasAssignment(employeeId, pageable);
+    public Page<JobFairAssignmentDTO> getJobFairAssignmentByEmployeeIdAndJobFairName(String employeeId, String jobFairName, Pageable pageable) {
+        Page<JobFairEntity> jobFairEntities = jobFairRepository.findJobFairThatEmployeeHasAssignment(employeeId, "%" + jobFairName + "%",pageable);
         Page<JobFairAssignmentDTO> result = jobFairEntities.map(jobFairEntity -> {
             JobFairAssignmentDTO dto = new JobFairAssignmentDTO();
             JobFairDTO jobFairDTO = jobFairMapper.toDTO(jobFairEntity);

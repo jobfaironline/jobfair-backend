@@ -155,11 +155,12 @@ public class AssignmentController {
             @RequestParam(value = "pageSize", defaultValue = AssignmentConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize,
             @RequestParam(value = "sortBy", defaultValue = AssignmentConstant.DEFAULT_SEARCH_SORT_BY_VALUE) String sortBy,
             @RequestParam(value = "direction", required = false, defaultValue = AssignmentConstant.DEFAULT_SEARCH_SORT_DIRECTION) Sort.Direction direction,
-            @RequestParam(value = "type", required = false) AssignmentType type
+            @RequestParam(value = "type", required = false) AssignmentType type,
+            @RequestParam(value = "jobFairName", required = false, defaultValue = AssignmentConstant.DEFAULT_SEARCH_JOB_FAIR_NAME) String jobFairName
     ) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (type == null) type = AssignmentType.SUPERVISOR;
-        Page<AssignmentDTO> result = assignmentService.getAssignmentByEmployeeIdAndType(userDetails.getId(), type, PageRequest.of(offset, pageSize).withSort(Sort.by(direction, sortBy)));
+        Page<AssignmentDTO> result = assignmentService.getAssignmentByEmployeeIdAndTypeAndJobFairName(userDetails.getId(), type, jobFairName, PageRequest.of(offset, pageSize).withSort(Sort.by(direction, sortBy)));
         return ResponseEntity.ok(result);
 
     }
@@ -170,10 +171,11 @@ public class AssignmentController {
             @RequestParam(value = "offset", defaultValue = AssignmentConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset,
             @RequestParam(value = "pageSize", defaultValue = AssignmentConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize,
             @RequestParam(value = "sortBy", defaultValue = "create_time") String sortBy,
-            @RequestParam(value = "direction", required = false, defaultValue = AssignmentConstant.DEFAULT_SEARCH_SORT_DIRECTION) Sort.Direction direction
+            @RequestParam(value = "direction", required = false, defaultValue = AssignmentConstant.DEFAULT_SEARCH_SORT_DIRECTION) Sort.Direction direction,
+            @RequestParam(value = "jobFairName", required = false, defaultValue = AssignmentConstant.DEFAULT_SEARCH_JOB_FAIR_NAME) String jobFairName
     ) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Page<JobFairAssignmentDTO> result = assignmentService.getJobFairAssignmentByEmployeeId(userDetails.getId(), PageRequest.of(offset, pageSize).withSort(Sort.by(direction, sortBy)));
+        Page<JobFairAssignmentDTO> result = assignmentService.getJobFairAssignmentByEmployeeIdAndJobFairName(userDetails.getId(), jobFairName , PageRequest.of(offset, pageSize).withSort(Sort.by(direction, sortBy)));
         return ResponseEntity.ok(result);
     }
 
