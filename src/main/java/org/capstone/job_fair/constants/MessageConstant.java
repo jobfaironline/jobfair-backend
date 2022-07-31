@@ -45,6 +45,7 @@ public final class MessageConstant {
         public static final String CREATED = "subscription.success.created";
 
         public static final String NOT_FOUND = "subscription.error.not-found";
+        public static final String CANCELED = "subscription.success.canceled";
     }
 
     public static final class ProfessionalCategory {

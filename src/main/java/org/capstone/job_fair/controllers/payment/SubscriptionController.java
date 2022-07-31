@@ -2,7 +2,6 @@ package org.capstone.job_fair.controllers.payment;
 
 import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import org.capstone.job_fair.constants.ApiEndPoint;
-import org.capstone.job_fair.constants.JobFairConstant;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.constants.SubscriptionConstant;
 import org.capstone.job_fair.controllers.payload.requests.payment.SubscriptionRequest;
@@ -21,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class SubscriptionController {
@@ -70,7 +70,7 @@ public class SubscriptionController {
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
     @GetMapping(ApiEndPoint.Subscription.GET_INVOICE_OF_SUBSCRIPTION + "/{subscriptionId}")
-    public ResponseEntity<?> getInvoiceUrlBySubscriptionOfCompany(@PathVariable(value = "subscriptionId") String subscriptionId) {
+    public ResponseEntity<?> getInvoiceUrlBySubscriptionOfCompany(@PathVariable(value = "subscriptionId") String subscriptionId){
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String companyId = userDetails.getCompanyId();
         String invoiceUrl = subscriptionService.getInvoiceUrlBySubscriptionOfCompany(companyId, subscriptionId);
@@ -79,4 +79,29 @@ public class SubscriptionController {
         }
         return ResponseEntity.ok(invoiceUrl);
     }
+
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
+    @GetMapping(ApiEndPoint.Subscription.CURRENT_SUBSCRIPTION_OF_COMPANY)
+    public ResponseEntity<?> getCurrentSubscriptionOfCompany(){
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String companyId = userDetails.getCompanyId();
+        Optional<SubscriptionDTO> subscriptionDTOOptional = subscriptionService.getCurrentSubscriptionOfCompany(companyId);
+        if(!subscriptionDTOOptional.isPresent()){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(subscriptionDTOOptional.get());
+    }
+
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
+    @GetMapping(ApiEndPoint.Subscription.CANCEL_SUBSCRIPTION_OF_COMPANY)
+    public ResponseEntity<?> cancelSubscriptionOfCompany(){
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String companyId = userDetails.getCompanyId();
+        subscriptionService.cancelSubscriptionOfCompany(companyId);
+        return ResponseEntity.ok(MessageUtil.getMessage(MessageConstant.Subscription.CANCELED));
+    }
+
+
+
+
 }

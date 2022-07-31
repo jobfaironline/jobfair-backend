@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.capstone.job_fair.models.statuses.SubscriptionStatus;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -13,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class SubscriptionDTO {
     private String id;
-    private Integer status;
+    private SubscriptionStatus status;
     private Long currentPeriodStart;
     private Long currentPeriodEnd;
     private Long cancelAt;

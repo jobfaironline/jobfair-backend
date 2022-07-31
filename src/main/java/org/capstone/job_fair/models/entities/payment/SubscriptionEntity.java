@@ -3,6 +3,7 @@ package org.capstone.job_fair.models.entities.payment;
 import lombok.*;
 import org.capstone.job_fair.models.entities.company.CompanyEntity;
 import org.capstone.job_fair.models.entities.job_fair.ShiftEntity;
+import org.capstone.job_fair.models.statuses.SubscriptionStatus;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -23,7 +24,7 @@ public class SubscriptionEntity {
     private String id;
 
     @Column(name = "status")
-    private Integer status;
+    private SubscriptionStatus status;
 
     @Column(name = "current_period_start")
     private Long currentPeriodStart;

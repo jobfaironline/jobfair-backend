@@ -1,5 +1,7 @@
 package org.capstone.job_fair.constants;
 
+import com.amazonaws.services.dynamodbv2.xspec.S;
+
 public final class ApiEndPoint {
     private ApiEndPoint() {
     }
@@ -276,6 +278,9 @@ public final class ApiEndPoint {
       public static final String SUBSCRIPTION_ENDPOINT = ROOT_ENDPOINT + VERSION + "/subscriptions";
       public static final String COMPANY_SUBSCRIPTION = SUBSCRIPTION_ENDPOINT + "/company";
       public static final String GET_INVOICE_OF_SUBSCRIPTION = SUBSCRIPTION_ENDPOINT + "/invoice";
+
+      public static final String CURRENT_SUBSCRIPTION_OF_COMPANY = SUBSCRIPTION_ENDPOINT + "/current";
+      public static final String CANCEL_SUBSCRIPTION_OF_COMPANY = SUBSCRIPTION_ENDPOINT + "/cancel";
       public static final String PAY_SUBSCRIPTION = SUBSCRIPTION_ENDPOINT + "/pay";
 
 
