@@ -398,16 +398,18 @@ public class InterviewServiceImpl implements InterviewService {
      * process of scheduling an interview
      * Step 1: Get interview assignments that endTime > current + interviewLength + bufferTime
      *         If empty throw Exception
-     * Step 2: Check for if the first available slot is an empty slot
-     *         If true process to step 3.1 else step to 3.2
-     * Step 3.1: create a brand-new UUID for waitingRoomId and interviewRoomId,
+     * Step 2.0: current slot = 0
+     *
+     * Step 3: Check for if the current slot is an empty slot
+     *         If true process to step 4.1 else step to 4.2
+     * Step 4.1: create a brand-new UUID for waitingRoomId and interviewRoomId,
      *           interviewBeginTime = assignment.beginTime,
      *           interviewEndTime = assigment.endTime + bufferTime
-     * Step 3.2:
+     * Step 4.2:
      *      1. Check if there is still enough time to assign to the first available assignment
      *         If true => assign application to that interview slot,
      *                    get previous waitingRoomId and interviewRoomId and assign to application
-     *         If false => move to second available assignment
+     *         If false => current slot + 1, repeat step 3
      */
     @Override
     public InterviewScheduleDTO scheduleInterview(String applicationId, String interviewerId) {
@@ -438,38 +440,43 @@ public class InterviewServiceImpl implements InterviewService {
         if (assignments.isEmpty()) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.InterviewSchedule.MAXIMUM_SCHEDULE_ALLOW));
         }
-        AssignmentEntity firstAssignment = assignments.get(0);
-        List<ApplicationEntity> scheduleList = applicationRepository.findWholeByInterviewerAndInTimeRange(interviewerId, firstAssignment.getBeginTime(), firstAssignment.getEndTime());
+
+        int currentAssignmentSlot = 0;
         String interviewRoomId = "";
         String waitingRoomId = "";
         long interviewBeginTime = 0;
         long interviewEndTime = 0;
-        //step 2
-        if (scheduleList.isEmpty()){
-            //step 3.1
-            interviewBeginTime = firstAssignment.getBeginTime();
-            interviewEndTime = firstAssignment.getBeginTime() + interviewLength;
-            interviewRoomId =  ScheduleConstant.INTERVIEW_ROOM_PREFIX + UUID.randomUUID().toString();
-            waitingRoomId = ScheduleConstant.WAITING_ROOM_PREFIX + UUID.randomUUID().toString();
-        } else {
-            //step 3.2
-            ApplicationEntity lastInterview = scheduleList.get(scheduleList.size() -1);
-            if (lastInterview.getEndTime() + interviewLength + interviewBufferLength > firstAssignment.getEndTime()){
-                if (assignments.size() == 1){
-                    throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.InterviewSchedule.MAXIMUM_SCHEDULE_ALLOW));
-                }
-                AssignmentEntity secondAssignment = assignments.get(1);
-                interviewBeginTime = firstAssignment.getBeginTime();
-                interviewEndTime = firstAssignment.getEndTime() + interviewLength;
+        while (currentAssignmentSlot < assignments.size()){
+            AssignmentEntity currentAssignment = assignments.get(currentAssignmentSlot);
+            List<ApplicationEntity> scheduleList = applicationRepository.findWholeByInterviewerAndInTimeRange(interviewerId, currentAssignment.getBeginTime(), currentAssignment.getEndTime());
+
+            //step 2
+            if (scheduleList.isEmpty()){
+                //step 3.1
+                interviewBeginTime = currentAssignment.getBeginTime();
+                interviewEndTime = currentAssignment.getBeginTime() + interviewLength;
                 interviewRoomId =  ScheduleConstant.INTERVIEW_ROOM_PREFIX + UUID.randomUUID().toString();
                 waitingRoomId = ScheduleConstant.WAITING_ROOM_PREFIX + UUID.randomUUID().toString();
+                break;
             } else {
-                interviewBeginTime = lastInterview.getEndTime() + interviewBufferLength;
-                interviewEndTime = interviewBeginTime + interviewLength;
-                interviewRoomId =  lastInterview.getInterviewRoomId();
-                waitingRoomId = lastInterview.getWaitingRoomId();
+                //step 3.2
+                ApplicationEntity lastInterview = scheduleList.get(scheduleList.size() -1);
+                if (lastInterview.getEndTime() + interviewLength + interviewBufferLength < currentAssignment.getEndTime()){
+                    interviewBeginTime = lastInterview.getEndTime() + interviewBufferLength;
+                    interviewEndTime = interviewBeginTime + interviewLength;
+                    interviewRoomId =  lastInterview.getInterviewRoomId();
+                    waitingRoomId = lastInterview.getWaitingRoomId();
+                    break;
+                } else {
+                    currentAssignmentSlot += 1;
+                }
             }
         }
+
+        if (interviewRoomId.isEmpty()){
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.InterviewSchedule.MAXIMUM_SCHEDULE_ALLOW));
+        }
+
 
 
         application.setInterviewName("Interview with " + application.getAttendant().getAccount().getFullname());

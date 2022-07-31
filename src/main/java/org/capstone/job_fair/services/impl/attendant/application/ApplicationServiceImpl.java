@@ -254,11 +254,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         boolean isValidUser = applicationEntity
                 .getBoothJobPosition().getJobFairBooth().getAssignments()
                 .stream()
-                .anyMatch(assignmentEntity -> {
-                    System.out.println(assignmentEntity.getCompanyEmployee().getAccountId().equals(userId));
-                    System.out.println(assignmentEntity.getType() == AssignmentType.INTERVIEWER);
-                   return  assignmentEntity.getCompanyEmployee().getAccountId().equals(userId) && assignmentEntity.getType() == AssignmentType.INTERVIEWER;
-                });
+                .anyMatch(assignmentEntity -> assignmentEntity.getCompanyEmployee().getAccountId().equals(userId) && assignmentEntity.getType() == AssignmentType.INTERVIEWER);
         if (!isValidUser) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.MISS_MATCH_INTERVIEWER));
         }
