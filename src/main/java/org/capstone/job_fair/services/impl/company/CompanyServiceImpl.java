@@ -16,12 +16,13 @@ import org.capstone.job_fair.services.mappers.company.CompanyMapper;
 import org.capstone.job_fair.utils.AwsUtil;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -97,11 +98,9 @@ public class CompanyServiceImpl implements CompanyService {
 
 
     @Override
-    public List<CompanyDTO> getAllCompanies() {
-        return companyRepository.findAll()
-                .stream()
-                .map(CompanyEntity -> mapper.toDTO(CompanyEntity))
-                .collect(Collectors.toList());
+    public Page<CompanyDTO> getAllCompanies(String searchValue, int pageSize, int offset, String sortBy, Sort.Direction direction) {
+        return companyRepository.findAllWithSearchValue("%" + searchValue + "%", PageRequest.of(offset, pageSize).withSort(direction, sortBy))
+                .map(mapper::toDTO);
     }
 
     @Override
@@ -196,11 +195,4 @@ public class CompanyServiceImpl implements CompanyService {
         companyRepository.save(company);
         return companyMapper.toDTO(company);
     }
-
-    @Override
-    public Optional<String> getIdByCompanyBoothID(String companyBoothId) {
-        return companyRepository.findCompanyIdByCompanyBoothID(companyBoothId);
-    }
-
-
 }

@@ -2,10 +2,7 @@ package org.capstone.job_fair.controllers.company;
 
 import lombok.extern.slf4j.Slf4j;
 import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
-import org.capstone.job_fair.constants.AWSConstant;
-import org.capstone.job_fair.constants.ApiEndPoint;
-import org.capstone.job_fair.constants.DataConstraint;
-import org.capstone.job_fair.constants.MessageConstant;
+import org.capstone.job_fair.constants.*;
 import org.capstone.job_fair.controllers.payload.requests.company.CreateCompanyRequest;
 import org.capstone.job_fair.controllers.payload.requests.company.UpdateCompanyRequest;
 import org.capstone.job_fair.controllers.payload.responses.GenericResponse;
@@ -18,6 +15,7 @@ import org.capstone.job_fair.services.mappers.company.CompanyMapper;
 import org.capstone.job_fair.utils.ImageUtil;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -49,8 +47,13 @@ public class CompanyController {
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
     @GetMapping(ApiEndPoint.Company.COMPANY_ENDPOINT)
-    public ResponseEntity<?> getCompanies() {
-        return new ResponseEntity<>(companyService.getAllCompanies(), HttpStatus.OK);
+    public ResponseEntity<?> getCompanies(@RequestParam(value = "offset", defaultValue = CompanyConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset,
+            @RequestParam(value = "pageSize", defaultValue = CompanyConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize,
+            @RequestParam(value = "sortBy", defaultValue = CompanyConstant.DEFAULT_SEARCH_SORT_BY_VALUE) String sortBy,
+            @RequestParam(value = "direction", required = false, defaultValue = CompanyConstant.DEFAULT_SORT_DIRECTION) Sort.Direction direction,
+            @RequestParam(value = "searchValue", required = false, defaultValue = CompanyConstant.DEFAULT_SEARCH_ACCOUNT_VALUE) String searchValue)
+     {
+        return new ResponseEntity<>(companyService.getAllCompanies(searchValue, pageSize, offset, sortBy, direction), HttpStatus.OK);
     }
 
     @GetMapping(ApiEndPoint.Company.COMPANY_ENDPOINT + "/" + "{id}")
