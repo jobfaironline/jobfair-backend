@@ -18,6 +18,7 @@ public class SubscriptionDTO {
     private Long currentPeriodEnd;
     private Long cancelAt;
     private Integer defaultPaymentMethod;
+    private Double price;
     @JsonIgnore
     private String transactionId;
 }
