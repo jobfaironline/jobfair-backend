@@ -67,9 +67,9 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Page<AccountDTO> getAllAccounts(int pageSize, int offset, String sortBy, Sort.Direction direction) {
+    public Page<AccountDTO> getAllAccounts(String searchValue, int pageSize, int offset, String sortBy, Sort.Direction direction) {
         validatePaging(pageSize, offset);
-        return accountRepository.findAll(PageRequest.of(offset, pageSize).withSort(direction, sortBy)).map(accountMapper::toDTO);
+        return accountRepository.findAllWithSearchValue("%" + searchValue + "%", PageRequest.of(offset, pageSize).withSort(direction, sortBy)).map(accountMapper::toDTO);
     }
 
     @Override

@@ -55,8 +55,9 @@ public class AccountController {
     public ResponseEntity<?> getAccounts(@RequestParam(value = "offset", defaultValue = AccountConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset,
                                          @RequestParam(value = "pageSize", defaultValue = AccountConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize,
                                          @RequestParam(value = "sortBy", defaultValue = AccountConstant.DEFAULT_SEARCH_SORT_BY_VALUE) String sortBy,
-                                         @RequestParam(value = "direction", required = false, defaultValue = AccountConstant.DEFAULT_SORT_DIRECTION) Sort.Direction direction) {
-        return new ResponseEntity<>(accountService.getAllAccounts(pageSize, offset, sortBy, direction), HttpStatus.OK);
+                                         @RequestParam(value = "direction", required = false, defaultValue = AccountConstant.DEFAULT_SORT_DIRECTION) Sort.Direction direction,
+                                         @RequestParam(value = "searchValue", required = false, defaultValue = AccountConstant.DEFAULT_SEARCH_ACCOUNT_VALUE) String searchValue) {
+        return new ResponseEntity<>(accountService.getAllAccounts(searchValue, pageSize, offset, sortBy, direction), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")

@@ -1,9 +1,9 @@
 package org.capstone.job_fair.repositories.account;
 
 import org.capstone.job_fair.models.entities.account.AccountEntity;
-import org.capstone.job_fair.models.entities.account.RoleEntity;
-import org.capstone.job_fair.models.enums.Role;
 import org.capstone.job_fair.models.statuses.AccountStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -33,4 +33,7 @@ public interface AccountRepository extends JpaRepository<AccountEntity, String> 
     long countByStatus(AccountStatus status);
 
     long countByRoleId(int roleId);
+
+    @Query(value = "select a from AccountEntity a where a.email LIKE :searchValue or a.firstname LIKE :searchValue or a.middlename LIKE :searchValue or a.lastname LIKE :searchValue")
+    Page<AccountEntity> findAllWithSearchValue(@Param("searchValue") String searchValue, Pageable pageable);
 }

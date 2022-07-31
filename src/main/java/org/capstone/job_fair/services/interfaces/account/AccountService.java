@@ -8,7 +8,7 @@ import org.springframework.data.domain.Sort;
 import java.util.Optional;
 
 public interface AccountService {
-    Page<AccountDTO> getAllAccounts(int pageSize, int offset, String sortBy, Sort.Direction direction);
+    Page<AccountDTO> getAllAccounts(String searchValue, int pageSize, int offset, String sortBy, Sort.Direction direction);
 
     Optional<AccountEntity> getActiveAccountByEmail(String email);
 
