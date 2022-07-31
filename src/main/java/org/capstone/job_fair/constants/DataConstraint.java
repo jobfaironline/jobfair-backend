@@ -179,7 +179,7 @@ public final class DataConstraint {
         public static final int COMPANY_MIN_NUM = 1;
         public static final int CATEGORY_MIN = 1;
         public static final int CATEGORY_MAX = 4;
-        public static final int DEFAULT_EMPLOYEE_MAX_NUM = 5;
+        public static final int DEFAULT_EMPLOYEE_MAX_NUM = 500;
         public static final int MIN_JOB_POSITION = 0;
         public static final int MAX_DESCRIPTION_LENGTH = 10000;
         public static final int MIN_DESCRIPTION_LENGTH = 1;

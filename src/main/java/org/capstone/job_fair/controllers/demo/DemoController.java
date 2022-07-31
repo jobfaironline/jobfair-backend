@@ -635,7 +635,7 @@ public class DemoController {
         entity.setCompany(companyEntity);
         AccountEntity accountEntity = entity.getAccount();
         accountEntity.setPassword(encoder.encode(accountEntity.getPassword()));
-        accountEntity.setProfileImageUrl(AccountConstant.DEFAULT_PROFILE_IMAGE_URL);
+        accountEntity.setProfileImageUrl(AccountConstant.DEMO_DEFAULT_PROFILE_IMAGE_URL);
         accountEntity.setStatus(AccountStatus.VERIFIED);
         companyEmployeeRepository.save(entity);
 
@@ -654,7 +654,7 @@ public class DemoController {
             employeeDTO.getAccount().setPassword(password);
             employeeDTO.getAccount().setRole(Role.COMPANY_EMPLOYEE);
             employeeDTO.getAccount().setStatus(AccountStatus.VERIFIED);
-            employeeDTO.getAccount().setProfileImageUrl(AccountConstant.DEFAULT_PROFILE_IMAGE_URL);
+            employeeDTO.getAccount().setProfileImageUrl(AccountConstant.DEMO_DEFAULT_PROFILE_IMAGE_URL);
             employeeDTO.getAccount().setCreateTime(clock.millis());
             employeeDTO.getAccount().setGender(Gender.MALE);
 

@@ -10,6 +10,7 @@ import org.capstone.job_fair.utils.DomainUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -26,7 +27,7 @@ import java.time.Duration;
 @Import(SpringDataRestConfiguration.class)
 @EnableAsync
 @EnableScheduling
-public class JobFairApplication {
+public class JobFairApplication extends SpringBootServletInitializer {
 
 
     @Value("${clock.delay.days}")
