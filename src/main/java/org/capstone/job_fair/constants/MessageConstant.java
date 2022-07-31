@@ -1,5 +1,7 @@
 package org.capstone.job_fair.constants;
 
+import com.amazonaws.services.dynamodbv2.xspec.S;
+
 public final class MessageConstant {
     private MessageConstant() {
 
@@ -21,6 +23,8 @@ public final class MessageConstant {
 
         public static final String CARD_ERROR = "payment.error.card-error";
         public static final String PAYMENT_ERROR = "payment.error.payment-error";
+
+        public static final String GET_INVOICE_ERROR = "payment.error.get-invoice-error";
     }
 
     public static final class SubscriptionPlan {
@@ -39,6 +43,8 @@ public final class MessageConstant {
 
         public static final String ALREADY_EXISTS = "subscription.error.already-exists";
         public static final String CREATED = "subscription.success.created";
+
+        public static final String NOT_FOUND = "subscription.error.not-found";
     }
 
     public static final class ProfessionalCategory {

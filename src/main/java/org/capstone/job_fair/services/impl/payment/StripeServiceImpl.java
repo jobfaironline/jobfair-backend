@@ -34,18 +34,24 @@ public class StripeServiceImpl implements StripeService {
     }
 
     @Override
-    public String createCharge(String amount, String currency, String companyId, CreditCardDTO creditCardDTO, String token) throws StripeException {
+    public String createCharge(String amount, String currency, String description, CreditCardDTO creditCardDTO, String token) throws StripeException {
         String id = null;
         Stripe.apiKey = STRIPE_API_SECRET_KEY;
         Map<String, Object> chargeParams = new HashMap<>();
         chargeParams.put("amount", amount);
         chargeParams.put("currency", "usd");
-        chargeParams.put("description", "Charge for " + companyId);
+        chargeParams.put("description", "Charge for " + description);
         chargeParams.put("source", token);
         //create a charge
         Charge charge = Charge.create(chargeParams);
         id = charge.getId();
         return id;
+    }
+
+    public String getReceipt(String chargeId) throws StripeException {
+        Stripe.apiKey = STRIPE_API_SECRET_KEY;
+        Charge charge = Charge.retrieve(chargeId);
+        return charge.getReceiptUrl();
     }
 
 }
