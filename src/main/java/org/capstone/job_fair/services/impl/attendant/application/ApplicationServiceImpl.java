@@ -26,6 +26,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Clock;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -65,6 +66,9 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Autowired
     private ApplicationWorkHistoryMapper applicationWorkHistoryMapper;
+
+    @Autowired
+    private Clock clock;
 
     @Autowired
     @Qualifier("LocalInterviewService")
@@ -268,7 +272,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         CompanyEmployeeDTO companyEmployeeDTO = new CompanyEmployeeDTO();
         companyEmployeeDTO.setAccountId(userId);
         dto.setInterviewer(companyEmployeeDTO);
-        dto.setEvaluateDate(new Date().getTime());
+        dto.setEvaluateDate(clock.millis());
 
 
         applicationMapper.updateFromDTO(applicationEntity, dto);

@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Clock;
 import java.util.Date;
 import java.util.Optional;
 
@@ -26,12 +27,15 @@ public class AccountVerifyTokenServiceImpl implements AccountVerifyTokenService 
     @Autowired
     private AccountVerifyTokenMapper mapper;
 
+    @Autowired
+    private Clock clock;
+
     @Override
     @Transactional
     public AccountVerifyTokenDTO createToken(String userId) {
         //generate token
         AccountVerifyTokenEntity accountVerifyToken = new AccountVerifyTokenEntity();
-        accountVerifyToken.setCreatedTime(new Date().getTime());
+        accountVerifyToken.setCreatedTime(clock.millis());
         accountVerifyToken.setExpiredTime(accountVerifyToken.getCreatedTime() + (long) Integer.parseInt(TOKEN_EXPIRED_TIME) * 1000 * 1000);
         accountVerifyToken.setAccountId(userId);
         accountVerifyToken.setIsInvalidated(false);

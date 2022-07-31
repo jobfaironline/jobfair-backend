@@ -17,6 +17,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.spring.data.rest.configuration.SpringDataRestConfiguration;
 
+import java.time.Clock;
+import java.time.Duration;
+
 
 @SpringBootApplication
 @RestController
@@ -24,6 +27,10 @@ import springfox.documentation.spring.data.rest.configuration.SpringDataRestConf
 @EnableAsync
 @EnableScheduling
 public class JobFairApplication {
+
+
+    @Value("${clock.delay.days}")
+    private int daysDelay;
 
     @Bean
     public DomainUtil domainUtil() {
@@ -56,6 +63,11 @@ public class JobFairApplication {
                 .withTableNameOverride(DynamoDBMapperConfig.TableNameOverride.withTableNamePrefix(environment))
                 .build();
         return mapperConfig;
+    }
+
+    @Bean
+    public Clock clock() {
+        return Clock.offset(Clock.systemDefaultZone(), Duration.ofDays(daysDelay));
     }
 
 

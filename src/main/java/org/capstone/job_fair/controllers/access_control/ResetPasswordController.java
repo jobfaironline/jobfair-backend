@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.mail.MessagingException;
 import java.io.UnsupportedEncodingException;
+import java.time.Clock;
 import java.util.Date;
 import java.util.Optional;
 
@@ -46,6 +47,9 @@ public class ResetPasswordController {
 
     @Autowired
     private BCryptPasswordEncoder encoder;
+
+    @Autowired
+    private Clock clock;
 
 
     @PostMapping(ApiEndPoint.Authentication.RESET_PASSWORD_ENDPOINT)
@@ -82,7 +86,7 @@ public class ResetPasswordController {
                     HttpStatus.BAD_REQUEST);
         }
         //check expired token
-        if (token.getExpiredTime() < new Date().getTime()) {
+        if (token.getExpiredTime() < clock.millis()) {
             resetService.invalidateEntity(tokenOpt.get());
             return GenericResponse.build(
                     MessageUtil.getMessage(MessageConstant.AccessControlMessage.EXPIRED_OTP),
@@ -131,7 +135,7 @@ public class ResetPasswordController {
         }
         PasswordResetTokenEntity token = tokenOpt.get();
         //check expired token
-        if (token.getExpiredTime() > new Date().getTime()) {
+        if (token.getExpiredTime() > clock.millis()) {
             return GenericResponse.build(String.format(
                             MessageUtil.getMessage(MessageConstant.AccessControlMessage.INTERVAL_OTP_REQUEST),
                             RESET_PASSWORD_TOKEN_EXPIRED_TIME),

@@ -40,6 +40,7 @@ import org.springframework.validation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityNotFoundException;
+import java.time.Clock;
 import java.util.*;
 
 @Service
@@ -67,6 +68,9 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
     @Autowired
     private XSLSFileService xslsFileService;
 
+    @Autowired
+    private Clock clock;
+
 
     private boolean isEmailExist(String email) {
         return accountRepository.countByEmail(email) != 0;
@@ -76,7 +80,7 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
     @Transactional
     public CompanyEmployeeDTO createNewCompanyManagerAccount(CompanyEmployeeDTO dto) {
         dto.getAccount().setRole(Role.COMPANY_MANAGER);
-        dto.getAccount().setCreateTime(new Date().getTime());
+        dto.getAccount().setCreateTime(clock.millis());
         CompanyEmployeeEntity entity = mapper.toEntity(dto);
 
         AccountEntity accountEntity = entity.getAccount();
@@ -112,7 +116,7 @@ public class CompanyEmployeeServiceImpl implements CompanyEmployeeService {
         dto.getAccount().setRole(Role.COMPANY_EMPLOYEE);
         dto.getAccount().setStatus(AccountStatus.REGISTERED);
         dto.getAccount().setProfileImageUrl(AccountConstant.DEFAULT_PROFILE_IMAGE_URL);
-        dto.getAccount().setCreateTime(new Date().getTime());
+        dto.getAccount().setCreateTime(clock.millis());
         dto.getAccount().setGender(Gender.MALE);
 
         CompanyEmployeeEntity entity = mapper.toEntity(dto);

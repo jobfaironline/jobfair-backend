@@ -28,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
+import java.time.Clock;
 import java.util.*;
 
 @Service
@@ -58,6 +59,9 @@ public class JobFairServiceImpl implements JobFairService {
     @Autowired
     private JobFairBoothLayoutService jobFairBoothLayoutService;
 
+    @Autowired
+    private Clock clock;
+
     @Override
     public Optional<JobFairDTO> getById(String id) {
         return jobFairRepository.findById(id).map(jobFairMapper::toDTO);
@@ -78,7 +82,7 @@ public class JobFairServiceImpl implements JobFairService {
     @Override
     @Transactional
     public JobFairDTO createNewJobFair(final JobFairDTO dto) {
-        long now = new Date().getTime();
+        long now = clock.millis();
         dto.setCreateTime(now);
         dto.setStatus(JobFairPlanStatus.DRAFT);
         validateJobFairTime(dto);
@@ -189,7 +193,7 @@ public class JobFairServiceImpl implements JobFairService {
 
     @Override
     public Page<JobFairDTO> findJobFairForAttendantByCriteria(String name, String countryId, String subCategoryId, Pageable pageable) {
-        long currentTime = new Date().getTime();
+        long currentTime = clock.millis();
         return jobFairRepository.findJobFairForAttendant
                 ("%" + name + "%",
                         JobFairPlanStatus.PUBLISH,
@@ -254,7 +258,7 @@ public class JobFairServiceImpl implements JobFairService {
 
     @Override
     public Page<JobFairDTO> findJobFairForAdmin(String name, JobFairConstant.AdminSearchStatus status, Pageable pageable) {
-        long now = new Date().getTime();
+        long now = clock.millis();
         if (status == JobFairConstant.AdminSearchStatus.HAPPENING)
             return jobFairRepository.findInProgressJobFair("%" + name + "%", now, pageable).map(jobFairMapper::toDTO);
         if (status == JobFairConstant.AdminSearchStatus.COMING_SOON)

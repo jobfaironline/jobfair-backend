@@ -41,10 +41,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.Duration;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -78,6 +75,9 @@ public class AssignmentServiceImpl implements AssignmentService {
 
     @Autowired
     private JobFairMapper jobFairMapper;
+
+    @Autowired
+    private Clock clock;
 
     @Getter
     @Setter
@@ -126,7 +126,7 @@ public class AssignmentServiceImpl implements AssignmentService {
         entity.setType(type);
         entity.setBeginTime(beginTime);
         entity.setEndTime(endTime);
-        entity.setCreateTime(new Date().getTime());
+        entity.setCreateTime(clock.millis());
         entity.setAssigner(assigner);
         assignmentRepository.save(entity);
         return assignmentMapper.toDTO(entity);
@@ -289,7 +289,7 @@ public class AssignmentServiceImpl implements AssignmentService {
             entity.setCompanyEmployee(companyEmployeeOpt.orElse(null));
             entity.setJobFairBooth(jobFairBoothOpt.orElse(null));
             entity.setType(type);
-            entity.setCreateTime(new Date().getTime());
+            entity.setCreateTime(clock.millis());
             entity.setAssigner(assigner);
 
             entities.add(entity);
@@ -386,7 +386,7 @@ public class AssignmentServiceImpl implements AssignmentService {
 
     @Override
     public List<CompanyEmployeeDTO> getAvailableInterviewer(String jobFairBoothId) {
-        long now = new Date().getTime();
+        long now = clock.millis();
         List<AssignmentEntity> assignments = assignmentRepository.findByJobFairBoothIdAndType(jobFairBoothId, AssignmentType.INTERVIEWER);
         assignments = assignments.stream().filter(assignment -> assignment.getEndTime() > now).collect(Collectors.toList());
         assignments.sort((o1, o2) -> Math.toIntExact(o1.getBeginTime() - o2.getBeginTime()));

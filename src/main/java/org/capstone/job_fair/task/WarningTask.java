@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.time.Clock;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -44,6 +45,9 @@ public class WarningTask {
     @Qualifier("LocalNotificationService")
     private NotificationService notificationService;
 
+    @Autowired
+    private Clock clock;
+
     @Scheduled(fixedDelayString = "${warning.interval.millis}")
     public void reportCurrentTime() {
         log.info("Send warning");
@@ -51,7 +55,7 @@ public class WarningTask {
         jobFairEntities.forEach(jobFair -> {
             List<CompanyEmployeeEntity> managers = companyEmployeeRepository.findByCompanyIdAndAccountRoleId(jobFair.getCompany().getId(), Role.COMPANY_MANAGER.ordinal());
             long decorateEndTime = jobFair.getDecorateEndTime();
-            long now = new Date().getTime();
+            long now = clock.millis();
             if (now > decorateEndTime) return;
 
             JobFairProgressDTO progressDTO = jobFairService.getJobFairProgress(jobFair.getId());

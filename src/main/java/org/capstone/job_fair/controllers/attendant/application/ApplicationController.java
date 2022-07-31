@@ -39,6 +39,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Clock;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -62,6 +63,9 @@ public class ApplicationController {
 
     @Autowired
     private AssignmentService assignmentService;
+
+    @Autowired
+    private Clock clock;
 
 
     @GetMapping(ApiEndPoint.Application.APPLICATION_ENDPOINT + "/{id}")
@@ -103,7 +107,7 @@ public class ApplicationController {
         BoothJobPositionDTO regisDTO = new BoothJobPositionDTO();
         regisDTO.setId(request.getBoothJobPositionId());
         //set summary, create date, status, attendantDTO, registrationJobPositionDTO for ApplicationDTO
-        dto.setCreateDate(new Date().getTime());
+        dto.setCreateDate(clock.millis());
         dto.setStatus(ApplicationStatus.DRAFT);
         dto.setOriginCvId(request.getCvId());
         dto.setBoothJobPositionDTO(regisDTO);

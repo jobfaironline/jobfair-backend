@@ -3,10 +3,12 @@ package org.capstone.job_fair.config.jwt;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
 import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
+import java.time.Clock;
 import java.util.Date;
 
 @Component
@@ -22,8 +24,11 @@ public class JwtTokenProvider {
     @Value("${jwt.refresh-expiration}")
     private long JWT_REFRESH_EXPIRATION;
 
+    @Autowired
+    private Clock clock;
+
     public String generateToken(String email, long expiredLength) {
-        Date now = new Date();
+        Date now = new Date(clock.millis());
         Date expiredDate = new Date(now.getTime() + expiredLength * 60 * 1000 * 1000);
 
         return Jwts.builder()
@@ -36,7 +41,7 @@ public class JwtTokenProvider {
 
 
     public String generateToken(Authentication authentication, long expiredLength) {
-        Date now = new Date();
+        Date now = new Date(clock.millis());
         Date expiredDate = new Date(now.getTime() + expiredLength * 60 * 1000 * 1000);
 
         UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();

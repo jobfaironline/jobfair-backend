@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.time.Clock;
 import java.util.Date;
 import java.util.Optional;
 
@@ -25,6 +26,9 @@ public class AttendantRegistrationServiceImpl implements AttendantRegistrationSe
 
     @Autowired
     private AttendantRegistrationMapper attendantRegistrationMapper;
+
+    @Autowired
+    private Clock clock;
 
     @Override
     public Page<AttendantRegistrationDTO> getAllRegisteredJobFair(int pageSize, int offset) {
@@ -39,7 +43,7 @@ public class AttendantRegistrationServiceImpl implements AttendantRegistrationSe
         Optional<AttendantRegistrationEntity> registrationOpt = attendantRegistrationRepository.findByAttendantIdAndJobFairId(userId, jobFairId);
         AttendantRegistrationEntity registration = registrationOpt.orElseGet(() -> this.attendantRegistrationMapper.toEntity(this.registerJobFairAttendant(userId, jobFairId)));
         registration.setIsVisit(true);
-        registration.setVisitTime(new Date().getTime());
+        registration.setVisitTime(clock.millis());
         return attendantRegistrationMapper.toDTO(attendantRegistrationRepository.save(registration));
     }
 
@@ -48,7 +52,7 @@ public class AttendantRegistrationServiceImpl implements AttendantRegistrationSe
         AttendantRegistrationEntity registration = new AttendantRegistrationEntity();
         registration.setAttendantId(userId);
         registration.setJobFairId(jobFairId);
-        Long now = new Date().getTime();
+        long now = clock.millis();
         registration.setCreateTime(now);
         registration.setIsVisit(false);
         return attendantRegistrationMapper.toDTO(attendantRegistrationRepository.save(registration));

@@ -28,6 +28,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Clock;
 import java.util.Date;
 import java.util.Optional;
 
@@ -60,6 +61,9 @@ public class AccountServiceImpl implements AccountService {
 
     @Autowired
     private AwsUtil awsUtil;
+
+    @Autowired
+    private Clock clock;
 
     private void validatePaging(int pageSize, int offset) {
         if (offset < DataConstraint.Paging.OFFSET_MIN || pageSize < DataConstraint.Paging.PAGE_SIZE_MIN)
@@ -158,7 +162,7 @@ public class AccountServiceImpl implements AccountService {
             //if not validate check on expired time
             AccountVerifyTokenEntity lastToken = accountVerifyTokenEntityOptional.get();
             if (!lastToken.getIsInvalidated()) {
-                long currentTime = new Date().getTime();
+                long currentTime = clock.millis();
                 if (lastToken.getExpiredTime() < currentTime) {
                     //token is expired
                     accountVerifyTokenService.invalidateTokenById(lastToken.getId());

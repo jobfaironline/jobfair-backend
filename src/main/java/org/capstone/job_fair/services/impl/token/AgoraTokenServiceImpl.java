@@ -4,10 +4,12 @@ import lombok.SneakyThrows;
 import org.capstone.job_fair.services.interfaces.token.AgoraTokenService;
 import org.capstone.job_fair.third_party.io.agora.media.RtcTokenBuilder;
 import org.capstone.job_fair.third_party.io.agora.rtm.RtmTokenBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Clock;
 import java.util.Date;
 
 @Service
@@ -20,11 +22,14 @@ public class AgoraTokenServiceImpl implements AgoraTokenService {
     private String appCertificate;
     private final Long tokenExpiredDuration = 60 * 60 * 1000L;
 
+    @Autowired
+    private Clock clock;
+
     @Override
     @SneakyThrows
     @SuppressWarnings("unchecked")
     public String getRtmToken(String accountName) {
-        int currentTimestamp = Math.toIntExact(new Date().getTime() / 1000);
+        int currentTimestamp = Math.toIntExact(clock.millis() / 1000);
         int expireTimestamp = Math.toIntExact(tokenExpiredDuration) + currentTimestamp;
         RtmTokenBuilder builder = new RtmTokenBuilder();
         String result = builder.buildToken(appID, appCertificate, accountName, RtmTokenBuilder.Role.Rtm_User, expireTimestamp);
@@ -33,7 +38,7 @@ public class AgoraTokenServiceImpl implements AgoraTokenService {
 
     @Override
     public String getRtcToken(String accountName, String channelName) {
-        int currentTimestamp = Math.toIntExact(new Date().getTime() / 1000);
+        int currentTimestamp = Math.toIntExact(clock.millis() / 1000);
         int expireTimestamp = Math.toIntExact(tokenExpiredDuration) + currentTimestamp;
         RtcTokenBuilder token = new RtcTokenBuilder();
         String result = token.buildTokenWithUserAccount(appID, appCertificate,

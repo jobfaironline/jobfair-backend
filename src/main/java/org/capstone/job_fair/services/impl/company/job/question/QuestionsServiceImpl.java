@@ -34,6 +34,7 @@ import org.springframework.validation.Validator;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
+import java.time.Clock;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -55,8 +56,11 @@ public class QuestionsServiceImpl implements QuestionsService {
     @Autowired
     private Validator validator;
 
+    @Autowired
+    private Clock clock;
+
     private QuestionsDTO createQuestion(QuestionsDTO questionsDTO) {
-        questionsDTO.setCreateDate(new Date().getTime());
+        questionsDTO.setCreateDate(clock.millis());
         questionsDTO.setStatus(QuestionStatus.ACTIVE);
         QuestionsEntity questionsEntity = questionsMapper.toEntity(questionsDTO);
         questionsEntity = questionsRepository.save(questionsEntity);
@@ -81,7 +85,7 @@ public class QuestionsServiceImpl implements QuestionsService {
 
     @Override
     public Page<QuestionsDTO> getQuestionsByCriteria(String companyId, String content, long fromDate, long toDate, QuestionStatus status, int pageSize, int offset, String sortBy, Sort.Direction direction) {
-        long date = new Date().getTime();
+        long date = clock.millis();
         if (fromDate == 0) fromDate = date - QuestionConstant.ONE_YEAR;
         if (toDate == 0) toDate = date + QuestionConstant.ONE_YEAR;
         if (offset < DataConstraint.Paging.OFFSET_MIN || pageSize < DataConstraint.Paging.PAGE_SIZE_MIN)
@@ -112,7 +116,7 @@ public class QuestionsServiceImpl implements QuestionsService {
         Optional<QuestionsEntity> questionsEntityOptional = questionsRepository.findByIdAndJobPositionCompanyId(dto.getId(), companyId);
         if (!questionsEntityOptional.isPresent())
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Question.NOT_FOUND));
-        dto.setUpdateDate(new Date().getTime());
+        dto.setUpdateDate(clock.millis());
         QuestionsEntity questionsEntity = questionsEntityOptional.get();
         questionsMapper.updateQuestion(dto, questionsEntity);
         questionsEntity = questionsRepository.save(questionsEntity);

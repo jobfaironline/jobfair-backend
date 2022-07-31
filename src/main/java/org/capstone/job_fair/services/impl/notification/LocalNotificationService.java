@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import java.time.Clock;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -36,6 +37,9 @@ public class LocalNotificationService implements NotificationService {
 
     @Autowired
     private WebClient webClient;
+
+    @Autowired
+    private Clock clock;
 
     private void sendNotification(String notificationId) {
         try {
@@ -58,7 +62,7 @@ public class LocalNotificationService implements NotificationService {
         List<String> accountIdList = accountRepository.findAccountByRole(role.ordinal());
         message.setNotificationId(UUID.randomUUID().toString());
         message.setRead(false);
-        Long now = new Date().getTime();
+        Long now = clock.millis();
         message.setCreateDate(now);
 
         List<NotificationMessageEntity> notificationMessageEntityList = accountIdList.stream().map(s -> {
@@ -79,7 +83,7 @@ public class LocalNotificationService implements NotificationService {
     protected NotificationMessageEntity createNotificationWrapper(NotificationMessageDTO message, String receiverId) {
         message.setNotificationId(UUID.randomUUID().toString());
         message.setRead(false);
-        Long now = new Date().getTime();
+        Long now = clock.millis();
         message.setCreateDate(now);
 
         NotificationMessageEntity entity = notificationMessageMapper.toEntity(message);
@@ -100,7 +104,7 @@ public class LocalNotificationService implements NotificationService {
     @Transactional
     protected List<NotificationMessageEntity> createNotificationWrapper(NotificationMessageDTO message, List<String> receiverIdList) {
         message.setRead(false);
-        Long now = new Date().getTime();
+        Long now = clock.millis();
         message.setCreateDate(now);
 
         List<NotificationMessageEntity> notificationMessageEntityList = receiverIdList.stream().map(s -> {

@@ -41,10 +41,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneId;
+import java.time.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -87,6 +84,9 @@ public class InterviewServiceImpl implements InterviewService {
     @Value("${interview.buffer.millis}")
     private long interviewBufferLength;
 
+    @Autowired
+    private Clock clock;
+
 
     @Override
     public List<InterviewScheduleDTO> getInterviewScheduleForCompanyEmployee(String employeeId, Long beginTime, Long endTime) {
@@ -122,7 +122,7 @@ public class InterviewServiceImpl implements InterviewService {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.InterviewSchedule.CANNOT_EDIT));
         }
         //check if allow request change
-        long now = new Date().getTime();
+        long now = clock.millis();
         if (application.getEndTime() > now + ScheduleConstant.BUFFER_CHANGE_INTERVIEW_SCHEDULE) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.InterviewSchedule.CANNOT_EDIT));
         }
@@ -341,7 +341,7 @@ public class InterviewServiceImpl implements InterviewService {
 
     @Override
     public int getAttendantTurnInWaitingRoom(String attendantId, String waitingRoomId) {
-        long now = new Date().getTime();
+        long now = clock.millis();
         LocalDate localDate = LocalDate.now();
         LocalDateTime endOfDay = localDate.atTime(LocalTime.MAX);
         long endTime = endOfDay.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
@@ -424,7 +424,7 @@ public class InterviewServiceImpl implements InterviewService {
         }
         JobFairBoothEntity jobFairBooth = application.getBoothJobPosition().getJobFairBooth();
 
-        long now = new Date().getTime();
+        long now = clock.millis();
         //Step 1
         List<AssignmentEntity> assignments = assignmentRepository.findByCompanyEmployeeAccountIdAndJobFairBoothId(interviewerId, jobFairBooth.getId());
 
@@ -494,7 +494,7 @@ public class InterviewServiceImpl implements InterviewService {
     @Override
     public Optional<InterviewScheduleDTO> getCurrentScheduleByEmployeeIdAndInterviewRoomId(String employeeId, String interviewRoomId) {
         List<ApplicationEntity> applicationList = applicationRepository.findByInterviewRoomId(interviewRoomId);
-        long now = new Date().getTime();
+        long now = clock.millis();
         for (ApplicationEntity application : applicationList) {
             if (now < application.getEndTime() && now > application.getBeginTime()) {
                 return Optional.of(interviewScheduleMapper.toDTO(application));

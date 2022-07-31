@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Clock;
 import java.util.Date;
 import java.util.Optional;
 
@@ -22,6 +23,9 @@ public class PasswordResetTokenServiceImpl implements PasswordResetTokenService 
 
     @Value("${reset-password-expiration}")
     private String RESET_PASSWORD_TOKEN_EXPIRED_TIME;
+
+    @Autowired
+    private Clock clock;
 
 
     @Override
@@ -37,7 +41,7 @@ public class PasswordResetTokenServiceImpl implements PasswordResetTokenService 
         //generate token
         PasswordResetTokenEntity resetToken = new PasswordResetTokenEntity();
         resetToken.setOtp(otp);
-        resetToken.setCreateTime(new Date().getTime());
+        resetToken.setCreateTime(clock.millis());
         resetToken.setExpiredTime(resetToken.getCreateTime() + (long) Integer.parseInt(RESET_PASSWORD_TOKEN_EXPIRED_TIME) * 1000 * 1000);
         resetToken.setAccount(account);
         resetToken.setInvalidated(false);

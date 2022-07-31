@@ -164,6 +164,9 @@ public class DemoController {
     @Autowired
     private JobPositionRepository jobPositionRepository;
 
+    @Autowired
+    private Clock clock;
+
     private String getSaltString(int number) {
         String SALTCHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
         StringBuilder salt = new StringBuilder();
@@ -206,7 +209,7 @@ public class DemoController {
         CvDTO dto = new CvDTO();
         dto.setAttendant(attendantDTO);
         dto.setEmail(attendantDTO.getAccount().getEmail());
-        dto.setCreateTime(new Date().getTime());
+        dto.setCreateTime(clock.millis());
         dto.setName("My cv");
         dto.setAboutMe("This is me");
         dto.setCountryId(attendantDTO.getCountryId());
@@ -351,7 +354,7 @@ public class DemoController {
         long oldDecorateEndTime = jobFair.getDecorateEndTime();
         long oldDecorateStartTime = jobFair.getDecorateStartTime();
         jobFair.setDecorateStartTime(0L);
-        jobFair.setDecorateEndTime(new Date().getTime() + 10000000);
+        jobFair.setDecorateEndTime(clock.millis()+ 10000000);
         jobFairRepository.saveAndFlush(jobFair);
 
         //get booths that have employee assign to
@@ -369,7 +372,7 @@ public class DemoController {
             JobFairBoothLayoutEntity layout = new JobFairBoothLayoutEntity();
             layout.setId(UUID.randomUUID().toString());
             layout.setVersion(1);
-            layout.setCreateDate(new Date().getTime());
+            layout.setCreateDate(clock.millis());
             layout.setUrl("https://d1t63ajhfi2lx8.cloudfront.net/Default/default_booth.glb");
             layout.setJobFairBooth(jobFairBooth);
             jobFairBoothLayoutRepository.save(layout);
@@ -460,7 +463,7 @@ public class DemoController {
         BoothJobPositionDTO regisDTO = new BoothJobPositionDTO();
         regisDTO.setId(request.getBoothJobPositionId());
         //set summary, create date, status, attendantDTO, registrationJobPositionDTO for ApplicationDTO
-        dto.setCreateDate(new Date().getTime());
+        dto.setCreateDate(clock.millis());
         dto.setStatus(ApplicationStatus.DRAFT);
         dto.setOriginCvId(request.getCvId());
         dto.setBoothJobPositionDTO(regisDTO);
@@ -627,7 +630,7 @@ public class DemoController {
         managerDTO.setCompanyDTO(companyDTO);
         managerDTO.setDepartment("DEPARTMENT_DEMO_" + companyName);
         managerDTO.getAccount().setRole(Role.COMPANY_MANAGER);
-        managerDTO.getAccount().setCreateTime(new Date().getTime());
+        managerDTO.getAccount().setCreateTime(clock.millis());
         CompanyEmployeeEntity entity = companyEmployeeMapper.toEntity(managerDTO);
         entity.setCompany(companyEntity);
         AccountEntity accountEntity = entity.getAccount();
@@ -652,7 +655,7 @@ public class DemoController {
             employeeDTO.getAccount().setRole(Role.COMPANY_EMPLOYEE);
             employeeDTO.getAccount().setStatus(AccountStatus.VERIFIED);
             employeeDTO.getAccount().setProfileImageUrl(AccountConstant.DEFAULT_PROFILE_IMAGE_URL);
-            employeeDTO.getAccount().setCreateTime(new Date().getTime());
+            employeeDTO.getAccount().setCreateTime(clock.millis());
             employeeDTO.getAccount().setGender(Gender.MALE);
 
             entity = companyEmployeeMapper.toEntity(employeeDTO);
@@ -680,7 +683,7 @@ public class DemoController {
             jobPositionDTO.setRequirements("This is the job requirements");
             jobPositionDTO.setDescriptionKeyWord("developer");
             jobPositionDTO.setRequirementKeyWord("developer");
-            long currentTime = new Date().getTime();
+            long currentTime = clock.millis();
             jobPositionDTO.setCreatedDate(currentTime);
 
             JobPositionEntity jobPositionEntity = jobPositionMapper.toEntity(jobPositionDTO);
@@ -846,7 +849,7 @@ public class DemoController {
         long oldDecorateEndTime = jobFair.getDecorateEndTime();
         long oldDecorateStartTime = jobFair.getDecorateStartTime();
         jobFair.setDecorateStartTime(0L);
-        jobFair.setDecorateEndTime(new Date().getTime() + 10000000);
+        jobFair.setDecorateEndTime(clock.millis() + 10000000);
         jobFairRepository.saveAndFlush(jobFair);
 
         //get booths that have employee assign to
@@ -863,7 +866,7 @@ public class DemoController {
             JobFairBoothLayoutEntity layout = new JobFairBoothLayoutEntity();
             layout.setId(UUID.randomUUID().toString());
             layout.setVersion(1);
-            layout.setCreateDate(new Date().getTime());
+            layout.setCreateDate(clock.millis());
             layout.setUrl("https://d1t63ajhfi2lx8.cloudfront.net/Default/default_booth.glb");
             layout.setJobFairBooth(jobFairBooth);
             jobFairBoothLayoutRepository.save(layout);

@@ -30,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import java.time.Clock;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -73,6 +74,9 @@ public class AttendantServiceImpl implements AttendantService {
 
     @Autowired
     private WebClient webClient;
+
+    @Autowired
+    private Clock clock;
 
 
     private boolean isEmailExist(String email) {
@@ -204,7 +208,7 @@ public class AttendantServiceImpl implements AttendantService {
         String hashPassword = encoder.encode(dto.getAccount().getPassword());
         dto.getAccount().setPassword(hashPassword);
         dto.getAccount().setProfileImageUrl(AccountConstant.DEFAULT_PROFILE_IMAGE_URL);
-        Long currentTime = new Date().getTime();
+        Long currentTime = clock.millis();
         dto.getAccount().setCreateTime(currentTime);
 
         AttendantEntity attendantEntity = attendantMapper.toEntity(dto);

@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import java.time.Clock;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -60,6 +61,9 @@ public class CvServiceImpl implements CvService {
     @Autowired
     private CvActivityRepository cvActivityRepository;
 
+    @Autowired
+    private Clock clock;
+
     private void validateCertification(CvCertificationEntity entity) {
         //If certification has expiration date => we need to validate issue date and expired date are not null
         //And issue date is less than expired date
@@ -81,8 +85,8 @@ public class CvServiceImpl implements CvService {
     public CvDTO draftCv(CvDTO dto) {
         CvEntity entity = cvMapper.toEntity(dto);
         entity.setName("Untitled");
-        entity.setUpdateTime(new Date().getTime());
-        entity.setCreateTime(new Date().getTime());
+        entity.setUpdateTime(clock.millis());
+        entity.setCreateTime(clock.millis());
         entity = cvRepository.save(entity);
         return cvMapper.toDTO(entity);
     }
@@ -171,7 +175,7 @@ public class CvServiceImpl implements CvService {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Cv.NOT_FOUND));
         }
         cvMapper.updateCvEntityFromCvDTO(dto, cvEntity);
-        cvEntity.setUpdateTime(new Date().getTime());
+        cvEntity.setUpdateTime(clock.millis());
 
 
         cvEntity = cvRepository.save(cvEntity);

@@ -30,6 +30,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Clock;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -54,6 +55,9 @@ public class StatisticsServiceImpl implements StatisticsService {
 
     @Autowired
     private AccountRepository accountRepository;
+
+    @Autowired
+    private Clock clock;
 
     @Override
     public JobFairStatisticsDTO getJobFairStatistics(String jobFairId, String companyId) {
@@ -271,7 +275,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         List<JobFairEntity> publishedJobFairs = jobFairRepository.findByCompanyIdAndStatus(companyId, JobFairPlanStatus.PUBLISH);
         List<JobFairEntity> draftJobFairs = jobFairRepository.findByCompanyIdAndStatus(companyId, JobFairPlanStatus.DRAFT);
 
-        long now = new Date().getTime();
+        long now = clock.millis();
         List<JobFairEntity> inProgressJobFairs = publishedJobFairs.stream().filter(jobfair -> jobfair.getDecorateStartTime() < now && jobfair.getPublicEndTime() > now).collect(Collectors.toList());
         List<JobFairEntity> pastJobFairs = publishedJobFairs.stream().filter(jobFair -> jobFair.getPublicEndTime() <= now).collect(Collectors.toList());
         List<JobFairEntity> upComingJobFairs = publishedJobFairs.stream().filter(jobFair -> jobFair.getDecorateStartTime() >= now).collect(Collectors.toList());
@@ -397,7 +401,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 
         //job fair statistics
         List<JobFairEntity> publishedJobFairs = jobFairRepository.findByStatus(JobFairPlanStatus.PUBLISH);
-        long now = new Date().getTime();
+        long now = clock.millis();
         List<JobFairEntity> inProgressJobFairs = publishedJobFairs.stream().filter(jobFair -> jobFair.getDecorateStartTime() < now && jobFair.getPublicEndTime() > now).collect(Collectors.toList());
         List<JobFairEntity> pastJobFairs = publishedJobFairs.stream().filter(jobFair -> jobFair.getPublicEndTime() <= now).collect(Collectors.toList());
         List<JobFairEntity> comingSoonJobFairs = publishedJobFairs.stream().filter(jobFair -> jobFair.getDecorateStartTime() >= now).collect(Collectors.toList());

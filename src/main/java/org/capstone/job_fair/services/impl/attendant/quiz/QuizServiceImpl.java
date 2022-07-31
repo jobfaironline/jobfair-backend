@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Clock;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -53,6 +54,9 @@ public class QuizServiceImpl implements QuizService {
 
     @Autowired
     private QuizChoiceMapper quizChoiceMapper;
+
+    @Autowired
+    private Clock clock;
 
 
     @Override
@@ -86,7 +90,7 @@ public class QuizServiceImpl implements QuizService {
         }
         //Check if there is any quiz is in progress at current time
         //By finding if there is any quiz that has start time < current time and end time > current time
-        Long currentTime = new Date().getTime();
+        Long currentTime = clock.millis();
         Optional<QuizEntity> quizEntityOptional = quizRepository.getQuiz(currentTime, applicationId, userId);
         //if there is => Quiz is in progress
         if (quizEntityOptional.isPresent()) {
@@ -116,7 +120,7 @@ public class QuizServiceImpl implements QuizService {
     }
 
     private boolean checkQuizTime(QuizEntity quizEntity) {
-        Long currentTime = new Date().getTime();
+        long currentTime = clock.millis();
         return currentTime >= quizEntity.getBeginTime() && currentTime <= quizEntity.getEndTime();
     }
 
@@ -197,7 +201,7 @@ public class QuizServiceImpl implements QuizService {
         }
         ApplicationEntity applicationEntity = quizEntity.getApplication();
         quizEntity.setMark(evaluateQuiz(quizEntity));
-        quizEntity.setSubmitTime(new Date().getTime());
+        quizEntity.setSubmitTime(clock.millis());
         double passMark = applicationEntity.getBoothJobPosition().getPassMark();
         if (quizEntity.getMark() < passMark) {
             applicationEntity.setTestStatus(TestStatus.FAIL);

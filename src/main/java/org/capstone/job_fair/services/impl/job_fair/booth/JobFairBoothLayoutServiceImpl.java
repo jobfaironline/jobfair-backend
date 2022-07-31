@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.lang.reflect.UndeclaredThrowableException;
+import java.time.Clock;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -45,6 +46,9 @@ public class JobFairBoothLayoutServiceImpl implements JobFairBoothLayoutService 
 
     @Autowired
     private AwsUtil awsUtil;
+
+    @Autowired
+    private Clock clock;
 
     @Override
     public List<JobFairBoothLayoutDTO> getLayoutsByCompanyBoothId(String companyBoothId) {
@@ -87,7 +91,7 @@ public class JobFairBoothLayoutServiceImpl implements JobFairBoothLayoutService 
         entity.setId(id);
         entity.setUrl(url);
         entity.setVersion(version);
-        entity.setCreateDate(new Date().getTime());
+        entity.setCreateDate(clock.millis());
         entity = jobFairBoothLayoutRepository.save(entity);
         return boothLayoutMapper.toDTO(entity);
     }

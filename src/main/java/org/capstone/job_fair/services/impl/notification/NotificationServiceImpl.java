@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.time.Clock;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -48,6 +49,9 @@ public class NotificationServiceImpl implements NotificationService {
     @Value("${aws.sqs.url}")
     private String queueURL;
 
+    @Autowired
+    private Clock clock;
+
     //SQS has SendMessageResult, but I have no idea what to do with this shit
     //So I just simply return true if it works
     private Boolean broadcastMessage(SendMessageRequest sendMessageRequest) {
@@ -68,7 +72,7 @@ public class NotificationServiceImpl implements NotificationService {
 
         message.setNotificationId(UUID.randomUUID().toString());
         message.setRead(false);
-        Long now = new Date().getTime();
+        Long now = clock.millis();
         message.setCreateDate(now);
 
         List<NotificationMessageEntity> notificationMessageEntityList = accountIdList.stream().map(s -> {
@@ -89,7 +93,7 @@ public class NotificationServiceImpl implements NotificationService {
 
         message.setNotificationId(UUID.randomUUID().toString());
         message.setRead(false);
-        Long now = new Date().getTime();
+        Long now = clock.millis();
         message.setCreateDate(now);
 
         NotificationMessageEntity entity = notificationMessageMapper.toEntity(message);
@@ -110,7 +114,7 @@ public class NotificationServiceImpl implements NotificationService {
 
         message.setNotificationId(UUID.randomUUID().toString());
         message.setRead(false);
-        Long now = new Date().getTime();
+        Long now = clock.millis();
         message.setCreateDate(now);
 
         List<NotificationMessageEntity> notificationMessageEntityList = receiverIdList.stream().map(s -> {

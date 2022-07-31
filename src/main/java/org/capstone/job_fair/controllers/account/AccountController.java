@@ -27,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.net.URI;
+import java.time.Clock;
 import java.util.Date;
 import java.util.Optional;
 
@@ -48,6 +49,9 @@ public class AccountController {
 
     @Autowired
     private AccountMapper accountMapper;
+
+    @Autowired
+    private Clock clock;
 
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
@@ -80,7 +84,7 @@ public class AccountController {
             return GenericResponse.build(MessageUtil.getMessage(MessageConstant.AccessControlMessage.INVALIDATED_VERIFY_TOKEN), HttpStatus.BAD_REQUEST);
         }
         accountVerifyTokenService.invalidateEntity(mapper.toAccountVerifyTokenEntity(token));
-        if (token.getExpiredTime() < new Date().getTime()) {
+        if (token.getExpiredTime() < clock.millis()) {
             return GenericResponse.build(MessageUtil.getMessage(MessageConstant.AccessControlMessage.EXPIRED_TOKEN), HttpStatus.BAD_REQUEST);
         }
         accountService.activateAccount(userId);

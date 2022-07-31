@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.lang.reflect.UndeclaredThrowableException;
+import java.time.Clock;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -45,6 +46,9 @@ public class DecoratorBoothLayoutServiceImpl implements DecoratorBoothLayoutServ
 
     @Autowired
     private AwsUtil awsUtil;
+
+    @Autowired
+    private Clock clock;
 
     @Override
     public List<DecoratorBoothLayoutDTO> getLayoutsByCompanyEmployeeId(String employeeId) {
@@ -70,7 +74,7 @@ public class DecoratorBoothLayoutServiceImpl implements DecoratorBoothLayoutServ
         String url = awsUtil.generateAwsS3AccessString(AWSConstant.DECORATOR_LAYOUT_FOLDER, id);
         entity.setId(id);
         entity.setUrl(url);
-        entity.setCreateTime(new Date().getTime());
+        entity.setCreateTime(clock.millis());
         entity.setName(name);
 
         CompanyEmployeeEntity companyEmployeeEntity = new CompanyEmployeeEntity();

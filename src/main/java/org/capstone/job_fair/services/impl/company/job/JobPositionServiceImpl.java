@@ -40,6 +40,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import java.time.Clock;
 import java.util.*;
 
 @Service
@@ -67,6 +68,8 @@ public class JobPositionServiceImpl implements JobPositionService {
     private XSLSFileService xslsFileService;
     @Autowired
     private WebClient webClient;
+    @Autowired
+    private Clock clock;
 
 
     private boolean isSubCategoryIdValid(int id) {
@@ -129,7 +132,7 @@ public class JobPositionServiceImpl implements JobPositionService {
                 }
             });
         }
-        long currentTime = new Date().getTime();
+        long currentTime = clock.millis();
         dto.setCreatedDate(currentTime);
 
         JobPositionEntity entity = mapper.toEntity(dto);
@@ -168,7 +171,7 @@ public class JobPositionServiceImpl implements JobPositionService {
                 }
             });
         }
-        long currentTime = new Date().getTime();
+        long currentTime = clock.millis();
         dto.setUpdateDate(currentTime);
         mapper.updateJobPositionEntity(dto, jobPositionEntity);
         jobPositionEntity = jobPositionRepository.save(jobPositionEntity);

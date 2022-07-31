@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Clock;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -34,6 +35,9 @@ public class JobFairBoothServiceImpl implements JobFairBoothService {
 
     @Autowired
     private JobPositionRepository jobPositionRepository;
+
+    @Autowired
+    private Clock clock;
 
     @Override
     public Optional<JobFairBoothDTO> getCompanyBoothByJobFairIdAndBoothId(String jobFairId, String boothId) {
@@ -91,7 +95,7 @@ public class JobFairBoothServiceImpl implements JobFairBoothService {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.NOT_EDITABLE));
         }
         //check decorate time
-        long now = new Date().getTime();
+        long now = clock.millis();
         if (now < jobFairEntity.getDecorateStartTime() || now > jobFairEntity.getDecorateEndTime()) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFair.NOT_EDITABLE));
         }
