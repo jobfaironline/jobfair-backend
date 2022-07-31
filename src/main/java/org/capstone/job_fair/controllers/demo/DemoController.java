@@ -736,7 +736,7 @@ public class DemoController {
         request.setTargetAttendant("Sinh vien FPT");
         request.setHostName("Demo");
         JobFairDTO jobFairDTO = jobFairMapper.toDTO(request);
-        jobFairDTO.setThumbnailUrl("https://d3polnwtp0nqe6.cloudfront.net/JobFair-thumbnail/6b9f083b-9a95-4bd3-b264-4822ae76b8f6");
+        jobFairDTO.setThumbnailUrl("https://d1t63ajhfi2lx8.cloudfront.net/JobFair-thumbnail/9a5dbbe4-b2b6-4075-9221-a7986d3b49d6");
         jobFairDTO.setCompany(CompanyDTO.builder().id(companyId).build());
 
         ShiftDTO morningShift = new ShiftDTO();
@@ -755,7 +755,7 @@ public class DemoController {
 
         jobFairDTO = jobFairService.createNewJobFair(jobFairDTO);
 
-        layoutService.pickJobFairLayout(jobFairDTO.getId(), "b40ab83c-8f13-44ea-91b7-993f2263efae", companyId);
+        layoutService.pickJobFairLayout(jobFairDTO.getId(), "ca8979fb-07de-448c-9da1-cd1f485a4255", companyId);
 
         if (!isAssignment) return jobFairDTO;
         /*
@@ -766,7 +766,7 @@ public class DemoController {
         List<JobFairBoothDTO> jobFairBooths = jobFairBoothService.getCompanyBoothByJobFairId(jobFairDTO.getId());
 
         final int minimumBooth = 1;
-        final int maximumBooth = 10;
+        final int maximumBooth = 5;
 
         final int totalNumberOfAssignBooth = ThreadLocalRandom.current().nextInt(minimumBooth, maximumBooth + 1);
 
