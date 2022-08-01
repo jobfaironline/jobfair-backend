@@ -53,6 +53,16 @@ public class SubscriptionController {
     }
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
+    @GetMapping(ApiEndPoint.Subscription.SUBSCRIPTION_ENDPOINT + "/{id}")
+    public ResponseEntity<?> getSubscriptionPlanById(@PathVariable(value="id") String id) {
+        Optional<SubscriptionPlanDTO> opt = subscriptionService.getSubscriptionPlanById(id);
+        if (!opt.isPresent()){
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(opt.get());
+    }
+
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
     @GetMapping(ApiEndPoint.Subscription.COMPANY_SUBSCRIPTION)
     public ResponseEntity<?> getAllSubscriptionOfCompany(@RequestParam(value = "offset", defaultValue = SubscriptionConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset,
                                                          @RequestParam(value = "pageSize", defaultValue = SubscriptionConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize,

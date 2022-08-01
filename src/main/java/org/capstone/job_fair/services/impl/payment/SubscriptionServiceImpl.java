@@ -140,9 +140,14 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         subscriptionRepository.save(subscriptionEntity);
     }
 
-
-
-
+    @Override
+    public Optional<SubscriptionPlanDTO> getSubscriptionPlanById(String id) {
+        Optional<SubscriptionPlanEntity> opt = subscriptionPlanRepository.findById(id);
+        if (!opt.isPresent()) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.SubscriptionPlan.NOT_FOUND));
+        }
+        return Optional.of(subscriptionPlanMapper.toDTO(opt.get()));
+    }
 
 
 }

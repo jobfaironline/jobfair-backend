@@ -21,4 +21,5 @@ public interface SubscriptionService {
     Optional<SubscriptionDTO> getCurrentSubscriptionOfCompany(String companyId);
 
     void cancelSubscriptionOfCompany(String companyId);
+    Optional<SubscriptionPlanDTO> getSubscriptionPlanById(String id);
 }
