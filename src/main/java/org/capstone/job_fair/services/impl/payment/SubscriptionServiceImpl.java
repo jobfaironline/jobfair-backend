@@ -23,12 +23,14 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional(readOnly = true)
 public class SubscriptionServiceImpl implements SubscriptionService {
 
     @Autowired
@@ -47,6 +49,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     private CompanyRepository companyRepository;
 
     @Override
+    @Transactional
     public void chargeSubscription(String subscriptionPlanId, String companyId, CreditCardDTO creditCardDTO) {
         //Check if this company already has a subscription, if there is, contact support for help.
         Long currentDate = new Date().getTime();
@@ -71,10 +74,10 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         //Call Stripe service to create charge
         String chargeId = null;
         try {
-            String price = Integer.toString((int)Math.round(subscriptionPlanEntity.getPrice().doubleValue()*100));
+            String price = Integer.toString((int) Math.round(subscriptionPlanEntity.getPrice().doubleValue() * 100));
             Optional<CompanyEntity> companyEntityOptional = companyRepository.findById(companyId);
             String description = " " + subscriptionPlanEntity.getName() + " plan of company " + companyEntityOptional.get().getName();
-            chargeId = stripeService.createCharge( price, "usd", description, creditCardDTO, token);
+            chargeId = stripeService.createCharge(price, "usd", description, creditCardDTO, token);
             //After charge is created, create subscription
             SubscriptionEntity subscriptionEntity = new SubscriptionEntity();
             CompanyEntity companyEntity = new CompanyEntity();
@@ -82,9 +85,8 @@ public class SubscriptionServiceImpl implements SubscriptionService {
             subscriptionEntity.setCompany(companyEntity);
             subscriptionEntity.setSubscriptionPlanEntity(subscriptionPlanEntity);
             subscriptionEntity.setTransactionId(chargeId);
-            long ONE_YEAR_IN_MILLIS = 31556952000L;
             subscriptionEntity.setCurrentPeriodStart(currentDate);
-            subscriptionEntity.setCurrentPeriodEnd(currentDate + ONE_YEAR_IN_MILLIS);
+            subscriptionEntity.setCurrentPeriodEnd(currentDate + subscriptionPlanEntity.getValidPeriod());
             subscriptionEntity.setPrice(subscriptionPlanEntity.getPrice());
             subscriptionRepository.save(subscriptionEntity);
         } catch (StripeException e) {
@@ -98,6 +100,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     public List<SubscriptionPlanDTO> getAllSubscriptionPlans() {
         return subscriptionPlanRepository.findAll().stream().map(subscriptionPlanMapper::toDTO).collect(java.util.stream.Collectors.toList());
     }
+
     @Override
     public Page<SubscriptionDTO> getAllSubscriptionOfCompany(String companyId, int offset, int pageSize, String sortBy, Sort.Direction direction) {
         return subscriptionRepository.findAllByCompanyId(companyId, PageRequest.of(offset, pageSize).withSort(Sort.by(direction, sortBy))).map(subscriptionMapper::toDTO);
@@ -112,7 +115,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         SubscriptionEntity subscriptionEntity = subscriptionEntityOptional.get();
         try {
             return stripeService.getReceipt(subscriptionEntity.getTransactionId());
-        } catch (StripeException e){
+        } catch (StripeException e) {
             e.printStackTrace();
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Payment.GET_INVOICE_ERROR));
         }
@@ -128,6 +131,8 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         return Optional.of(subscriptionMapper.toDTO(subscriptionEntityOptional.get()));
     }
 
+    @Override
+    @Transactional
     public void cancelSubscriptionOfCompany(String companyId) {
         Long currentDate = new Date().getTime();
         Optional<SubscriptionEntity> subscriptionEntityOptional = subscriptionRepository.findByCompanyIdAndCurrentPeriodStartAfterAndCurrentPeriodEndBeforeAndStatusNotOrStatusNull(companyId, currentDate, SubscriptionStatus.CANCELED);
@@ -147,6 +152,37 @@ public class SubscriptionServiceImpl implements SubscriptionService {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.SubscriptionPlan.NOT_FOUND));
         }
         return Optional.of(subscriptionPlanMapper.toDTO(opt.get()));
+    }
+
+    @Override
+    @Transactional
+    public SubscriptionPlanDTO createSubscriptionPlan(SubscriptionPlanDTO subscriptionPlanDTO) {
+        SubscriptionPlanEntity subscriptionPlanEntity = subscriptionPlanMapper.toEntity(subscriptionPlanDTO);
+        subscriptionPlanRepository.save(subscriptionPlanEntity);
+        return subscriptionPlanMapper.toDTO(subscriptionPlanEntity);
+    }
+
+    @Override
+    @Transactional
+    public SubscriptionPlanDTO updateSubscriptionPlan(SubscriptionPlanDTO subscriptionPlanDTO) {
+        Optional<SubscriptionPlanEntity> subscriptionPlanEntityOptional = subscriptionPlanRepository.findById(subscriptionPlanDTO.getId());
+        SubscriptionPlanEntity subscriptionPlanEntity = subscriptionPlanEntityOptional.get();
+        subscriptionPlanMapper.UpdateSubscriptionPlanFromDTO(subscriptionPlanDTO, subscriptionPlanEntity);
+        subscriptionPlanRepository.save(subscriptionPlanEntity);
+        return subscriptionPlanMapper.toDTO(subscriptionPlanEntity);
+    }
+
+    @Override
+    @Transactional
+    public SubscriptionPlanDTO deleteSubscriptionPlan(String id) {
+        Optional<SubscriptionPlanEntity> subscriptionPlanEntityOptional = subscriptionPlanRepository.findById(id);
+        SubscriptionPlanEntity subscriptionPlanEntity = subscriptionPlanEntityOptional.get();
+        subscriptionPlanRepository.delete(subscriptionPlanEntity);
+        return subscriptionPlanMapper.toDTO(subscriptionPlanEntity);
+    }
+
+    public List<SubscriptionDTO> getAllSubscription(){
+        return subscriptionRepository.findAll().stream().map(subscriptionMapper::toDTO).collect(java.util.stream.Collectors.toList());
     }
 
 

@@ -34,6 +34,8 @@ public final class MessageConstant {
 
         public static final String NOT_FOUND = "subscription-plan.error.not-found";
         public static final String DUPLICATED = "subscription-plan.error.duplicate-subscription-plan";
+        public static final String UPDATED = "subscription-plan.success.updated";
+        public static final String CREATED = "subscription-plan.success.created";
     }
 
     public static final class Subscription {

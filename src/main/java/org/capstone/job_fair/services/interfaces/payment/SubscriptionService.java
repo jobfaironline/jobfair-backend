@@ -22,4 +22,7 @@ public interface SubscriptionService {
 
     void cancelSubscriptionOfCompany(String companyId);
     Optional<SubscriptionPlanDTO> getSubscriptionPlanById(String id);
+    SubscriptionPlanDTO createSubscriptionPlan(SubscriptionPlanDTO subscriptionPlanDTO);
+    SubscriptionPlanDTO updateSubscriptionPlan(SubscriptionPlanDTO subscriptionPlanDTO);
+    SubscriptionPlanDTO deleteSubscriptionPlan(String id);
 }

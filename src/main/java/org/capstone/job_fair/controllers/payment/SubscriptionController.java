@@ -4,7 +4,9 @@ import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.constants.SubscriptionConstant;
+import org.capstone.job_fair.controllers.payload.requests.payment.CreateSubscriptionPlanRequest;
 import org.capstone.job_fair.controllers.payload.requests.payment.SubscriptionRequest;
+import org.capstone.job_fair.controllers.payload.requests.payment.UpdateSubscriptionPlanRequest;
 import org.capstone.job_fair.models.dtos.payment.CreditCardDTO;
 import org.capstone.job_fair.models.dtos.payment.SubscriptionDTO;
 import org.capstone.job_fair.models.dtos.payment.SubscriptionPlanDTO;
@@ -42,7 +44,7 @@ public class SubscriptionController {
         return ResponseEntity.ok(MessageUtil.getMessage(MessageConstant.Subscription.CREATED));
     }
 
-    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
     @GetMapping(ApiEndPoint.Subscription.SUBSCRIPTION_ENDPOINT)
     public ResponseEntity<?> getAllSubscriptionPlan() {
         List<SubscriptionPlanDTO> subscriptionPlanDTOList = subscriptionService.getAllSubscriptionPlans();
@@ -54,9 +56,9 @@ public class SubscriptionController {
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
     @GetMapping(ApiEndPoint.Subscription.SUBSCRIPTION_ENDPOINT + "/{id}")
-    public ResponseEntity<?> getSubscriptionPlanById(@PathVariable(value="id") String id) {
+    public ResponseEntity<?> getSubscriptionPlanById(@PathVariable(value = "id") String id) {
         Optional<SubscriptionPlanDTO> opt = subscriptionService.getSubscriptionPlanById(id);
-        if (!opt.isPresent()){
+        if (!opt.isPresent()) {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok(opt.get());
@@ -80,7 +82,7 @@ public class SubscriptionController {
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
     @GetMapping(ApiEndPoint.Subscription.GET_INVOICE_OF_SUBSCRIPTION + "/{subscriptionId}")
-    public ResponseEntity<?> getInvoiceUrlBySubscriptionOfCompany(@PathVariable(value = "subscriptionId") String subscriptionId){
+    public ResponseEntity<?> getInvoiceUrlBySubscriptionOfCompany(@PathVariable(value = "subscriptionId") String subscriptionId) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String companyId = userDetails.getCompanyId();
         String invoiceUrl = subscriptionService.getInvoiceUrlBySubscriptionOfCompany(companyId, subscriptionId);
@@ -92,11 +94,11 @@ public class SubscriptionController {
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
     @GetMapping(ApiEndPoint.Subscription.CURRENT_SUBSCRIPTION_OF_COMPANY)
-    public ResponseEntity<?> getCurrentSubscriptionOfCompany(){
+    public ResponseEntity<?> getCurrentSubscriptionOfCompany() {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String companyId = userDetails.getCompanyId();
         Optional<SubscriptionDTO> subscriptionDTOOptional = subscriptionService.getCurrentSubscriptionOfCompany(companyId);
-        if(!subscriptionDTOOptional.isPresent()){
+        if (!subscriptionDTOOptional.isPresent()) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(subscriptionDTOOptional.get());
@@ -104,7 +106,7 @@ public class SubscriptionController {
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
     @GetMapping(ApiEndPoint.Subscription.CANCEL_SUBSCRIPTION_OF_COMPANY)
-    public ResponseEntity<?> cancelSubscriptionOfCompany(){
+    public ResponseEntity<?> cancelSubscriptionOfCompany() {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String companyId = userDetails.getCompanyId();
         subscriptionService.cancelSubscriptionOfCompany(companyId);
@@ -112,6 +114,40 @@ public class SubscriptionController {
     }
 
 
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
+    @PostMapping(ApiEndPoint.SubscriptionPlan.SUBSCRIPTION_PLAN_ENDPOINT)
+    public ResponseEntity<?> createSubscriptionPlan(@RequestBody @Valid CreateSubscriptionPlanRequest request) {
+        SubscriptionPlanDTO subscriptionPlanDTO = new SubscriptionPlanDTO();
+        subscriptionPlanDTO.setName(request.getName());
+        subscriptionPlanDTO.setDescription(request.getDescription());
+        subscriptionPlanDTO.setPrice(request.getPrice());
+        subscriptionPlanDTO.setValidPeriod(request.getValidPeriod());
+        subscriptionPlanDTO = subscriptionService.createSubscriptionPlan(subscriptionPlanDTO);
+        return ResponseEntity.ok(subscriptionPlanDTO);
+    }
+
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
+    @PutMapping(ApiEndPoint.SubscriptionPlan.SUBSCRIPTION_PLAN_ENDPOINT)
+    public ResponseEntity<?> updateSubscriptionPlan(@RequestBody @Valid UpdateSubscriptionPlanRequest request) {
+        SubscriptionPlanDTO subscriptionPlanDTO = new SubscriptionPlanDTO();
+        subscriptionPlanDTO.setId(request.getId());
+        subscriptionPlanDTO.setName(request.getName());
+        subscriptionPlanDTO.setDescription(request.getDescription());
+        subscriptionPlanDTO.setPrice(request.getPrice());
+        subscriptionPlanDTO.setValidPeriod(request.getValidPeriod());
+        subscriptionService.createSubscriptionPlan(subscriptionPlanDTO);
+        subscriptionPlanDTO = subscriptionService.updateSubscriptionPlan(subscriptionPlanDTO);
+        return ResponseEntity.ok(subscriptionPlanDTO);
+    }
+
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
+    @DeleteMapping(ApiEndPoint.SubscriptionPlan.SUBSCRIPTION_PLAN_ENDPOINT + "/{id}")
+    public ResponseEntity<?> deleteSubscriptionPlan(@PathVariable(value = "id") String id) {
+        SubscriptionPlanDTO dto = subscriptionService.deleteSubscriptionPlan(id);
+        return ResponseEntity.ok(dto);
+    }
+
+//    public ResponseEntity<?> getAllSubscriptions()
 
 
 }

@@ -15,7 +15,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Data
 @Entity
-@Table(name = "subscription_plan")
+@Table(name = "subscription_plan", schema = "dbo")
 public class SubscriptionPlanEntity {
     @Id
     @Column(name = "id", nullable = false, length = 36)
@@ -31,6 +31,9 @@ public class SubscriptionPlanEntity {
 
     @Column(name = "price")
     private Double price;
+
+    @Column(name = "valid_period")
+    private Long validPeriod;
 
 
     @Override

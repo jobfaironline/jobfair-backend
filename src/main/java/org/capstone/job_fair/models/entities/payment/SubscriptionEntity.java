@@ -15,7 +15,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @Data
 @Entity
-@Table(name = "subscription")
+@Table(name = "subscription", schema = "dbo")
 public class SubscriptionEntity {
     @Id
     @Column(name = "id", nullable = false, length = 36)

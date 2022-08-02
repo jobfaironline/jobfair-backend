@@ -1,25 +1,25 @@
-package org.capstone.job_fair.models.dtos.payment;
+package org.capstone.job_fair.controllers.payload.requests.payment;
 
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.capstone.job_fair.models.entities.payment.SubscriptionEntity;
 
 import javax.validation.constraints.NotBlank;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import javax.validation.constraints.NotNull;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class SubscriptionPlanDTO {
-    private String id;
+public class CreateSubscriptionPlanRequest {
+    @NotBlank
     private String name;
+    @NotBlank
     private String description;
+    @NotNull
     private Double price;
+    @NotNull
     private Long validPeriod;
-
 }
