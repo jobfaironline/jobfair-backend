@@ -46,7 +46,7 @@ public class SubscriptionController {
     }
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
-    @GetMapping(ApiEndPoint.Subscription.SUBSCRIPTION_ENDPOINT)
+    @GetMapping(ApiEndPoint.SubscriptionPlan.SUBSCRIPTION_PLAN_ENDPOINT)
     public ResponseEntity<?> getAllSubscriptionPlan(@RequestParam(value = "offset", defaultValue = SubscriptionPlanConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset,
                                                     @RequestParam(value = "pageSize", defaultValue = SubscriptionPlanConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize,
                                                     @RequestParam(value = "sortBy", defaultValue = SubscriptionPlanConstant.DEFAULT_SEARCH_SORT_BY_VALUE) String sortBy,
@@ -73,9 +73,9 @@ public class SubscriptionController {
         return ResponseEntity.ok(subscriptionPlanDTOList);
     }
 
-    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
-    @GetMapping(ApiEndPoint.Subscription.SUBSCRIPTION_ENDPOINT + "/{id}")
-    public ResponseEntity<?> getSubscriptionPlanById(@PathVariable(value = "id") String id) {
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
+    @GetMapping(ApiEndPoint.SubscriptionPlan.SUBSCRIPTION_PLAN_ENDPOINT + "/{id}")
+    public ResponseEntity<?> getSubscriptionPlanById(@PathVariable("id") String id) {
         Optional<SubscriptionPlanDTO> opt = subscriptionService.getSubscriptionPlanById(id);
         if (!opt.isPresent()) {
             return ResponseEntity.noContent().build();
@@ -165,7 +165,7 @@ public class SubscriptionController {
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
     @GetMapping(ApiEndPoint.Subscription.SUBSCRIPTION_ENDPOINT + "/{subscriptionId}")
-    public ResponseEntity<?> getSubscriptionById(@PathVariable(value = "subscriptionId") String id) {
+    public ResponseEntity<?> getSubscriptionById(@PathVariable("subscriptionId") String id) {
         Optional<SubscriptionDTO> opt = subscriptionService.getSubscriptionById(id);
         if (!opt.isPresent()) {
             return ResponseEntity.noContent().build();
