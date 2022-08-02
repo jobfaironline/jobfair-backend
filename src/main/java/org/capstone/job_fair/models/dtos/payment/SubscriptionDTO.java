@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.capstone.job_fair.models.entities.payment.SubscriptionPlanEntity;
+import org.capstone.job_fair.models.statuses.SubscriptionRefundStatus;
 import org.capstone.job_fair.models.statuses.SubscriptionStatus;
 
 @AllArgsConstructor
@@ -20,6 +22,8 @@ public class SubscriptionDTO {
     private Long cancelAt;
     private Integer defaultPaymentMethod;
     private Double price;
+    private SubscriptionRefundStatus refundStatus;
+    private SubscriptionPlanDTO subscriptionPlan;
     @JsonIgnore
     private String transactionId;
 }

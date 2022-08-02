@@ -11,6 +11,7 @@ import org.capstone.job_fair.controllers.payload.requests.payment.UpdateSubscrip
 import org.capstone.job_fair.models.dtos.payment.CreditCardDTO;
 import org.capstone.job_fair.models.dtos.payment.SubscriptionDTO;
 import org.capstone.job_fair.models.dtos.payment.SubscriptionPlanDTO;
+import org.capstone.job_fair.models.statuses.SubscriptionRefundStatus;
 import org.capstone.job_fair.services.interfaces.payment.SubscriptionService;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -41,8 +41,8 @@ public class SubscriptionController {
         creditCardDTO.setExp_month(request.getCard().getExp_month());
         creditCardDTO.setExp_year(request.getCard().getExp_year());
         creditCardDTO.setCvc(request.getCard().getCvc());
-        subscriptionService.chargeSubscription(request.getSubscriptionId(), companyId, creditCardDTO);
-        return ResponseEntity.ok(MessageUtil.getMessage(MessageConstant.Subscription.CREATED));
+        SubscriptionDTO result = subscriptionService.chargeSubscription(request.getSubscriptionId(), companyId, creditCardDTO);
+        return ResponseEntity.ok(result);
     }
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
@@ -53,6 +53,20 @@ public class SubscriptionController {
                                                     @RequestParam(value = "direction", required = false, defaultValue = SubscriptionPlanConstant.DEFAULT_SEARCH_SORT_DIRECTION) Sort.Direction direction,
                                                     @RequestParam(value = "name", required = false, defaultValue = "") String name) {
         Page<SubscriptionPlanDTO> subscriptionPlanDTOList = subscriptionService.getAllSubscriptionPlans(offset, pageSize, sortBy, direction, name);
+        if (subscriptionPlanDTOList.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(subscriptionPlanDTOList);
+    }
+
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
+    @GetMapping(ApiEndPoint.Subscription.ADMIN_GET_SUBSCRIPTION_BY_CRITERIA)
+    public ResponseEntity<?> getAllSubscription(@RequestParam(value = "offset", defaultValue = SubscriptionConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset,
+                                                    @RequestParam(value = "pageSize", defaultValue = SubscriptionConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize,
+                                                    @RequestParam(value = "sortBy", defaultValue = SubscriptionConstant.DEFAULT_SEARCH_SORT_BY_VALUE) String sortBy,
+                                                    @RequestParam(value = "direction", required = false, defaultValue = SubscriptionConstant.DEFAULT_SEARCH_SORT_DIRECTION) Sort.Direction direction,
+                                                    @RequestParam(value = "companyName", required = false, defaultValue = "") String companyName) {
+        Page<SubscriptionDTO> subscriptionPlanDTOList = subscriptionService.getAllSubscription(offset, pageSize, sortBy, direction, companyName);
         if (subscriptionPlanDTOList.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
@@ -85,6 +99,7 @@ public class SubscriptionController {
         return ResponseEntity.ok(subscriptionDTOList);
     }
 
+
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
     @GetMapping(ApiEndPoint.Subscription.GET_INVOICE_OF_SUBSCRIPTION + "/{subscriptionId}")
     public ResponseEntity<?> getInvoiceUrlBySubscriptionOfCompany(@PathVariable(value = "subscriptionId") String subscriptionId) {
@@ -97,25 +112,14 @@ public class SubscriptionController {
         return ResponseEntity.ok(invoiceUrl);
     }
 
-    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
-    @GetMapping(ApiEndPoint.Subscription.CURRENT_SUBSCRIPTION_OF_COMPANY)
-    public ResponseEntity<?> getCurrentSubscriptionOfCompany() {
-        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String companyId = userDetails.getCompanyId();
-        Optional<SubscriptionDTO> subscriptionDTOOptional = subscriptionService.getCurrentSubscriptionOfCompany(companyId);
-        if (!subscriptionDTOOptional.isPresent()) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(subscriptionDTOOptional.get());
-    }
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
-    @GetMapping(ApiEndPoint.Subscription.CANCEL_SUBSCRIPTION_OF_COMPANY)
-    public ResponseEntity<?> cancelSubscriptionOfCompany() {
+    @GetMapping(ApiEndPoint.Subscription.CANCEL_SUBSCRIPTION_OF_COMPANY + "/{subscriptionId}")
+    public ResponseEntity<?> cancelSubscriptionOfCompany(@PathVariable("subscriptionId") String subscriptionId) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String companyId = userDetails.getCompanyId();
-        subscriptionService.cancelSubscriptionOfCompany(companyId);
-        return ResponseEntity.ok(MessageUtil.getMessage(MessageConstant.Subscription.CANCELED));
+        subscriptionService.refundSubscriptionOfCompany(companyId, subscriptionId);
+        return ResponseEntity.ok(MessageUtil.getMessage(MessageConstant.Subscription.REQUESTED_REFUND));
     }
 
 
@@ -151,7 +155,14 @@ public class SubscriptionController {
         return ResponseEntity.ok(dto);
     }
 
-//    public ResponseEntity<?> getAllSubscriptions()
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
+    @GetMapping(ApiEndPoint.Subscription.EVALUATE_REFUND_REQUEST)
+    public ResponseEntity<?> evaluateSubscriptionRefundRequest(@RequestParam(value = "subscriptionId") String subscriptionId,
+                                                               @RequestParam(value = "status")SubscriptionRefundStatus status) {
+        subscriptionService.evaluateRefundRequest(subscriptionId, status);
+        return ResponseEntity.ok(MessageUtil.getMessage(MessageConstant.Subscription.REFUND_REQUEST_EVALUATED));
+    }
+
 
 
 }

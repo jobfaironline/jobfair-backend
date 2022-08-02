@@ -1,5 +1,7 @@
 package org.capstone.job_fair.models.statuses;
 
 public enum SubscriptionStatus {
-    CANCELED
+    NOT_USED,
+    USED,
+    INACTIVE
 }

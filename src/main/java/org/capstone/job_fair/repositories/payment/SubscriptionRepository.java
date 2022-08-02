@@ -20,4 +20,6 @@ public interface SubscriptionRepository extends JpaRepository<SubscriptionEntity
     Page<SubscriptionEntity> findAllByCompanyId(String companyId, Pageable pageable);
 
     Optional<SubscriptionEntity> findByCompanyIdAndId(String companyId, String subscriptionId);
+
+    Page<SubscriptionEntity> findAllByCompanyNameContains(String companyName, Pageable pageable);
 }

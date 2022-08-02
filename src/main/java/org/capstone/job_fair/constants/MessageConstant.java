@@ -48,6 +48,14 @@ public final class MessageConstant {
 
         public static final String NOT_FOUND = "subscription.error.not-found";
         public static final String CANCELED = "subscription.success.canceled";
+        public static final String EXPIRED = "subscription.error.expired";
+        public static final String USED = "subscription.error.used";
+        public static final String EVALUATE_REFUND_STATUS_ERROR = "subscription.error.evaluate-refund-status-error";
+        public static final String INACTIVE = "subscription.error.inactive";
+        public static final String NOT_REQUESTED_REFUND = "subscription.error.not-requested-refund";
+        public static final String REQUESTED_REFUND = "subscription.success.requested-refund";
+        public static final String REFUND_REQUEST_EVALUATED = "subscription.success.refund-request-evaluated";
+
     }
 
     public static final class ProfessionalCategory {

@@ -281,6 +281,8 @@ public final class ApiEndPoint {
         public static final String CURRENT_SUBSCRIPTION_OF_COMPANY = SUBSCRIPTION_ENDPOINT + "/current";
         public static final String CANCEL_SUBSCRIPTION_OF_COMPANY = SUBSCRIPTION_ENDPOINT + "/cancel";
         public static final String PAY_SUBSCRIPTION = SUBSCRIPTION_ENDPOINT + "/pay";
+        public static final String EVALUATE_REFUND_REQUEST = SUBSCRIPTION_ENDPOINT + "/evaluate-refund-request";
+        public static final String ADMIN_GET_SUBSCRIPTION_BY_CRITERIA = SUBSCRIPTION_ENDPOINT + "/admin";
     }
 
     public static final class SubscriptionPlan{

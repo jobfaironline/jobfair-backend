@@ -3,6 +3,7 @@ package org.capstone.job_fair.models.entities.payment;
 import lombok.*;
 import org.capstone.job_fair.models.entities.company.CompanyEntity;
 import org.capstone.job_fair.models.entities.job_fair.ShiftEntity;
+import org.capstone.job_fair.models.statuses.SubscriptionRefundStatus;
 import org.capstone.job_fair.models.statuses.SubscriptionStatus;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.GenericGenerator;
@@ -40,7 +41,7 @@ public class SubscriptionEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subscription_plan_id")
-    private SubscriptionPlanEntity subscriptionPlanEntity;
+    private SubscriptionPlanEntity subscriptionPlan;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id")
@@ -51,6 +52,9 @@ public class SubscriptionEntity {
 
     @Column(name = "transaction_id")
     private String transactionId;
+
+    @Column(name = "refund_status")
+    private SubscriptionRefundStatus refundStatus;
 
     @Override
     public boolean equals(Object o) {

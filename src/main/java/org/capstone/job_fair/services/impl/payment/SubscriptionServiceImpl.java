@@ -8,6 +8,7 @@ import org.capstone.job_fair.models.dtos.payment.SubscriptionPlanDTO;
 import org.capstone.job_fair.models.entities.company.CompanyEntity;
 import org.capstone.job_fair.models.entities.payment.SubscriptionEntity;
 import org.capstone.job_fair.models.entities.payment.SubscriptionPlanEntity;
+import org.capstone.job_fair.models.statuses.SubscriptionRefundStatus;
 import org.capstone.job_fair.models.statuses.SubscriptionStatus;
 import org.capstone.job_fair.repositories.company.CompanyRepository;
 import org.capstone.job_fair.repositories.payment.SubscriptionPlanRepository;
@@ -20,7 +21,6 @@ import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,14 +50,13 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
     @Override
     @Transactional
-    public void chargeSubscription(String subscriptionPlanId, String companyId, CreditCardDTO creditCardDTO) {
+    public SubscriptionDTO chargeSubscription(String subscriptionPlanId, String companyId, CreditCardDTO creditCardDTO) {
         //Check if this company already has a subscription, if there is, contact support for help.
         Long currentDate = new Date().getTime();
-        Optional<SubscriptionEntity> subscriptionEntityOptional = subscriptionRepository.findByCompanyIdAndCurrentPeriodStartAfterAndCurrentPeriodEndBeforeAndStatusNotOrStatusNull(companyId, currentDate, SubscriptionStatus.CANCELED);
-        if (subscriptionEntityOptional.isPresent()) {
-            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Subscription.ALREADY_EXISTS));
-        }
-        //If company has no subscription, check for subscriptionPlanId, if it doesn't exist, throw exception.
+//        Optional<SubscriptionEntity> subscriptionEntityOptional = subscriptionRepository.findByCompanyIdAndCurrentPeriodStartAfterAndCurrentPeriodEndBeforeAndStatusNotOrStatusNull(companyId, currentDate, SubscriptionStatus.CANCELED);
+//        if (subscriptionEntityOptional.isPresent()) {
+//            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Subscription.ALREADY_EXISTS));
+//        }
         Optional<SubscriptionPlanEntity> subscriptionPlanOptional = subscriptionPlanRepository.findById(subscriptionPlanId);
         if (!subscriptionPlanOptional.isPresent()) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.SubscriptionPlan.NOT_FOUND));
@@ -82,23 +81,29 @@ public class SubscriptionServiceImpl implements SubscriptionService {
             SubscriptionEntity subscriptionEntity = new SubscriptionEntity();
             CompanyEntity companyEntity = new CompanyEntity();
             companyEntity.setId(companyId);
+            subscriptionEntity.setStatus(SubscriptionStatus.NOT_USED);
             subscriptionEntity.setCompany(companyEntity);
-            subscriptionEntity.setSubscriptionPlanEntity(subscriptionPlanEntity);
+            subscriptionEntity.setSubscriptionPlan(subscriptionPlanEntity);
             subscriptionEntity.setTransactionId(chargeId);
             subscriptionEntity.setCurrentPeriodStart(currentDate);
             subscriptionEntity.setCurrentPeriodEnd(currentDate + subscriptionPlanEntity.getValidPeriod());
             subscriptionEntity.setPrice(subscriptionPlanEntity.getPrice());
-            subscriptionRepository.save(subscriptionEntity);
+            subscriptionEntity = subscriptionRepository.save(subscriptionEntity);
+            return subscriptionMapper.toDTO(subscriptionEntity);
         } catch (StripeException e) {
             e.printStackTrace();
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Payment.PAYMENT_ERROR));
         }
-
     }
 
     @Override
     public Page<SubscriptionPlanDTO> getAllSubscriptionPlans(int offset, int pageSize, String sortBy, Sort.Direction direction, String name) {
         return subscriptionPlanRepository.findAllByNameContains(name, PageRequest.of(offset, pageSize).withSort(Sort.by(direction, sortBy))).map(subscriptionPlanMapper::toDTO);
+    }
+
+    @Override
+    public Page<SubscriptionDTO> getAllSubscription(int offset, int pageSize, String sortBy, Sort.Direction direction, String companyName) {
+        return subscriptionRepository.findAllByCompanyNameContains(companyName, PageRequest.of(offset, pageSize).withSort(Sort.by(direction, sortBy))).map(subscriptionMapper::toDTO);
     }
 
     @Override
@@ -121,29 +126,60 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         }
     }
 
-    @Override
-    public Optional<SubscriptionDTO> getCurrentSubscriptionOfCompany(String companyId) {
-        Long currentDate = new Date().getTime();
-        Optional<SubscriptionEntity> subscriptionEntityOptional = subscriptionRepository.findByCompanyIdAndCurrentPeriodStartAfterAndCurrentPeriodEndBeforeAndStatusNotOrStatusNull(companyId, currentDate, SubscriptionStatus.CANCELED);
-        if (!subscriptionEntityOptional.isPresent()) {
-            return Optional.empty();
-        }
-        return Optional.of(subscriptionMapper.toDTO(subscriptionEntityOptional.get()));
-    }
 
     @Override
     @Transactional
-    public void cancelSubscriptionOfCompany(String companyId) {
+    public void refundSubscriptionOfCompany(String companyId, String subscriptionId) {
         Long currentDate = new Date().getTime();
-        Optional<SubscriptionEntity> subscriptionEntityOptional = subscriptionRepository.findByCompanyIdAndCurrentPeriodStartAfterAndCurrentPeriodEndBeforeAndStatusNotOrStatusNull(companyId, currentDate, SubscriptionStatus.CANCELED);
+        Optional<SubscriptionEntity> subscriptionEntityOptional = subscriptionRepository.findByCompanyIdAndId(companyId, subscriptionId);
         if (!subscriptionEntityOptional.isPresent()) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Subscription.NOT_FOUND));
         }
         SubscriptionEntity subscriptionEntity = subscriptionEntityOptional.get();
-        subscriptionEntity.setStatus(SubscriptionStatus.CANCELED);
-        subscriptionEntity.setCancelAt(currentDate);
+        //If subscription expired, throw exception.
+        if (subscriptionEntity.getCurrentPeriodEnd() < currentDate) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Subscription.EXPIRED));
+        }
+        //If subscription is used, throw exception.
+        if (subscriptionEntity.getStatus() == SubscriptionStatus.USED) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Subscription.USED));
+        }
+        //If subscription is inactive, throw exception.
+        if (subscriptionEntity.getStatus() == SubscriptionStatus.INACTIVE) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Subscription.INACTIVE));
+        }
+        //If subscription still in available time and has not been used, set refund status to REQUESTED_REFUND and inactivate this subscription.
+        if (subscriptionEntity.getStatus() == SubscriptionStatus.NOT_USED) {
+            subscriptionEntity.setStatus(SubscriptionStatus.INACTIVE);
+            subscriptionEntity.setRefundStatus(SubscriptionRefundStatus.REQUESTED_REFUND);
+        }
         subscriptionRepository.save(subscriptionEntity);
     }
+    @Override
+    @Transactional
+    public void evaluateRefundRequest(String subscriptionId, SubscriptionRefundStatus status) {
+        Optional<SubscriptionEntity> subscriptionEntityOptional = subscriptionRepository.findById(subscriptionId);
+        if (!subscriptionEntityOptional.isPresent())
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Subscription.NOT_FOUND));
+        SubscriptionEntity subscriptionEntity = subscriptionEntityOptional.get();
+        //Check if subscription is in REQUESTED_REFUND status
+        if (subscriptionEntity.getRefundStatus() != SubscriptionRefundStatus.REQUESTED_REFUND)
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Subscription.NOT_REQUESTED_REFUND));
+        //If status is DECLINED, make this subscription active again.
+        if (status == SubscriptionRefundStatus.REFUND_DECLINED) {
+            subscriptionEntity.setStatus(SubscriptionStatus.NOT_USED);
+            subscriptionEntity.setRefundStatus(SubscriptionRefundStatus.REFUND_DECLINED);
+        }
+        //If status is APPROVED, make this subscription inactive and set cancel date to current date.
+        if (status == SubscriptionRefundStatus.REFUNDED) {
+            subscriptionEntity.setStatus(SubscriptionStatus.INACTIVE);
+            subscriptionEntity.setRefundStatus(SubscriptionRefundStatus.REFUNDED);
+            subscriptionEntity.setCancelAt(new Date().getTime());
+        }
+        subscriptionRepository.save(subscriptionEntity);
+    }
+
+
 
     @Override
     public Optional<SubscriptionPlanDTO> getSubscriptionPlanById(String id) {
@@ -181,7 +217,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         return subscriptionPlanMapper.toDTO(subscriptionPlanEntity);
     }
 
-    public List<SubscriptionDTO> getAllSubscription(){
+    public List<SubscriptionDTO> getAllSubscription() {
         return subscriptionRepository.findAll().stream().map(subscriptionMapper::toDTO).collect(java.util.stream.Collectors.toList());
     }
 
