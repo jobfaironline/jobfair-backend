@@ -82,11 +82,13 @@ public class SubscriptionServiceImpl implements SubscriptionService {
             CompanyEntity companyEntity = new CompanyEntity();
             companyEntity.setId(companyId);
             subscriptionEntity.setStatus(SubscriptionStatus.NOT_USED);
+            subscriptionEntity.setJobfairQuota(subscriptionPlanEntity.getJobfairQuota());
             subscriptionEntity.setCompany(companyEntity);
             subscriptionEntity.setSubscriptionPlan(subscriptionPlanEntity);
             subscriptionEntity.setTransactionId(chargeId);
             subscriptionEntity.setCurrentPeriodStart(currentDate);
-            subscriptionEntity.setCurrentPeriodEnd(currentDate + subscriptionPlanEntity.getValidPeriod());
+            long ONE_MONTH_IN_MILLIS = 30 * 24 * 60 * 60 * 1000;
+            subscriptionEntity.setCurrentPeriodEnd(currentDate + subscriptionPlanEntity.getValidPeriod() * ONE_MONTH_IN_MILLIS);
             subscriptionEntity.setPrice(subscriptionPlanEntity.getPrice());
             subscriptionEntity = subscriptionRepository.save(subscriptionEntity);
             return subscriptionMapper.toDTO(subscriptionEntity);
@@ -156,6 +158,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         }
         subscriptionRepository.save(subscriptionEntity);
     }
+
     @Override
     @Transactional
     public void evaluateRefundRequest(String subscriptionId, SubscriptionRefundStatus status) {
@@ -224,6 +227,23 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
     public List<SubscriptionDTO> getAllSubscription() {
         return subscriptionRepository.findAll().stream().map(subscriptionMapper::toDTO).collect(java.util.stream.Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public void decreaseJobFairQuota(String subscriptionId){
+        //Get subscription by id
+        Optional<SubscriptionEntity> subscriptionEntityOptional = subscriptionRepository.findById(subscriptionId);
+        if (!subscriptionEntityOptional.isPresent()) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Subscription.NOT_FOUND));
+        }
+        SubscriptionEntity subscriptionEntity = subscriptionEntityOptional.get();
+        if(subscriptionEntity.getJobfairQuota() > 0 ) {
+            subscriptionEntity.setJobfairQuota(subscriptionEntity.getJobfairQuota() - 1);
+        } else {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Subscription.JOBFAIR_QUOTA_EXCEEDED));
+        }
+        subscriptionRepository.save(subscriptionEntity);
     }
 
 

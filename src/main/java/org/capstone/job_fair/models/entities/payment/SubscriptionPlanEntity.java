@@ -35,6 +35,9 @@ public class SubscriptionPlanEntity {
     @Column(name = "valid_period")
     private Long validPeriod;
 
+    @Column(name = "jobfair_quota")
+    private Integer jobfairQuota;
+
 
     @Override
     public boolean equals(Object o) {

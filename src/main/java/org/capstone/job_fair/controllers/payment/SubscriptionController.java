@@ -173,6 +173,10 @@ public class SubscriptionController {
         return ResponseEntity.ok(opt.get());
     }
 
-
+    @GetMapping(ApiEndPoint.Subscription.SUBSCRIPTION_ENDPOINT + "/quota/"+"/{subscriptionId}")
+    public ResponseEntity<?> decreaseJobFairQuota(@PathVariable(value = "subscriptionId") String subscriptionId) {
+        subscriptionService.decreaseJobFairQuota(subscriptionId);
+        return ResponseEntity.ok().build();
+    }
 
 }

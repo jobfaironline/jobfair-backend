@@ -55,6 +55,7 @@ public final class MessageConstant {
         public static final String NOT_REQUESTED_REFUND = "subscription.error.not-requested-refund";
         public static final String REQUESTED_REFUND = "subscription.success.requested-refund";
         public static final String REFUND_REQUEST_EVALUATED = "subscription.success.refund-request-evaluated";
+        public static final String JOBFAIR_QUOTA_EXCEEDED = "subscription.error.jobfair-quota-exceeded";
 
     }
 

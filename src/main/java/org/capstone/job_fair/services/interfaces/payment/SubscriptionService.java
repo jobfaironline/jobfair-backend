@@ -27,4 +27,6 @@ public interface SubscriptionService {
     void evaluateRefundRequest(String subscriptionId, SubscriptionRefundStatus status);
 
     Optional<SubscriptionDTO> getSubscriptionById(String id);
+
+    void decreaseJobFairQuota(String subscriptionId);
 }

@@ -21,5 +21,6 @@ public class SubscriptionPlanDTO {
     private String description;
     private Double price;
     private Long validPeriod;
+    private Integer jobfairQuota;
 
 }

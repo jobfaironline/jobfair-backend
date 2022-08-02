@@ -22,4 +22,6 @@ public class CreateSubscriptionPlanRequest {
     private Double price;
     @NotNull
     private Long validPeriod;
+    @NotNull
+    private Integer jobfairQuota;
 }

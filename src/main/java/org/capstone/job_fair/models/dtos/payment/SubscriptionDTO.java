@@ -27,4 +27,5 @@ public class SubscriptionDTO {
     @JsonIgnore
     private String transactionId;
     private String refundReason;
+    private Integer jobfairQuota;
 }
