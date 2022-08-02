@@ -19,10 +19,12 @@ public interface SubscriptionService {
 
     String getInvoiceUrlBySubscriptionOfCompany(String companyId, String subscriptionId);
 
-    void refundSubscriptionOfCompany(String companyId, String subscriptionId);
+    void refundSubscriptionOfCompany(String companyId, String subscriptionId, String reason);
     Optional<SubscriptionPlanDTO> getSubscriptionPlanById(String id);
     SubscriptionPlanDTO createSubscriptionPlan(SubscriptionPlanDTO subscriptionPlanDTO);
     SubscriptionPlanDTO updateSubscriptionPlan(SubscriptionPlanDTO subscriptionPlanDTO);
     SubscriptionPlanDTO deleteSubscriptionPlan(String id);
     void evaluateRefundRequest(String subscriptionId, SubscriptionRefundStatus status);
+
+    Optional<SubscriptionDTO> getSubscriptionById(String id);
 }

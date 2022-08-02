@@ -129,7 +129,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
     @Override
     @Transactional
-    public void refundSubscriptionOfCompany(String companyId, String subscriptionId) {
+    public void refundSubscriptionOfCompany(String companyId, String subscriptionId, String reason) {
         Long currentDate = new Date().getTime();
         Optional<SubscriptionEntity> subscriptionEntityOptional = subscriptionRepository.findByCompanyIdAndId(companyId, subscriptionId);
         if (!subscriptionEntityOptional.isPresent()) {
@@ -152,6 +152,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         if (subscriptionEntity.getStatus() == SubscriptionStatus.NOT_USED) {
             subscriptionEntity.setStatus(SubscriptionStatus.INACTIVE);
             subscriptionEntity.setRefundStatus(SubscriptionRefundStatus.REQUESTED_REFUND);
+            subscriptionEntity.setRefundReason(reason);
         }
         subscriptionRepository.save(subscriptionEntity);
     }
@@ -179,6 +180,10 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         subscriptionRepository.save(subscriptionEntity);
     }
 
+    @Override
+    public Optional<SubscriptionDTO> getSubscriptionById(String id) {
+        return subscriptionRepository.findById(id).map(subscriptionMapper::toDTO);
+    }
 
 
     @Override

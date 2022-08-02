@@ -56,6 +56,9 @@ public class SubscriptionEntity {
     @Column(name = "refund_status")
     private SubscriptionRefundStatus refundStatus;
 
+    @Column(name = "refund_reason")
+    private String refundReason;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

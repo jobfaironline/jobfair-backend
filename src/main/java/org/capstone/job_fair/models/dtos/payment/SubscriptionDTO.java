@@ -26,4 +26,5 @@ public class SubscriptionDTO {
     private SubscriptionPlanDTO subscriptionPlan;
     @JsonIgnore
     private String transactionId;
+    private String refundReason;
 }

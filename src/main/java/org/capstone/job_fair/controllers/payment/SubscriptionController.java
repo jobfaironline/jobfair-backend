@@ -114,11 +114,11 @@ public class SubscriptionController {
 
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
-    @GetMapping(ApiEndPoint.Subscription.CANCEL_SUBSCRIPTION_OF_COMPANY + "/{subscriptionId}")
-    public ResponseEntity<?> cancelSubscriptionOfCompany(@PathVariable("subscriptionId") String subscriptionId) {
+    @PostMapping(ApiEndPoint.Subscription.CANCEL_SUBSCRIPTION_OF_COMPANY + "/{subscriptionId}")
+    public ResponseEntity<?> cancelSubscriptionOfCompany(@PathVariable("subscriptionId") String subscriptionId, @RequestBody String reason) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String companyId = userDetails.getCompanyId();
-        subscriptionService.refundSubscriptionOfCompany(companyId, subscriptionId);
+        subscriptionService.refundSubscriptionOfCompany(companyId, subscriptionId, reason);
         return ResponseEntity.ok(MessageUtil.getMessage(MessageConstant.Subscription.REQUESTED_REFUND));
     }
 
@@ -161,6 +161,16 @@ public class SubscriptionController {
                                                                @RequestParam(value = "status")SubscriptionRefundStatus status) {
         subscriptionService.evaluateRefundRequest(subscriptionId, status);
         return ResponseEntity.ok(MessageUtil.getMessage(MessageConstant.Subscription.REFUND_REQUEST_EVALUATED));
+    }
+
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
+    @GetMapping(ApiEndPoint.Subscription.SUBSCRIPTION_ENDPOINT + "/{subscriptionId}")
+    public ResponseEntity<?> getSubscriptionById(@PathVariable(value = "subscriptionId") String id) {
+        Optional<SubscriptionDTO> opt = subscriptionService.getSubscriptionById(id);
+        if (!opt.isPresent()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(opt.get());
     }
 
 
