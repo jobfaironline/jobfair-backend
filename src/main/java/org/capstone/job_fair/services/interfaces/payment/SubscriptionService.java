@@ -12,7 +12,7 @@ import java.util.Optional;
 public interface SubscriptionService {
     void chargeSubscription(String subscriptionPlanId, String companyId, CreditCardDTO creditCardDTO);
 
-    List<SubscriptionPlanDTO> getAllSubscriptionPlans();
+    Page<SubscriptionPlanDTO> getAllSubscriptionPlans(int offset, int pageSize, String sortBy, Sort.Direction direction, String name);
 
     Page<SubscriptionDTO> getAllSubscriptionOfCompany(String companyId, int offset, int pageSize, String sortBy, Sort.Direction direction);
 

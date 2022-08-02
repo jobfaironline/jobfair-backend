@@ -97,8 +97,8 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     }
 
     @Override
-    public List<SubscriptionPlanDTO> getAllSubscriptionPlans() {
-        return subscriptionPlanRepository.findAll().stream().map(subscriptionPlanMapper::toDTO).collect(java.util.stream.Collectors.toList());
+    public Page<SubscriptionPlanDTO> getAllSubscriptionPlans(int offset, int pageSize, String sortBy, Sort.Direction direction, String name) {
+        return subscriptionPlanRepository.findAllByNameContains(name, PageRequest.of(offset, pageSize).withSort(Sort.by(direction, sortBy))).map(subscriptionPlanMapper::toDTO);
     }
 
     @Override

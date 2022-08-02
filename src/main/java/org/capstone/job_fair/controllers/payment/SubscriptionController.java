@@ -4,6 +4,7 @@ import org.capstone.job_fair.config.jwt.details.UserDetailsImpl;
 import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.constants.SubscriptionConstant;
+import org.capstone.job_fair.constants.SubscriptionPlanConstant;
 import org.capstone.job_fair.controllers.payload.requests.payment.CreateSubscriptionPlanRequest;
 import org.capstone.job_fair.controllers.payload.requests.payment.SubscriptionRequest;
 import org.capstone.job_fair.controllers.payload.requests.payment.UpdateSubscriptionPlanRequest;
@@ -46,8 +47,12 @@ public class SubscriptionController {
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
     @GetMapping(ApiEndPoint.Subscription.SUBSCRIPTION_ENDPOINT)
-    public ResponseEntity<?> getAllSubscriptionPlan() {
-        List<SubscriptionPlanDTO> subscriptionPlanDTOList = subscriptionService.getAllSubscriptionPlans();
+    public ResponseEntity<?> getAllSubscriptionPlan(@RequestParam(value = "offset", defaultValue = SubscriptionPlanConstant.DEFAULT_SEARCH_OFFSET_VALUE) int offset,
+                                                    @RequestParam(value = "pageSize", defaultValue = SubscriptionPlanConstant.DEFAULT_SEARCH_PAGE_SIZE_VALUE) int pageSize,
+                                                    @RequestParam(value = "sortBy", defaultValue = SubscriptionPlanConstant.DEFAULT_SEARCH_SORT_BY_VALUE) String sortBy,
+                                                    @RequestParam(value = "direction", required = false, defaultValue = SubscriptionPlanConstant.DEFAULT_SEARCH_SORT_DIRECTION) Sort.Direction direction,
+                                                    @RequestParam(value = "name", required = false, defaultValue = "") String name) {
+        Page<SubscriptionPlanDTO> subscriptionPlanDTOList = subscriptionService.getAllSubscriptionPlans(offset, pageSize, sortBy, direction, name);
         if (subscriptionPlanDTOList.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
@@ -135,7 +140,6 @@ public class SubscriptionController {
         subscriptionPlanDTO.setDescription(request.getDescription());
         subscriptionPlanDTO.setPrice(request.getPrice());
         subscriptionPlanDTO.setValidPeriod(request.getValidPeriod());
-        subscriptionService.createSubscriptionPlan(subscriptionPlanDTO);
         subscriptionPlanDTO = subscriptionService.updateSubscriptionPlan(subscriptionPlanDTO);
         return ResponseEntity.ok(subscriptionPlanDTO);
     }
