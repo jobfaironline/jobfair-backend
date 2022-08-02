@@ -42,6 +42,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.*;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -403,8 +404,8 @@ public class InterviewServiceImpl implements InterviewService {
      * Step 3: Check for if the current slot is an empty slot
      *         If true process to step 4.1 else step to 4.2
      * Step 4.1: create a brand-new UUID for waitingRoomId and interviewRoomId,
-     *           interviewBeginTime = assignment.beginTime,
-     *           interviewEndTime = assigment.endTime + bufferTime
+     *           interviewBeginTime = now > currentAssignment.beginTime ? now + bufferTime (round to nearest 15 minute) : currentAssignment.beginTime
+     *           interviewEndTime = interviewBeginTime + interviewLength
      * Step 4.2:
      *      1. Check if there is still enough time to assign to the first available assignment
      *         If true => assign application to that interview slot,
@@ -441,6 +442,7 @@ public class InterviewServiceImpl implements InterviewService {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.InterviewSchedule.MAXIMUM_SCHEDULE_ALLOW));
         }
 
+        //step 2
         int currentAssignmentSlot = 0;
         String interviewRoomId = "";
         String waitingRoomId = "";
@@ -450,16 +452,22 @@ public class InterviewServiceImpl implements InterviewService {
             AssignmentEntity currentAssignment = assignments.get(currentAssignmentSlot);
             List<ApplicationEntity> scheduleList = applicationRepository.findWholeByInterviewerAndInTimeRange(interviewerId, currentAssignment.getBeginTime(), currentAssignment.getEndTime());
 
-            //step 2
+            //step 3
             if (scheduleList.isEmpty()){
-                //step 3.1
-                interviewBeginTime = currentAssignment.getBeginTime();
-                interviewEndTime = currentAssignment.getBeginTime() + interviewLength;
+                //step 4.1
+                if (now > currentAssignment.getBeginTime()) {
+                    long minute = clock.instant().atZone(ZoneId.systemDefault()).getMinute();
+                    Instant instant = clock.instant().truncatedTo(ChronoUnit.HOURS).plus(15 * (minute / 15 + 1), ChronoUnit.MINUTES);
+                    interviewBeginTime = instant.getEpochSecond() * 1000 + interviewBufferLength;
+                } else {
+                    interviewBeginTime = currentAssignment.getBeginTime();
+                }
+                interviewEndTime = interviewBeginTime + interviewLength;
                 interviewRoomId =  ScheduleConstant.INTERVIEW_ROOM_PREFIX + UUID.randomUUID().toString();
                 waitingRoomId = ScheduleConstant.WAITING_ROOM_PREFIX + UUID.randomUUID().toString();
                 break;
             } else {
-                //step 3.2
+                //step 4.2
                 ApplicationEntity lastInterview = scheduleList.get(scheduleList.size() -1);
                 if (lastInterview.getEndTime() + interviewLength + interviewBufferLength < currentAssignment.getEndTime()){
                     interviewBeginTime = lastInterview.getEndTime() + interviewBufferLength;
