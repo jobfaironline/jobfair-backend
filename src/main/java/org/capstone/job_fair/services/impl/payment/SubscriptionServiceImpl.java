@@ -87,8 +87,9 @@ public class SubscriptionServiceImpl implements SubscriptionService {
             subscriptionEntity.setSubscriptionPlan(subscriptionPlanEntity);
             subscriptionEntity.setTransactionId(chargeId);
             subscriptionEntity.setCurrentPeriodStart(currentDate);
-            long ONE_MONTH_IN_MILLIS = 30 * 24 * 60 * 60 * 1000;
-            subscriptionEntity.setCurrentPeriodEnd(currentDate + subscriptionPlanEntity.getValidPeriod() * ONE_MONTH_IN_MILLIS);
+            long ONE_MONTH_IN_MILLIS = 2629800000L ;
+            long END_DATE = subscriptionPlanEntity.getValidPeriod() * ONE_MONTH_IN_MILLIS;
+            subscriptionEntity.setCurrentPeriodEnd(currentDate + END_DATE);
             subscriptionEntity.setPrice(subscriptionPlanEntity.getPrice());
             subscriptionEntity = subscriptionRepository.save(subscriptionEntity);
             return subscriptionMapper.toDTO(subscriptionEntity);
