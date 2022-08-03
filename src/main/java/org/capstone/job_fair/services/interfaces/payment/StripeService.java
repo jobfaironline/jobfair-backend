@@ -1,6 +1,7 @@
 package org.capstone.job_fair.services.interfaces.payment;
 
 import com.stripe.exception.StripeException;
+import com.stripe.model.Charge;
 import org.capstone.job_fair.models.dtos.payment.CreditCardDTO;
 
 public interface StripeService {
@@ -8,5 +9,6 @@ public interface StripeService {
     String createChargeToken(CreditCardDTO creditCardDTO) throws StripeException;
 
     String getReceipt(String chargeId) throws StripeException;
+    Charge getChargeObject(String chargeId) throws StripeException;
 
     }

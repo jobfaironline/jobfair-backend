@@ -8,6 +8,7 @@ import org.capstone.job_fair.constants.SubscriptionPlanConstant;
 import org.capstone.job_fair.controllers.payload.requests.payment.CreateSubscriptionPlanRequest;
 import org.capstone.job_fair.controllers.payload.requests.payment.SubscriptionRequest;
 import org.capstone.job_fair.controllers.payload.requests.payment.UpdateSubscriptionPlanRequest;
+import org.capstone.job_fair.controllers.payload.responses.SubscriptionReceiptResponse;
 import org.capstone.job_fair.models.dtos.payment.CreditCardDTO;
 import org.capstone.job_fair.models.dtos.payment.SubscriptionDTO;
 import org.capstone.job_fair.models.dtos.payment.SubscriptionPlanDTO;
@@ -180,6 +181,15 @@ public class SubscriptionController {
     public ResponseEntity<?> decreaseJobFairQuota(@PathVariable(value = "subscriptionId") String subscriptionId) {
         subscriptionService.decreaseJobFairQuota(subscriptionId);
         return ResponseEntity.ok().build();
+    }
+
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
+    @GetMapping(ApiEndPoint.Subscription.GET_INVOICE_OF_SUBSCRIPTION + "/data/{subscriptionId}")
+    public ResponseEntity<?> getReceiptInfo(@PathVariable(value = "subscriptionId") String subscriptionId) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String companyId = userDetails.getCompanyId();
+        SubscriptionReceiptResponse response = subscriptionService.getReceiptData(subscriptionId, companyId);
+        return ResponseEntity.ok(response);
     }
 
 }

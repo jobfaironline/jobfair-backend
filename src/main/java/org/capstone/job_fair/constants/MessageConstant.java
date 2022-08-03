@@ -25,6 +25,7 @@ public final class MessageConstant {
         public static final String PAYMENT_ERROR = "payment.error.payment-error";
 
         public static final String GET_INVOICE_ERROR = "payment.error.get-invoice-error";
+        public static final String INVALID_TRANSACTION_ID = "payment.error.invalid-transaction-id";
     }
 
     public static final class SubscriptionPlan {

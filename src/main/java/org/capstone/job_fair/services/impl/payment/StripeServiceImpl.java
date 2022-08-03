@@ -48,10 +48,17 @@ public class StripeServiceImpl implements StripeService {
         return id;
     }
 
+    @Override
     public String getReceipt(String chargeId) throws StripeException {
         Stripe.apiKey = STRIPE_API_SECRET_KEY;
         Charge charge = Charge.retrieve(chargeId);
         return charge.getReceiptUrl();
+    }
+
+    public Charge getChargeObject(String chargeId) throws StripeException {
+        Stripe.apiKey = STRIPE_API_SECRET_KEY;
+        Charge charge = Charge.retrieve(chargeId);
+        return charge;
     }
 
 }

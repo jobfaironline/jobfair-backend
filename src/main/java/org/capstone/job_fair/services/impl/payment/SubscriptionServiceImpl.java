@@ -1,7 +1,9 @@
 package org.capstone.job_fair.services.impl.payment;
 
 import com.stripe.exception.StripeException;
+import com.stripe.model.Charge;
 import org.capstone.job_fair.constants.MessageConstant;
+import org.capstone.job_fair.controllers.payload.responses.SubscriptionReceiptResponse;
 import org.capstone.job_fair.models.dtos.payment.CreditCardDTO;
 import org.capstone.job_fair.models.dtos.payment.SubscriptionDTO;
 import org.capstone.job_fair.models.dtos.payment.SubscriptionPlanDTO;
@@ -245,6 +247,30 @@ public class SubscriptionServiceImpl implements SubscriptionService {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Subscription.JOBFAIR_QUOTA_EXCEEDED));
         }
         subscriptionRepository.save(subscriptionEntity);
+    }
+
+    public SubscriptionReceiptResponse getReceiptData(String subscriptionId, String companyId) {
+        //Get subscription
+        Optional<SubscriptionEntity> subscriptionEntityOptional = subscriptionRepository.findByCompanyIdAndId(companyId, subscriptionId);
+        if (!subscriptionEntityOptional.isPresent()) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Subscription.NOT_FOUND));
+        }
+        SubscriptionEntity subscriptionEntity = subscriptionEntityOptional.get();
+        String transactionId = subscriptionEntity.getTransactionId();
+        try {
+            SubscriptionReceiptResponse response = new SubscriptionReceiptResponse();
+            Charge charge = stripeService.getChargeObject(transactionId);
+            response.setAmount(charge.getAmount());
+            response.setCurrency(charge.getCurrency());
+            response.setDescription(charge.getDescription());
+            response.setPaymentMethod(charge.getPaymentMethodDetails().getCard().getBrand());
+            response.setPurchaseDate(charge.getCreated());
+            response.setLast4(charge.getPaymentMethodDetails().getCard().getLast4());
+            return response;
+        } catch (StripeException e){
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Payment.INVALID_TRANSACTION_ID));
+        }
+
     }
 
 

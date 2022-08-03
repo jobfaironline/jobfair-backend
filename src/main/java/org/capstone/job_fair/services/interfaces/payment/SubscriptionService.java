@@ -1,5 +1,6 @@
 package org.capstone.job_fair.services.interfaces.payment;
 
+import org.capstone.job_fair.controllers.payload.responses.SubscriptionReceiptResponse;
 import org.capstone.job_fair.models.dtos.payment.CreditCardDTO;
 import org.capstone.job_fair.models.dtos.payment.SubscriptionDTO;
 import org.capstone.job_fair.models.dtos.payment.SubscriptionPlanDTO;
@@ -29,4 +30,6 @@ public interface SubscriptionService {
     Optional<SubscriptionDTO> getSubscriptionById(String id);
 
     void decreaseJobFairQuota(String subscriptionId);
+
+    SubscriptionReceiptResponse getReceiptData(String subscriptionId,  String companyId);
 }
