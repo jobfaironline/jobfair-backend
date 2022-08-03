@@ -13,6 +13,7 @@ import org.capstone.job_fair.models.dtos.payment.SubscriptionDTO;
 import org.capstone.job_fair.models.dtos.payment.SubscriptionPlanDTO;
 import org.capstone.job_fair.models.statuses.SubscriptionRefundStatus;
 import org.capstone.job_fair.services.interfaces.payment.SubscriptionService;
+import org.capstone.job_fair.services.mappers.payment.SubscriptionMapper;
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -29,6 +30,8 @@ import java.util.Optional;
 public class SubscriptionController {
     @Autowired
     private SubscriptionService subscriptionService;
+    @Autowired
+    private SubscriptionMapper subscriptionMapper;
 
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
@@ -42,7 +45,7 @@ public class SubscriptionController {
         creditCardDTO.setExp_year(request.getCard().getExp_year());
         creditCardDTO.setCvc(request.getCard().getCvc());
         SubscriptionDTO result = subscriptionService.chargeSubscription(request.getSubscriptionId(), companyId, creditCardDTO);
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(subscriptionMapper.toResponse(result));
     }
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
@@ -70,7 +73,7 @@ public class SubscriptionController {
         if (subscriptionPlanDTOList.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
-        return ResponseEntity.ok(subscriptionPlanDTOList);
+        return ResponseEntity.ok(subscriptionPlanDTOList.map(subscriptionMapper::toResponse));
     }
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
@@ -96,7 +99,7 @@ public class SubscriptionController {
         if (subscriptionDTOList.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
-        return ResponseEntity.ok(subscriptionDTOList);
+        return ResponseEntity.ok(subscriptionDTOList.map(subscriptionMapper::toResponse));
     }
 
 
@@ -170,7 +173,7 @@ public class SubscriptionController {
         if (!opt.isPresent()) {
             return ResponseEntity.noContent().build();
         }
-        return ResponseEntity.ok(opt.get());
+        return ResponseEntity.ok(subscriptionMapper.toResponse(opt.get()));
     }
 
     @GetMapping(ApiEndPoint.Subscription.SUBSCRIPTION_ENDPOINT + "/quota/"+"/{subscriptionId}")

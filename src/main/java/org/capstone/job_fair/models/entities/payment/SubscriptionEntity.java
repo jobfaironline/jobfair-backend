@@ -62,6 +62,10 @@ public class SubscriptionEntity {
     @Column(name = "jobfair_quota")
     private Integer jobfairQuota;
 
+    @Column(name = "max_job_fair_quota")
+    private Integer maxJobFairQuota;
+
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
