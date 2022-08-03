@@ -79,10 +79,10 @@ public class SubscriptionServiceImpl implements SubscriptionService {
             chargeId = stripeService.createCharge(price, "usd", description, creditCardDTO, token);
             //After charge is created, create subscription
             SubscriptionEntity subscriptionEntity = new SubscriptionEntity();
-            CompanyEntity companyEntity = new CompanyEntity();
-            companyEntity.setId(companyId);
-            subscriptionEntity.setStatus(SubscriptionStatus.NOT_USED);
+            CompanyEntity companyEntity = companyRepository.findById(companyId).get();
+            subscriptionEntity.setStatus(SubscriptionStatus.ACTIVE);
             subscriptionEntity.setJobfairQuota(subscriptionPlanEntity.getJobfairQuota());
+            subscriptionEntity.setMaxJobFairQuota(subscriptionPlanEntity.getJobfairQuota());
             subscriptionEntity.setCompany(companyEntity);
             subscriptionEntity.setSubscriptionPlan(subscriptionPlanEntity);
             subscriptionEntity.setTransactionId(chargeId);
@@ -143,16 +143,16 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         if (subscriptionEntity.getCurrentPeriodEnd() < currentDate) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Subscription.EXPIRED));
         }
-        //If subscription is used, throw exception.
-        if (subscriptionEntity.getStatus() == SubscriptionStatus.USED) {
-            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Subscription.USED));
-        }
         //If subscription is inactive, throw exception.
         if (subscriptionEntity.getStatus() == SubscriptionStatus.INACTIVE) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Subscription.INACTIVE));
         }
+        //If quota is used, throw exception.
+        if (subscriptionEntity.getJobfairQuota() == 0) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Subscription.JOBFAIR_QUOTA_EXCEEDED));
+        }
         //If subscription still in available time and has not been used, set refund status to REQUESTED_REFUND and inactivate this subscription.
-        if (subscriptionEntity.getStatus() == SubscriptionStatus.NOT_USED) {
+        if (subscriptionEntity.getStatus() == SubscriptionStatus.ACTIVE) {
             subscriptionEntity.setStatus(SubscriptionStatus.INACTIVE);
             subscriptionEntity.setRefundStatus(SubscriptionRefundStatus.REQUESTED_REFUND);
             subscriptionEntity.setRefundReason(reason);
@@ -172,7 +172,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Subscription.NOT_REQUESTED_REFUND));
         //If status is DECLINED, make this subscription active again.
         if (status == SubscriptionRefundStatus.REFUND_DECLINED) {
-            subscriptionEntity.setStatus(SubscriptionStatus.NOT_USED);
+            subscriptionEntity.setStatus(SubscriptionStatus.ACTIVE);
             subscriptionEntity.setRefundStatus(SubscriptionRefundStatus.REFUND_DECLINED);
         }
         //If status is APPROVED, make this subscription inactive and set cancel date to current date.
