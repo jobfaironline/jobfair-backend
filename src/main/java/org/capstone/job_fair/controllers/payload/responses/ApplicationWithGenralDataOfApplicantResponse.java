@@ -7,6 +7,7 @@ import org.capstone.job_fair.models.dtos.attendant.cv.*;
 import org.capstone.job_fair.models.enums.ApplicationStatus;
 import org.capstone.job_fair.models.enums.Gender;
 import org.capstone.job_fair.models.enums.JobLevel;
+import org.capstone.job_fair.models.statuses.InterviewStatus;
 
 import java.util.List;
 
@@ -42,5 +43,10 @@ public class ApplicationWithGenralDataOfApplicantResponse {
     String candidateFullName;
     String candidateProfileImageUrl;
     String candidateAboutMe;
+
+    private String attendantAdvantage;
+    private String attendantDisadvantage;
+    private String interviewNote;
+    private InterviewStatus interviewStatus;
 
 }
