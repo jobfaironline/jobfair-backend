@@ -79,6 +79,7 @@ public class JobFairController {
     private AssignmentService assignmentService;
 
     @Autowired
+    @Qualifier("LocalJobFairVisitService")
     private JobFairVisitService jobFairVisitService;
 
     @GetMapping(ApiEndPoint.JobFair.FOR_3D_MAP + "/{id}")

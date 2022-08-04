@@ -9,6 +9,7 @@ import org.capstone.job_fair.models.dtos.job_fair.booth.JobFairBoothDTO;
 import org.capstone.job_fair.services.interfaces.job_fair.JobFairVisitService;
 import org.capstone.job_fair.services.interfaces.job_fair.booth.JobFairBoothService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +26,7 @@ public class JobFairBoothController {
     private JobFairBoothService boothService;
 
     @Autowired
+    @Qualifier("LocalJobFairVisitService")
     private JobFairVisitService jobFairVisitService;
 
     @GetMapping(ApiEndPoint.JobFairBooth.JOB_FAIR_BOOTH)
