@@ -210,7 +210,8 @@ public class SubscriptionController {
                     .title(MessageUtil.getMessage(MessageConstant.NotificationMessage.EVALUATE_REQUEST_TO_REFUND_SUBSCRIPTION.TITLE))
                     .notificationType(NotificationType.NOTI)
                     .build();
-        } else {
+        }
+        if (status == SubscriptionRefundStatus.REFUND_DECLINED) {
             //reject
             message = NotificationMessageDTO.builder()
                     .message(MessageUtil.getMessage(MessageConstant.NotificationMessage.EVALUATE_REQUEST_TO_REFUND_SUBSCRIPTION.REJECT_MESSAGE))
@@ -223,7 +224,6 @@ public class SubscriptionController {
         if (!subscriptionDTO.isPresent()) {
             return ResponseEntity.notFound().build();
         }
-        System.out.println(subscriptionDTO.get());
         String accountId = subscriptionDTO.get().getAccount().getId();
         notificationService.createNotification(message, accountId);
         return ResponseEntity.ok(MessageUtil.getMessage(MessageConstant.Subscription.REFUND_REQUEST_EVALUATED));
