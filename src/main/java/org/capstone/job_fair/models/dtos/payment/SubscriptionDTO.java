@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.capstone.job_fair.models.dtos.account.AccountDTO;
 import org.capstone.job_fair.models.dtos.company.CompanyDTO;
 import org.capstone.job_fair.models.entities.company.CompanyEntity;
 import org.capstone.job_fair.models.entities.payment.SubscriptionPlanEntity;
@@ -32,4 +33,5 @@ public class SubscriptionDTO {
     private Integer jobfairQuota;
     private Integer maxJobFairQuota;
     private CompanyDTO company;
+    private AccountDTO account;
 }

@@ -20,7 +20,7 @@ public interface SubscriptionService {
 
     String getInvoiceUrlBySubscriptionOfCompany(String companyId, String subscriptionId);
 
-    void refundSubscriptionOfCompany(String companyId, String subscriptionId, String reason);
+    void refundSubscriptionOfCompany(String companyId, String subscriptionId, String reason, String accountId);
     Optional<SubscriptionPlanDTO> getSubscriptionPlanById(String id);
     SubscriptionPlanDTO createSubscriptionPlan(SubscriptionPlanDTO subscriptionPlanDTO);
     SubscriptionPlanDTO updateSubscriptionPlan(SubscriptionPlanDTO subscriptionPlanDTO);

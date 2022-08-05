@@ -1,6 +1,7 @@
 package org.capstone.job_fair.models.entities.payment;
 
 import lombok.*;
+import org.capstone.job_fair.models.entities.account.AccountEntity;
 import org.capstone.job_fair.models.entities.company.CompanyEntity;
 import org.capstone.job_fair.models.entities.job_fair.ShiftEntity;
 import org.capstone.job_fair.models.statuses.SubscriptionRefundStatus;
@@ -46,6 +47,10 @@ public class SubscriptionEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id")
     private CompanyEntity company;
+
+    @OneToOne(targetEntity = AccountEntity.class, fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false, name = "requester_id")
+    private AccountEntity account;
 
     @Column(name = "price")
     private Double price;

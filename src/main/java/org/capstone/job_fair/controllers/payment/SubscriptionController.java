@@ -6,13 +6,21 @@ import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.constants.SubscriptionConstant;
 import org.capstone.job_fair.constants.SubscriptionPlanConstant;
 import org.capstone.job_fair.controllers.payload.requests.payment.CreateSubscriptionPlanRequest;
+import org.capstone.job_fair.controllers.payload.requests.payment.RefundSubscriptionRequest;
 import org.capstone.job_fair.controllers.payload.requests.payment.SubscriptionRequest;
 import org.capstone.job_fair.controllers.payload.requests.payment.UpdateSubscriptionPlanRequest;
 import org.capstone.job_fair.controllers.payload.responses.SubscriptionReceiptResponse;
+import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
+import org.capstone.job_fair.models.dtos.dynamoDB.NotificationMessageDTO;
 import org.capstone.job_fair.models.dtos.payment.CreditCardDTO;
 import org.capstone.job_fair.models.dtos.payment.SubscriptionDTO;
 import org.capstone.job_fair.models.dtos.payment.SubscriptionPlanDTO;
+import org.capstone.job_fair.models.entities.account.AccountEntity;
+import org.capstone.job_fair.models.enums.NotificationType;
 import org.capstone.job_fair.models.statuses.SubscriptionRefundStatus;
+import org.capstone.job_fair.services.interfaces.account.AccountService;
+import org.capstone.job_fair.services.interfaces.company.CompanyEmployeeService;
+import org.capstone.job_fair.services.interfaces.notification.NotificationService;
 import org.capstone.job_fair.services.interfaces.payment.SubscriptionService;
 import org.capstone.job_fair.services.mappers.payment.SubscriptionMapper;
 import org.capstone.job_fair.utils.MessageUtil;
@@ -25,6 +33,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -33,6 +42,15 @@ public class SubscriptionController {
     private SubscriptionService subscriptionService;
     @Autowired
     private SubscriptionMapper subscriptionMapper;
+
+    @Autowired
+    private NotificationService notificationService;
+
+    @Autowired
+    private AccountService accountService;
+
+    @Autowired
+    private CompanyEmployeeService companyEmployeeService;
 
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
@@ -118,11 +136,27 @@ public class SubscriptionController {
 
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
-    @PostMapping(ApiEndPoint.Subscription.CANCEL_SUBSCRIPTION_OF_COMPANY + "/{subscriptionId}")
-    public ResponseEntity<?> cancelSubscriptionOfCompany(@PathVariable("subscriptionId") String subscriptionId, @RequestBody String reason) {
+    @PostMapping(ApiEndPoint.Subscription.CANCEL_SUBSCRIPTION_OF_COMPANY)
+    public ResponseEntity<?> cancelSubscriptionOfCompany(@RequestBody @Valid RefundSubscriptionRequest request) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String companyId = userDetails.getCompanyId();
-        subscriptionService.refundSubscriptionOfCompany(companyId, subscriptionId, reason);
+        String requesterId = userDetails.getId();
+        subscriptionService.refundSubscriptionOfCompany(companyId, request.getSubscriptionId(), request.getReason(), requesterId);
+
+        //send notification to admin
+        NotificationMessageDTO message = NotificationMessageDTO.builder()
+                .message(MessageUtil.getMessage(MessageConstant.NotificationMessage.REQUEST_TO_REFUND_SUBSCRIPTION.MESSAGE))
+                .title(MessageUtil.getMessage(MessageConstant.NotificationMessage.REQUEST_TO_REFUND_SUBSCRIPTION.TITLE))
+                .notificationType(NotificationType.NOTI)
+                .build();
+        //find accountId by adminEmail
+        Optional<AccountEntity> opt = accountService.getActiveAccountByEmail(request.getAdminEmail());
+        if (!opt.isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+        String accountId = opt.get().getId();
+
+        notificationService.createNotification(message, accountId);
         return ResponseEntity.ok(MessageUtil.getMessage(MessageConstant.Subscription.REQUESTED_REFUND));
     }
 
@@ -135,6 +169,7 @@ public class SubscriptionController {
         subscriptionPlanDTO.setDescription(request.getDescription());
         subscriptionPlanDTO.setPrice(request.getPrice());
         subscriptionPlanDTO.setValidPeriod(request.getValidPeriod());
+        subscriptionPlanDTO.setJobfairQuota(request.getJobfairQuota());
         subscriptionPlanDTO = subscriptionService.createSubscriptionPlan(subscriptionPlanDTO);
         return ResponseEntity.ok(subscriptionPlanDTO);
     }
@@ -148,6 +183,7 @@ public class SubscriptionController {
         subscriptionPlanDTO.setDescription(request.getDescription());
         subscriptionPlanDTO.setPrice(request.getPrice());
         subscriptionPlanDTO.setValidPeriod(request.getValidPeriod());
+        subscriptionPlanDTO.setJobfairQuota(request.getJobfairQuota());
         subscriptionPlanDTO = subscriptionService.updateSubscriptionPlan(subscriptionPlanDTO);
         return ResponseEntity.ok(subscriptionPlanDTO);
     }
@@ -164,6 +200,32 @@ public class SubscriptionController {
     public ResponseEntity<?> evaluateSubscriptionRefundRequest(@RequestParam(value = "subscriptionId") String subscriptionId,
                                                                @RequestParam(value = "status")SubscriptionRefundStatus status) {
         subscriptionService.evaluateRefundRequest(subscriptionId, status);
+
+        //send notification to company manager
+        NotificationMessageDTO message = null;
+        if (status == SubscriptionRefundStatus.REFUNDED) {
+            //approved
+            message = NotificationMessageDTO.builder()
+                    .message(MessageUtil.getMessage(MessageConstant.NotificationMessage.EVALUATE_REQUEST_TO_REFUND_SUBSCRIPTION.APPROVE_MESSAGE))
+                    .title(MessageUtil.getMessage(MessageConstant.NotificationMessage.EVALUATE_REQUEST_TO_REFUND_SUBSCRIPTION.TITLE))
+                    .notificationType(NotificationType.NOTI)
+                    .build();
+        } else {
+            //reject
+            message = NotificationMessageDTO.builder()
+                    .message(MessageUtil.getMessage(MessageConstant.NotificationMessage.EVALUATE_REQUEST_TO_REFUND_SUBSCRIPTION.REJECT_MESSAGE))
+                    .title(MessageUtil.getMessage(MessageConstant.NotificationMessage.EVALUATE_REQUEST_TO_REFUND_SUBSCRIPTION.TITLE))
+                    .notificationType(NotificationType.NOTI)
+                    .build();
+        }
+
+        Optional<SubscriptionDTO> subscriptionDTO = subscriptionService.getSubscriptionById(subscriptionId);
+        if (!subscriptionDTO.isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+        System.out.println(subscriptionDTO.get());
+        String accountId = subscriptionDTO.get().getAccount().getId();
+        notificationService.createNotification(message, accountId);
         return ResponseEntity.ok(MessageUtil.getMessage(MessageConstant.Subscription.REFUND_REQUEST_EVALUATED));
     }
 

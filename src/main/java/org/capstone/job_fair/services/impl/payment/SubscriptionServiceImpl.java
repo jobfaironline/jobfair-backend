@@ -7,6 +7,7 @@ import org.capstone.job_fair.controllers.payload.responses.SubscriptionReceiptRe
 import org.capstone.job_fair.models.dtos.payment.CreditCardDTO;
 import org.capstone.job_fair.models.dtos.payment.SubscriptionDTO;
 import org.capstone.job_fair.models.dtos.payment.SubscriptionPlanDTO;
+import org.capstone.job_fair.models.entities.account.AccountEntity;
 import org.capstone.job_fair.models.entities.company.CompanyEntity;
 import org.capstone.job_fair.models.entities.payment.SubscriptionEntity;
 import org.capstone.job_fair.models.entities.payment.SubscriptionPlanEntity;
@@ -17,6 +18,7 @@ import org.capstone.job_fair.repositories.payment.SubscriptionPlanRepository;
 import org.capstone.job_fair.repositories.payment.SubscriptionRepository;
 import org.capstone.job_fair.services.interfaces.payment.StripeService;
 import org.capstone.job_fair.services.interfaces.payment.SubscriptionService;
+import org.capstone.job_fair.services.mappers.account.AccountMapper;
 import org.capstone.job_fair.services.mappers.payment.SubscriptionMapper;
 import org.capstone.job_fair.services.mappers.payment.SubscriptionPlanMapper;
 import org.capstone.job_fair.utils.MessageUtil;
@@ -46,6 +48,9 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
     @Autowired
     private SubscriptionMapper subscriptionMapper;
+
+    @Autowired
+    private AccountMapper accountMapper;
 
     @Autowired
     private CompanyRepository companyRepository;
@@ -134,7 +139,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
     @Override
     @Transactional
-    public void refundSubscriptionOfCompany(String companyId, String subscriptionId, String reason) {
+    public void refundSubscriptionOfCompany(String companyId, String subscriptionId, String reason, String accountId) {
         Long currentDate = new Date().getTime();
         Optional<SubscriptionEntity> subscriptionEntityOptional = subscriptionRepository.findByCompanyIdAndId(companyId, subscriptionId);
         if (!subscriptionEntityOptional.isPresent()) {
@@ -158,6 +163,9 @@ public class SubscriptionServiceImpl implements SubscriptionService {
             subscriptionEntity.setStatus(SubscriptionStatus.INACTIVE);
             subscriptionEntity.setRefundStatus(SubscriptionRefundStatus.REQUESTED_REFUND);
             subscriptionEntity.setRefundReason(reason);
+            AccountEntity accountEntity = new AccountEntity();
+            accountEntity.setId(accountId);
+            subscriptionEntity.setAccount(accountEntity);
         }
         subscriptionRepository.save(subscriptionEntity);
     }

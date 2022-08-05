@@ -491,6 +491,25 @@ public final class MessageConstant {
             public static final String TITLE = "notification-message.request-change-interview.title";
             public static final String MESSAGE = "notification-message.request-change-interview.message";
         }
+
+        public static final class REQUEST_TO_REFUND_SUBSCRIPTION {
+            private REQUEST_TO_REFUND_SUBSCRIPTION() {
+
+            }
+
+            public static final String TITLE = "notification-message.request-to-refund.title";
+            public static final String MESSAGE = "notification-message.request-to-refund.message";
+        }
+
+        public static final class EVALUATE_REQUEST_TO_REFUND_SUBSCRIPTION {
+            private EVALUATE_REQUEST_TO_REFUND_SUBSCRIPTION() {
+
+            }
+
+            public static final String TITLE = "notification-message.evaluate-request-to-refund.title";
+            public static final String APPROVE_MESSAGE = "notification-message.approve-request-to-refund.message";
+            public static final String REJECT_MESSAGE = "notification-message.reject-request-to-refund.message";
+        }
     }
 
     public static final class InterviewSchedule {
