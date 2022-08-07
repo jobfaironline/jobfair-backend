@@ -303,6 +303,7 @@ public final class ApiEndPoint {
 
         public static final String JOB_FAIR_BOOTH = ROOT_ENDPOINT + VERSION + "/job-fair-booth";
         public static final String STATISTICS = JOB_FAIR_BOOTH + "/statistics";
+        public static final String UPLOAD_CSV = JOB_FAIR_BOOTH + "/csv";
     }
 
     public static final class Cv {
