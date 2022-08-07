@@ -2,30 +2,37 @@ package org.capstone.job_fair.task;
 
 import com.amazonaws.util.json.Jackson;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import lombok.SneakyThrows;
 import org.capstone.job_fair.models.dtos.dynamoDB.NotificationMessageDTO;
 import org.capstone.job_fair.models.dtos.job_fair.JobFairProgressDTO;
+import org.capstone.job_fair.models.entities.attendant.application.ApplicationEntity;
 import org.capstone.job_fair.models.entities.company.CompanyEmployeeEntity;
 import org.capstone.job_fair.models.entities.job_fair.JobFairEntity;
+import org.capstone.job_fair.models.entities.job_fair.booth.AssignmentEntity;
+import org.capstone.job_fair.models.entities.job_fair.booth.JobFairBoothEntity;
 import org.capstone.job_fair.models.enums.NotificationAction;
 import org.capstone.job_fair.models.enums.NotificationType;
 import org.capstone.job_fair.models.enums.Role;
+import org.capstone.job_fair.models.statuses.InterviewStatus;
 import org.capstone.job_fair.models.statuses.JobFairPlanStatus;
+import org.capstone.job_fair.repositories.attendant.application.ApplicationRepository;
 import org.capstone.job_fair.repositories.company.CompanyEmployeeRepository;
 import org.capstone.job_fair.repositories.job_fair.JobFairRepository;
+import org.capstone.job_fair.repositories.job_fair.job_fair_booth.AssignmentRepository;
 import org.capstone.job_fair.services.interfaces.job_fair.JobFairService;
 import org.capstone.job_fair.services.interfaces.notification.NotificationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.Clock;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -48,9 +55,18 @@ public class WarningTask {
     @Autowired
     private Clock clock;
 
-    @Scheduled(fixedDelayString = "${warning.interval.millis}")
-    public void reportCurrentTime() {
-        log.info("Send warning");
+    @Autowired
+    private ApplicationRepository applicationRepository;
+
+    @Autowired
+    private AssignmentRepository assignmentRepository;
+
+    @Value("${warning.interview.ahead}")
+    private long interviewAhead;
+
+    @Scheduled(fixedDelayString = "${warning.task.millis}")
+    public void warningTaskForJobFair() {
+        log.info("Send warning task for job fair");
         List<JobFairEntity> jobFairEntities = jobFairRepository.findByStatus(JobFairPlanStatus.PUBLISH);
         jobFairEntities.forEach(jobFair -> {
             List<CompanyEmployeeEntity> managers = companyEmployeeRepository.findByCompanyIdAndAccountRoleId(jobFair.getCompany().getId(), Role.COMPANY_MANAGER.ordinal());
@@ -124,5 +140,29 @@ public class WarningTask {
                 }
             });
         });
+    }
+
+    @Scheduled(fixedDelayString = "${warning.interview.millis}")
+    @SneakyThrows
+    public void warningInterview(){
+        log.info("Send warning interview for job fair");
+        Page<JobFairEntity> jobFairs = jobFairRepository.findInProgressJobFair("%%", clock.millis(), Pageable.unpaged());
+        for (JobFairEntity jobFair : jobFairs.toList()){
+            List<ApplicationEntity> applications = applicationRepository.findByInJobFairIdAndInterviewStatus(jobFair.getId(), InterviewStatus.NOT_YET);
+            for (ApplicationEntity application: applications){
+                if (application.getBeginTime() - clock.millis() < interviewAhead ){
+                    Map<String, String> managerBody = new HashMap<>();
+                    managerBody.put("jobFairId", jobFair.getId());
+                    NotificationMessageDTO notificationMessage = NotificationMessageDTO.builder()
+                            .title(NotificationAction.WARNING_INTERVIEW.toString())
+                            .message(Jackson.getObjectMapper().writeValueAsString(managerBody))
+                            .notificationType(NotificationType.NOTI).build();
+                    List<String> userIds = Arrays.asList(application.getInterviewer().getAccountId(), application.getAttendant().getAccountId());
+                    notificationService.createNotification(notificationMessage, userIds);
+                }
+            }
+        }
+
+
     }
 }

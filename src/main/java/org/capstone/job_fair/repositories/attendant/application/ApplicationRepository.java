@@ -121,4 +121,10 @@ public interface ApplicationRepository extends JpaRepository<ApplicationEntity, 
     Optional<ApplicationEntity> findByWaitingRoomIdAndInterviewerAccountId(String waitingRoomId, String employeeId);
 
 
+    @Query("select a from ApplicationEntity a " +
+            "where a.boothJobPosition.jobFairBooth.jobFair.id = :jobFairId " +
+            "and a.interviewStatus = :status")
+    List<ApplicationEntity> findByInJobFairIdAndInterviewStatus(@Param("jobFairId") String jobFairId, @Param("status") InterviewStatus status);
+
+
 }

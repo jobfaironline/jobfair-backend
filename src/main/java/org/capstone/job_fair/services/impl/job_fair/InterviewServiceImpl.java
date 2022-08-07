@@ -466,14 +466,19 @@ public class InterviewServiceImpl implements InterviewService {
         if (attendantSchedules.isEmpty()){
             return interviewerSchedules;
         }
+        //step 1
         List<Schedule> mergeSchedules = Stream.concat(interviewerSchedules.stream(), attendantSchedules.stream()).collect(Collectors.toList());
+        //step 2
         mergeSchedules.sort((o1, o2) -> Math.toIntExact(o1.beginTime - o2.beginTime));
 
         List<Schedule> result = new ArrayList<>();
         int index = 0;
+        //step 3
         Schedule currentSchedule = mergeSchedules.get(0);
+        //step 4
         while (index < mergeSchedules.size() - 1){
             Schedule nextSchedule = mergeSchedules.get(index + 1);
+            //step 4.1
             if (nextSchedule.beginTime <= currentSchedule.endTime && nextSchedule.beginTime >= currentSchedule.beginTime){
                 //overlap schedule
                 long beginTime = nextSchedule.beginTime;
@@ -552,20 +557,25 @@ public class InterviewServiceImpl implements InterviewService {
         assignmentLoop:
         while (currentAssignmentSlot < assignments.size()){
             AssignmentEntity currentAssignment = assignments.get(currentAssignmentSlot);
+            //step 2.1
             List<ApplicationEntity> interviewerScheduleList = applicationRepository.findWholeByInterviewerAndInTimeRange(interviewerId, currentAssignment.getBeginTime(), currentAssignment.getEndTime());
             List<ApplicationEntity> attendantScheduleList = applicationRepository.findWholeByAttendantAndInTimeRange(application.getAttendant().getAccountId(), currentAssignment.getBeginTime(), currentAssignment.getEndTime());
             interviewerScheduleList.sort((o1, o2) -> Math.toIntExact(o1.getBeginTime() - o2.getBeginTime()));
             attendantScheduleList.sort((o1, o2) -> Math.toIntExact(o1.getBeginTime() - o2.getBeginTime()));
+            //step 2.2
             List<Schedule> interviewerFreeSchedule = getFreeSchedule(currentAssignment.getBeginTime(), currentAssignment.getEndTime(), interviewerScheduleList);
             List<Schedule> attendantFreeSchedule = getFreeSchedule(currentAssignment.getBeginTime(), currentAssignment.getEndTime(), attendantScheduleList);
-
+            //step 2.3
             List<Schedule> availableFreeSchedule = getAvailableSchedule(interviewerFreeSchedule, attendantFreeSchedule);
+            //step 2.4
             if (availableFreeSchedule.isEmpty()){
                 currentAssignmentSlot++;
                 continue;
             }
             for (Schedule schedule : availableFreeSchedule){
+                //step 2.4.1
                 long freeTimeLength = schedule.endTime - schedule.beginTime;
+                //step 2.4.2
                 if (freeTimeLength < interviewLength + interviewBufferLength) continue;
                 //has time slot for interview
                 interviewBeginTime = schedule.getBeginTime() + interviewBufferLength;
