@@ -7,6 +7,8 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.util.json.Jackson;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.capstone.job_fair.constants.MessageConstant;
@@ -42,9 +44,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.*;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @Transactional(readOnly = true)
@@ -393,24 +395,123 @@ public class InterviewServiceImpl implements InterviewService {
         applicationRepository.save(application);
     }
 
+    @Data
+    @AllArgsConstructor
+    public static class Schedule {
+        private long beginTime;
+        private long endTime;
+    }
+
+
+    /***
+     *
+     * since the schedule list is already sort by beginTime
+     * iterate through the schedule list and get the interval between these schedule
+     * also calculate the interval between the beginTime and the first schedule's begin time
+     * also calculate the interval between the endTime and the last schedule's end time
+     *
+     */
+    private List<Schedule> getFreeSchedule(long beginTime, long endTime, List<ApplicationEntity> scheduleList){
+        List<Schedule> result = new ArrayList<>();
+        if (scheduleList.isEmpty()){
+            result.add(new Schedule(beginTime, endTime));
+            return result;
+        }
+        long beginScheduleTime = beginTime;
+        ApplicationEntity applicationSchedule = null;
+        for (int i = 0; i < scheduleList.size(); i ++){
+            applicationSchedule = scheduleList.get(i);
+            result.add(new Schedule(beginScheduleTime, applicationSchedule.getBeginTime()));
+            beginScheduleTime = applicationSchedule.getEndTime();
+        }
+        //check last schedule to end time
+        if (applicationSchedule.getEndTime() < endTime){
+            result.add(new Schedule(applicationSchedule.getEndTime(), endTime));
+        }
+
+        return result;
+    }
+
+
+    /**
+     * Inspired by this algorithm: https://www.geeksforgeeks.org/merging-intervals/
+     * Step 1: merge 2 schedule list
+     * Step 2: sort the merged schedule list by begin time
+     * Step 3: currentSchedule = the first schedule from the list
+     * Step 4: loop from the 2nd schedule to the last. For each schedule do the following steps
+     *    Step 4.1: if the current and the next schedule is non overlapped, current schedule = next schedule
+     *              else 4.1.1
+     *       Step 4.1.1: beginTime = nextSchedule.beginTime
+     *                   endTime = min(nextSchedule.endTime, currentSchedule.endTime)
+     *       Step 4.1.2: add beginTime and endTime schedule to the result list
+     *       Step 4.1.3: newCurrentScheduleBeginTime = endTime;
+     *                   newCurrentScheduleEndTime = max(nextSchedule.endTime, currentSchedule.endTime);
+     *       Step 4.1.4: currentSchedule = schedule( newCurrentScheduleBeginTime, newCurrentScheduleEndTime)
+     *
+     *    Ex for 4.1.1
+     *    Case 1: currentSchedule: |----------|
+     *            nextSchedule:        |----------|
+     *            overlapSchedule:     |------|
+     *    Case 2: currentSchedule: |------------------|
+     *            nextSchedule:        |----------|
+     *            overlapSchedule:     |----------|
+     *    Case 3: currentSchedule: |--------------|
+     *            nextSchedule:        |----------|
+     *            overlapSchedule:     |----------|
+     */
+    private List<Schedule> getAvailableSchedule(List<Schedule> interviewerSchedules, List<Schedule> attendantSchedules){
+        if (interviewerSchedules.isEmpty()){
+            return attendantSchedules;
+        }
+        if (attendantSchedules.isEmpty()){
+            return interviewerSchedules;
+        }
+        List<Schedule> mergeSchedules = Stream.concat(interviewerSchedules.stream(), attendantSchedules.stream()).collect(Collectors.toList());
+        mergeSchedules.sort((o1, o2) -> Math.toIntExact(o1.beginTime - o2.beginTime));
+
+        List<Schedule> result = new ArrayList<>();
+        int index = 0;
+        Schedule currentSchedule = mergeSchedules.get(0);
+        while (index < mergeSchedules.size() - 1){
+            Schedule nextSchedule = mergeSchedules.get(index + 1);
+            if (nextSchedule.beginTime <= currentSchedule.endTime && nextSchedule.beginTime >= currentSchedule.beginTime){
+                //overlap schedule
+                long beginTime = nextSchedule.beginTime;
+                long endTime = Math.min(nextSchedule.endTime, currentSchedule.endTime);
+                result.add(new Schedule(beginTime, endTime));
+                long newCurrentScheduleBeginTime = endTime;
+                long newCurrentScheduleEndTime = Math.max(nextSchedule.endTime, currentSchedule.endTime);
+                currentSchedule = new Schedule(newCurrentScheduleBeginTime, newCurrentScheduleEndTime);
+            } else {
+                //non-overlap schedule
+                currentSchedule = nextSchedule;
+            }
+            index ++;
+        }
+        return result;
+    }
 
     /***
      *
      * process of scheduling an interview
      * Step 1: Get interview assignments that endTime > current + interviewLength + bufferTime
      *         If empty throw Exception
-     * Step 2.0: current slot = 0
+     * Step 2: Iterate through the assignments. For each assignment do the following steps
+     *     Step 2.1: get interviewer interview schedule
+     *               get attendant interview schedule
+     *     Step 2.2: get interviewer free schedule
+     *               get attendant free schedule
+     *     Step 2.3: find common free schedule from interviewer and attendant
+     *     Step 2.4: if the common free schedule is empty move to next assignment
+     *               else iterate through the free schedule. For each schedule do the following steps
+     *        Step 2.4.1: get the free schedule length
+     *        Step 2.4.2: if the length < interviewLength + bufferTime, continue
+     *                    else step 2.4.2.1
+     *           Step 2.4.2.1: interviewBeginTime = schedule.getBeginTime() + interviewBufferLength;
+     *                         interviewEndTime = interviewBeginTime + interviewLength;
+     *           Step 2.4.2.2: if the interviewer interview schedule is empty, generate random interviewRoomId, waitingRoomId
+     *                         else get interviewRoomId, waitingRoomId from last interview schedule
      *
-     * Step 3: Check for if the current slot is an empty slot
-     *         If true process to step 4.1 else step to 4.2
-     * Step 4.1: create a brand-new UUID for waitingRoomId and interviewRoomId,
-     *           interviewBeginTime = now > currentAssignment.beginTime ? now + bufferTime (round to nearest 15 minute) : currentAssignment.beginTime
-     *           interviewEndTime = interviewBeginTime + interviewLength
-     * Step 4.2:
-     *      1. Check if there is still enough time to assign to the first available assignment
-     *         If true => assign application to that interview slot,
-     *                    get previous waitingRoomId and interviewRoomId and assign to application
-     *         If false => current slot + 1, repeat step 3
      */
     @Override
     public InterviewScheduleDTO scheduleInterview(String applicationId, String interviewerId) {
@@ -448,44 +549,44 @@ public class InterviewServiceImpl implements InterviewService {
         String waitingRoomId = "";
         long interviewBeginTime = 0;
         long interviewEndTime = 0;
+        assignmentLoop:
         while (currentAssignmentSlot < assignments.size()){
             AssignmentEntity currentAssignment = assignments.get(currentAssignmentSlot);
-            List<ApplicationEntity> scheduleList = applicationRepository.findWholeByInterviewerAndInTimeRange(interviewerId, currentAssignment.getBeginTime(), currentAssignment.getEndTime());
+            List<ApplicationEntity> interviewerScheduleList = applicationRepository.findWholeByInterviewerAndInTimeRange(interviewerId, currentAssignment.getBeginTime(), currentAssignment.getEndTime());
+            List<ApplicationEntity> attendantScheduleList = applicationRepository.findWholeByAttendantAndInTimeRange(application.getAttendant().getAccountId(), currentAssignment.getBeginTime(), currentAssignment.getEndTime());
+            interviewerScheduleList.sort((o1, o2) -> Math.toIntExact(o1.getBeginTime() - o2.getBeginTime()));
+            attendantScheduleList.sort((o1, o2) -> Math.toIntExact(o1.getBeginTime() - o2.getBeginTime()));
+            List<Schedule> interviewerFreeSchedule = getFreeSchedule(currentAssignment.getBeginTime(), currentAssignment.getEndTime(), interviewerScheduleList);
+            List<Schedule> attendantFreeSchedule = getFreeSchedule(currentAssignment.getBeginTime(), currentAssignment.getEndTime(), attendantScheduleList);
 
-            //step 3
-            if (scheduleList.isEmpty()){
-                //step 4.1
-                if (now > currentAssignment.getBeginTime()) {
-                    long minute = clock.instant().atZone(ZoneId.systemDefault()).getMinute();
-                    Instant instant = clock.instant().truncatedTo(ChronoUnit.HOURS).plus(15 * (minute / 15 + 1), ChronoUnit.MINUTES);
-                    interviewBeginTime = instant.getEpochSecond() * 1000 + interviewBufferLength;
-                } else {
-                    interviewBeginTime = currentAssignment.getBeginTime();
-                }
+            List<Schedule> availableFreeSchedule = getAvailableSchedule(interviewerFreeSchedule, attendantFreeSchedule);
+            if (availableFreeSchedule.isEmpty()){
+                currentAssignmentSlot++;
+                continue;
+            }
+            for (Schedule schedule : availableFreeSchedule){
+                long freeTimeLength = schedule.endTime - schedule.beginTime;
+                if (freeTimeLength < interviewLength + interviewBufferLength) continue;
+                //has time slot for interview
+                interviewBeginTime = schedule.getBeginTime() + interviewBufferLength;
                 interviewEndTime = interviewBeginTime + interviewLength;
-                interviewRoomId =  ScheduleConstant.INTERVIEW_ROOM_PREFIX + UUID.randomUUID().toString();
-                waitingRoomId = ScheduleConstant.WAITING_ROOM_PREFIX + UUID.randomUUID().toString();
-                break;
-            } else {
-                //step 4.2
-                ApplicationEntity lastInterview = scheduleList.get(scheduleList.size() -1);
-                if (lastInterview.getEndTime() + interviewLength + interviewBufferLength < currentAssignment.getEndTime()){
-                    interviewBeginTime = lastInterview.getEndTime() + interviewBufferLength;
-                    interviewEndTime = interviewBeginTime + interviewLength;
+                if (interviewerScheduleList.isEmpty()){
+                    interviewRoomId =  ScheduleConstant.INTERVIEW_ROOM_PREFIX + UUID.randomUUID().toString();
+                    waitingRoomId = ScheduleConstant.WAITING_ROOM_PREFIX + UUID.randomUUID().toString();
+                } else {
+                    ApplicationEntity lastInterview = interviewerScheduleList.get(interviewerScheduleList.size() -1);
                     interviewRoomId =  lastInterview.getInterviewRoomId();
                     waitingRoomId = lastInterview.getWaitingRoomId();
-                    break;
-                } else {
-                    currentAssignmentSlot += 1;
                 }
+                break assignmentLoop;
+
             }
+            currentAssignmentSlot++;
         }
 
         if (interviewRoomId.isEmpty()){
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.InterviewSchedule.MAXIMUM_SCHEDULE_ALLOW));
         }
-
-
 
         application.setInterviewName("Interview with " + application.getAttendant().getAccount().getFullname());
         application.setInterviewDescription("Interview with " + application.getAttendant().getAccount().getFullname());
