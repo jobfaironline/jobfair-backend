@@ -1,5 +1,7 @@
 package org.capstone.job_fair.constants;
 
+import com.amazonaws.services.dynamodbv2.xspec.S;
+
 public final class MessageConstant {
     private MessageConstant() {
 
@@ -12,6 +14,50 @@ public final class MessageConstant {
 
         public static final String NOT_FOUND = "job-level.error.not-found";
         public static final String DUPLICATED = "job-level.error.duplicate-job-level";
+    }
+
+    public static final class Payment {
+        private Payment() {
+
+        }
+
+        public static final String CARD_ERROR = "payment.error.card-error";
+        public static final String PAYMENT_ERROR = "payment.error.payment-error";
+
+        public static final String GET_INVOICE_ERROR = "payment.error.get-invoice-error";
+        public static final String INVALID_TRANSACTION_ID = "payment.error.invalid-transaction-id";
+    }
+
+    public static final class SubscriptionPlan {
+        private SubscriptionPlan() {
+
+        }
+
+        public static final String NOT_FOUND = "subscription-plan.error.not-found";
+        public static final String DUPLICATED = "subscription-plan.error.duplicate-subscription-plan";
+        public static final String UPDATED = "subscription-plan.success.updated";
+        public static final String CREATED = "subscription-plan.success.created";
+    }
+
+    public static final class Subscription {
+        private Subscription() {
+
+        }
+
+        public static final String ALREADY_EXISTS = "subscription.error.already-exists";
+        public static final String CREATED = "subscription.success.created";
+
+        public static final String NOT_FOUND = "subscription.error.not-found";
+        public static final String CANCELED = "subscription.success.canceled";
+        public static final String EXPIRED = "subscription.error.expired";
+        public static final String USED = "subscription.error.used";
+        public static final String EVALUATE_REFUND_STATUS_ERROR = "subscription.error.evaluate-refund-status-error";
+        public static final String INACTIVE = "subscription.error.inactive";
+        public static final String NOT_REQUESTED_REFUND = "subscription.error.not-requested-refund";
+        public static final String REQUESTED_REFUND = "subscription.success.requested-refund";
+        public static final String REFUND_REQUEST_EVALUATED = "subscription.success.refund-request-evaluated";
+        public static final String JOBFAIR_QUOTA_EXCEEDED = "subscription.error.jobfair-quota-exceeded";
+
     }
 
     public static final class ProfessionalCategory {
@@ -444,6 +490,25 @@ public final class MessageConstant {
 
             public static final String TITLE = "notification-message.request-change-interview.title";
             public static final String MESSAGE = "notification-message.request-change-interview.message";
+        }
+
+        public static final class REQUEST_TO_REFUND_SUBSCRIPTION {
+            private REQUEST_TO_REFUND_SUBSCRIPTION() {
+
+            }
+
+            public static final String TITLE = "notification-message.request-to-refund.title";
+            public static final String MESSAGE = "notification-message.request-to-refund.message";
+        }
+
+        public static final class EVALUATE_REQUEST_TO_REFUND_SUBSCRIPTION {
+            private EVALUATE_REQUEST_TO_REFUND_SUBSCRIPTION() {
+
+            }
+
+            public static final String TITLE = "notification-message.evaluate-request-to-refund.title";
+            public static final String APPROVE_MESSAGE = "notification-message.approve-request-to-refund.message";
+            public static final String REJECT_MESSAGE = "notification-message.reject-request-to-refund.message";
         }
     }
 
