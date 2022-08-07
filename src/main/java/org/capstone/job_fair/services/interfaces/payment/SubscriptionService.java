@@ -19,6 +19,7 @@ public interface SubscriptionService {
     Page<SubscriptionDTO> getAllSubscriptionOfCompany(String companyId, int offset, int pageSize, String sortBy, Sort.Direction direction);
 
     String getInvoiceUrlBySubscriptionOfCompany(String companyId, String subscriptionId);
+    String getInvoiceUrlBySubscriptionId(String subscriptionId);
 
     void refundSubscriptionOfCompany(String companyId, String subscriptionId, String reason, String accountId);
     Optional<SubscriptionPlanDTO> getSubscriptionPlanById(String id);

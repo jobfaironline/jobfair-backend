@@ -5,10 +5,7 @@ import org.capstone.job_fair.constants.ApiEndPoint;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.constants.SubscriptionConstant;
 import org.capstone.job_fair.constants.SubscriptionPlanConstant;
-import org.capstone.job_fair.controllers.payload.requests.payment.CreateSubscriptionPlanRequest;
-import org.capstone.job_fair.controllers.payload.requests.payment.RefundSubscriptionRequest;
-import org.capstone.job_fair.controllers.payload.requests.payment.SubscriptionRequest;
-import org.capstone.job_fair.controllers.payload.requests.payment.UpdateSubscriptionPlanRequest;
+import org.capstone.job_fair.controllers.payload.requests.payment.*;
 import org.capstone.job_fair.controllers.payload.responses.SubscriptionReceiptResponse;
 import org.capstone.job_fair.models.dtos.company.CompanyEmployeeDTO;
 import org.capstone.job_fair.models.dtos.dynamoDB.NotificationMessageDTO;
@@ -134,6 +131,13 @@ public class SubscriptionController {
         return ResponseEntity.ok(invoiceUrl);
     }
 
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
+    @GetMapping(ApiEndPoint.Subscription.GET_INVOICE_OF_SUBSCRIPTION + "/admin"  + "/{subscriptionId}")
+    public ResponseEntity<?> adminGetInvoiceURLOfCompany(@PathVariable(value = "subscriptionId") String subscriptionId) {
+        String result = subscriptionService.getInvoiceUrlBySubscriptionId(subscriptionId);
+        return result != null ? ResponseEntity.ok(result) : ResponseEntity.notFound().build();
+    }
+
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
     @PostMapping(ApiEndPoint.Subscription.CANCEL_SUBSCRIPTION_OF_COMPANY)
@@ -245,7 +249,7 @@ public class SubscriptionController {
         return ResponseEntity.ok().build();
     }
 
-    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER)")
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
     @GetMapping(ApiEndPoint.Subscription.GET_INVOICE_OF_SUBSCRIPTION + "/data/{subscriptionId}")
     public ResponseEntity<?> getReceiptInfo(@PathVariable(value = "subscriptionId") String subscriptionId) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

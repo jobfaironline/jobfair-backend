@@ -136,6 +136,22 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         }
     }
 
+    @Override
+    public String getInvoiceUrlBySubscriptionId(String subscriptionId) {
+        Optional<SubscriptionEntity> opt = subscriptionRepository.findById(subscriptionId);
+        if (!opt.isPresent()) {
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Subscription.NOT_FOUND));
+        }
+        try {
+            return stripeService.getReceipt(opt.get().getTransactionId());
+        }
+        catch (StripeException e) {
+            e.printStackTrace();
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Payment.GET_INVOICE_ERROR));
+        }
+
+    }
+
 
     @Override
     @Transactional
