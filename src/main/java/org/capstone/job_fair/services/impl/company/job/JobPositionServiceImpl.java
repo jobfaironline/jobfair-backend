@@ -99,6 +99,7 @@ public class JobPositionServiceImpl implements JobPositionService {
             }
         });
 
+        body = new HashMap<>();
         body.put("description", jobPosition.getRequirements());
         Mono<KeyWordResponse> requirementResult = webClient.post().uri(skillProcessorURL+SkillExtractorApiEndpoint.EXTRACT_KEYWORD)
                 .body(Mono.just(body), Map.class)
