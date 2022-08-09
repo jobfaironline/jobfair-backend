@@ -200,6 +200,7 @@ public class ApplicationController {
         NotificationMessageDTO notificationMessageDTO = new NotificationMessageDTO();
         notificationMessageDTO.setMessage(MessageUtil.getMessage(MessageConstant.Application.EVALUATE_MESSAGE_TO_ATTENDANT));
         notificationMessageDTO.setNotificationType(NotificationType.NOTI);
+        notificationMessageDTO.setTitle("Application finished evaluate");
 
         //send notification to attendant
         notificationService.createNotification(notificationMessageDTO, dto.getAttendant().getAccount().getId());
