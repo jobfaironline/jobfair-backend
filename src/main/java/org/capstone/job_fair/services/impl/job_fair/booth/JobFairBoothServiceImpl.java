@@ -237,7 +237,7 @@ public class JobFairBoothServiceImpl implements JobFairBoothService {
             }
             if (parseResult.isHasError()) continue;
 
-            Optional<JobPositionEntity> jobPositionOpt = jobPositionRepository.findFirstByTitleLike(jobName);
+            Optional<JobPositionEntity> jobPositionOpt = jobPositionRepository.findFirstByTitleLikeAndCompanyId(jobName, companyId);
             if (!jobPositionOpt.isPresent()){
                 parseResult.addErrorMessage(i, MessageUtil.getMessage(MessageConstant.Job.JOB_POSITION_NOT_FOUND));
                 continue;
@@ -248,9 +248,16 @@ public class JobFairBoothServiceImpl implements JobFairBoothService {
 
         }
 
-        JobFairBoothDTO jobFairBoothDTO = new JobFairBoothDTO();
-        jobFairBoothDTO.setId(jobFairBoothId);
+        Optional<JobFairBoothEntity> jobFairBoothOpt = jobFairBoothRepository.findById(jobFairBoothId);
+        if (!jobFairBoothOpt.isPresent()){
+            parseResult.addErrorMessage(rowNum, MessageUtil.getMessage(MessageConstant.Job.JOB_POSITION_NOT_FOUND));
+            return parseResult;
+        }
+
+        JobFairBoothDTO jobFairBoothDTO = jobFairBoothMapper.toDTO(jobFairBoothOpt.get());
+
         jobFairBoothDTO.setBoothJobPositions(jobPositionDTOS);
+
         jobFairBoothDTO = updateJobFairBooth(jobFairBoothDTO, companyId);
         parseResult.addToResult(jobFairBoothDTO);
         return parseResult;

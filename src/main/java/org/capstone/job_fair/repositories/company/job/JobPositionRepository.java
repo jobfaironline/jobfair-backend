@@ -20,5 +20,5 @@ public interface JobPositionRepository extends JpaRepository<JobPositionEntity, 
 
     Optional<JobPositionEntity> findByIdAndCompanyId(String id, String companyId);
 
-    Optional<JobPositionEntity> findFirstByTitleLike(String title);
+    Optional<JobPositionEntity> findFirstByTitleLikeAndCompanyId(String title, String companyId);
 }

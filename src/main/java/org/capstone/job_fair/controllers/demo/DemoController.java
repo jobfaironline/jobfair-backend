@@ -167,12 +167,13 @@ public class DemoController {
     @Autowired
     private Clock clock;
 
+    private Random random = new Random();
+
     private String getSaltString(int number) {
         String SALTCHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
         StringBuilder salt = new StringBuilder();
-        Random rnd = new Random();
         while (salt.length() < number) { // length of the random string.
-            int index = (int) (rnd.nextFloat() * SALTCHARS.length());
+            int index = (int) (random.nextFloat() * SALTCHARS.length());
             salt.append(SALTCHARS.charAt(index));
         }
         String saltStr = salt.toString();
@@ -350,6 +351,8 @@ public class DemoController {
     }
 
     protected void decorateJobFair(String jobFairId, String jobFairBoothId){
+
+        List<String> defaultBoothUrls = Arrays.asList("https://d1t63ajhfi2lx8.cloudfront.net/Default/default_booth.glb", "https://d1t63ajhfi2lx8.cloudfront.net/Default/default2.glb", "https://d1t63ajhfi2lx8.cloudfront.net/Default/default3.glb", "https://d1t63ajhfi2lx8.cloudfront.net/Default/default4.glb");
         JobFairEntity jobFair = jobFairRepository.getById(jobFairId);
         long oldDecorateEndTime = jobFair.getDecorateEndTime();
         long oldDecorateStartTime = jobFair.getDecorateStartTime();
@@ -373,7 +376,9 @@ public class DemoController {
             layout.setId(UUID.randomUUID().toString());
             layout.setVersion(1);
             layout.setCreateDate(clock.millis());
-            layout.setUrl("https://d1t63ajhfi2lx8.cloudfront.net/Default/default_booth.glb");
+            String url = defaultBoothUrls.get(random.nextInt(defaultBoothUrls.size()));
+            System.out.println(url);
+            layout.setUrl(url);
             layout.setJobFairBooth(jobFairBooth);
             jobFairBoothLayoutRepository.save(layout);
             jobFairBoothRepository.save(jobFairBooth);
@@ -847,6 +852,9 @@ public class DemoController {
     }
 
     protected void decorateJobFair(String jobFairId){
+        Random rand = new Random();
+        List<String> defaultBoothUrls = Arrays.asList("https://d1t63ajhfi2lx8.cloudfront.net/Default/default_booth.glb", "https://d1t63ajhfi2lx8.cloudfront.net/Default/default2.glb", "https://d1t63ajhfi2lx8.cloudfront.net/Default/default3.glb", "https://d1t63ajhfi2lx8.cloudfront.net/Default/default4.glb");
+
         JobFairEntity jobFair = jobFairRepository.getById(jobFairId);
         long oldDecorateEndTime = jobFair.getDecorateEndTime();
         long oldDecorateStartTime = jobFair.getDecorateStartTime();
@@ -869,7 +877,9 @@ public class DemoController {
             layout.setId(UUID.randomUUID().toString());
             layout.setVersion(1);
             layout.setCreateDate(clock.millis());
-            layout.setUrl("https://d1t63ajhfi2lx8.cloudfront.net/Default/default_booth.glb");
+            String url = defaultBoothUrls.get(rand.nextInt(defaultBoothUrls.size()));
+            System.out.println(url);
+            layout.setUrl(url);
             layout.setJobFairBooth(jobFairBooth);
             jobFairBoothLayoutRepository.save(layout);
             jobFairBoothRepository.save(jobFairBooth);
