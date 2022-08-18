@@ -86,6 +86,7 @@ public class WarningTask {
                         .message(Jackson.getObjectMapper().writeValueAsString(managerBody))
                         .notificationType(NotificationType.NOTI).build();
                 List<String> userIds = managers.stream().map(CompanyEmployeeEntity::getAccountId).collect(Collectors.toList());
+                userIds = new ArrayList<>(new HashSet<>(userIds));
                 notificationService.createNotification(notificationMessage, userIds);
             } catch (JsonProcessingException e) {
                 log.error(e.getMessage());
@@ -158,6 +159,7 @@ public class WarningTask {
                             .message(Jackson.getObjectMapper().writeValueAsString(managerBody))
                             .notificationType(NotificationType.NOTI).build();
                     List<String> userIds = Arrays.asList(application.getInterviewer().getAccountId(), application.getAttendant().getAccountId());
+                    userIds = new ArrayList<>(new HashSet<>(userIds));
                     notificationService.createNotification(notificationMessage, userIds);
                 }
             }

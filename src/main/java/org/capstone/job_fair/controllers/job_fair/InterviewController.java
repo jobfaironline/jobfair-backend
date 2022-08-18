@@ -21,6 +21,7 @@ import org.capstone.job_fair.services.interfaces.notification.NotificationServic
 import org.capstone.job_fair.utils.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -40,6 +41,9 @@ public class InterviewController {
     @Autowired
     @Qualifier("LocalNotificationService")
     private NotificationService notificationService;
+
+    @Value("${clock.delay.days}")
+    private int delay;
 
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE) or hasAuthority(T(org.capstone.job_fair.models.enums.Role).ATTENDANT)")
     @GetMapping(ApiEndPoint.Interview.SCHEDULE)
@@ -132,6 +136,10 @@ public class InterviewController {
         Optional<InterviewScheduleDTO> currentSchedule = interviewService.getCurrentScheduleByEmployeeIdAndInterviewRoomId(
                 userDetails.getId(), interviewRoomId
         );
+        if (delay > 0){
+            interviewService.askAttendantJoinInterviewRoom(attendantId, interviewRoomId);
+            return ResponseEntity.ok().build();
+        }
         if (currentSchedule.isPresent()) {
             if (!currentSchedule.get().getAttendantId().equals(attendantId)) {
                 return ResponseEntity.accepted().build();

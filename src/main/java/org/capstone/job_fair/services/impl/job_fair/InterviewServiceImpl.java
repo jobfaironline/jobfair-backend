@@ -87,6 +87,9 @@ public class InterviewServiceImpl implements InterviewService {
     @Value("${interview.buffer.millis}")
     private long interviewBufferLength;
 
+    @Value("${interview.request-change.buffer.millis}")
+    private long requestChangeBuffer;
+
     @Autowired
     private Clock clock;
 
@@ -126,7 +129,7 @@ public class InterviewServiceImpl implements InterviewService {
         }
         //check if allow request change
         long now = clock.millis();
-        if (application.getEndTime() > now + ScheduleConstant.BUFFER_CHANGE_INTERVIEW_SCHEDULE) {
+        if (application.getEndTime() > now + requestChangeBuffer) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.InterviewSchedule.CANNOT_EDIT));
         }
         //check if endTime inside job fair public time
@@ -339,7 +342,6 @@ public class InterviewServiceImpl implements InterviewService {
                 .notificationType(NotificationType.INTERVIEW_ROOM).build();
 
         notificationService.createNotification(notificationMessage, attendantId);
-
     }
 
     @Override
@@ -411,21 +413,21 @@ public class InterviewServiceImpl implements InterviewService {
      * also calculate the interval between the endTime and the last schedule's end time
      *
      */
-    private List<Schedule> getFreeSchedule(long beginTime, long endTime, List<ApplicationEntity> scheduleList){
+    private List<Schedule> getFreeSchedule(long beginTime, long endTime, List<ApplicationEntity> scheduleList) {
         List<Schedule> result = new ArrayList<>();
-        if (scheduleList.isEmpty()){
+        if (scheduleList.isEmpty()) {
             result.add(new Schedule(beginTime, endTime));
             return result;
         }
         long beginScheduleTime = beginTime;
         ApplicationEntity applicationSchedule = null;
-        for (int i = 0; i < scheduleList.size(); i ++){
+        for (int i = 0; i < scheduleList.size(); i++) {
             applicationSchedule = scheduleList.get(i);
             result.add(new Schedule(beginScheduleTime, applicationSchedule.getBeginTime()));
             beginScheduleTime = applicationSchedule.getEndTime();
         }
         //check last schedule to end time
-        if (applicationSchedule.getEndTime() < endTime){
+        if (applicationSchedule.getEndTime() < endTime) {
             result.add(new Schedule(applicationSchedule.getEndTime(), endTime));
         }
 
@@ -439,31 +441,31 @@ public class InterviewServiceImpl implements InterviewService {
      * Step 2: sort the merged schedule list by begin time
      * Step 3: currentSchedule = the first schedule from the list
      * Step 4: loop from the 2nd schedule to the last. For each schedule do the following steps
-     *    Step 4.1: if the current and the next schedule is non overlapped, current schedule = next schedule
-     *              else 4.1.1
-     *       Step 4.1.1: beginTime = nextSchedule.beginTime
-     *                   endTime = min(nextSchedule.endTime, currentSchedule.endTime)
-     *       Step 4.1.2: add beginTime and endTime schedule to the result list
-     *       Step 4.1.3: newCurrentScheduleBeginTime = endTime;
-     *                   newCurrentScheduleEndTime = max(nextSchedule.endTime, currentSchedule.endTime);
-     *       Step 4.1.4: currentSchedule = schedule( newCurrentScheduleBeginTime, newCurrentScheduleEndTime)
-     *
-     *    Ex for 4.1.1
-     *    Case 1: currentSchedule: |----------|
-     *            nextSchedule:        |----------|
-     *            overlapSchedule:     |------|
-     *    Case 2: currentSchedule: |------------------|
-     *            nextSchedule:        |----------|
-     *            overlapSchedule:     |----------|
-     *    Case 3: currentSchedule: |--------------|
-     *            nextSchedule:        |----------|
-     *            overlapSchedule:     |----------|
+     * Step 4.1: if the current and the next schedule is non overlapped, current schedule = next schedule
+     * else 4.1.1
+     * Step 4.1.1: beginTime = nextSchedule.beginTime
+     * endTime = min(nextSchedule.endTime, currentSchedule.endTime)
+     * Step 4.1.2: add beginTime and endTime schedule to the result list
+     * Step 4.1.3: newCurrentScheduleBeginTime = endTime;
+     * newCurrentScheduleEndTime = max(nextSchedule.endTime, currentSchedule.endTime);
+     * Step 4.1.4: currentSchedule = schedule( newCurrentScheduleBeginTime, newCurrentScheduleEndTime)
+     * <p>
+     * Ex for 4.1.1
+     * Case 1: currentSchedule: |----------|
+     * nextSchedule:        |----------|
+     * overlapSchedule:     |------|
+     * Case 2: currentSchedule: |------------------|
+     * nextSchedule:        |----------|
+     * overlapSchedule:     |----------|
+     * Case 3: currentSchedule: |--------------|
+     * nextSchedule:        |----------|
+     * overlapSchedule:     |----------|
      */
-    private List<Schedule> getAvailableSchedule(List<Schedule> interviewerSchedules, List<Schedule> attendantSchedules){
-        if (interviewerSchedules.isEmpty()){
+    private List<Schedule> getAvailableSchedule(List<Schedule> interviewerSchedules, List<Schedule> attendantSchedules) {
+        if (interviewerSchedules.isEmpty()) {
             return attendantSchedules;
         }
-        if (attendantSchedules.isEmpty()){
+        if (attendantSchedules.isEmpty()) {
             return interviewerSchedules;
         }
         //step 1
@@ -476,10 +478,10 @@ public class InterviewServiceImpl implements InterviewService {
         //step 3
         Schedule currentSchedule = mergeSchedules.get(0);
         //step 4
-        while (index < mergeSchedules.size() - 1){
+        while (index < mergeSchedules.size() - 1) {
             Schedule nextSchedule = mergeSchedules.get(index + 1);
             //step 4.1
-            if (nextSchedule.beginTime <= currentSchedule.endTime && nextSchedule.beginTime >= currentSchedule.beginTime){
+            if (nextSchedule.beginTime <= currentSchedule.endTime && nextSchedule.beginTime >= currentSchedule.beginTime) {
                 //overlap schedule
                 long beginTime = nextSchedule.beginTime;
                 long endTime = Math.min(nextSchedule.endTime, currentSchedule.endTime);
@@ -491,7 +493,7 @@ public class InterviewServiceImpl implements InterviewService {
                 //non-overlap schedule
                 currentSchedule = nextSchedule;
             }
-            index ++;
+            index++;
         }
         return result;
     }
@@ -555,7 +557,7 @@ public class InterviewServiceImpl implements InterviewService {
         long interviewBeginTime = 0;
         long interviewEndTime = 0;
         assignmentLoop:
-        while (currentAssignmentSlot < assignments.size()){
+        while (currentAssignmentSlot < assignments.size()) {
             AssignmentEntity currentAssignment = assignments.get(currentAssignmentSlot);
             //step 2.1
             List<ApplicationEntity> interviewerScheduleList = applicationRepository.findWholeByInterviewerAndInTimeRange(interviewerId, currentAssignment.getBeginTime(), currentAssignment.getEndTime());
@@ -568,11 +570,11 @@ public class InterviewServiceImpl implements InterviewService {
             //step 2.3
             List<Schedule> availableFreeSchedule = getAvailableSchedule(interviewerFreeSchedule, attendantFreeSchedule);
             //step 2.4
-            if (availableFreeSchedule.isEmpty()){
+            if (availableFreeSchedule.isEmpty()) {
                 currentAssignmentSlot++;
                 continue;
             }
-            for (Schedule schedule : availableFreeSchedule){
+            for (Schedule schedule : availableFreeSchedule) {
                 //step 2.4.1
                 long freeTimeLength = schedule.endTime - schedule.beginTime;
                 //step 2.4.2
@@ -580,12 +582,12 @@ public class InterviewServiceImpl implements InterviewService {
                 //has time slot for interview
                 interviewBeginTime = schedule.getBeginTime() + interviewBufferLength;
                 interviewEndTime = interviewBeginTime + interviewLength;
-                if (interviewerScheduleList.isEmpty()){
-                    interviewRoomId =  ScheduleConstant.INTERVIEW_ROOM_PREFIX + UUID.randomUUID().toString();
+                if (interviewerScheduleList.isEmpty()) {
+                    interviewRoomId = ScheduleConstant.INTERVIEW_ROOM_PREFIX + UUID.randomUUID().toString();
                     waitingRoomId = ScheduleConstant.WAITING_ROOM_PREFIX + UUID.randomUUID().toString();
                 } else {
-                    ApplicationEntity lastInterview = interviewerScheduleList.get(interviewerScheduleList.size() -1);
-                    interviewRoomId =  lastInterview.getInterviewRoomId();
+                    ApplicationEntity lastInterview = interviewerScheduleList.get(interviewerScheduleList.size() - 1);
+                    interviewRoomId = lastInterview.getInterviewRoomId();
                     waitingRoomId = lastInterview.getWaitingRoomId();
                 }
                 break assignmentLoop;
@@ -594,7 +596,7 @@ public class InterviewServiceImpl implements InterviewService {
             currentAssignmentSlot++;
         }
 
-        if (interviewRoomId.isEmpty()){
+        if (interviewRoomId.isEmpty()) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.InterviewSchedule.MAXIMUM_SCHEDULE_ALLOW));
         }
 
