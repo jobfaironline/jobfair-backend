@@ -38,6 +38,7 @@ import org.capstone.job_fair.models.entities.job_fair.booth.JobFairBoothEntity;
 import org.capstone.job_fair.models.entities.job_fair.booth.JobFairBoothLayoutEntity;
 import org.capstone.job_fair.models.enums.*;
 import org.capstone.job_fair.models.statuses.AccountStatus;
+import org.capstone.job_fair.models.statuses.InterviewStatus;
 import org.capstone.job_fair.models.statuses.JobFairPlanStatus;
 import org.capstone.job_fair.repositories.attendant.application.ApplicationRepository;
 import org.capstone.job_fair.repositories.attendant.cv.CvRepository;
@@ -377,7 +378,6 @@ public class DemoController {
             layout.setVersion(1);
             layout.setCreateDate(clock.millis());
             String url = defaultBoothUrls.get(random.nextInt(defaultBoothUrls.size()));
-            System.out.println(url);
             layout.setUrl(url);
             layout.setJobFairBooth(jobFairBooth);
             jobFairBoothLayoutRepository.save(layout);
@@ -710,13 +710,149 @@ public class DemoController {
         return ResponseEntity.ok(body);
     }
 
+    private JobFairDTO createFutureDraftJobFair(String companyId, boolean isAssignment){
+        LocalDate localDate = LocalDate.now();
+        LocalDate threeDayLater = localDate.plusDays(3);
+        LocalDate fiveDayLater = localDate.plusDays(5);
+        LocalDate sevenDayLater = localDate.plusDays(7);
+        LocalDate tenDayLater = localDate.plusDays(10);
+
+
+        LocalDateTime startOfDay = threeDayLater.atTime(LocalTime.MIN);
+        long decorateStartTime = startOfDay.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+
+        LocalDateTime endOfDay = fiveDayLater.atTime(LocalTime.MAX);
+        long decorateEndTime = endOfDay.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+
+        startOfDay = sevenDayLater.atTime(LocalTime.MIN);
+        long publicStartTime = startOfDay.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+
+        endOfDay = tenDayLater.atTime(LocalTime.MAX);
+        long publicEndTime = endOfDay.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+
+        DraftJobFairRequest request = new DraftJobFairRequest();
+        request.setName("JOB_FAIR_DEMO_" + getSaltString(2));
+
+        request.setDecorateStartTime(decorateStartTime);
+        request.setDecorateEndTime(decorateEndTime);
+        request.setPublicStartTime(publicStartTime);
+        request.setPublicEndTime(publicEndTime);
+        request.setDescription("description about job fair");
+        request.setTargetAttendant("Sinh vien FPT");
+        request.setHostName("Demo");
+        JobFairDTO jobFairDTO = jobFairMapper.toDTO(request);
+        jobFairDTO.setThumbnailUrl("https://d1t63ajhfi2lx8.cloudfront.net/JobFair-thumbnail/9a5dbbe4-b2b6-4075-9221-a7986d3b49d6");
+        jobFairDTO.setCompany(CompanyDTO.builder().id(companyId).build());
+
+        ShiftDTO morningShift = new ShiftDTO();
+        morningShift.setBeginTime(25200000L);
+        morningShift.setEndTime(36000000L);
+        morningShift.setJobFairId(jobFairDTO.getId());
+
+        ShiftDTO afternoonShift = new ShiftDTO();
+        afternoonShift.setBeginTime(43200000L);
+        afternoonShift.setEndTime(54000000L);
+        afternoonShift.setJobFairId(jobFairDTO.getId());
+
+        jobFairDTO.setShifts(new ArrayList<>());
+        jobFairDTO.getShifts().add(morningShift);
+        jobFairDTO.getShifts().add(afternoonShift);
+
+        jobFairDTO = jobFairService.createNewJobFair(jobFairDTO);
+
+        layoutService.pickJobFairLayout(jobFairDTO.getId(), "ca8979fb-07de-448c-9da1-cd1f485a4255", companyId);
+
+        if (!isAssignment) return jobFairDTO;
+        /*
+         * 1. Random total of booths that need assign
+         * 2. Calculate total number of employee that need to be assigned: totalOfBooth * 4
+         * 3. Use for i to assign  employee. In this loop, get first 4 employee from total of employee above, then assign equally to each booth
+         * */
+        List<JobFairBoothDTO> jobFairBooths = jobFairBoothService.getCompanyBoothByJobFairId(jobFairDTO.getId());
+
+        final int minimumBooth = 1;
+        final int maximumBooth = 5;
+
+        final int totalNumberOfAssignBooth = ThreadLocalRandom.current().nextInt(minimumBooth, maximumBooth + 1);
+
+        //maximum needed employee will be 40, so get 45
+        Page<CompanyEmployeeDTO> pageResult = companyEmployeeService.getAllCompanyEmployees(companyId, "", 45, 0, "account.createTime", Sort.Direction.ASC);
+
+        List<CompanyEmployeeDTO> listShuffle = new ArrayList<>(pageResult.getContent());
+        Collections.shuffle(listShuffle);
+
+        List<CompanyEmployeeEntity> managers = companyEmployeeRepository.findAllByCompanyIdAndAccountRoleId(companyId, Role.COMPANY_MANAGER.ordinal());
+        CompanyEmployeeEntity manager = managers.get(0);
+
+        for (int i = 0; i <= totalNumberOfAssignBooth; i++) {
+
+            List<CompanyEmployeeDTO> neededEmployeeList = listShuffle
+                    .stream()
+                    .filter(item -> item.getAccount().getRole() != Role.COMPANY_MANAGER)
+                    .limit(4).collect(Collectors.toList());
+
+            //make sure these employees must be VERIFIED
+            neededEmployeeList.forEach(item -> {
+                AccountDTO dto = item.getAccount();
+                dto.setStatus(AccountStatus.VERIFIED);
+                item.setAccount(dto);
+            });
+
+            //get first 4 employees from total needed employee
+            //Employee 1: SUPERVISOR
+            assignmentService
+                    .assignEmployee(
+                            manager.getAccountId(),
+                            neededEmployeeList.get(0).getAccountId(),
+                            jobFairBooths.get(i).getId(),
+                            AssignmentType.SUPERVISOR,
+                            companyId,
+                            decorateStartTime,
+                            publicEndTime);
+            //Employee 2: DECORATOR
+            assignmentService
+                    .assignEmployee(
+                            manager.getAccountId(),
+                            neededEmployeeList.get(1).getAccountId(),
+                            jobFairBooths.get(i).getId(),
+                            AssignmentType.DECORATOR,
+                            companyId,
+                            decorateStartTime,
+                            decorateEndTime
+                    );
+            //Employee 3: STAFF
+            assignmentService
+                    .assignEmployee(
+                            manager.getAccountId(),
+                            neededEmployeeList.get(2).getAccountId(),
+                            jobFairBooths.get(i).getId(),
+                            AssignmentType.STAFF,
+                            companyId,
+                            decorateStartTime,
+                            decorateEndTime
+                    );
+            //Employee 4: STAFF
+            assignmentService
+                    .assignEmployee(
+                            manager.getAccountId(),
+                            neededEmployeeList.get(3).getAccountId(),
+                            jobFairBooths.get(i).getId(),
+                            AssignmentType.STAFF,
+                            companyId,
+                            decorateStartTime,
+                            decorateEndTime
+                    );
+
+            listShuffle.removeAll(neededEmployeeList);
+        }
+        return jobFairDTO;
+    }
+
     private JobFairDTO createDraftJobFair(String companyId, boolean isAssignment) {
         LocalDate localDate = LocalDate.now();
         LocalDate fiveDayAgo = localDate.minusDays(5);
         LocalDate twoDayAgo = localDate.minusDays(2);
         LocalDate oneDayAgo = localDate.minusDays(1);
-        LocalDate twoDayLater = localDate.plusDays(2);
-        LocalDate threeDayLater = localDate.plusDays(3);
         LocalDate fiveDayLater = localDate.plusDays(5);
 
 
@@ -878,7 +1014,6 @@ public class DemoController {
             layout.setVersion(1);
             layout.setCreateDate(clock.millis());
             String url = defaultBoothUrls.get(rand.nextInt(defaultBoothUrls.size()));
-            System.out.println(url);
             layout.setUrl(url);
             layout.setJobFairBooth(jobFairBooth);
             jobFairBoothLayoutRepository.save(layout);
@@ -900,7 +1035,10 @@ public class DemoController {
 
     @PostMapping(ApiEndPoint.Demo.CREATE_1_DRAFT_JOB_FAIR_FOR_COMPANY)
     public ResponseEntity<?> create1DraftForEachCompany(@RequestParam String companyId) {
-        JobFairDTO jobFairDTO = createDraftJobFair(companyId, true);
+        boolean isFuture = random.nextBoolean();
+        JobFairDTO jobFairDTO = null;
+        if (isFuture) jobFairDTO = createFutureDraftJobFair(companyId, true);
+        else jobFairDTO = createDraftJobFair(companyId, true);
         return ResponseEntity.ok(jobFairDTO);
     }
 
@@ -927,4 +1065,22 @@ public class DemoController {
         decorateJobFair(jobFairId);
         return ResponseEntity.ok().build();
     }
+
+    private void interviewApplication(List<String> applicationIds) {
+        for (String applicationId: applicationIds){
+            Optional<ApplicationEntity> applicationOpt = applicationRepository.findById(applicationId);
+            applicationOpt.ifPresent(applicationEntity -> {
+                applicationEntity.setInterviewStatus(InterviewStatus.DONE);
+                applicationRepository.save(applicationEntity);
+            });
+        }
+    }
+
+    @PostMapping(ApiEndPoint.Demo.SIMULATE_JOB_FAIR)
+    public ResponseEntity<?> randomInterviewApplication(@RequestBody  Map<String, Object> request){
+        List<String> applicationList = (List<String>) request.get("applicationIds");
+        interviewApplication(applicationList);
+        return ResponseEntity.ok().build();
+    }
+
 }

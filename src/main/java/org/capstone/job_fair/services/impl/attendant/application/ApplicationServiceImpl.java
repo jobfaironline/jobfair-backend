@@ -133,12 +133,24 @@ public class ApplicationServiceImpl implements ApplicationService {
         entity.setYearOfExp(cvEntity.getYearOfExp());
         entity.setJobTitle(cvEntity.getJobTitle());
         entity.setJobLevel(cvEntity.getJobLevel());
-        entity.setActivities(cvEntity.getActivities().stream().map(applicationActivityMapper::toEntity).collect(Collectors.toList()));
-        entity.setCertifications(cvEntity.getCertifications().stream().map(applicationCertificationMapper::toEntity).collect(Collectors.toList()));
-        entity.setEducations(cvEntity.getEducations().stream().map(applicationEducationMapper::toEntity).collect(Collectors.toList()));
-        entity.setReferences(cvEntity.getReferences().stream().map(applicationReferenceMapper::toEntity).collect(Collectors.toList()));
-        entity.setSkills(cvEntity.getSkills().stream().map(applicationSkillMapper::toEntity).collect(Collectors.toList()));
-        entity.setWorkHistories(cvEntity.getWorkHistories().stream().map(applicationWorkHistoryMapper::toEntity).collect(Collectors.toList()));
+        if (cvEntity.getActivities() != null){
+            entity.setActivities(cvEntity.getActivities().stream().map(applicationActivityMapper::toEntity).collect(Collectors.toList()));
+        }
+        if (cvEntity.getCertifications() != null){
+            entity.setCertifications(cvEntity.getCertifications().stream().map(applicationCertificationMapper::toEntity).collect(Collectors.toList()));
+        }
+        if (cvEntity.getEducations() != null){
+            entity.setEducations(cvEntity.getEducations().stream().map(applicationEducationMapper::toEntity).collect(Collectors.toList()));
+        }
+        if (cvEntity.getReferences() != null){
+            entity.setReferences(cvEntity.getReferences().stream().map(applicationReferenceMapper::toEntity).collect(Collectors.toList()));
+        }
+        if (cvEntity.getSkills() != null){
+            entity.setSkills(cvEntity.getSkills().stream().map(applicationSkillMapper::toEntity).collect(Collectors.toList()));
+        }
+        if (cvEntity.getWorkHistories() != null){
+            entity.setWorkHistories(cvEntity.getWorkHistories().stream().map(applicationWorkHistoryMapper::toEntity).collect(Collectors.toList()));
+        }
         entity.setBoothJobPosition(jobPositionOpt.get());
         entity.setAboutMe(cvEntity.getAboutMe());
         entity.setCountryId(cvEntity.getCountryId());

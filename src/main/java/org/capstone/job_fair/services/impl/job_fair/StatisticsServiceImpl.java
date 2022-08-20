@@ -68,7 +68,6 @@ public class StatisticsServiceImpl implements StatisticsService {
 
         JobFairEntity jobFairEntity = jobFairOpt.get();
 
-
         JobFairStatisticsDTO statisticsDTO = new JobFairStatisticsDTO();
         //get general statistics
         statisticsDTO.getJobFair().setName(jobFairEntity.getName());
@@ -78,9 +77,17 @@ public class StatisticsServiceImpl implements StatisticsService {
             return booth.getName() != null;
         }).count();
         statisticsDTO.getGeneralStatistics().setBoothNum((int) boothNum);
-        int jobPositionNum = jobFairEntity.getJobFairBoothList().stream()
-                .map(booth -> booth.getBoothJobPositions().size()).mapToInt(Integer::intValue).sum();
-        statisticsDTO.getGeneralStatistics().setJobPositionNum(jobPositionNum);
+
+        List<String> originJobPositionIds = new ArrayList<>();
+        jobFairEntity.getJobFairBoothList().stream()
+                .flatMap(booth -> booth.getBoothJobPositions().stream())
+                .forEach(jobPosition -> {
+                    if (!originJobPositionIds.contains(jobPosition.getOriginJobPosition())){
+                        originJobPositionIds.add(jobPosition.getOriginJobPosition());
+                    }
+                });
+        statisticsDTO.getGeneralStatistics().setJobPositionNum(originJobPositionIds.size());
+
         int employeeNum = assignmentService.getCountAssignedEmployeeByJobFair(jobFairId);
         statisticsDTO.getGeneralStatistics().setEmployeeNum(employeeNum);
 
@@ -127,7 +134,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         //get job position statistics
         Map<String, List<ApplicationEntity>> applicationByJobPosition = new HashedMap<>();
         applicationPage.forEach(applicationEntity -> {
-            String jobPositionId = applicationEntity.getBoothJobPosition().getId();
+            String jobPositionId = applicationEntity.getBoothJobPosition().getOriginJobPosition();
             if (applicationByJobPosition.containsKey(jobPositionId)) {
                 applicationByJobPosition.get(jobPositionId).add(applicationEntity);
                 return;
@@ -139,19 +146,27 @@ public class StatisticsServiceImpl implements StatisticsService {
 
         List<BoothJobPositionEntity> jobPositionEntities = jobFairEntity.getJobFairBoothList()
                 .stream().flatMap(booth -> booth.getBoothJobPositions().stream()).collect(Collectors.toList());
-        jobPositionEntities.forEach(jobPositionEntity -> {
+        originJobPositionIds.clear();
+
+        jobPositionEntities.stream().filter(jobPosition -> {
+            if (originJobPositionIds.contains(jobPosition.getOriginJobPosition())){
+                return false;
+            }
+            originJobPositionIds.add(jobPosition.getOriginJobPosition());
+            return true;
+        }).forEach(jobPositionEntity -> {
             JobFairStatisticsDTO.JobPosition jobPosition = new JobFairStatisticsDTO.JobPosition();
             jobPosition.setId(jobPositionEntity.getId());
             jobPosition.setName(jobPositionEntity.getTitle());
             jobPosition.setGoal(jobPositionEntity.getNumOfPosition());
-            int appliedCVNum = applicationByJobPosition.get(jobPositionEntity.getId()) != null ? applicationByJobPosition.get(jobPositionEntity.getId()).size() : 0;
-            int approvedCVNum = applicationByJobPosition.get(jobPositionEntity.getId()) == null ? 0 : (int) applicationByJobPosition.get(jobPositionEntity.getId()).stream().filter(application -> {
+            int appliedCVNum = applicationByJobPosition.get(jobPositionEntity.getOriginJobPosition()) != null ? applicationByJobPosition.get(jobPositionEntity.getOriginJobPosition()).size() : 0;
+            int approvedCVNum = applicationByJobPosition.get(jobPositionEntity.getId()) == null ? 0 : (int) applicationByJobPosition.get(jobPositionEntity.getOriginJobPosition()).stream().filter(application -> {
                 return application.getStatus() == ApplicationStatus.APPROVE;
             }).count();
             jobPosition.setCurrent(appliedCVNum);
             jobPosition.setApproveCV(approvedCVNum);
-            if (applicationByJobPosition.get(jobPositionEntity.getId()) != null) {
-                double averageMatchingPoint = applicationByJobPosition.get(jobPositionEntity.getId()).stream().map(applicationEntity -> {
+            if (applicationByJobPosition.get(jobPositionEntity.getOriginJobPosition()) != null) {
+                double averageMatchingPoint = applicationByJobPosition.get(jobPositionEntity.getOriginJobPosition()).stream().map(applicationEntity -> {
                     if (applicationEntity.getMatchingPoint() == null) return 0.0;
                     return applicationEntity.getMatchingPoint();
                 }).mapToDouble(Double::doubleValue).average().orElse(0.0);
@@ -327,7 +342,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         //get job statistics
         Map<String, List<ApplicationEntity>> applicationByJobPosition = new HashedMap<>();
         applications.forEach(applicationEntity -> {
-            String jobPositionId = applicationEntity.getBoothJobPosition().getId();
+            String jobPositionId = applicationEntity.getBoothJobPosition().getOriginJobPosition();
             if (applicationByJobPosition.containsKey(jobPositionId)) {
                 applicationByJobPosition.get(jobPositionId).add(applicationEntity);
                 return;
@@ -339,15 +354,26 @@ public class StatisticsServiceImpl implements StatisticsService {
         List<BoothJobPositionEntity> jobPositionEntities = publishedJobFairs.stream().flatMap(jobFair -> {
             return jobFair.getJobFairBoothList().stream().flatMap(booth -> booth.getBoothJobPositions().stream());
         }).collect(Collectors.toList());
-        jobPositionEntities.forEach(jobPositionEntity -> {
+
+
+        List<String> originJobPositionIds = new ArrayList<>();
+
+        jobPositionEntities.stream().filter(jobPosition -> {
+            if (originJobPositionIds.contains(jobPosition.getOriginJobPosition())){
+                return false;
+            }
+            originJobPositionIds.add(jobPosition.getOriginJobPosition());
+            return true;
+        })
+        .forEach(jobPositionEntity -> {
             CompanyStatisticsDTO.JobPosition jobPosition = new CompanyStatisticsDTO.JobPosition();
             jobPosition.setId(jobPositionEntity.getId());
             jobPosition.setName(jobPositionEntity.getTitle());
             jobPosition.setGoal(jobPositionEntity.getNumOfPosition());
-            int appliedCVNum = applicationByJobPosition.get(jobPositionEntity.getId()) != null ? applicationByJobPosition.get(jobPositionEntity.getId()).size() : 0;
+            int appliedCVNum = applicationByJobPosition.get(jobPositionEntity.getId()) != null ? applicationByJobPosition.get(jobPositionEntity.getOriginJobPosition()).size() : 0;
             jobPosition.setCurrent(appliedCVNum);
             if (applicationByJobPosition.get(jobPositionEntity.getId()) != null) {
-                double averageMatchingPoint = applicationByJobPosition.get(jobPositionEntity.getId()).stream().map(applicationEntity -> {
+                double averageMatchingPoint = applicationByJobPosition.get(jobPositionEntity.getOriginJobPosition()).stream().map(applicationEntity -> {
                     if (applicationEntity.getMatchingPoint() == null) return 0.0;
                     return applicationEntity.getMatchingPoint();
                 }).mapToDouble(Double::doubleValue).average().orElse(0.0);
