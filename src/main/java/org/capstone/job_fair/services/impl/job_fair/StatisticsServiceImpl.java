@@ -199,9 +199,13 @@ public class StatisticsServiceImpl implements StatisticsService {
             int approvedCVNum = applicationByBooth.get(boothEntity.getId()) == null ? 0 : (int) applicationByBooth.get(boothEntity.getId()).stream().filter(application -> {
                 return application.getStatus() == ApplicationStatus.APPROVE;
             }).count();
+            int interviewNum = applicationByBooth.get(boothEntity.getId()) == null ? 0 : (int) applicationByBooth.get(boothEntity.getId()).stream().filter(application -> {
+                return application.getInterviewStatus() != null && application.getInterviewStatus() == InterviewStatus.DONE;
+            }).count();
             booth.setVisitNum(visitNum);
             booth.setCvNum(appliedCvNum);
             booth.setApproveCV(approvedCVNum);
+            booth.setInterviewNum(interviewNum);
             if (applicationByBooth.get(boothEntity.getId()) != null) {
                 double average = applicationByBooth.get(boothEntity.getId()).stream().map(applicationEntity -> {
                     if (applicationEntity.getMatchingPoint() == null) return 0.0;
