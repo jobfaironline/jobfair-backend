@@ -1034,10 +1034,9 @@ public class DemoController {
     }
 
     @PostMapping(ApiEndPoint.Demo.CREATE_1_DRAFT_JOB_FAIR_FOR_COMPANY)
-    public ResponseEntity<?> create1DraftForEachCompany(@RequestParam String companyId) {
-        boolean isFuture = random.nextBoolean();
+    public ResponseEntity<?> create1DraftForEachCompany(@RequestParam String companyId, @RequestParam boolean isHappening) {
         JobFairDTO jobFairDTO = null;
-        if (isFuture) jobFairDTO = createFutureDraftJobFair(companyId, true);
+        if (!isHappening) jobFairDTO = createFutureDraftJobFair(companyId, true);
         else jobFairDTO = createDraftJobFair(companyId, true);
         return ResponseEntity.ok(jobFairDTO);
     }
