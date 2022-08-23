@@ -7,6 +7,7 @@ import org.capstone.job_fair.models.statuses.JobFairPlanStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface JobFairService {
@@ -31,4 +32,6 @@ public interface JobFairService {
     JobFairProgressDTO getJobFairProgress(String jobFairId);
 
     Page<JobFairDTO> findJobFairForAdmin(String name, JobFairConstant.AdminSearchStatus status, Pageable pageable);
+
+    List<JobFairDTO> findJobFairForAdminInRange(long fromTime, long toTime);
 }

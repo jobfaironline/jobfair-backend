@@ -260,6 +260,14 @@ public class JobFairController {
         return ResponseEntity.ok(jobFairProgressDTO);
     }
 
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).ADMIN)")
+    @GetMapping(ApiEndPoint.JobFair.FOR_ADMIN_RANGE)
+    public ResponseEntity<?> getJobFairInRange(@RequestParam long from, @RequestParam long to){
+        List<JobFairDTO> result = jobFairService.findJobFairForAdminInRange(from, to);
+        return ResponseEntity.ok(result);
+    }
+
+
 
 
 }

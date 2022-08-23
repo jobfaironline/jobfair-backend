@@ -588,7 +588,11 @@ public class DemoController {
             evaluateApplicationRequest.setApplicationId(cvIdList.get(i));
             evaluateApplicationRequest.setStatus(ApplicationStatus.APPROVE);
             evaluateApplicationRequest.setEvaluateMessage("Script auto evaluation approve");
-            evaluateApplication(evaluateApplicationRequest, request.getEmployeeId());
+            try {
+                evaluateApplication(evaluateApplicationRequest, request.getEmployeeId());
+            } catch (Exception e) {
+                //ignored
+            }
             result.put(cvIdList.get(i), ApplicationStatus.APPROVE);
         }
         //Reject

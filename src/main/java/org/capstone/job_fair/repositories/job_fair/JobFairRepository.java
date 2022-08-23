@@ -47,5 +47,7 @@ public interface JobFairRepository extends JpaRepository<JobFairEntity, String> 
             nativeQuery = true)
     Page<JobFairEntity> findJobFairThatEmployeeHasAssignment(@Param("companyEmployeeId") String companyEmployeeId, @Param("jobFairName") String jobFairName, Pageable pageable);
 
+    @Query("SELECT j FROM JobFairEntity j where j.status = 1 and j.createTime >= :from and j.createTime <= :to")
+    List<JobFairEntity> findJobFairForAdminInRange(@Param("from") long from, @Param("to") long to);
 
 }

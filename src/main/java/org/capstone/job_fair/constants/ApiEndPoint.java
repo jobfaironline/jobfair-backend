@@ -117,6 +117,8 @@ public final class ApiEndPoint {
 
         public static final String JOB_FAIR = ROOT_ENDPOINT + VERSION + "/job-fairs";
         public static final String FOR_ADMIN = JOB_FAIR + "/admins";
+
+        public static final String FOR_ADMIN_RANGE = FOR_ADMIN + "/range";
         public static final String FOR_3D_MAP = JOB_FAIR + "/for-3d-map";
         public static final String PUBLISH = JOB_FAIR + "/publish";
         public static final String PUBLISHABLE = JOB_FAIR + "/check-publish";

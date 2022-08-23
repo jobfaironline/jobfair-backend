@@ -30,6 +30,7 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 import java.time.Clock;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -264,5 +265,10 @@ public class JobFairServiceImpl implements JobFairService {
         if (status == JobFairConstant.AdminSearchStatus.COMING_SOON)
             return jobFairRepository.findUpComingJobFair("%" + name + "%", now, pageable).map(jobFairMapper::toDTO);
         return jobFairRepository.findPastJobFair("%" + name + "%", now, pageable).map(jobFairMapper::toDTO);
+    }
+
+    @Override
+    public List<JobFairDTO> findJobFairForAdminInRange(long fromTime, long toTime) {
+        return jobFairRepository.findJobFairForAdminInRange(fromTime, toTime).stream().map(jobFairMapper::toDTO).collect(Collectors.toList());
     }
 }
