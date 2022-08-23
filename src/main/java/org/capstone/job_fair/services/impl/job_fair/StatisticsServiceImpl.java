@@ -38,6 +38,7 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class StatisticsServiceImpl implements StatisticsService {
 
+    public static long visitorNum = 493;
     @Autowired
     private JobFairRepository jobFairRepository;
 
@@ -446,7 +447,6 @@ public class StatisticsServiceImpl implements StatisticsService {
 
         //general statistics
         long companyNum = companyRepository.count();
-        long visitorNum = 0;
         long userNum = verifiedNum + inactiveNum + registeredNum + suspendedNum;
         result.getGeneralStatistics().setCompanyNum(companyNum);
         result.getGeneralStatistics().setVisitorNum(visitorNum);
