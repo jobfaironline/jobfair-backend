@@ -373,6 +373,9 @@ public class DemoController {
             if (booth.getId().equals(jobFairBoothId)) continue;
             JobFairBoothEntity jobFairBooth = jobFairBoothRepository.getById(booth.getId());
             jobFairBooth.setDescription("This is department description");
+            if (jobFairBooth.getName() == null || jobFairBooth.getName().isEmpty()){
+                jobFairBooth.setName("Untitled");
+            }
             JobFairBoothLayoutEntity layout = new JobFairBoothLayoutEntity();
             layout.setId(UUID.randomUUID().toString());
             layout.setVersion(1);
@@ -612,7 +615,7 @@ public class DemoController {
         createCompanyRequest.setSizeId(1);
         CreateCompanyRequest.BenefitRequest benefit = new CreateCompanyRequest.BenefitRequest();
         benefit.setId(1);
-        benefit.setDescription("alalala");
+        benefit.setDescription("this a scripted company");
         List<CreateCompanyRequest.BenefitRequest> benefitss = new ArrayList<>();
         benefitss.add(benefit);
         List<Integer> subCategoriesIds = new ArrayList<>();
@@ -647,16 +650,19 @@ public class DemoController {
         companyEmployeeRepository.save(entity);
 
         //create employees
+        List<CompanyEmployeeEntity> listCompanyEntities = new ArrayList<>();
         for (int i = 0; i < numberOfEmployees; i++) {
             CompanyEmployeeRegisterRequest createEmployeeRequest = new CompanyEmployeeRegisterRequest();
-            createEmployeeRequest.setEmail("employee_demo_company_" + companyName + i + "_" + getSaltString(2) + "@gmail.com");
-            createEmployeeRequest.setFirstName("Employee");
-            createEmployeeRequest.setMiddleName("Of");
-            createEmployeeRequest.setLastName(companyName + "_" + i);
-            createEmployeeRequest.setDepartment("DEPARTMENT_DEMO_" + i + "OF_COMPANY_" + companyName);
-            createEmployeeRequest.setEmployeeId("EMPLOYEE_" + i + "+_OF_COMPANY" + companyName);
+            CompanyEmployeeDTO employeeDTO = new CompanyEmployeeDTO();
+            AccountDTO accountDTO = new AccountDTO();
+            employeeDTO.setAccount(accountDTO);
+            accountDTO.setEmail("employee_demo_company_" + companyName + i + "_" + getSaltString(2) + "@gmail.com");
+            accountDTO.setFirstname("Employee");
+            accountDTO.setMiddlename("Of");
+            accountDTO.setLastname(companyName + "_" + i);
+            employeeDTO.setDepartment("DEPARTMENT_DEMO_" + i + "OF_COMPANY_" + companyName);
+            employeeDTO.setEmployeeId("EMPLOYEE_" + i + "+_OF_COMPANY" + companyName);
 
-            CompanyEmployeeDTO employeeDTO = companyEmployeeMapper.toDTO(createEmployeeRequest);
             String password = PasswordGenerator.generatePassword();
             employeeDTO.getAccount().setPassword(password);
             employeeDTO.getAccount().setRole(Role.COMPANY_EMPLOYEE);
@@ -669,11 +675,14 @@ public class DemoController {
             entity.setCompany(companyEntity);
             String hashPassword = encoder.encode(password);
             entity.getAccount().setPassword(hashPassword);
-            companyEmployeeRepository.save(entity);
+            listCompanyEntities.add(entity);
         }
+        companyEmployeeRepository.saveAll(listCompanyEntities);
+
 
 
         List<String> jobNames = Arrays.asList("Unity Game Developer", "Java Software Engineer", "Test Automation Specialist", "DevOps", "Project Manager", "Frontend Developer", "Full Stack Developer", "Accounting Associate", "Graphic Design Specialist");
+        List<JobPositionEntity> jobPositionEntities = new ArrayList<>();
         //create job position
         for (String name : jobNames){
             JobPositionDTO jobPositionDTO = new JobPositionDTO();
@@ -694,10 +703,9 @@ public class DemoController {
             jobPositionDTO.setCreatedDate(currentTime);
 
             JobPositionEntity jobPositionEntity = jobPositionMapper.toEntity(jobPositionDTO);
-            jobPositionRepository.save(jobPositionEntity);
+            jobPositionEntities.add(jobPositionEntity);
         }
-
-
+        jobPositionRepository.saveAll(jobPositionEntities);
 
         return companyDTO.getId();
     }
