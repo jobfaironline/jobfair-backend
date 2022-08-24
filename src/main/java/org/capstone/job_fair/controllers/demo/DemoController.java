@@ -34,6 +34,7 @@ import org.capstone.job_fair.models.entities.company.job.JobPositionEntity;
 import org.capstone.job_fair.models.entities.job_fair.JobFairEntity;
 import org.capstone.job_fair.models.entities.job_fair.ShiftEntity;
 import org.capstone.job_fair.models.entities.job_fair.booth.AssignmentEntity;
+import org.capstone.job_fair.models.entities.job_fair.booth.BoothJobPositionEntity;
 import org.capstone.job_fair.models.entities.job_fair.booth.JobFairBoothEntity;
 import org.capstone.job_fair.models.entities.job_fair.booth.JobFairBoothLayoutEntity;
 import org.capstone.job_fair.models.enums.*;
@@ -46,6 +47,7 @@ import org.capstone.job_fair.repositories.company.CompanyEmployeeRepository;
 import org.capstone.job_fair.repositories.company.job.JobPositionRepository;
 import org.capstone.job_fair.repositories.job_fair.JobFairRepository;
 import org.capstone.job_fair.repositories.job_fair.job_fair_booth.AssignmentRepository;
+import org.capstone.job_fair.repositories.job_fair.job_fair_booth.BoothJobPositionRepository;
 import org.capstone.job_fair.repositories.job_fair.job_fair_booth.JobFairBoothLayoutRepository;
 import org.capstone.job_fair.repositories.job_fair.job_fair_booth.JobFairBoothRepository;
 import org.capstone.job_fair.services.interfaces.attendant.AttendantService;
@@ -167,6 +169,9 @@ public class DemoController {
 
     @Autowired
     private Clock clock;
+
+    @Autowired
+    private BoothJobPositionRepository boothJobPositionRepository;
 
     private Random random = new Random();
 
@@ -494,6 +499,26 @@ public class DemoController {
         return result.getId();
     }
 
+    private void evaluateApplication(EvaluateApplicationRequest request){
+        ApplicationEntity entity = applicationRepository.getById(request.getApplicationId());
+        ApplicationDTO dto = new ApplicationDTO();
+        dto.setId(request.getApplicationId());
+        dto.setEvaluateMessage(request.getEvaluateMessage());
+        dto.setStatus(request.getStatus());
+
+        JobFairBoothEntity jobFairBoothEntity = entity.getBoothJobPosition().getJobFairBooth();
+        List<AssignmentEntity> assignmentEntities = assignmentRepository.findByJobFairBoothIdAndType(jobFairBoothEntity.getId(), AssignmentType.INTERVIEWER);
+
+
+        dto = applicationService.evaluateApplication(dto, assignmentEntities.get(0).getCompanyEmployee().getAccountId());
+
+        //create notification message
+        NotificationMessageDTO notificationMessageDTO = new NotificationMessageDTO();
+        notificationMessageDTO.setMessage(MessageUtil.getMessage(MessageConstant.Application.EVALUATE_MESSAGE_TO_ATTENDANT));
+        notificationMessageDTO.setNotificationType(NotificationType.NOTI);
+        notificationMessageDTO.setTitle("Application finished evaluate");
+    }
+
     private void evaluateApplication(EvaluateApplicationRequest request, String userId) {
 
         ApplicationDTO dto = new ApplicationDTO();
@@ -515,9 +540,11 @@ public class DemoController {
         notificationService.createNotification(notificationMessageDTO, dto.getAttendant().getAccount().getId());
     }
 
+
     @PostMapping(ApiEndPoint.Demo.SUBMIT_MULTIPLE_APPLICATION + "/apply")
     public ResponseEntity<?> submitMultipleApplication(@RequestBody CreateApplicationAndEvaluateRequest request) {
-        List<String> cvIdList = request.getCvId();
+        List<String> cvIdList = request.getCvId().subList(0, 20);
+
         final double HIGH_MATCHING_POINT = 0.8;
         final double MEDIUM_MATCHING_POINT = 0.6;
         final double LOW_MATCHING_POINT = 0.3;
@@ -566,13 +593,36 @@ public class DemoController {
             String applicationId = applyApplication(createApplicationRequest, accountId, TestStatus.PASS, LOW_MATCHING_POINT + beta);
             result.add(applicationId);
         }
+
+
+        List<String> otherCVList = request.getCvId().subList(20, request.getCvId().size());
+        JobFairEntity jobFair = assignmentEntity.getJobFairBooth().getJobFair();
+        List<BoothJobPositionEntity> jobs = boothJobPositionRepository.findByJobFairBoothJobFairId(jobFair.getId());
+        jobs = jobs.stream().filter(boothJobPositionEntity -> {
+            return !boothJobPositionEntity.getJobFairBooth().getId().equals(assignmentEntity.getJobFairBooth().getId()) && boothJobPositionEntity.getJobFairBooth().getName() != null;
+        }).collect(Collectors.toList());
+        int maxIndex = jobs.size() > otherCVList.size() ? otherCVList.size() : jobs.size();
+        for (i = 0; i < maxIndex; i ++){
+            String cv = otherCVList.get(i);
+            String accountId = cvRepository.findById(cv).get().getAttendant().getAccountId();
+            CreateApplicationRequest createApplicationRequest = new CreateApplicationRequest();
+            createApplicationRequest.setBoothJobPositionId(jobs.get(i).getId());
+            createApplicationRequest.setCvId(cv);
+            double beta = ThreadLocalRandom.current().nextDouble(0, 0.1);
+            String applicationId = applyApplication(createApplicationRequest, accountId, TestStatus.PASS, MEDIUM_MATCHING_POINT + beta);
+            result.add(applicationId);
+        }
+
         return ResponseEntity.ok(result);
     }
 
 
     @PostMapping(ApiEndPoint.Demo.SUBMIT_MULTIPLE_APPLICATION + "/evaluate")
     public ResponseEntity<?> evaluateMultipleApplication(@RequestBody CreateApplicationAndEvaluateRequest request) {
-        List<String> cvIdList = request.getCvId();
+        List<String> cvIdList = request.getCvId().subList(0, 20);
+        List<String> otherCVList = request.getCvId().subList(20, request.getCvId().size());
+
+
 
         final double numberOfApprove = cvIdList.size() * 0.3;
         final double numberOfPending = cvIdList.size() * 0.3;
@@ -603,6 +653,17 @@ public class DemoController {
             evaluateApplicationRequest.setEvaluateMessage("Script auto evaluation reject " + i);
             evaluateApplication(evaluateApplicationRequest, request.getEmployeeId());
             result.put(cvIdList.get(i), ApplicationStatus.REJECT);
+        }
+
+        for (String cvId: otherCVList){
+            ApplicationStatus status = random.nextBoolean() ? ApplicationStatus.APPROVE : ApplicationStatus.REJECT;
+
+            EvaluateApplicationRequest evaluateApplicationRequest = new EvaluateApplicationRequest();
+            evaluateApplicationRequest.setApplicationId(cvId);
+            evaluateApplicationRequest.setStatus(status);
+            evaluateApplicationRequest.setEvaluateMessage("Script auto evaluation");
+            evaluateApplication(evaluateApplicationRequest);
+            result.put(cvId, status);
         }
         return ResponseEntity.ok(result);
     }
