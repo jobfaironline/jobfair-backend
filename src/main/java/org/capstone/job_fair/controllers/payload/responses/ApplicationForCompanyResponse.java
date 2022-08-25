@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.capstone.job_fair.models.enums.ApplicationStatus;
+import org.capstone.job_fair.models.statuses.InterviewStatus;
 
 @Data
 @NoArgsConstructor
@@ -19,4 +20,6 @@ public class ApplicationForCompanyResponse {
     ApplicationStatus status;
     Long evaluateDate;
     Double matchingPoint;
+    InterviewStatus interviewStatus;
+    Boolean isQualified;
 }

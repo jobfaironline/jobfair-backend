@@ -47,6 +47,6 @@ public interface InterviewService {
 
     void swapSchedule(String fromApplicationId, String toApplicationId);
 
-    ApplicationDTO createInterviewReport(String applicationId, String advantage, String disadvantage, String note);
+    ApplicationDTO createInterviewReport(String applicationId, String advantage, String disadvantage, String note, boolean isQualified);
 
 }

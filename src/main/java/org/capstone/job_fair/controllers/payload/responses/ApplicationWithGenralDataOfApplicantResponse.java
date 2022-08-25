@@ -48,5 +48,6 @@ public class ApplicationWithGenralDataOfApplicantResponse {
     private String attendantDisadvantage;
     private String interviewNote;
     private InterviewStatus interviewStatus;
+    private Boolean isQualified;
 
 }

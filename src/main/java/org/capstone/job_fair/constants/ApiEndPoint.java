@@ -48,6 +48,8 @@ public final class ApiEndPoint {
 
         public static final String SIMULATE_JOB_FAIR = DEMO_ENDPOINT + "/simulate-job-fair";
 
+        public static final String PUBLIC_JOB_FAIR = DEMO_ENDPOINT + "/public-job-fair";
+
     }
 
     public static final class Quiz {

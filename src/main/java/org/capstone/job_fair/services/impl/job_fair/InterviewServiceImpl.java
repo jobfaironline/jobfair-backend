@@ -44,6 +44,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.*;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -404,6 +405,21 @@ public class InterviewServiceImpl implements InterviewService {
         private long endTime;
     }
 
+    private long roundToLater15Minute(long time){
+        long now = clock.millis();
+        long fifteenMinute = 15 * 60 * 1000L;
+        LocalDateTime dateTime =
+                LocalDateTime.ofInstant(Instant.ofEpochMilli(time),
+                        clock.getZone());
+        LocalDateTime lastQuarter = dateTime.truncatedTo(ChronoUnit.HOURS)
+                .plusMinutes(15 * (dateTime.getMinute() / 15));
+
+        long nearestQuarter = lastQuarter.atZone(clock.getZone()).toInstant().toEpochMilli();
+        if (nearestQuarter < now)
+            nearestQuarter += fifteenMinute;
+        return nearestQuarter;
+    }
+
 
     /***
      *
@@ -415,8 +431,16 @@ public class InterviewServiceImpl implements InterviewService {
      */
     private List<Schedule> getFreeSchedule(long beginTime, long endTime, List<ApplicationEntity> scheduleList) {
         List<Schedule> result = new ArrayList<>();
+        long now = clock.millis();
+        long bufferTime = roundToLater15Minute(now + interviewBufferLength);
+
         if (scheduleList.isEmpty()) {
-            result.add(new Schedule(beginTime, endTime));
+            if (bufferTime < beginTime){
+                result.add(new Schedule(beginTime, endTime));
+            }
+            if (bufferTime > beginTime && bufferTime < endTime){
+                result.add(new Schedule(bufferTime, endTime));
+            }
             return result;
         }
         long beginScheduleTime = beginTime;
@@ -429,6 +453,17 @@ public class InterviewServiceImpl implements InterviewService {
         //check last schedule to end time
         if (applicationSchedule.getEndTime() < endTime) {
             result.add(new Schedule(applicationSchedule.getEndTime(), endTime));
+        }
+        //remove now schedule
+        int i = 0;
+        while (i < result.size()){
+            Schedule schedule = result.get(i);
+            if (bufferTime < schedule.getBeginTime()) break;
+            if (bufferTime > schedule.getBeginTime() && bufferTime < schedule.getEndTime() ){
+                schedule.setBeginTime(bufferTime);
+                break;
+            }
+            result.remove(0);
         }
 
         return result;
@@ -664,7 +699,7 @@ public class InterviewServiceImpl implements InterviewService {
 
     @Override
     @Transactional
-    public ApplicationDTO createInterviewReport(String applicationId, String advantage, String disadvantage, String note) {
+    public ApplicationDTO createInterviewReport(String applicationId, String advantage, String disadvantage, String note, boolean isQualified) {
         Optional<ApplicationEntity> applicationOpt = applicationRepository.findById(applicationId);
         if (!applicationOpt.isPresent()) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Application.APPLICATION_NOT_FOUND));
@@ -678,6 +713,7 @@ public class InterviewServiceImpl implements InterviewService {
         application.setAttendantAdvantage(advantage);
         application.setAttendantDisadvantage(disadvantage);
         application.setInterviewNote(note);
+        application.setIsQualified(isQualified);
         applicationRepository.save(application);
         return applicationMapper.toDTO(application);
 

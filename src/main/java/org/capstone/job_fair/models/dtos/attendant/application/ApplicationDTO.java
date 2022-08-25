@@ -53,6 +53,7 @@ public class ApplicationDTO {
     private String attendantAdvantage;
     private String attendantDisadvantage;
     private String interviewNote;
+    private Boolean isQualified;
     private Double matchingPoint;
     private String aboutMe;
     private String fullName;

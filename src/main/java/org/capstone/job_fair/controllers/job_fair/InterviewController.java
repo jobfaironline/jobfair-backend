@@ -228,7 +228,7 @@ public class InterviewController {
     @PostMapping(ApiEndPoint.Interview.REPORT)
     @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE)")
     public ResponseEntity<?> createReport(@RequestBody CreateInterviewReportRequest request) {
-        ApplicationDTO application = interviewService.createInterviewReport(request.getApplicationId(), request.getAdvantage(), request.getDisadvantage(), request.getNote());
+        ApplicationDTO application = interviewService.createInterviewReport(request.getApplicationId(), request.getAdvantage(), request.getDisadvantage(), request.getNote(), request.isQualified());
         return ResponseEntity.ok(application);
     }
 
