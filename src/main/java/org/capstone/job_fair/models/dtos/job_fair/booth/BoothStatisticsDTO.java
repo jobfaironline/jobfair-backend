@@ -37,5 +37,6 @@ public class BoothStatisticsDTO {
         private int goal = 0;
         private int current = 0;
         private double matchingPointAverage = 0;
+        private int approveCV = 0;
     }
 }

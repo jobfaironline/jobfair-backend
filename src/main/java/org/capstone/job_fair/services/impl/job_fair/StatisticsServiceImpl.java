@@ -83,7 +83,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         jobFairEntity.getJobFairBoothList().stream()
                 .flatMap(booth -> booth.getBoothJobPositions().stream())
                 .forEach(jobPosition -> {
-                    if (!originJobPositionIds.contains(jobPosition.getOriginJobPosition())){
+                    if (!originJobPositionIds.contains(jobPosition.getOriginJobPosition())) {
                         originJobPositionIds.add(jobPosition.getOriginJobPosition());
                     }
                 });
@@ -145,12 +145,25 @@ public class StatisticsServiceImpl implements StatisticsService {
             applicationByJobPosition.put(jobPositionId, newList);
         });
 
+
         List<BoothJobPositionEntity> jobPositionEntities = jobFairEntity.getJobFairBoothList()
-                .stream().flatMap(booth -> booth.getBoothJobPositions().stream()).collect(Collectors.toList());
+                .stream()
+                .filter(jobFairBoothEntity -> jobFairBoothEntity.getName() != null)
+                .flatMap(booth -> booth.getBoothJobPositions().stream()).collect(Collectors.toList());
         originJobPositionIds.clear();
 
+        Map<String, Integer> jobGoals = new HashMap<>();
+        jobPositionEntities.forEach(jobPosition -> {
+            String jobPositionId = jobPosition.getOriginJobPosition();
+            if (jobGoals.containsKey(jobPositionId)) {
+                jobGoals.put(jobPositionId, jobGoals.get(jobPositionId) + jobPosition.getNumOfPosition());
+                return;
+            }
+            jobGoals.put(jobPositionId, jobPosition.getNumOfPosition());
+        });
+
         jobPositionEntities.stream().filter(jobPosition -> {
-            if (originJobPositionIds.contains(jobPosition.getOriginJobPosition())){
+            if (originJobPositionIds.contains(jobPosition.getOriginJobPosition())) {
                 return false;
             }
             originJobPositionIds.add(jobPosition.getOriginJobPosition());
@@ -159,9 +172,9 @@ public class StatisticsServiceImpl implements StatisticsService {
             JobFairStatisticsDTO.JobPosition jobPosition = new JobFairStatisticsDTO.JobPosition();
             jobPosition.setId(jobPositionEntity.getId());
             jobPosition.setName(jobPositionEntity.getTitle());
-            jobPosition.setGoal(jobPositionEntity.getNumOfPosition());
+            jobPosition.setGoal(jobGoals.get(jobPositionEntity.getOriginJobPosition()));
             int appliedCVNum = applicationByJobPosition.get(jobPositionEntity.getOriginJobPosition()) != null ? applicationByJobPosition.get(jobPositionEntity.getOriginJobPosition()).size() : 0;
-            int approvedCVNum = applicationByJobPosition.get(jobPositionEntity.getId()) == null ? 0 : (int) applicationByJobPosition.get(jobPositionEntity.getOriginJobPosition()).stream().filter(application -> {
+            int approvedCVNum = applicationByJobPosition.get(jobPositionEntity.getOriginJobPosition()) == null ? 0 : (int) applicationByJobPosition.get(jobPositionEntity.getOriginJobPosition()).stream().filter(application -> {
                 return application.getStatus() == ApplicationStatus.APPROVE;
             }).count();
             jobPosition.setCurrent(appliedCVNum);
@@ -270,7 +283,9 @@ public class StatisticsServiceImpl implements StatisticsService {
             jobPosition.setName(jobPositionEntity.getTitle());
             jobPosition.setGoal(jobPositionEntity.getNumOfPosition());
             int appliedCVNum = applicationByJobPosition.get(jobPositionEntity.getId()) != null ? applicationByJobPosition.get(jobPositionEntity.getId()).size() : 0;
+            long approveCVNumPerJob =  applicationByJobPosition.get(jobPositionEntity.getId()) != null ? applicationByJobPosition.get(jobPositionEntity.getId()).stream().filter(applicationEntity -> applicationEntity.getStatus() == ApplicationStatus.APPROVE).count() : 0;
             jobPosition.setCurrent(appliedCVNum);
+            jobPosition.setApproveCV((int) approveCVNumPerJob);
             if (applicationByJobPosition.get(jobPositionEntity.getId()) != null) {
                 double averageMatchingPoint = applicationByJobPosition.get(jobPositionEntity.getId()).stream().map(applicationEntity -> {
                     if (applicationEntity.getMatchingPoint() == null) return 0.0;
@@ -309,7 +324,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 
         result.getGeneralStatistics().setCreatedJobFairNum(createdJobFairNum);
         result.getGeneralStatistics().setPublishedJobFairNum(publishedJobFairNum);
-        result.getGeneralStatistics().setParticipantNum(0);
+        result.getGeneralStatistics().setParticipantNum(129);
         result.getGeneralStatistics().setBoothTotalNums(boothTotalNum);
         result.getGeneralStatistics().setInProgressJobFairNum(inProgressJobFairNum);
         result.getGeneralStatistics().setPastJobFairNum(pastJobFairNum);
@@ -357,35 +372,43 @@ public class StatisticsServiceImpl implements StatisticsService {
             applicationByJobPosition.put(jobPositionId, newList);
         });
         List<BoothJobPositionEntity> jobPositionEntities = publishedJobFairs.stream().flatMap(jobFair -> {
-            return jobFair.getJobFairBoothList().stream().flatMap(booth -> booth.getBoothJobPositions().stream());
+            return jobFair.getJobFairBoothList().stream().filter(jobFairBoothEntity -> jobFairBoothEntity.getName() != null).flatMap(booth -> booth.getBoothJobPositions().stream());
         }).collect(Collectors.toList());
 
+        Map<String, Integer> jobGoals = new HashMap<>();
+        jobPositionEntities.forEach(jobPosition -> {
+            String jobPositionId = jobPosition.getOriginJobPosition();
+            if (jobGoals.containsKey(jobPositionId)) {
+                jobGoals.put(jobPositionId, jobGoals.get(jobPositionId) + jobPosition.getNumOfPosition());
+                return;
+            }
+            jobGoals.put(jobPositionId, jobPosition.getNumOfPosition());
+        });
 
         List<String> originJobPositionIds = new ArrayList<>();
-
         jobPositionEntities.stream().filter(jobPosition -> {
-            if (originJobPositionIds.contains(jobPosition.getOriginJobPosition())){
-                return false;
-            }
-            originJobPositionIds.add(jobPosition.getOriginJobPosition());
-            return true;
-        })
-        .forEach(jobPositionEntity -> {
-            CompanyStatisticsDTO.JobPosition jobPosition = new CompanyStatisticsDTO.JobPosition();
-            jobPosition.setId(jobPositionEntity.getId());
-            jobPosition.setName(jobPositionEntity.getTitle());
-            jobPosition.setGoal(jobPositionEntity.getNumOfPosition());
-            int appliedCVNum = applicationByJobPosition.get(jobPositionEntity.getId()) != null ? applicationByJobPosition.get(jobPositionEntity.getOriginJobPosition()).size() : 0;
-            jobPosition.setCurrent(appliedCVNum);
-            if (applicationByJobPosition.get(jobPositionEntity.getId()) != null) {
-                double averageMatchingPoint = applicationByJobPosition.get(jobPositionEntity.getOriginJobPosition()).stream().map(applicationEntity -> {
-                    if (applicationEntity.getMatchingPoint() == null) return 0.0;
-                    return applicationEntity.getMatchingPoint();
-                }).mapToDouble(Double::doubleValue).average().orElse(0.0);
-                jobPosition.setMatchingPointAverage(averageMatchingPoint);
-            }
-            result.getJobPositions().add(jobPosition);
-        });
+                    if (originJobPositionIds.contains(jobPosition.getOriginJobPosition())) {
+                        return false;
+                    }
+                    originJobPositionIds.add(jobPosition.getOriginJobPosition());
+                    return true;
+                })
+                .forEach(jobPositionEntity -> {
+                    CompanyStatisticsDTO.JobPosition jobPosition = new CompanyStatisticsDTO.JobPosition();
+                    jobPosition.setId(jobPositionEntity.getId());
+                    jobPosition.setName(jobPositionEntity.getTitle());
+                    jobPosition.setGoal(jobGoals.get(jobPositionEntity.getOriginJobPosition()));
+                    int appliedCVNum = applicationByJobPosition.get(jobPositionEntity.getOriginJobPosition()) != null ? applicationByJobPosition.get(jobPositionEntity.getOriginJobPosition()).size() : 0;
+                    jobPosition.setCurrent(appliedCVNum);
+                    if (applicationByJobPosition.get(jobPositionEntity.getOriginJobPosition()) != null) {
+                        double averageMatchingPoint = applicationByJobPosition.get(jobPositionEntity.getOriginJobPosition()).stream().map(applicationEntity -> {
+                            if (applicationEntity.getMatchingPoint() == null) return 0.0;
+                            return applicationEntity.getMatchingPoint();
+                        }).mapToDouble(Double::doubleValue).average().orElse(0.0);
+                        jobPosition.setMatchingPointAverage(averageMatchingPoint);
+                    }
+                    result.getJobPositions().add(jobPosition);
+                });
 
         //get job fair statistics
         publishedJobFairs.forEach(jobFair -> {
