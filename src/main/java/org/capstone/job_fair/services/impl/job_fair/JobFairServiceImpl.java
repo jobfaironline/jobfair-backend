@@ -88,6 +88,7 @@ public class JobFairServiceImpl implements JobFairService {
         dto.setStatus(JobFairPlanStatus.DRAFT);
         validateJobFairTime(dto);
         JobFairEntity entity = jobFairMapper.toEntity(dto);
+        entity.setVisitNum(0);
         entity = jobFairRepository.save(entity);
         return jobFairMapper.toDTO(entity);
     }

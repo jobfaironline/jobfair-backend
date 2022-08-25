@@ -324,14 +324,14 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public Page<ApplicationEntity> getApplicationOfCompanyByJobFairIdAndStatus(String companyId, String jobFairId, List<ApplicationStatus> statusList, int pageSize, int offset, String sortBy, Sort.Direction direction) {
+    public Page<ApplicationEntity> getApplicationOfCompanyByJobFairIdAndStatus(String companyId, String jobFairId, List<ApplicationStatus> statusList, String attendantName, int pageSize, int offset, String sortBy, Sort.Direction direction) {
         validatePaging(pageSize, offset);
         sortBy = applicationForCompanySortByMapper(sortBy);
         if (statusList == null || statusList.isEmpty()) {
             statusList = Arrays.asList(ApplicationStatus.FINISHED, ApplicationStatus.PENDING, ApplicationStatus.CANCEL, ApplicationStatus.APPROVE, ApplicationStatus.REJECT);
         }
 
-        Page<ApplicationEntity> applicationEntityPage = applicationRepository.findAllApplicationOfCompanyByJobFairIdAndStatusIn(companyId, jobFairId, statusList, PageRequest.of(offset, pageSize).withSort(direction, sortBy));
+        Page<ApplicationEntity> applicationEntityPage = applicationRepository.findAllApplicationOfCompanyByJobFairIdAndStatusIn(companyId, jobFairId, statusList, attendantName, PageRequest.of(offset, pageSize).withSort(direction, sortBy));
         return applicationEntityPage;
     }
 

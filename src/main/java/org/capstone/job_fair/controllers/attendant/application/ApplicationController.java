@@ -163,7 +163,7 @@ public class ApplicationController {
         if (jobPositionId != null)
             applicationForCompanyResponses = applicationService.getApplicationOfCompanyByJobPositionIdAndStatus(companyId, jobPositionId, statusList, pageSize, offset, sortBy, direction);
         if (jobFairId != null)
-            applicationForCompanyResponses = applicationService.getApplicationOfCompanyByJobFairIdAndStatus(companyId, jobFairId, statusList, pageSize, offset, sortBy, direction);
+            applicationForCompanyResponses = applicationService.getApplicationOfCompanyByJobFairIdAndStatus(companyId, jobFairId, statusList, attendantName, pageSize, offset, sortBy, direction);
         if (jobFairId == null && jobPositionId == null)
             applicationForCompanyResponses = applicationService.getApplicationOfCompanyByJobFairNameAndJobPositionNameAndAttendantNameAndStatus(companyId, jobFairName, jobPositionName, attendantName, statusList, pageSize, offset, sortBy, direction);
 

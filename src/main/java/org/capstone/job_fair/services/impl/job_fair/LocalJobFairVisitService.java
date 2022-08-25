@@ -7,8 +7,10 @@ import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.models.dtos.dynamoDB.NotificationMessageDTO;
 import org.capstone.job_fair.models.entities.dynamoDB.JobFairVisitEntity;
 import org.capstone.job_fair.models.entities.dynamoDB.JobhubConnectionsEntity;
+import org.capstone.job_fair.models.entities.job_fair.JobFairEntity;
 import org.capstone.job_fair.models.entities.job_fair.booth.JobFairBoothEntity;
 import org.capstone.job_fair.models.enums.NotificationType;
+import org.capstone.job_fair.repositories.job_fair.JobFairRepository;
 import org.capstone.job_fair.repositories.job_fair.job_fair_booth.JobFairBoothRepository;
 import org.capstone.job_fair.repositories.local_dynamo.JobFairVisitRepository;
 import org.capstone.job_fair.repositories.local_dynamo.JobHubConnectionsRepository;
@@ -43,6 +45,10 @@ public class LocalJobFairVisitService implements JobFairVisitService {
 
     @Autowired
     private JobFairVisitRepository jobFairVisitRepository;
+
+    @Autowired
+    private JobFairRepository jobFairRepository;
+
 
     private List<String> getConnectedUsers() {
         List<JobhubConnectionsEntity> scanResult = jobHubConnectionsRepository.findAll();
@@ -93,6 +99,11 @@ public class LocalJobFairVisitService implements JobFairVisitService {
     @Override
     @Transactional
     public void visitJobFair(String userId, String jobFairId) {
+
+        JobFairEntity jobFair = jobFairRepository.getById(jobFairId);
+        jobFair.setVisitNum(jobFair.getVisitNum() + 1);
+        jobFairRepository.save(jobFair);
+
         JobFairVisitEntity entity = new JobFairVisitEntity();
         entity.setUserId(userId);
         entity.setJobFairId(jobFairId);
@@ -112,14 +123,15 @@ public class LocalJobFairVisitService implements JobFairVisitService {
     @SneakyThrows
     @Transactional
     public void visitBooth(String userId, String jobFairBoothId) {
-        Thread.sleep(AWSConstant.DYNAMO_DELAY_TIME);
-        //this is a shitty method this should be optimized
-
         Optional<JobFairBoothEntity> jobFairBoothOpt = jobFairBoothRepository.findById(jobFairBoothId);
         if (!jobFairBoothOpt.isPresent()) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.JobFairBooth.NOT_FOUND));
         }
         JobFairBoothEntity jobFairBooth = jobFairBoothOpt.get();
+        jobFairBooth.setVisitNum(jobFairBooth.getVisitNum() + 1);
+        jobFairBoothRepository.save(jobFairBooth);
+
+
         JobFairVisitEntity entity = new JobFairVisitEntity();
         entity.setUserId(userId);
         entity.setJobFairId(jobFairBooth.getJobFair().getId());

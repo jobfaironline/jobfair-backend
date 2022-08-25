@@ -224,6 +224,7 @@ public class LayoutServiceImpl implements LayoutService {
             JobFairBoothEntity jobFairBoothEntity = new JobFairBoothEntity();
             jobFairBoothEntity.setJobFair(jobFairEntity);
             jobFairBoothEntity.setBooth(booth);
+            jobFairBoothEntity.setVisitNum(0);
             jobFairBoothRepository.save(jobFairBoothEntity);
         }
     }

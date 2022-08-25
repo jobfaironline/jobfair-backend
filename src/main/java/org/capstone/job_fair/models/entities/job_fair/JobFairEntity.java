@@ -64,6 +64,9 @@ public class JobFairEntity {
     @JoinColumn(name = "job_fair_id", referencedColumnName = "id")
     private List<ShiftEntity> shifts;
 
+    @Column(name = "visit_num")
+    private Integer visitNum;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

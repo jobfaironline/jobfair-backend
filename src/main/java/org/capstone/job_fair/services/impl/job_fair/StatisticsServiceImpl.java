@@ -91,9 +91,10 @@ public class StatisticsServiceImpl implements StatisticsService {
 
         int employeeNum = assignmentService.getCountAssignedEmployeeByJobFair(jobFairId);
         statisticsDTO.getGeneralStatistics().setEmployeeNum(employeeNum);
+        statisticsDTO.getGeneralStatistics().setParticipationNum(jobFairEntity.getVisitNum());
 
         //get CV general statistics
-        Page<ApplicationEntity> applicationPage = applicationRepository.findAllApplicationOfCompanyByJobFairIdAndStatusIn(companyId, jobFairId, Arrays.asList(ApplicationStatus.APPROVE, ApplicationStatus.PENDING, ApplicationStatus.REJECT), Pageable.unpaged());
+        Page<ApplicationEntity> applicationPage = applicationRepository.findAllApplicationOfCompanyByJobFairIdAndStatusIn(companyId, jobFairId, Arrays.asList(ApplicationStatus.APPROVE, ApplicationStatus.PENDING, ApplicationStatus.REJECT), "", Pageable.unpaged());
         long pendingCVNum = applicationPage.stream().filter(application -> application.getStatus() == ApplicationStatus.PENDING).count();
         long rejectCVNum = applicationPage.stream().filter(application -> application.getStatus() == ApplicationStatus.REJECT).count();
         long approveCVNum = applicationPage.stream().filter(application -> application.getStatus() == ApplicationStatus.APPROVE).count();
@@ -208,7 +209,7 @@ public class StatisticsServiceImpl implements StatisticsService {
             JobFairStatisticsDTO.Booth booth = new JobFairStatisticsDTO.Booth();
             booth.setId(boothEntity.getId());
             booth.setName(boothEntity.getName());
-            int visitNum = 0;
+            int visitNum = boothEntity.getVisitNum();
             int appliedCvNum = applicationByBooth.get(boothEntity.getId()) != null ? applicationByBooth.get(boothEntity.getId()).size() : 0;
             int approvedCVNum = applicationByBooth.get(boothEntity.getId()) == null ? 0 : (int) applicationByBooth.get(boothEntity.getId()).stream().filter(application -> {
                 return application.getStatus() == ApplicationStatus.APPROVE;
@@ -308,6 +309,11 @@ public class StatisticsServiceImpl implements StatisticsService {
 
         //get general statistics
         List<JobFairEntity> publishedJobFairs = jobFairRepository.findByCompanyIdAndStatus(companyId, JobFairPlanStatus.PUBLISH);
+        publishedJobFairs.sort((o1, o2) -> {
+            if (o1.getCreateTime() > o2.getCreateTime()) return -1;
+            if (o1.getCreateTime().equals(o2.getCreateTime())) return 0;
+            return 1;
+        });
         List<JobFairEntity> draftJobFairs = jobFairRepository.findByCompanyIdAndStatus(companyId, JobFairPlanStatus.DRAFT);
 
         long now = clock.millis();
@@ -324,7 +330,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 
         result.getGeneralStatistics().setCreatedJobFairNum(createdJobFairNum);
         result.getGeneralStatistics().setPublishedJobFairNum(publishedJobFairNum);
-        result.getGeneralStatistics().setParticipantNum(129);
+        result.getGeneralStatistics().setParticipantNum(publishedJobFairs.stream().map(JobFairEntity::getVisitNum).mapToInt(Integer::intValue).sum());
         result.getGeneralStatistics().setBoothTotalNums(boothTotalNum);
         result.getGeneralStatistics().setInProgressJobFairNum(inProgressJobFairNum);
         result.getGeneralStatistics().setPastJobFairNum(pastJobFairNum);
@@ -334,7 +340,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 
         //get CV statisics
         List<ApplicationEntity> applications = publishedJobFairs.stream().flatMap(jobFair -> {
-            Page<ApplicationEntity> applicationPage = applicationRepository.findAllApplicationOfCompanyByJobFairIdAndStatusIn(companyId, jobFair.getId(), Arrays.asList(ApplicationStatus.APPROVE, ApplicationStatus.PENDING, ApplicationStatus.REJECT), Pageable.unpaged());
+            Page<ApplicationEntity> applicationPage = applicationRepository.findAllApplicationOfCompanyByJobFairIdAndStatusIn(companyId, jobFair.getId(), Arrays.asList(ApplicationStatus.APPROVE, ApplicationStatus.PENDING, ApplicationStatus.REJECT), "", Pageable.unpaged());
             return applicationPage.toList().stream();
         }).collect(Collectors.toList());
 
@@ -413,7 +419,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         //get job fair statistics
         publishedJobFairs.forEach(jobFair -> {
             int boothNum = jobFair.getJobFairBoothList().size();
-            int participationNum = 0;
+            int participationNum = jobFair.getVisitNum();
             int jobPositionNum = jobFair.getJobFairBoothList().stream().map(booth -> booth.getBoothJobPositions().size()).mapToInt(Integer::intValue).sum();
             int employeeNum = assignmentService.getCountAssignedEmployeeByJobFair(jobFair.getId());
 

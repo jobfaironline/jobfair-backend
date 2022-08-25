@@ -42,10 +42,11 @@ public interface ApplicationRepository extends JpaRepository<ApplicationEntity, 
 
     @Query("select a from ApplicationEntity a " +
             "where a.boothJobPosition.jobFairBooth.jobFair.company.id  = :companyId " +
-            "and a.boothJobPosition.jobFairBooth.jobFair.id = :jobFairId and a.status in :statusList")
+            "and a.boothJobPosition.jobFairBooth.jobFair.id = :jobFairId and a.status in :statusList and a.fullName LIKE concat('%', :attendantName, '%')")
     Page<ApplicationEntity> findAllApplicationOfCompanyByJobFairIdAndStatusIn(@Param("companyId") String companyId,
                                                                               @Param("jobFairId") String jobFairId,
                                                                               @Param("statusList") List<ApplicationStatus> applicationStatusList,
+                                                                              @Param("attendantName") String attendantName,
                                                                               Pageable pageable);
 
     @Query("select a from ApplicationEntity a " +

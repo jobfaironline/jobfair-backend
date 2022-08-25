@@ -50,6 +50,9 @@ public class JobFairBoothEntity {
     @JoinColumn(name = "job_fair_booth_id", referencedColumnName = "id")
     private List<BoothJobPositionEntity> boothJobPositions;
 
+    @Column(name = "visit_num")
+    private Integer visitNum;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
