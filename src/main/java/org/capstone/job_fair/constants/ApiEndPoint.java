@@ -280,6 +280,12 @@ public final class ApiEndPoint {
         public static final String SUBMIT_APPLICATION = APPLICATION_ENDPOINT + "/submit";
         public static final String DRAFT_APPLICATION = APPLICATION_ENDPOINT + "/draft";
 
+        public static final String EXPORT_APPLICATION = APPLICATION_ENDPOINT + "/export";
+
+        public static final String EXPORT_APPLICATION_EMPLOYEE = EXPORT_APPLICATION + "/employee";
+
+        public static final String EXPORT_APPLICATION_MANAGER = EXPORT_APPLICATION + "/manager";
+
     }
 
     public static final class JobFairBoothLayout {

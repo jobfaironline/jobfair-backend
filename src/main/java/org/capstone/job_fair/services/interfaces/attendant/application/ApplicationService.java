@@ -30,4 +30,6 @@ public interface ApplicationService {
 
     Optional<ApplicationDTO> getApplicationByIdForCompanyEmployee(String applicationId, String userId);
 
+    String exportApplicationByJobFair(String companyId, String jobFairId);
+
 }

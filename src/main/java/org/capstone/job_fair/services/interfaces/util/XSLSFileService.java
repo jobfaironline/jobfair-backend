@@ -15,4 +15,6 @@ public interface XSLSFileService {
     String uploadErrorXSLFile(Workbook workbook, Map<Integer, String> errors, String fileOriginalName, int errorIndex);
 
     String uploadErrorCSVFile(List<List<String>> data, Map<Integer, String> errors, String fileOriginalName);
+
+    String uploadXSLFile(Workbook workbook, String folderName);
 }

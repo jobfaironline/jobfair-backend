@@ -40,7 +40,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Clock;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -227,5 +226,15 @@ public class ApplicationController {
 
         return ResponseEntity.ok(applicationEntityPage.map(entity -> applicationMapper.toApplicationForAttendantResponse(entity)));
     }
+
+    @GetMapping(ApiEndPoint.Application.EXPORT_APPLICATION)
+    @PreAuthorize("hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_MANAGER) OR hasAuthority(T(org.capstone.job_fair.models.enums.Role).COMPANY_EMPLOYEE)")
+    public ResponseEntity<?> exportApplication(@RequestParam String jobFairId) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String companyId = userDetails.getCompanyId();
+        String url = applicationService.exportApplicationByJobFair(companyId, jobFairId);
+        return ResponseEntity.ok(url);
+    }
+
 
 }

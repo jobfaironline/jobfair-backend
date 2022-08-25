@@ -1,5 +1,13 @@
 package org.capstone.job_fair.services.impl.attendant.application;
 
+import org.apache.poi.common.usermodel.HyperlinkType;
+import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.usermodel.*;
+import org.capstone.job_fair.constants.AWSConstant;
 import org.capstone.job_fair.constants.DataConstraint;
 import org.capstone.job_fair.constants.MessageConstant;
 import org.capstone.job_fair.models.dtos.attendant.application.ApplicationDTO;
@@ -15,22 +23,22 @@ import org.capstone.job_fair.repositories.attendant.cv.CvRepository;
 import org.capstone.job_fair.repositories.job_fair.job_fair_booth.BoothJobPositionRepository;
 import org.capstone.job_fair.services.interfaces.attendant.application.ApplicationService;
 import org.capstone.job_fair.services.interfaces.job_fair.InterviewService;
+import org.capstone.job_fair.services.interfaces.util.XSLSFileService;
 import org.capstone.job_fair.services.mappers.attendant.application.*;
 import org.capstone.job_fair.utils.MessageUtil;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTable;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableStyleInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Clock;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -73,6 +81,12 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Autowired
     @Qualifier("LocalInterviewService")
     private InterviewService interviewService;
+
+    @Value("${front-end.endpoint}")
+    private String frontEndEndpoint;
+
+    @Autowired
+    private XSLSFileService xslsFileService;
 
 
     private TestStatus getTestStatus(String boothJobPositionId) {
@@ -133,22 +147,22 @@ public class ApplicationServiceImpl implements ApplicationService {
         entity.setYearOfExp(cvEntity.getYearOfExp());
         entity.setJobTitle(cvEntity.getJobTitle());
         entity.setJobLevel(cvEntity.getJobLevel());
-        if (cvEntity.getActivities() != null){
+        if (cvEntity.getActivities() != null) {
             entity.setActivities(cvEntity.getActivities().stream().map(applicationActivityMapper::toEntity).collect(Collectors.toList()));
         }
-        if (cvEntity.getCertifications() != null){
+        if (cvEntity.getCertifications() != null) {
             entity.setCertifications(cvEntity.getCertifications().stream().map(applicationCertificationMapper::toEntity).collect(Collectors.toList()));
         }
-        if (cvEntity.getEducations() != null){
+        if (cvEntity.getEducations() != null) {
             entity.setEducations(cvEntity.getEducations().stream().map(applicationEducationMapper::toEntity).collect(Collectors.toList()));
         }
-        if (cvEntity.getReferences() != null){
+        if (cvEntity.getReferences() != null) {
             entity.setReferences(cvEntity.getReferences().stream().map(applicationReferenceMapper::toEntity).collect(Collectors.toList()));
         }
-        if (cvEntity.getSkills() != null){
+        if (cvEntity.getSkills() != null) {
             entity.setSkills(cvEntity.getSkills().stream().map(applicationSkillMapper::toEntity).collect(Collectors.toList()));
         }
-        if (cvEntity.getWorkHistories() != null){
+        if (cvEntity.getWorkHistories() != null) {
             entity.setWorkHistories(cvEntity.getWorkHistories().stream().map(applicationWorkHistoryMapper::toEntity).collect(Collectors.toList()));
         }
         entity.setBoothJobPosition(jobPositionOpt.get());
@@ -208,6 +222,94 @@ public class ApplicationServiceImpl implements ApplicationService {
     public Optional<ApplicationDTO> getApplicationByIdForCompanyEmployee(String applicationId, String userId) {
         //TODO: check for company employee valid time
         return applicationRepository.findById(applicationId).map(applicationMapper::toDTO);
+    }
+
+    @Override
+    public String exportApplicationByJobFair(String companyId, String jobFairId) {
+        List<ApplicationEntity> applicationEntities = applicationRepository.findByBoothJobPositionJobFairBoothJobFairIdAndBoothJobPositionJobFairBoothJobFairCompanyId(jobFairId, companyId);
+
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFSheet spreadsheet = workbook.createSheet("Applications");
+
+        XSSFRow row;
+        CreationHelper createHelper = workbook.getCreationHelper();
+
+        XSSFCellStyle hlinkstyle = workbook.createCellStyle();
+        XSSFFont hlinkfont = workbook.createFont();
+        hlinkfont.setUnderline(XSSFFont.U_SINGLE);
+        hlinkfont.setColor(IndexedColors.BLUE.index);
+        hlinkstyle.setFont(hlinkfont);
+
+        XSSFCellStyle headerStyle = workbook.createCellStyle();
+        XSSFFont headerFont = workbook.createFont();
+        headerFont.setBold(true);
+        headerFont.setFontHeight(12);
+        headerStyle.setFont(headerFont);
+        headerStyle.setBorderBottom(BorderStyle.MEDIUM);
+
+        // This data needs to be written (Object[])
+        Map<String, Object[]> applicationData
+                = new TreeMap<String, Object[]>();
+
+        applicationData.put(
+                "0",
+                new Object[]{"No", "Candidate's name   ", "Job position   ", "Matching point   ", "Status   ", "Interview status    ", "Is qualified  ", "URL"});
+
+
+        for (int i = 0; i < applicationEntities.size(); i++) {
+            ApplicationEntity application = applicationEntities.get(i);
+            String url = frontEndEndpoint + "/company/resume-detail/" + application.getId();
+            applicationData.put(Integer.toString(i + 1), new Object[]{
+                    Integer.toString(i + 1),
+                    application.getFullName(),
+                    application.getBoothJobPosition().getTitle(),
+                    application.getMatchingPoint() != null ? String.format("%.2f", application.getMatchingPoint() * 100) : "0",
+                    application.getStatus().toString(),
+                    application.getInterviewStatus() != null ? application.getInterviewStatus().toString() : "",
+                    application.getIsQualified() != null ? application.getIsQualified().toString(): "",
+                    url});
+        }
+
+        Set<String> keyid = applicationData.keySet();
+
+
+        int rowid = 0;
+        for (String key : keyid) {
+            row = spreadsheet.createRow(rowid++);
+            Object[] objectArr = applicationData.get(key);
+            int cellid = 0;
+
+            for (int i=0; i < objectArr.length; i++){
+
+                Object obj = objectArr[i];
+                Cell cell = row.createCell(cellid++);
+                if (i == 0 && !key.equals("0")){
+                    cell.setCellValue(rowid);
+                } else {
+                    cell.setCellValue((String) obj);
+                }
+                if (i == 7 && !key.equals("0")){
+                    XSSFHyperlink link = (XSSFHyperlink)createHelper.createHyperlink(HyperlinkType.URL);
+                    link.setAddress((String) obj);
+                    cell.setHyperlink((XSSFHyperlink) link);
+                    cell.setCellStyle(hlinkstyle);
+                }
+                if (key.equals("0")){
+                    cell.setCellStyle(headerStyle);
+                }
+            }
+
+        }
+
+        for (int i = 0; i < spreadsheet.getRow(0).getPhysicalNumberOfCells(); i++) {
+            spreadsheet.autoSizeColumn(i);
+        }
+        spreadsheet.setAutoFilter(new CellRangeAddress(0, 0, 1, 6));
+        spreadsheet.createFreezePane(0, 1);
+        String url = xslsFileService.uploadXSLFile(workbook, AWSConstant.APPLICATION_FOLDER);
+
+        return url;
+
     }
 
     @Override

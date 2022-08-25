@@ -19,5 +19,7 @@ public final class AWSConstant {
     public static final String DECORATOR_BOOTH_LAYOUT_VIDEO_FOLDER = "DecoratorLayoutVideo";
     public static final String CV_PROFILE_FOLDER = "CvPictureProfile";
 
+    public static final String APPLICATION_FOLDER = "Application";
+
     public static final long DYNAMO_DELAY_TIME = 100;
 }

@@ -146,4 +146,24 @@ public class XSLSFileServiceImpl implements XSLSFileService {
             return url;
         }
     }
+
+    @Override
+    @SneakyThrows
+    public String uploadXSLFile(Workbook workbook, String folderName) {
+        String url = "";
+        try {
+            if (workbook.getNumberOfSheets() != 1) {
+                throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.File.XSL_NO_SHEET));
+            }
+            String id = UUID.randomUUID().toString();
+            String fileName = "application_report_" + id + ".xlsx";
+            url = awsUtil.generateAwsS3AccessString(folderName, fileName);
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            workbook.write(bos);
+            fileStorageService.store(bos.toByteArray(), folderName + "/" + fileName);
+        } finally {
+            workbook.close();
+        }
+        return url;
+    }
 }
