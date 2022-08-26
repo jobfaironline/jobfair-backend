@@ -29,10 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.lang.reflect.UndeclaredThrowableException;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -154,6 +151,13 @@ public class LayoutServiceImpl implements LayoutService {
 
             return layoutBoothEntity;
         }).collect(Collectors.toSet());
+        //validate booth have the same name
+        List<String> boothNames= boothEntities.stream().map(LayoutBoothEntity::getName).collect(Collectors.toList());
+        Set<String> boothNameSet = new HashSet<>(boothNames);
+        if (boothNames.size() != boothNameSet.size()){
+            throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.Layout.INVALID_GLB_FILE));
+        }
+
         layoutEntity.getBooths().addAll(boothEntities);
         layoutRepository.save(layoutEntity);
 

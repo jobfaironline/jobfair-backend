@@ -154,7 +154,7 @@ public class CvServiceImpl implements CvService {
             descriptionResult.subscribe(keyWordResponse -> {
                 try {
                     String parseResult = Jackson.getObjectMapper().writeValueAsString(keyWordResponse.result);
-                    activityEntity.setDescription(parseResult);
+                    activityEntity.setDescriptionKeyWord(parseResult);
                     cvActivityRepository.save(activityEntity);
                 } catch (Exception e) {
                     e.printStackTrace();

@@ -232,7 +232,6 @@ public class StatisticsServiceImpl implements StatisticsService {
             statisticsDTO.getBooths().add(booth);
         });
         int sumVisitNum = statisticsDTO.getBooths().stream().map(JobFairStatisticsDTO.Booth::getVisitNum).mapToInt(Integer::intValue).sum();
-        statisticsDTO.getGeneralStatistics().setParticipationNum(sumVisitNum);
         return statisticsDTO;
     }
 

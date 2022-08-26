@@ -596,6 +596,10 @@ public class DemoController {
 
         List<String> otherCVList = request.getCvId().subList(20, request.getCvId().size());
         JobFairEntity jobFair = assignmentEntity.getJobFairBooth().getJobFair();
+        jobFair.setVisitNum(jobFair.getVisitNum() + 40);
+        jobFairRepository.save(jobFair);
+
+
         List<BoothJobPositionEntity> jobs = boothJobPositionRepository.findByJobFairBoothJobFairId(jobFair.getId());
         jobs = jobs.stream().filter(boothJobPositionEntity -> {
             return !boothJobPositionEntity.getJobFairBooth().getId().equals(assignmentEntity.getJobFairBooth().getId()) && boothJobPositionEntity.getJobFairBooth().getName() != null;
@@ -1139,6 +1143,7 @@ public class DemoController {
             Optional<ApplicationEntity> applicationOpt = applicationRepository.findById(applicationId);
             applicationOpt.ifPresent(applicationEntity -> {
                 applicationEntity.setInterviewStatus(InterviewStatus.DONE);
+                applicationEntity.setIsQualified(random.nextBoolean());
                 applicationRepository.save(applicationEntity);
             });
         }

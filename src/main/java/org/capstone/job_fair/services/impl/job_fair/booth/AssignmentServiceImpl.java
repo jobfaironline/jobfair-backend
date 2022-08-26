@@ -368,6 +368,10 @@ public class AssignmentServiceImpl implements AssignmentService {
         if (!assignerOpt.isPresent()) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.CompanyEmployee.EMPLOYEE_NOT_FOUND));
         }
+        //remove previous assignment
+        List<AssignmentEntity> assignmentEntities = assignmentRepository.findByJobFairBoothJobFairId(jobFairId);
+        assignmentRepository.deleteAll(assignmentEntities);
+
         CompanyEmployeeEntity assigner = assignerOpt.get();
         //check for invalid type
         List<String> allowTypes = Arrays.asList(FileConstant.CSV_CONSTANT.TYPE, FileConstant.XLS_CONSTANT.TYPE, FileConstant.XLSX_CONSTANT.TYPE);
