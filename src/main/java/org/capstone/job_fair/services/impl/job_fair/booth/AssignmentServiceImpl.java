@@ -512,6 +512,13 @@ public class AssignmentServiceImpl implements AssignmentService {
             }
         }
         if (!parseResult.isHasError()) {
+
+            //remove all assignment
+            List<AssignmentEntity> interviewerAssignments = assignmentRepository.findByJobFairBoothIdAndType(jobFairBoothId, AssignmentType.INTERVIEWER);
+            List<AssignmentEntity> receptionistAssignments = assignmentRepository.findByJobFairBoothIdAndType(jobFairBoothId, AssignmentType.RECEPTION);
+            assignmentRepository.deleteAll(interviewerAssignments);
+            assignmentRepository.deleteAll(receptionistAssignments);
+
             for (int i = 0; i < entities.size(); i++) {
                 AssignmentEntity assignmentEntity = entities.get(i);
                 try {
@@ -548,6 +555,9 @@ public class AssignmentServiceImpl implements AssignmentService {
         if (!allowTypes.contains(fileType)) {
             throw new IllegalArgumentException(MessageUtil.getMessage(MessageConstant.File.NOT_ALLOWED));
         }
+
+
+
         ParseFileResult<AssignmentDTO> parseResult;
         List<List<String>> data = null;
 
