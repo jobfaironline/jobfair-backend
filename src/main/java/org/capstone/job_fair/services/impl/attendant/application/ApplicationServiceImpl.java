@@ -226,7 +226,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     public String exportApplicationByJobFair(String companyId, String jobFairId) {
-        List<ApplicationEntity> applicationEntities = applicationRepository.findByBoothJobPositionJobFairBoothJobFairIdAndBoothJobPositionJobFairBoothJobFairCompanyId(jobFairId, companyId);
+        List<ApplicationEntity> applicationEntities = applicationRepository.findByBoothJobPositionJobFairBoothJobFairIdAndBoothJobPositionJobFairBoothJobFairCompanyIdAndStatusIn(jobFairId, companyId, Arrays.asList(ApplicationStatus.APPROVE, ApplicationStatus.PENDING, ApplicationStatus.REJECT));
 
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet spreadsheet = workbook.createSheet("Applications");
@@ -284,7 +284,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 Object obj = objectArr[i];
                 Cell cell = row.createCell(cellid++);
                 if (i == 0 && !key.equals("0")){
-                    cell.setCellValue(rowid);
+                    cell.setCellValue(rowid - 1);
                 } else {
                     cell.setCellValue((String) obj);
                 }

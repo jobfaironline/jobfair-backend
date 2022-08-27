@@ -127,7 +127,7 @@ public interface ApplicationRepository extends JpaRepository<ApplicationEntity, 
             "and a.interviewStatus = :status")
     List<ApplicationEntity> findByInJobFairIdAndInterviewStatus(@Param("jobFairId") String jobFairId, @Param("status") InterviewStatus status);
 
-    List<ApplicationEntity> findByBoothJobPositionJobFairBoothJobFairIdAndBoothJobPositionJobFairBoothJobFairCompanyId(String boothId, String companyId);
+    List<ApplicationEntity> findByBoothJobPositionJobFairBoothJobFairIdAndBoothJobPositionJobFairBoothJobFairCompanyIdAndStatusIn(String boothId, String companyId, List<ApplicationStatus> status);
 
 
 }
