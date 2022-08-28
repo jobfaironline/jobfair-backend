@@ -253,7 +253,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         applicationData.put(
                 "0",
-                new Object[]{"No", "Candidate's name   ", "Job position   ", "Matching point   ", "Status   ", "Interview status    ", "Is qualified  ", "URL"});
+                new Object[]{"No", "Candidate's name   ", "Email    ", "Job position   ", "Matching point   ", "Status   ", "Interview status    ", "Is qualified  ", "URL"});
 
 
         for (int i = 0; i < applicationEntities.size(); i++) {
@@ -262,6 +262,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             applicationData.put(Integer.toString(i + 1), new Object[]{
                     Integer.toString(i + 1),
                     application.getFullName(),
+                    application.getEmail(),
                     application.getBoothJobPosition().getTitle(),
                     application.getMatchingPoint() != null ? String.format("%.2f", application.getMatchingPoint() * 100) : "0",
                     application.getStatus().toString(),
@@ -288,7 +289,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 } else {
                     cell.setCellValue((String) obj);
                 }
-                if (i == 7 && !key.equals("0")){
+                if (i == 8 && !key.equals("0")){
                     XSSFHyperlink link = (XSSFHyperlink)createHelper.createHyperlink(HyperlinkType.URL);
                     link.setAddress((String) obj);
                     cell.setHyperlink((XSSFHyperlink) link);

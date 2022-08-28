@@ -22,4 +22,5 @@ public class InterviewScheduleDTO {
     private String attendantName;
     private String interviewRoomId;
     private String waitingRoomId;
+    private String interviewerName;
 }
