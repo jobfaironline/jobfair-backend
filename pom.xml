@@ -104,7 +104,7 @@
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-dynamodb</artifactId>
-            <version>1.12.201</version>
+            <version>1.12.405</version>
         </dependency>
         <!-- End DynamoDB dependencies -->
         <!-- AWS sqs dependencies -->
